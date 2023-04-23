@@ -56,18 +56,18 @@ export default function DrawerNavigation() {
           title: 'Megoo',
           drawerLabel: 'Trang cá nhân',
         }}
-        name={RouteNames.PROFILE}
+        name={RouteNames.PROFILE_STACK}
         component={BottomNavigationBar}
-        initialParams={{screen: RouteNames.PROFILE}}
+        initialParams={{screen: RouteNames.PROFILE_STACK}}
       />
       <Drawer.Screen
         options={{
           title: 'Megoo',
           drawerLabel: 'Cài đặt',
         }}
-        name={RouteNames.SETTINGS}
+        name={RouteNames.SETTINGS_STACK}
         component={BottomNavigationBar}
-        initialParams={{screen: RouteNames.SETTINGS}}
+        initialParams={{screen: RouteNames.SETTINGS_STACK}}
       />
     </Drawer.Navigator>
   );

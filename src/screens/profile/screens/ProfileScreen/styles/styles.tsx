@@ -7,13 +7,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  avatar: {
+    width: 200,
+    height: 200,
+    borderRadius: 200 / 2,
+    marginBottom: 5,
+  },
   titleContainer: {
     width: '90%',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'baseline',
-    marginBottom: 10,
+    marginVertical: 10,
   },
   title: {
     textAlign: 'left',

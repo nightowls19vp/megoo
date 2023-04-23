@@ -15,6 +15,7 @@ export default {
     PROFILE: "Trang cá nhân",
     EDIT_PROFILE: "Chỉnh sửa thông tin cá nhân",
   
+    SETTINGS_STACK: "Settings stack",
     SETTINGS: "Cài đặt",
   };
   

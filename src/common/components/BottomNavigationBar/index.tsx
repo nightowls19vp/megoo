@@ -1,17 +1,14 @@
-// import Icon from "@ant-design/react-native/lib/icon";
 import Icon from 'react-native-vector-icons/AntDesign';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {View, Text, Pressable} from 'react-native';
+
 import {Colors} from '../../../constants/color.const';
 import RouteNames from '../../../constants/route-names.const';
+
 import ProfileScreen from '../../../screens/profile/screens/ProfileScreen';
 import EditProfileScreen from '../../../screens/profile/screens/EditProfileScreen';
-// import HomeScreen from "../../../screens/home/screens/HomeScreen";
-// import DrawerNavigation from "../DrawerNavigation";
-// import ProfileScreen from "../../../screens/profile/screens/ProfileScreen";
-// import EditProfileScreen from "../../../screens/profile/screens/EditProfileScreen";
-
+import SettingsScreen from '../../../screens/settings/screens/SettingsScreen';
 function PackageScreen() {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -19,14 +16,6 @@ function PackageScreen() {
     </View>
   );
 }
-
-// function ProfileScreen() {
-//   return (
-//     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-//       <Text>Profile!</Text>
-//     </View>
-//   );
-// }
 
 function HomeScreen() {
   return (
@@ -61,13 +50,26 @@ function ProfileScreenStack() {
   );
 }
 
-function SettingsScreen() {
+const SettingsStack = createNativeStackNavigator();
+
+function SettingsScreenStack() {
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Settings!</Text>
-    </View>
+    <SettingsStack.Navigator>
+      <SettingsStack.Screen
+        name={RouteNames.SETTINGS}
+        component={SettingsScreen}
+      />
+    </SettingsStack.Navigator>
   );
 }
+
+// function SettingsScreen() {
+//   return (
+//     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+//       <Text>Settings!</Text>
+//     </View>
+//   );
+// }
 
 const Tab = createBottomTabNavigator();
 
@@ -129,6 +131,7 @@ export default function BottomNavigationBar() {
       <Tab.Screen
         name={RouteNames.PROFILE_STACK}
         component={ProfileScreenStack}
+        initialParams={{screen: RouteNames.PROFILE}}
         options={{
           title: 'Trang cá nhân',
           tabBarIcon: ({color}) => {
@@ -137,8 +140,9 @@ export default function BottomNavigationBar() {
         }}
       />
       <Tab.Screen
-        name={RouteNames.SETTINGS}
-        component={SettingsScreen}
+        name={RouteNames.SETTINGS_STACK}
+        component={SettingsScreenStack}
+        initialParams={{screen: RouteNames.SETTINGS}}
         options={{
           tabBarIcon: ({color}) => {
             return <Icon name="setting" size={20} color={color} />;

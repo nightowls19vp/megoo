@@ -7,6 +7,13 @@ import styles from './styles/styles';
 export default function ProfileScreen({navigation}: {navigation: any}) {
   return (
     <View style={styles.container}>
+      <Image
+        source={{
+          uri: 'https://raw.githubusercontent.com/AboutReact/sampleresource/master/old_logo.png',
+        }}
+        style={styles.avatar}
+      />
+
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Thông tin cá nhân</Text>
 
