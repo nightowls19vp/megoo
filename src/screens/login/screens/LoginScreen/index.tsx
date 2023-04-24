@@ -1,8 +1,9 @@
-import {Formik} from 'formik';
+import {ErrorMessage, Formik} from 'formik';
 import React from 'react';
 import {
   AppRegistry,
   Image,
+  Modal,
   Text,
   TextInput,
   TouchableOpacity,
@@ -13,12 +14,15 @@ import * as Yup from 'yup';
 
 // import Provider from '@ant-design/react-native/lib/provider';
 // import Toast from '@ant-design/react-native/lib/toast';
+import Toast from 'react-native-toast-message';
 
 import {Colors} from '../../../../constants/color.const';
 import {ILoginRes} from './interfaces/login.interface';
-// import {login} from './services/login.service';
 import styles from './styles/styles';
 import RouteNames from '../../../../constants/route-names.const';
+import {login} from './services/login.service';
+import userStore from '../../../../common/store/user.store';
+import {IUser} from './../../../../interfaces/user.interface';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -29,7 +33,7 @@ const LoginSchema = Yup.object().shape({
 
 export default function LoginScreen({navigation}: {navigation: any}) {
   const [hidePassword, setHidePassword] = React.useState(true);
-  const [showIcon, setShowIcon] = React.useState(false);
+  const [isModalVisible, setIsModalVisible] = React.useState(true);
 
   const onClose = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     console.log(e, 'I was closed.');
@@ -86,7 +90,77 @@ export default function LoginScreen({navigation}: {navigation: any}) {
       onSubmit={values => {
         // same shape as initial values
         console.log(values);
-        // login({username: values.email, password: values.password});
+        login({
+          username: values.email,
+          password: values.password,
+        }).then((response: ILoginRes) => {
+          console.log(response.data?.userInfo);
+          let user: IUser = {
+            id: '',
+            name: '',
+            dob: '',
+            email: '',
+            phone: '',
+            avatar: '',
+          };
+          // user.name = response.data?.userInfo["name"];
+          // console.log(response.data?.userInfo['name']);
+          // console.log(response.data?.userInfo['avatar']);
+          // console.log(response.data?.userInfo['email']);
+
+          user.id = response.data?.userInfo['id'] ?? '';
+          user.name = response.data?.userInfo['name'] ?? '';
+          user.dob = response.data?.userInfo['dob'] ?? '';
+          user.email = response.data?.userInfo['email'] ?? '';
+          user.phone = response.data?.userInfo['phone'] ?? '';
+          user.avatar = response.data?.userInfo['avatar'] ?? '';
+
+          console.log(user.avatar);
+
+          userStore.setUser(user);
+          console.log(userStore.avatar);
+
+          if (response.statusCode === 200) {
+            Toast.show({
+              type: 'success',
+              text1: 'Đăng nhập thành công',
+              autoHide: true,
+              visibilityTime: 1000,
+              topOffset: 30,
+              bottomOffset: 40,
+              onHide: () => {
+                navigation.navigate(
+                  RouteNames.HOME_DRAWER as never,
+                  {} as never,
+                );
+              },
+            });
+          } else if (response.statusCode === 401) {
+            Toast.show({
+              type: 'error',
+              text1: response.message,
+              autoHide: false,
+              topOffset: 30,
+              bottomOffset: 40,
+            });
+          } else if (response.statusCode === 404) {
+            Toast.show({
+              type: 'error',
+              text1: response.message,
+              autoHide: false,
+              topOffset: 30,
+              bottomOffset: 40,
+            });
+          } else {
+            Toast.show({
+              type: 'error',
+              text1: response.message,
+              autoHide: false,
+              topOffset: 30,
+              bottomOffset: 40,
+            });
+          }
+        });
       }}>
       {({
         values,
@@ -94,6 +168,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
         touched,
         setFieldTouched,
         setFieldValue,
+        setErrors,
         isValid,
         handleChange,
         handleSubmit,
@@ -154,24 +229,16 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             </Text>
           </View>
           <TouchableOpacity
-            onPress={() => {
-              // login({
-              //   username: values.email,
-              //   password: values.password,
-              // }).then((response: ILoginRes) => {
-              //   console.log(response.data);
-              //   if (response.statusCode === 200) {
-              //     Toast.success(response.message, 1);
-              //     navigation.navigate(
-              //       RoutesName.HOME_DRAWER as never,
-              //       {} as never
-              //     );
-              //   } else {
-              //     Toast.fail(response.message, 1);
-              //   }
-              // });
-              navigation.navigate(RouteNames.HOME_DRAWER as never, {} as never);
-            }}
+            // onPress={() => {
+            //   login({
+            //     username: values.email,
+            //     password: values.password,
+            //   }).then((response: ILoginRes) => {
+            //     console.log(response.data?.userInfo);
+            //   });
+            // navigation.navigate(RouteNames.HOME_DRAWER as never, {} as never);
+            // }}
+            onPress={handleSubmit}
             disabled={!isValid}
             style={[
               styles.button,
@@ -181,6 +248,8 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             ]}>
             <Text style={styles.buttonText}>Đăng nhập</Text>
           </TouchableOpacity>
+
+          <Toast position="top"></Toast>
 
           <View style={styles.dividerContainer}>
             <View style={styles.divider} />

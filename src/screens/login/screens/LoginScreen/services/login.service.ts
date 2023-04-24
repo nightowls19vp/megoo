@@ -29,7 +29,7 @@ export const login = async (loginInfo: ILoginReq) => {
       } else if (error.response?.status === 400) {
         response.message = "Dữ liệu không hợp lệ";
       } else if (error.response?.status === 401) {
-        response.message = "Không xác thực được tài khoản";
+        response.message = "Mật khẩu không chính xác";
       } else if (error.response?.status === 404) {
         response.message = "Tài khoản không tồn tại";
       } else {
@@ -46,20 +46,4 @@ export const login = async (loginInfo: ILoginReq) => {
   // });
 
   // const loginRes: ILoginRes = res.data;
-};
-
-export const validate = async (token: string): Promise<IValidateRes> => {
-  const validateEndpoint = "api/auth/validate";
-  const reqUrl = `${URL_HOST}${validateEndpoint}`;
-  console.log(reqUrl);
-
-  const res = await axios.get(reqUrl, {
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  console.log(res.data);
-  return res.data;
 };

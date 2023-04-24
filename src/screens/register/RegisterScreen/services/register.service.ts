@@ -3,7 +3,7 @@ import axios from 'axios';
 import { IRegisterReq, IRegisterRes } from './../interfaces/register.interface';
 
 export const register = async (registerInfo: IRegisterReq) => {
-    const registerEndpoint = 'api/auth/login/register';
+    const registerEndpoint = 'api/auth/register';
     const reqUrl = `${URL_HOST}${registerEndpoint}`;
     console.log(reqUrl);
 
@@ -15,7 +15,7 @@ export const register = async (registerInfo: IRegisterReq) => {
             phone: registerInfo.phone,
             dob: registerInfo.dob,
         });
-        console.log(res.data);
+        console.log(`Data: ${res.data}`);
 
         return res.data;
     } catch (error) {

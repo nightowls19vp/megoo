@@ -1,5 +1,6 @@
 import React from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
+import userStore from '../../../../common/store/user.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import styles from './styles/styles';
@@ -9,7 +10,8 @@ export default function ProfileScreen({navigation}: {navigation: any}) {
     <View style={styles.container}>
       <Image
         source={{
-          uri: 'https://raw.githubusercontent.com/AboutReact/sampleresource/master/old_logo.png',
+          // uri: 'https://raw.githubusercontent.com/AboutReact/sampleresource/master/old_logo.png',
+          uri: userStore.avatar,
         }}
         style={styles.avatar}
       />
@@ -33,7 +35,7 @@ export default function ProfileScreen({navigation}: {navigation: any}) {
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
           <Text style={styles.text}>Họ tên:</Text>
-          <Text style={styles.infoText}>admin</Text>
+          <Text style={styles.infoText}>{userStore.name}</Text>
         </View>
         <View style={styles.infoRow}>
           <Text style={[styles.text, {width: '40%'}]}>Email:</Text>
@@ -41,16 +43,16 @@ export default function ProfileScreen({navigation}: {navigation: any}) {
             numberOfLines={1}
             ellipsizeMode={'tail'}
             style={[styles.infoText, {width: '60%', textAlign: 'right'}]}>
-            admin@email.com
+            {userStore.email}
           </Text>
         </View>
         <View style={styles.infoRow}>
           <Text style={styles.text}>Số điện thoại:</Text>
-          <Text style={styles.infoText}>0953315682</Text>
+          <Text style={styles.infoText}>{userStore.phone}</Text>
         </View>
         <View style={styles.infoRow}>
           <Text style={styles.text}>Ngày sinh:</Text>
-          <Text style={styles.infoText}>19/11/2001</Text>
+          <Text style={styles.infoText}>{userStore.dob}</Text>
         </View>
       </View>
 

@@ -144,6 +144,7 @@ export default function BottomNavigationBar() {
         component={SettingsScreenStack}
         initialParams={{screen: RouteNames.SETTINGS}}
         options={{
+          title: 'Cài đặt',
           tabBarIcon: ({color}) => {
             return <Icon name="setting" size={20} color={color} />;
           },

@@ -16,6 +16,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import RouteNames from '../../../../constants/route-names.const';
 import {Colors} from '../../../../constants/color.const';
 import styles from './styles/styles';
+import userStore from '../../../../common/store/user.store';
+import DatePicker from 'react-native-date-picker';
+import moment from 'moment';
 
 const ProfileSchema = Yup.object().shape({
   email: Yup.string()
@@ -27,16 +30,21 @@ const ProfileSchema = Yup.object().shape({
 });
 
 export default function EditProfileScreen({navigation}: {navigation: any}) {
+  const [date, setDate] = React.useState(new Date());
+  const [open, setOpen] = React.useState(false);
   return (
     <Formik
       initialValues={{
-        email: 'admin@email.com',
-        name: 'admin',
-        phone: '0953315682',
-        dob: '19/11/2001',
+        email: userStore.email,
+        name: userStore.name,
+        phone: userStore.phone,
+        dob: userStore.dob,
       }}
       validationSchema={ProfileSchema}
       onSubmit={values => {
+        const dobISOString = moment(values.dob, 'DD/MM/YYYY').toISOString();
+
+        console.log(`Date: ${dobISOString}`);
         // same shape as initial values
         console.log(values);
       }}>
@@ -98,6 +106,7 @@ export default function EditProfileScreen({navigation}: {navigation: any}) {
               onBlur={() => setFieldTouched('phone')}
               style={{flex: 1}}
               placeholder={'Số điện thoại'}
+              keyboardType="phone-pad"
               value={values.phone}
             />
 
@@ -114,28 +123,53 @@ export default function EditProfileScreen({navigation}: {navigation: any}) {
 
           <View style={[styles.inputContainer]}>
             <TextInput
-              onChangeText={value => setFieldValue('dob', value)}
+              editable={false}
               onBlur={() => setFieldTouched('dob')}
-              style={{flex: 1}}
+              style={{flex: 1, color: 'black'}}
               placeholder={'Ngày sinh'}
               value={values.dob}
             />
 
+            <DatePicker
+              modal
+              open={open}
+              date={date}
+              mode={'date'}
+              locale={'vi'}
+              onConfirm={value => {
+                console.log(value);
+
+                setOpen(false);
+                setDate(value);
+                // setFieldValue('dob', value);
+                setFieldValue('dob', moment(value).format('DD/MM/YYYY'));
+              }}
+              onCancel={() => {
+                setOpen(false);
+              }}
+            />
             {values.dob && (
               <Icon
                 onPress={() => setFieldValue('dob', '')}
                 name={'close'}
                 style={styles.inputIcon}></Icon>
             )}
+            <Icon
+              onPress={() => {
+                setOpen(true);
+              }}
+              name={'calendar'}
+              style={styles.inputIcon}></Icon>
           </View>
           {touched.dob && errors.dob && (
             <Text style={styles.error}>{errors.dob}</Text>
           )}
 
           <TouchableOpacity
-            onPress={() => {
-              navigation.navigate(RouteNames.PROFILE as never, {} as never);
-            }}
+            // onPress={() => {
+            //   navigation.navigate(RouteNames.PROFILE as never, {} as never);
+            // }}
+            onPress={handleSubmit}
             disabled={!isValid}
             style={[
               styles.button,
