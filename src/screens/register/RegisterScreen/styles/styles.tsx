@@ -35,7 +35,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
   },
-  disabled: {},
   button: {
     width: '80%',
     content: 'fill',

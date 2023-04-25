@@ -1,11 +1,12 @@
 import React from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {observer} from 'mobx-react';
 import userStore from '../../../../common/store/user.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import styles from './styles/styles';
 
-export default function ProfileScreen({navigation}: {navigation: any}) {
+const ProfileScreen = ({navigation}: {navigation: any}) => {
   return (
     <View style={styles.container}>
       <Image
@@ -34,10 +35,6 @@ export default function ProfileScreen({navigation}: {navigation: any}) {
       </View>
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
-          <Text style={styles.text}>Họ tên:</Text>
-          <Text style={styles.infoText}>{userStore.name}</Text>
-        </View>
-        <View style={styles.infoRow}>
           <Text style={[styles.text, {width: '40%'}]}>Email:</Text>
           <Text
             numberOfLines={1}
@@ -46,6 +43,11 @@ export default function ProfileScreen({navigation}: {navigation: any}) {
             {userStore.email}
           </Text>
         </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.text}>Họ tên:</Text>
+          <Text style={styles.infoText}>{userStore.name}</Text>
+        </View>
+
         <View style={styles.infoRow}>
           <Text style={styles.text}>Số điện thoại:</Text>
           <Text style={styles.infoText}>{userStore.phone}</Text>
@@ -92,4 +94,6 @@ export default function ProfileScreen({navigation}: {navigation: any}) {
       </View>
     </View>
   );
-}
+};
+
+export default observer(ProfileScreen);

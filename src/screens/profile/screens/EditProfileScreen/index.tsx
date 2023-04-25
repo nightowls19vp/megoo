@@ -19,11 +19,13 @@ import styles from './styles/styles';
 import userStore from '../../../../common/store/user.store';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
+import {editInfo} from './services/edit.info.service';
+import {IEditInfoRes} from './interfaces/edit.info.interface';
 
 const ProfileSchema = Yup.object().shape({
-  email: Yup.string()
-    .email('Email không hợp lệ')
-    .required('Vui lòng nhập email'),
+  // email: Yup.string()
+  //   .email('Email không hợp lệ')
+  //   .required('Vui lòng nhập email'),
   name: Yup.string().required('Vui lòng nhập họ tên'),
   phone: Yup.string().required('Vui lòng nhập số điện thoại'),
   dob: Yup.string().required('Vui lòng nhập ngày sinh'),
@@ -47,6 +49,13 @@ export default function EditProfileScreen({navigation}: {navigation: any}) {
         console.log(`Date: ${dobISOString}`);
         // same shape as initial values
         console.log(values);
+        editInfo({
+          name: values.name,
+          phone: values.phone,
+          dob: values.dob,
+        }).then((response: IEditInfoRes) => {
+          console.log(response.statusCode);
+        });
       }}>
       {({
         values,
@@ -60,6 +69,14 @@ export default function EditProfileScreen({navigation}: {navigation: any}) {
       }) => (
         <View style={styles.container}>
           {/* <Text style={styles.title}>Đăng nhập</Text> */}
+          {/* <View style={[styles.inputContainer]}>
+            <TextInput
+              editable={false}
+              style={{flex: 1}}
+              value={values.email}
+            />
+          </View> */}
+
           <View style={[styles.inputContainer]}>
             <TextInput
               onChangeText={value => setFieldValue('name', value)}
@@ -78,26 +95,6 @@ export default function EditProfileScreen({navigation}: {navigation: any}) {
           </View>
           {touched.name && errors.name && (
             <Text style={styles.error}>{errors.name}</Text>
-          )}
-
-          <View style={[styles.inputContainer]}>
-            <TextInput
-              onChangeText={value => setFieldValue('email', value)}
-              onBlur={() => setFieldTouched('email')}
-              style={{flex: 1}}
-              placeholder={'Email'}
-              value={values.email}
-            />
-
-            {values.email && (
-              <Icon
-                onPress={() => setFieldValue('email', '')}
-                name={'close'}
-                style={styles.inputIcon}></Icon>
-            )}
-          </View>
-          {touched.email && errors.email && (
-            <Text style={styles.error}>{errors.email}</Text>
           )}
 
           <View style={[styles.inputContainer]}>
@@ -152,7 +149,7 @@ export default function EditProfileScreen({navigation}: {navigation: any}) {
               <Icon
                 onPress={() => setFieldValue('dob', '')}
                 name={'close'}
-                style={styles.inputIcon}></Icon>
+                style={[styles.inputIcon, {marginRight: 5}]}></Icon>
             )}
             <Icon
               onPress={() => {

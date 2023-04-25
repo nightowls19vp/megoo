@@ -23,6 +23,7 @@ import RouteNames from '../../../../constants/route-names.const';
 import {login} from './services/login.service';
 import userStore from '../../../../common/store/user.store';
 import {IUser} from './../../../../interfaces/user.interface';
+import moment from 'moment';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -96,29 +97,37 @@ export default function LoginScreen({navigation}: {navigation: any}) {
         }).then((response: ILoginRes) => {
           console.log(response.data?.userInfo);
           let user: IUser = {
-            id: '',
+            _id: '',
             name: '',
             dob: '',
             email: '',
             phone: '',
             avatar: '',
           };
-          // user.name = response.data?.userInfo["name"];
-          // console.log(response.data?.userInfo['name']);
-          // console.log(response.data?.userInfo['avatar']);
-          // console.log(response.data?.userInfo['email']);
 
-          user.id = response.data?.userInfo['id'] ?? '';
+          user._id = response.data?.userInfo['_id'] ?? '';
           user.name = response.data?.userInfo['name'] ?? '';
-          user.dob = response.data?.userInfo['dob'] ?? '';
           user.email = response.data?.userInfo['email'] ?? '';
           user.phone = response.data?.userInfo['phone'] ?? '';
           user.avatar = response.data?.userInfo['avatar'] ?? '';
 
-          console.log(user.avatar);
+          let dob = response.data?.userInfo['dob'] ?? '';
+          user.dob = moment(dob).format('DD/MM/YYYY').toString();
+          console.log(user._id);
+
+          // setTimeout(() => {
+          //   userStore.setUser({
+          //     name: 'Phat anh iu 123456',
+          //     _id: '',
+          //     dob: '',
+          //     email: '',
+          //     phone: '',
+          //     avatar: '',
+          //   });
+          //   console.log('update user successfully');
+          // }, 15000);
 
           userStore.setUser(user);
-          console.log(userStore.avatar);
 
           if (response.statusCode === 200) {
             Toast.show({
@@ -208,7 +217,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
               <Icon
                 onPress={() => setFieldValue('password', '')}
                 name={'close'}
-                style={[styles.inputIcon, {marginRight: 10}]}
+                style={[styles.inputIcon, {marginRight: 5}]}
               />
             )}
             <Icon

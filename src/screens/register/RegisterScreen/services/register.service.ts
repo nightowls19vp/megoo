@@ -9,9 +9,10 @@ export const register = async (registerInfo: IRegisterReq) => {
 
     try {
         const res = await axios.post(reqUrl, {
-            name: registerInfo.name,
             username: registerInfo.email,
+            name: registerInfo.name,
             password: registerInfo.password,
+            email: registerInfo.email,
             phone: registerInfo.phone,
             dob: registerInfo.dob,
         });
