@@ -47,7 +47,6 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
           <Text style={styles.text}>Họ tên:</Text>
           <Text style={styles.infoText}>{userStore.name}</Text>
         </View>
-
         <View style={styles.infoRow}>
           <Text style={styles.text}>Số điện thoại:</Text>
           <Text style={styles.infoText}>{userStore.phone}</Text>

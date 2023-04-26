@@ -1,7 +1,7 @@
 import { IUser } from "./user.interface";
 
 export interface IData {
-  authData: IAuthData;
+  auth: IAuthData;
   userInfo: IUser;
 }
 
@@ -11,4 +11,5 @@ export interface IAuthData {
   role: string;
   password: string;
   hashedPassword: string;
+  socialAccounts: string[];
 }

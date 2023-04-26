@@ -3,7 +3,6 @@ import axios from "axios";
 import { IEditInfoReq, IEditInfoRes } from './../interfaces/edit.info.interface';
 import userStore from './../../../../../common/store/user.store';
 
-
 export const editInfo = async (editInfo: IEditInfoReq) => {
     const editInfoEndpoint = `api/users/${userStore.id}`;
     const reqUrl = `${URL_HOST}${editInfoEndpoint}`;
@@ -36,7 +35,7 @@ export const editInfo = async (editInfo: IEditInfoReq) => {
             } else if (error.response?.status === 404) {
                 response.message = "Tài khoản không tồn tại";
             } else {
-                console.log("Login Failed");
+                console.log("Edit Failed");
                 response.message = "Chỉnh sửa không thành công";
             }
             return response;

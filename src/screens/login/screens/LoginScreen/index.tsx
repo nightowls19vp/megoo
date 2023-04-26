@@ -24,6 +24,7 @@ import {login} from './services/login.service';
 import userStore from '../../../../common/store/user.store';
 import {IUser} from './../../../../interfaces/user.interface';
 import moment from 'moment';
+import {IAuthData} from '../../../../interfaces/data.interface';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -89,13 +90,13 @@ export default function LoginScreen({navigation}: {navigation: any}) {
       }}
       validationSchema={LoginSchema}
       onSubmit={values => {
-        // same shape as initial values
-        console.log(values);
         login({
           username: values.email,
           password: values.password,
         }).then((response: ILoginRes) => {
-          console.log(response.data?.userInfo);
+          console.log('User info:', response?.data?.userInfo);
+          console.log('Auth data:', response?.data?.auth);
+
           let user: IUser = {
             _id: '',
             name: '',
@@ -105,29 +106,32 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             avatar: '',
           };
 
-          user._id = response.data?.userInfo['_id'] ?? '';
-          user.name = response.data?.userInfo['name'] ?? '';
-          user.email = response.data?.userInfo['email'] ?? '';
-          user.phone = response.data?.userInfo['phone'] ?? '';
-          user.avatar = response.data?.userInfo['avatar'] ?? '';
+          user._id = response?.data?.userInfo['_id'] ?? '';
+          user.name = response?.data?.userInfo['name'] ?? '';
+          user.email = response?.data?.userInfo['email'] ?? '';
+          user.phone = response?.data?.userInfo['phone'] ?? '';
+          user.avatar = response?.data?.userInfo['avatar'] ?? '';
 
           let dob = response.data?.userInfo['dob'] ?? '';
           user.dob = moment(dob).format('DD/MM/YYYY').toString();
-          console.log(user._id);
 
-          // setTimeout(() => {
-          //   userStore.setUser({
-          //     name: 'Phat anh iu 123456',
-          //     _id: '',
-          //     dob: '',
-          //     email: '',
-          //     phone: '',
-          //     avatar: '',
-          //   });
-          //   console.log('update user successfully');
-          // }, 15000);
+          let auth: IAuthData = {
+            id: '',
+            username: '',
+            role: '',
+            password: '',
+            hashedPassword: '',
+            socialAccounts: [],
+          };
+
+          auth.id = response?.data?.auth['id'] ?? '';
+          auth.role = response?.data?.auth['role'] ?? '';
+          auth.username = response?.data?.auth['username'] ?? '';
 
           userStore.setUser(user);
+
+          userStore.setAccessToken(`${response?.accessToken}`);
+          userStore.setRefreshToken(`${response?.refreshToken}`);
 
           if (response.statusCode === 200) {
             Toast.show({

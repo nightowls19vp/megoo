@@ -1,7 +1,6 @@
 import { URL_HOST } from "./../../../../../core/config/api/api.config";
 import axios from "axios";
 import { ILoginReq, ILoginRes } from "../interfaces/login.interface";
-import { IValidateRes } from "../interfaces/validate.interface";
 
 export const login = async (loginInfo: ILoginReq) => {
   const loginEndpoint = "api/auth/login/mobile";
@@ -13,7 +12,7 @@ export const login = async (loginInfo: ILoginReq) => {
       username: loginInfo.username,
       password: loginInfo.password,
     });
-    console.log(res.data);
+    console.log("Data:", res.data);
 
     return res.data;
   } catch (error) {

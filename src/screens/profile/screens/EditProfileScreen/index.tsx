@@ -21,6 +21,8 @@ import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {editInfo} from './services/edit.info.service';
 import {IEditInfoRes} from './interfaces/edit.info.interface';
+import Toast from 'react-native-toast-message';
+import {observer} from 'mobx-react';
 
 const ProfileSchema = Yup.object().shape({
   // email: Yup.string()
@@ -31,30 +33,77 @@ const ProfileSchema = Yup.object().shape({
   dob: Yup.string().required('Vui lòng nhập ngày sinh'),
 });
 
-export default function EditProfileScreen({navigation}: {navigation: any}) {
-  const [date, setDate] = React.useState(new Date());
+const EditProfileScreen = ({navigation}: {navigation: any}) => {
+  const dobISOString = moment(userStore.dob, 'DD/MM/YYYY').toISOString();
+  const [date, setDate] = React.useState(new Date(dobISOString));
+
   const [open, setOpen] = React.useState(false);
+
+  const initialValues = {
+    email: userStore.email,
+    name: userStore.name,
+    phone: userStore.phone,
+    dob: userStore.dob,
+  };
+
   return (
     <Formik
-      initialValues={{
-        email: userStore.email,
-        name: userStore.name,
-        phone: userStore.phone,
-        dob: userStore.dob,
-      }}
+      initialValues={initialValues}
       validationSchema={ProfileSchema}
       onSubmit={values => {
         const dobISOString = moment(values.dob, 'DD/MM/YYYY').toISOString();
-
         console.log(`Date: ${dobISOString}`);
+
         // same shape as initial values
         console.log(values);
+
         editInfo({
           name: values.name,
           phone: values.phone,
-          dob: values.dob,
+          dob: dobISOString,
         }).then((response: IEditInfoRes) => {
           console.log(response.statusCode);
+          userStore.setName(values.name);
+          userStore.setPhone(values.phone);
+          userStore.setDob(values.dob);
+
+          if (response.statusCode === 200) {
+            Toast.show({
+              type: 'success',
+              text1: 'Sửa thông tin thành công',
+              autoHide: true,
+              visibilityTime: 1000,
+              topOffset: 20,
+              bottomOffset: 40,
+              onHide: () => {
+                navigation.navigate(RouteNames.PROFILE as never, {} as never);
+              },
+            });
+          } else if (response.statusCode === 401) {
+            Toast.show({
+              type: 'error',
+              text1: response.message,
+              autoHide: false,
+              topOffset: 30,
+              bottomOffset: 40,
+            });
+          } else if (response.statusCode === 404) {
+            Toast.show({
+              type: 'error',
+              text1: response.message,
+              autoHide: false,
+              topOffset: 30,
+              bottomOffset: 40,
+            });
+          } else {
+            Toast.show({
+              type: 'error',
+              text1: response.message,
+              autoHide: false,
+              topOffset: 30,
+              bottomOffset: 40,
+            });
+          }
         });
       }}>
       {({
@@ -133,6 +182,9 @@ export default function EditProfileScreen({navigation}: {navigation: any}) {
               date={date}
               mode={'date'}
               locale={'vi'}
+              title={'Chọn ngày'}
+              confirmText={'Chọn'}
+              cancelText={'Huỷ'}
               onConfirm={value => {
                 console.log(value);
 
@@ -176,8 +228,12 @@ export default function EditProfileScreen({navigation}: {navigation: any}) {
             ]}>
             <Text style={styles.buttonText}>Lưu thông tin</Text>
           </TouchableOpacity>
+
+          <Toast position="top"></Toast>
         </View>
       )}
     </Formik>
   );
-}
+};
+
+export default observer(EditProfileScreen);

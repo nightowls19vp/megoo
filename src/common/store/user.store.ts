@@ -8,6 +8,10 @@ class UserStore {
     @observable phone = "";
     @observable dob = "";
     @observable avatar = "";
+    @observable accessToken = "";
+    @observable refreshToken = "";
+    // @observable googleAccount = false;
+    // @observable facebookAccount = false;
 
     constructor() {
         makeAutoObservable(this)
@@ -20,6 +24,26 @@ class UserStore {
         this.phone = user.phone || this.phone;
         this.dob = user.dob || this.dob;
         this.avatar = user.avatar || this.avatar;
+    }
+
+    @action setName(name: string) {
+        this.name = name;
+    }
+
+    @action setPhone(phone: string) {
+        this.phone = phone;
+    }
+
+    @action setDob(dob: string) {
+        this.dob = dob;
+    }
+
+    @action setAccessToken(token: string) {
+        this.accessToken = token;
+    }
+
+    @action setRefreshToken(token: string) {
+        this.refreshToken = token;
     }
 }
 

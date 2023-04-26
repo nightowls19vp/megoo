@@ -201,6 +201,9 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                 date={date}
                 mode={'date'}
                 locale={'vi'}
+                title={'Chọn ngày'}
+                confirmText={'Chọn'}
+                cancelText={'Huỷ'}
                 onConfirm={value => {
                   console.log(value);
 
@@ -243,6 +246,8 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
               ]}>
               <Text style={styles.textButton}>Đăng ký</Text>
             </TouchableOpacity>
+
+            <Toast position="top"></Toast>
 
             <View style={styles.dividerContainer}>
               <View style={styles.divider} />
