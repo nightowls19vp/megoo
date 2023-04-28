@@ -1,5 +1,11 @@
 import React from 'react';
-import {Button, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Button,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {logout} from './services/settings.service';
@@ -8,6 +14,7 @@ import userStore from './../../../../common/store/user.store';
 import {ILogoutRes} from './interfaces/logout.interface';
 import Toast from 'react-native-toast-message';
 import Modal from 'react-native-modal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SettingsScreen({navigation}: {navigation: any}) {
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -37,6 +44,9 @@ export default function SettingsScreen({navigation}: {navigation: any}) {
         onPress={() => {
           setModalVisible(!modalVisible);
           // logout(userStore.refreshToken).then((response: ILogoutRes) => {
+          //   AsyncStorage.removeItem('accessToken');
+          //   AsyncStorage.removeItem('refreshToken');
+
           //   if (response.statusCode === 200) {
           //     Toast.show({
           //       type: 'success',
@@ -95,6 +105,10 @@ export default function SettingsScreen({navigation}: {navigation: any}) {
                   console.log(response.message);
                   userStore.setAccessToken('');
                   userStore.setRefreshToken('');
+
+                  AsyncStorage.removeItem('accessToken');
+                  AsyncStorage.removeItem('refreshToken');
+
                   navigation.navigate(RouteNames.LOGIN as never, {} as never);
                 });
               }}

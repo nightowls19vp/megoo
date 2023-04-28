@@ -25,6 +25,7 @@ import userStore from '../../../../common/store/user.store';
 import {IUser} from './../../../../interfaces/user.interface';
 import moment from 'moment';
 import {IAuthData} from '../../../../interfaces/data.interface';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -129,6 +130,9 @@ export default function LoginScreen({navigation}: {navigation: any}) {
           auth.username = response?.data?.auth['username'] ?? '';
 
           userStore.setUser(user);
+
+          AsyncStorage.setItem('accessToken', `${response?.accessToken}`);
+          AsyncStorage.setItem('refreshToken', `${response?.refreshToken}`);
 
           userStore.setAccessToken(`${response?.accessToken}`);
           userStore.setRefreshToken(`${response?.refreshToken}`);
