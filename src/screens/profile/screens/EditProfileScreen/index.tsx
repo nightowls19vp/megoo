@@ -25,11 +25,11 @@ import Toast from 'react-native-toast-message';
 import {observer} from 'mobx-react';
 
 const ProfileSchema = Yup.object().shape({
-  // email: Yup.string()
-  //   .email('Email không hợp lệ')
-  //   .required('Vui lòng nhập email'),
   name: Yup.string().required('Vui lòng nhập họ tên'),
-  phone: Yup.string().required('Vui lòng nhập số điện thoại'),
+  phone: Yup.string()
+    .min(10, 'Số điện thoại không hợp lệ')
+    .max(12, 'Số điện thoại không hợp lệ')
+    .matches(/^(\+84)|0([3|5|7|8|9])(\d{8})$/, 'Số điện thoại không hợp lệ'),
   dob: Yup.string().required('Vui lòng nhập ngày sinh'),
 });
 

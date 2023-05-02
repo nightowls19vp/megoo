@@ -1,5 +1,5 @@
 import {ErrorMessage, Formik} from 'formik';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   AppRegistry,
   Image,
@@ -11,7 +11,13 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
-
+import moment from 'moment';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+import axios from 'axios';
 // import Provider from '@ant-design/react-native/lib/provider';
 // import Toast from '@ant-design/react-native/lib/toast';
 import Toast from 'react-native-toast-message';
@@ -20,12 +26,10 @@ import {Colors} from '../../../../constants/color.const';
 import {ILoginRes} from './interfaces/login.interface';
 import styles from './styles/styles';
 import RouteNames from '../../../../constants/route-names.const';
-import {login} from './services/login.service';
+import {googleSignIn, isSignedIn, login} from './services/login.service';
 import userStore from '../../../../common/store/user.store';
 import {IUser} from './../../../../interfaces/user.interface';
-import moment from 'moment';
 import {IAuthData} from '../../../../interfaces/data.interface';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -41,6 +45,21 @@ export default function LoginScreen({navigation}: {navigation: any}) {
   const onClose = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     console.log(e, 'I was closed.');
   };
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      scopes: [
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/user.phonenumbers.read',
+        'https://www.googleapis.com/auth/user.birthday.read',
+      ],
+      webClientId:
+        '768201973051-b9supnlu237m58th9c3du0qpp3m13cgl.apps.googleusercontent.com',
+      offlineAccess: true,
+      forceCodeForRefreshToken: true,
+    });
+    isSignedIn();
+  }, []);
 
   // const [appIsReady, setAppIsReady] = useState(false);
   //
@@ -116,26 +135,23 @@ export default function LoginScreen({navigation}: {navigation: any}) {
           let dob = response.data?.userInfo['dob'] ?? '';
           user.dob = moment(dob).format('DD/MM/YYYY').toString();
 
-          let auth: IAuthData = {
-            id: '',
-            username: '',
-            role: '',
-            password: '',
-            hashedPassword: '',
-            socialAccounts: [],
-          };
-
-          auth.id = response?.data?.auth['id'] ?? '';
-          auth.role = response?.data?.auth['role'] ?? '';
-          auth.username = response?.data?.auth['username'] ?? '';
-
           userStore.setUser(user);
+
+          // let auth: IAuthData = {
+          //   id: '',
+          //   username: '',
+          //   role: '',
+          //   password: '',
+          //   hashedPassword: '',
+          //   socialAccounts: [],
+          // };
+
+          // auth.id = response?.data?.auth['id'] ?? '';
+          // auth.role = response?.data?.auth['role'] ?? '';
+          // auth.username = response?.data?.auth['username'] ?? '';
 
           AsyncStorage.setItem('accessToken', `${response?.accessToken}`);
           AsyncStorage.setItem('refreshToken', `${response?.refreshToken}`);
-
-          userStore.setAccessToken(`${response?.accessToken}`);
-          userStore.setRefreshToken(`${response?.refreshToken}`);
 
           if (response.statusCode === 200) {
             Toast.show({
@@ -246,15 +262,6 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             </Text>
           </View>
           <TouchableOpacity
-            // onPress={() => {
-            //   login({
-            //     username: values.email,
-            //     password: values.password,
-            //   }).then((response: ILoginRes) => {
-            //     console.log(response.data?.userInfo);
-            //   });
-            // navigation.navigate(RouteNames.HOME_DRAWER as never, {} as never);
-            // }}
             onPress={handleSubmit}
             disabled={!isValid}
             style={[
@@ -274,7 +281,16 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             <View style={styles.divider} />
           </View>
 
-          <TouchableOpacity style={styles.socialButton}>
+          <TouchableOpacity
+            style={styles.socialButton}
+            onPress={() => {
+              googleSignIn().then(user => {
+                navigation.navigate(
+                  RouteNames.HOME_DRAWER as never,
+                  {} as never,
+                );
+              });
+            }}>
             <Image
               source={require('../../../../../assets/google.png')}
               style={{...styles.socialButton.image}}

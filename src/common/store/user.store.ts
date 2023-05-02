@@ -34,17 +34,25 @@ class UserStore {
         this.phone = phone;
     }
 
+    @action setEmail(email: string) {
+        this.email = email;
+    }
+
     @action setDob(dob: string) {
         this.dob = dob;
     }
 
-    @action setAccessToken(token: string) {
-        this.accessToken = token;
+    @action setAvatar(avatar: string) {
+        this.avatar = avatar;
     }
 
-    @action setRefreshToken(token: string) {
-        this.refreshToken = token;
-    }
+    // @action setAccessToken(token: string) {
+    //     this.accessToken = token;
+    // }
+
+    // @action setRefreshToken(token: string) {
+    //     this.refreshToken = token;
+    // }
 }
 
 const userStore = new UserStore();
