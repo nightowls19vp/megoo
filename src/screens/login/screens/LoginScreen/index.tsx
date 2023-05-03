@@ -23,13 +23,19 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 
 import {Colors} from '../../../../constants/color.const';
-import {ILoginRes} from './interfaces/login.interface';
+import {IGoogleLoginRes, ILoginRes} from './interfaces/login.interface';
 import styles from './styles/styles';
 import RouteNames from '../../../../constants/route-names.const';
-import {googleSignIn, isSignedIn, login} from './services/login.service';
+import {
+  googleSignIn,
+  isSignedIn,
+  login,
+  validate,
+} from './services/login.service';
 import userStore from '../../../../common/store/user.store';
 import {IUser} from './../../../../interfaces/user.interface';
 import {IAuthData} from '../../../../interfaces/data.interface';
+import {IValidateRes} from './../../../../interfaces/validate.interface';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -117,6 +123,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
           console.log('User info:', response?.data?.userInfo);
           console.log('Auth data:', response?.data?.auth);
 
+          // Store user info
           let user: IUser = {
             _id: '',
             name: '',
@@ -150,9 +157,11 @@ export default function LoginScreen({navigation}: {navigation: any}) {
           // auth.role = response?.data?.auth['role'] ?? '';
           // auth.username = response?.data?.auth['username'] ?? '';
 
+          // Store user token
           AsyncStorage.setItem('accessToken', `${response?.accessToken}`);
           AsyncStorage.setItem('refreshToken', `${response?.refreshToken}`);
 
+          // Show toast message and navigate to home screen if login successfully
           if (response.statusCode === 200) {
             Toast.show({
               type: 'success',
@@ -284,11 +293,86 @@ export default function LoginScreen({navigation}: {navigation: any}) {
           <TouchableOpacity
             style={styles.socialButton}
             onPress={() => {
-              googleSignIn().then(user => {
-                navigation.navigate(
-                  RouteNames.HOME_DRAWER as never,
-                  {} as never,
+              googleSignIn().then((response: IGoogleLoginRes) => {
+                // console.log('access token:', response.data.refreshToken);
+
+                // Store user token
+                AsyncStorage.setItem(
+                  'accessToken',
+                  `${response.data?.accessToken}`,
                 );
+                AsyncStorage.setItem(
+                  'refreshToken',
+                  `${response.data?.refreshToken}`,
+                );
+
+                validate(`${response.data?.accessToken}`).then(
+                  (response: IValidateRes) => {
+                    console.log('Validate data:', response);
+
+                    let user: IUser = {
+                      _id: '',
+                      name: '',
+                      dob: '',
+                      email: '',
+                      phone: '',
+                      avatar: '',
+                    };
+
+                    // user._id = response.user['_id'] ?? '';
+                    // user.name = response.userInfo['name'] ?? '';
+                    // user.email = response?.data?.userInfo['email'] ?? '';
+                    // user.phone = response?.data?.userInfo['phone'] ?? '';
+                    // user.avatar = response?.data?.userInfo['avatar'] ?? '';
+                  },
+                );
+
+                // Show toast message and navigate to home screen if login successfully
+                // if (response.statusCode === 200) {
+                //   Toast.show({
+                //     type: 'success',
+                //     text1: 'Đăng nhập thành công',
+                //     autoHide: true,
+                //     visibilityTime: 1000,
+                //     topOffset: 30,
+                //     bottomOffset: 40,
+                //     onHide: () => {
+                //       navigation.navigate(
+                //         RouteNames.HOME_DRAWER as never,
+                //         {} as never,
+                //       );
+                //     },
+                //   });
+                // } else if (response.statusCode === 401) {
+                //   Toast.show({
+                //     type: 'error',
+                //     text1: response.message,
+                //     autoHide: false,
+                //     topOffset: 30,
+                //     bottomOffset: 40,
+                //   });
+                // } else if (response.statusCode === 404) {
+                //   Toast.show({
+                //     type: 'error',
+                //     text1: response.message,
+                //     autoHide: false,
+                //     topOffset: 30,
+                //     bottomOffset: 40,
+                //   });
+                // } else {
+                //   Toast.show({
+                //     type: 'error',
+                //     text1: response.message,
+                //     autoHide: false,
+                //     topOffset: 30,
+                //     bottomOffset: 40,
+                //   });
+                // }
+
+                // navigation.navigate(
+                //   RouteNames.HOME_DRAWER as never,
+                //   {} as never,
+                // );
               });
             }}>
             <Image

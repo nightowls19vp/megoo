@@ -1,4 +1,4 @@
-import { IData } from "../../../../../interfaces/data.interface";
+import { IData, IToken } from "../../../../../interfaces/data.interface";
 
 export interface ILoginReq {
   username: string;
@@ -11,4 +11,10 @@ export interface ILoginRes {
   accessToken?: string;
   refreshToken?: string;
   data?: IData;
+}
+
+export interface IGoogleLoginRes {
+  statusCode: number;
+  message: string;
+  data?: IToken;
 }

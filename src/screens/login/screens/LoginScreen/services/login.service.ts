@@ -1,12 +1,13 @@
 import { URL_HOST } from "./../../../../../core/config/api/api.config";
 import axios from "axios";
-import { ILoginReq, ILoginRes } from "../interfaces/login.interface";
+import { IGoogleLoginRes, ILoginReq, ILoginRes } from "../interfaces/login.interface";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { statusCodes } from "@react-native-google-signin/google-signin";
 import { IUser } from './../../../../../interfaces/user.interface';
 import userStore from "../../../../../common/store/user.store";
 import moment from "moment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { IValidateRes } from "../../../../../interfaces/validate.interface";
 
 export const login = async (loginInfo: ILoginReq) => {
   const loginEndpoint = "api/auth/login/mobile";
@@ -18,7 +19,8 @@ export const login = async (loginInfo: ILoginReq) => {
       username: loginInfo.username,
       password: loginInfo.password,
     });
-    console.log("Data:", response.data);
+
+    // console.log("Data:", response.data);
 
     return response.data;
   } catch (error) {
@@ -46,6 +48,41 @@ export const login = async (loginInfo: ILoginReq) => {
   }
 };
 
+export const validate = async (token: string) => {
+  const validateEndpoint = "api/auth/validate";
+  const reqUrl = `${URL_HOST}${validateEndpoint}`;
+  console.log(reqUrl);
+
+  try {
+    const res = await axios.get(reqUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      let response: IValidateRes = {
+        statusCode: error.response?.status ?? 500,
+        message: error.response?.statusText ?? "",
+      };
+
+      if (!error?.response) {
+        console.log("No Server Response");
+        response.message = "Mất kết nối với server";
+      } else {
+        console.log("Validate Failed");
+        response.message = "Xác thực không thành công";
+      }
+      return response;
+    }
+  }
+
+};
+
 export const googleSignIn = async () => {
   try {
     await GoogleSignin.hasPlayServices();
@@ -53,47 +90,48 @@ export const googleSignIn = async () => {
     // Get user info (email, name, avatar)
     const userInfo = await GoogleSignin.signIn();
 
-    // Get access token to call APIs of People API
-    const { accessToken } = await GoogleSignin.getTokens();
+    // Call API to create social account
+    const loginEndpoint = "api/auth/create-social-account";
+    const reqUrl = `${URL_HOST}${loginEndpoint}`;
+    console.log(reqUrl);
 
-    // Call API to get user birthday
-    const birthday = await getUserBirthday(accessToken);
-    console.log("birthday:", birthday);
+    const response = await axios.post(reqUrl, {
+      provider: "google",
+      providerId: userInfo.user.id,
+      name: userInfo.user.name,
+      email: userInfo.user.email,
+      photo: userInfo.user.photo,
+    });
 
-    // Call API to get user phone number
-    const phone = await getUserPhoneNum(accessToken);
-    console.log("phone:", phone);
+    // console.log("Data", response.data);
 
-    // Store user info 
-    let user: IUser = {
-      _id: '',
-      name: '',
-      dob: '',
-      email: '',
-      phone: '',
-      avatar: '',
-    };
-
-    user._id = userInfo.user.id ?? '';
-    user.name = userInfo.user.name ?? '';
-    user.dob = birthday ?? '';
-    user.phone = phone ?? '';
-    user.email = userInfo.user.email ?? '';
-    user.avatar = userInfo.user.photo ?? '';
-
-    return user;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.log('Message: ', error.message);
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        console.log('User cancelled the login flow');
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        console.log('Signing in');
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        console.log('Play Services not available');
+      let response: IGoogleLoginRes = {
+        statusCode: error.response?.status ?? 500,
+        message: error.response?.statusText ?? "",
+      };
+
+      if (!error?.response) {
+        console.log("No Server Response");
+        response.message = "Mất kết nối với server";
+      } else if (error.response?.status === 400) {
+        response.message = "Dữ liệu không hợp lệ";
       } else {
-        console.log('Some other error happened');
+        console.log("Login Failed");
+        response.message = "Đăng nhập không thành công";
       }
+
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log("Huỷ đăng nhập");
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log("Đang đăng nhập");
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log("Dịch vụ hiện không khả dụng");
+      }
+
+      return response;
     }
   }
 };
