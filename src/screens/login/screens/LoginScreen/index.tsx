@@ -28,7 +28,7 @@ import styles from './styles/styles';
 import RouteNames from '../../../../constants/route-names.const';
 import {
   googleSignIn,
-  isSignedIn,
+  isUserSignedIn,
   login,
   validate,
 } from './services/login.service';
@@ -36,6 +36,8 @@ import userStore from '../../../../common/store/user.store';
 import {IUser} from './../../../../interfaces/user.interface';
 import {IAuthData} from '../../../../interfaces/data.interface';
 import {IValidateRes} from './../../../../interfaces/validate.interface';
+import jwtDecode from 'jwt-decode';
+import {IJWTToken} from '../../../../interfaces/token.interface';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -64,7 +66,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
       offlineAccess: true,
       forceCodeForRefreshToken: true,
     });
-    isSignedIn();
+    isUserSignedIn();
   }, []);
 
   // const [appIsReady, setAppIsReady] = useState(false);
@@ -294,7 +296,8 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             style={styles.socialButton}
             onPress={() => {
               googleSignIn().then((response: IGoogleLoginRes) => {
-                // console.log('access token:', response.data.refreshToken);
+                console.log('GG AT:', response.data?.accessToken);
+                console.log('GG RT:', response.data?.refreshToken);
 
                 // Store user token
                 AsyncStorage.setItem(
@@ -308,7 +311,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
 
                 validate(`${response.data?.accessToken}`).then(
                   (response: IValidateRes) => {
-                    console.log('Validate data:', response);
+                    console.log('User data:', response.statusCode);
 
                     let user: IUser = {
                       _id: '',
@@ -319,55 +322,62 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                       avatar: '',
                     };
 
-                    // user._id = response.user['_id'] ?? '';
-                    // user.name = response.userInfo['name'] ?? '';
-                    // user.email = response?.data?.userInfo['email'] ?? '';
-                    // user.phone = response?.data?.userInfo['phone'] ?? '';
-                    // user.avatar = response?.data?.userInfo['avatar'] ?? '';
+                    user._id = response.data?.userInfo._id ?? '';
+                    user.name = response.data?.userInfo.name ?? '';
+                    user.email = response.data?.userInfo.email ?? '';
+                    user.phone = response.data?.userInfo.phone ?? '';
+                    user.dob = response.data?.userInfo.dob ?? '';
+                    user.avatar = response.data?.userInfo.avatar ?? '';
+
+                    console.log('User email:', user.email);
+                    console.log('User name:', user.name);
+                    console.log('User dob:', user.dob);
+
+                    userStore.setUser(user);
                   },
                 );
 
                 // Show toast message and navigate to home screen if login successfully
-                // if (response.statusCode === 200) {
-                //   Toast.show({
-                //     type: 'success',
-                //     text1: 'Đăng nhập thành công',
-                //     autoHide: true,
-                //     visibilityTime: 1000,
-                //     topOffset: 30,
-                //     bottomOffset: 40,
-                //     onHide: () => {
-                //       navigation.navigate(
-                //         RouteNames.HOME_DRAWER as never,
-                //         {} as never,
-                //       );
-                //     },
-                //   });
-                // } else if (response.statusCode === 401) {
-                //   Toast.show({
-                //     type: 'error',
-                //     text1: response.message,
-                //     autoHide: false,
-                //     topOffset: 30,
-                //     bottomOffset: 40,
-                //   });
-                // } else if (response.statusCode === 404) {
-                //   Toast.show({
-                //     type: 'error',
-                //     text1: response.message,
-                //     autoHide: false,
-                //     topOffset: 30,
-                //     bottomOffset: 40,
-                //   });
-                // } else {
-                //   Toast.show({
-                //     type: 'error',
-                //     text1: response.message,
-                //     autoHide: false,
-                //     topOffset: 30,
-                //     bottomOffset: 40,
-                //   });
-                // }
+                if (response.statusCode === 200) {
+                  Toast.show({
+                    type: 'success',
+                    text1: 'Đăng nhập thành công',
+                    autoHide: true,
+                    visibilityTime: 1000,
+                    topOffset: 30,
+                    bottomOffset: 40,
+                    onHide: () => {
+                      navigation.navigate(
+                        RouteNames.HOME_DRAWER as never,
+                        {} as never,
+                      );
+                    },
+                  });
+                } else if (response.statusCode === 401) {
+                  Toast.show({
+                    type: 'error',
+                    text1: response.message,
+                    autoHide: false,
+                    topOffset: 30,
+                    bottomOffset: 40,
+                  });
+                } else if (response.statusCode === 404) {
+                  Toast.show({
+                    type: 'error',
+                    text1: response.message,
+                    autoHide: false,
+                    topOffset: 30,
+                    bottomOffset: 40,
+                  });
+                } else {
+                  Toast.show({
+                    type: 'error',
+                    text1: response.message,
+                    autoHide: false,
+                    topOffset: 30,
+                    bottomOffset: 40,
+                  });
+                }
 
                 // navigation.navigate(
                 //   RouteNames.HOME_DRAWER as never,

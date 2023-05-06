@@ -13,8 +13,3 @@ export interface IAuthData {
   hashedPassword: string;
   socialAccounts: string[];
 }
-
-export interface IToken {
-  accessToken: string;
-  refreshToken: string;
-}

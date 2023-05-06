@@ -12,7 +12,7 @@ import { IValidateRes } from "../../../../../interfaces/validate.interface";
 export const login = async (loginInfo: ILoginReq) => {
   const loginEndpoint = "api/auth/login/mobile";
   const reqUrl = `${URL_HOST}${loginEndpoint}`;
-  console.log(reqUrl);
+  console.log("Login:", reqUrl);
 
   try {
     const response = await axios.post(reqUrl, {
@@ -51,7 +51,7 @@ export const login = async (loginInfo: ILoginReq) => {
 export const validate = async (token: string) => {
   const validateEndpoint = "api/auth/validate";
   const reqUrl = `${URL_HOST}${validateEndpoint}`;
-  console.log(reqUrl);
+  console.log("Validate:", reqUrl);
 
   try {
     const res = await axios.get(reqUrl, {
@@ -61,6 +61,8 @@ export const validate = async (token: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
+
+    // console.log("user data:", res.data.data.userInfo);
 
     return res.data;
   } catch (error) {
@@ -89,21 +91,18 @@ export const googleSignIn = async () => {
 
     // Get user info (email, name, avatar)
     const userInfo = await GoogleSignin.signIn();
+    const { accessToken } = await GoogleSignin.getTokens();
 
-    // Call API to create social account
-    const loginEndpoint = "api/auth/create-social-account";
+    // Call API to sign up with social account
+    const loginEndpoint = "api/auth/mobile/google-sign-up";
     const reqUrl = `${URL_HOST}${loginEndpoint}`;
-    console.log(reqUrl);
+    console.log("GG login", reqUrl);
 
     const response = await axios.post(reqUrl, {
-      provider: "google",
-      providerId: userInfo.user.id,
-      name: userInfo.user.name,
-      email: userInfo.user.email,
-      photo: userInfo.user.photo,
+      googleAccessToken: accessToken,
     });
 
-    // console.log("Data", response.data);
+    console.log("Google sign up data:", response.data);
 
     return response.data;
   } catch (error) {
@@ -125,10 +124,13 @@ export const googleSignIn = async () => {
 
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log("Huỷ đăng nhập");
+        response.message = "Huỷ đăng nhập";
       } else if (error.code === statusCodes.IN_PROGRESS) {
         console.log("Đang đăng nhập");
+        response.message = "Đang đăng nhập";
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
         console.log("Dịch vụ hiện không khả dụng");
+        response.message = "Dịch vụ hiện không khả dụng";
       }
 
       return response;
@@ -136,7 +138,7 @@ export const googleSignIn = async () => {
   }
 };
 
-export const isSignedIn = async () => {
+export const isUserSignedIn = async () => {
   const isSignedIn = await GoogleSignin.isSignedIn()
   if (!!isSignedIn) {
     getCurrentUser();
@@ -144,6 +146,16 @@ export const isSignedIn = async () => {
   } else {
     console.log("Please login");
   }
+  return isSignedIn;
+}
+
+// Log the user out if they are currently signed in
+export const signOutIfSignedInWithGG = async () => {
+  const isSignedIn = await isUserSignedIn();
+  if (isSignedIn) {
+    await GoogleSignin.signOut();
+  }
+  console.log('Signed out');
 }
 
 export const getCurrentUser = async () => {

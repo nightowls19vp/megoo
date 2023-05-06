@@ -1,4 +1,5 @@
-import { IData, IToken } from "../../../../../interfaces/data.interface";
+import { IData } from "../../../../../interfaces/data.interface";
+import { IToken } from "../../../../../interfaces/token.interface";
 
 export interface ILoginReq {
   username: string;

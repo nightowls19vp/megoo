@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   AppRegistry,
   Image,
@@ -10,19 +10,24 @@ import {
 
 import {Formik} from 'formik';
 import * as Yup from 'yup';
-
-import Icon from 'react-native-vector-icons/Ionicons';
-
-import RouteNames from '../../../../constants/route-names.const';
-import {Colors} from '../../../../constants/color.const';
-import styles from './styles/styles';
-import userStore from '../../../../common/store/user.store';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
-import {editInfo} from './services/edit.info.service';
-import {IEditInfoRes} from './interfaces/edit.info.interface';
+import {
+  Asset,
+  launchCamera,
+  launchImageLibrary,
+} from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 import {observer} from 'mobx-react';
+import Icon from 'react-native-vector-icons/Ionicons';
+import base64 from 'base64-js';
+
+import styles from './styles/styles';
+import RouteNames from '../../../../constants/route-names.const';
+import {Colors} from '../../../../constants/color.const';
+import userStore from '../../../../common/store/user.store';
+import {editInfo} from './services/edit.info.service';
+import {IEditInfoRes} from './interfaces/edit.info.interface';
 
 const ProfileSchema = Yup.object().shape({
   name: Yup.string().required('Vui lòng nhập họ tên'),
@@ -35,9 +40,10 @@ const ProfileSchema = Yup.object().shape({
 
 const EditProfileScreen = ({navigation}: {navigation: any}) => {
   const dobISOString = moment(userStore.dob, 'DD/MM/YYYY').toISOString();
-  const [date, setDate] = React.useState(new Date(dobISOString));
+  const [date, setDate] = useState(new Date(dobISOString));
+  const [selectedImages, setSelectedImages] = useState('');
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const initialValues = {
     email: userStore.email,
@@ -117,14 +123,42 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
         handleSubmit,
       }) => (
         <View style={styles.container}>
-          {/* <Text style={styles.title}>Đăng nhập</Text> */}
-          {/* <View style={[styles.inputContainer]}>
-            <TextInput
-              editable={false}
-              style={{flex: 1}}
-              value={values.email}
-            />
-          </View> */}
+          <TouchableOpacity
+            onPress={() => {
+              launchImageLibrary({mediaType: 'mixed'}, response => {
+                console.log('Response = ', response);
+
+                if (response.didCancel) {
+                  console.log('User cancelled image picker');
+                } else if (response.errorMessage) {
+                  console.log('ImagePicker Error: ', response.errorMessage);
+                } else {
+                  let source: Asset[] = response.assets as Asset[];
+                  console.log('source:', source[0].uri);
+                  setSelectedImages(`${source[0].uri}`);
+                }
+              });
+            }}>
+            <Text>Choose image</Text>
+          </TouchableOpacity>
+
+          <Image
+            source={{
+              uri: selectedImages != '' ? selectedImages : userStore.avatar,
+            }}
+            style={{width: 150, height: 150, borderRadius: 150 / 2}}
+          />
+
+          {/* <Image
+            source={{uri: `data:image/jpeg;base64,${base64String}`}}
+            style={{
+              width: 200,
+              height: 200,
+              borderWidth: 2,
+              borderColor: 'black',
+              borderRadius: 200 / 2,
+            }}
+          /> */}
 
           <View style={[styles.inputContainer]}>
             <TextInput

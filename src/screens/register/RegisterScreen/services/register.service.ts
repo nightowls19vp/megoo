@@ -5,7 +5,7 @@ import { IRegisterReq, IRegisterRes } from './../interfaces/register.interface';
 export const register = async (registerInfo: IRegisterReq) => {
     const registerEndpoint = 'api/auth/register';
     const reqUrl = `${URL_HOST}${registerEndpoint}`;
-    console.log(reqUrl);
+    console.log("Register:", reqUrl);
 
     try {
         const res = await axios.post(reqUrl, {

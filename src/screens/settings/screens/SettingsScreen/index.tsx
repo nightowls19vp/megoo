@@ -15,6 +15,9 @@ import {ILogoutRes} from './interfaces/logout.interface';
 import Toast from 'react-native-toast-message';
 import Modal from 'react-native-modal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {signOutIfSignedInWithGG} from '../../../login/screens/LoginScreen/services/login.service';
+import appStore from '../../../../common/store/app.store';
 
 export default function SettingsScreen({navigation}: {navigation: any}) {
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -99,15 +102,18 @@ export default function SettingsScreen({navigation}: {navigation: any}) {
               <Text style={{fontSize: 18}}>Huỷ</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => {
+              onPress={async () => {
                 setModalVisible(!modalVisible);
-                logout(userStore.refreshToken).then((response: ILogoutRes) => {
-                  console.log(response.message);
-                  userStore.setAccessToken('');
-                  userStore.setRefreshToken('');
+                await signOutIfSignedInWithGG();
+                const refreshToken = await AsyncStorage.getItem('refreshToken');
+
+                logout(`${refreshToken}`).then((response: ILogoutRes) => {
+                  console.log('Logout msg:', response.message);
 
                   AsyncStorage.removeItem('accessToken');
                   AsyncStorage.removeItem('refreshToken');
+
+                  appStore.setIsLoggedIn(false);
 
                   navigation.navigate(RouteNames.LOGIN as never, {} as never);
                 });

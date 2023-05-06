@@ -5,7 +5,7 @@ import { ILogoutRes } from "../interfaces/logout.interface";
 export const logout = async (refreshToken: string) => {
     const logoutEndpoint = "api/auth/logout";
     const reqUrl = `${URL_HOST}${logoutEndpoint}`;
-    console.log(reqUrl);
+    console.log("Logout:", reqUrl);
 
     try {
         const res = await axios.post(reqUrl, {
@@ -24,14 +24,17 @@ export const logout = async (refreshToken: string) => {
                 console.log("No Server Response");
                 response.message = "Mất kết nối với server";
             } else if (error.response?.status === 400) {
-                response.message = error.response?.statusText;
+                console.log("Status:", error.response?.status);
+                response.message = error.response?.data;
             } else if (error.response?.status === 401) {
-                response.message = error.response?.statusText;
+                console.log("Status:", error.response?.status);
+                response.message = error.response?.data;
             } else if (error.response?.status === 404) {
+                console.log("Status:", error.response?.status);
                 response.message = error.response?.statusText;
             } else {
-                console.log("Logout Failed");
-                response.message = "Đăng xuất không thành công";
+                console.log("Status:", error.response?.status);
+                response.message = error.response?.statusText;
             }
             return response;
 

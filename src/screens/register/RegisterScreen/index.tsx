@@ -63,7 +63,7 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
           }).then((response: IRegisterRes) => {
             console.log(response.statusCode);
 
-            if (response.statusCode === 200) {
+            if (response.statusCode === 201) {
               Toast.show({
                 type: 'success',
                 text1: 'Đăng ký thành công',
