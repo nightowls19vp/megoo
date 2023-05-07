@@ -33,11 +33,10 @@ import {
   validate,
 } from './services/login.service';
 import userStore from '../../../../common/store/user.store';
-import {IUser} from './../../../../interfaces/user.interface';
-import {IAuthData} from '../../../../interfaces/data.interface';
-import {IValidateRes} from './../../../../interfaces/validate.interface';
-import jwtDecode from 'jwt-decode';
-import {IJWTToken} from '../../../../interfaces/token.interface';
+import {IUser} from '../../../../common/interfaces/user.interface';
+import {IAuthData} from '../../../../common/interfaces/data.interface';
+import {IValidateRes} from '../../../../common/interfaces/validate.interface';
+import {ISettings} from '../../../../common/interfaces/settings.interface';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -296,8 +295,8 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             style={styles.socialButton}
             onPress={() => {
               googleSignIn().then((response: IGoogleLoginRes) => {
-                console.log('GG AT:', response.data?.accessToken);
-                console.log('GG RT:', response.data?.refreshToken);
+                // console.log('GG AT:', response.data?.accessToken);
+                // console.log('GG RT:', response.data?.refreshToken);
 
                 // Store user token
                 AsyncStorage.setItem(
@@ -311,8 +310,9 @@ export default function LoginScreen({navigation}: {navigation: any}) {
 
                 validate(`${response.data?.accessToken}`).then(
                   (response: IValidateRes) => {
-                    console.log('User data:', response.statusCode);
+                    console.log('User data:', response.data);
 
+                    // Store user data
                     let user: IUser = {
                       _id: '',
                       name: '',
@@ -322,6 +322,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                       avatar: '',
                     };
 
+                    // Store user info
                     user._id = response.data?.userInfo._id ?? '';
                     user.name = response.data?.userInfo.name ?? '';
                     user.email = response.data?.userInfo.email ?? '';
@@ -329,11 +330,29 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                     user.dob = response.data?.userInfo.dob ?? '';
                     user.avatar = response.data?.userInfo.avatar ?? '';
 
-                    console.log('User email:', user.email);
-                    console.log('User name:', user.name);
-                    console.log('User dob:', user.dob);
-
                     userStore.setUser(user);
+
+                    // Store user settings
+                    let settings: ISettings = {
+                      _id: '',
+                      callNoti: true,
+                      msgNoti: true,
+                      stockNoti: true,
+                      newsNoti: true,
+                    };
+
+                    settings._id = response.data.userInfo.setting._id ?? '';
+                    settings.callNoti =
+                      response.data.userInfo.setting.callNoti ?? true;
+                    settings.msgNoti =
+                      response.data.userInfo.setting.msgNoti ?? true;
+                    settings.stockNoti =
+                      response.data.userInfo.setting.stockNoti ?? true;
+                    settings.newsNoti =
+                      response.data.userInfo.setting.newsNoti ?? true;
+
+                    userStore.setUserSettings(settings);
+                    console.log('Call noti:', settings.callNoti);
                   },
                 );
 

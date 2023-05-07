@@ -2,8 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 import { URL_HOST } from "../core/config/api/api.config";
-import { IJWTToken } from "../interfaces/token.interface";
-import { IUser } from "../interfaces/user.interface";
+import { IJWTToken } from "./interfaces/token.interface";
+import { IUser } from "./interfaces/user.interface";
 import { validate } from "../screens/login/screens/LoginScreen/services/login.service";
 import userStore from "./store/user.store";
 
@@ -27,10 +27,14 @@ export const checkLogin = async () => {
     // Check if access token expired or not
     if (accessToken !== null) {
         const isTokenExpired = await checkAccessToken(`${accessToken}`);
+        console.log("access token:", accessToken);
+        console.log("refresh token:", refreshToken);
 
         // If access token has not expired then get user info
         if (isTokenExpired == false) {
             const response = await validate(`${accessToken}`);
+            console.log("Validate res:", response.data.userInfo.setting);
+
             let user: IUser = {
                 _id: '',
                 name: '',
@@ -52,7 +56,13 @@ export const checkLogin = async () => {
         } else {
             const refreshEndpoint = "api/auth/refresh";
             const reqUrl = `${URL_HOST}${refreshEndpoint}`;
-            const response = await axios.get(reqUrl);
+            const response = await axios.get(reqUrl, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    Authorization: `Bearer ${refreshToken}`,
+                },
+            });
         }
     }
 

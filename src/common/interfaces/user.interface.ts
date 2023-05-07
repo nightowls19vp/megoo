@@ -1,3 +1,5 @@
+import { ISettings } from './settings.interface';
+
 export interface IUser {
     _id: string;
     name: string;

@@ -60,6 +60,16 @@ const styles = StyleSheet.create({
     // borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomWidth: 1,
   },
+  settingIcon: {
+    fontWeight: '200',
+    color: Colors.text,
+    fontSize: 22,
+  },
+  notiIcon: {
+    fontWeight: '200',
+    color: Colors.primary,
+    fontSize: 22,
+  },
 });
 
 export default styles;

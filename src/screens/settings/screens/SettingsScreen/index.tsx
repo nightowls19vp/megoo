@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   ActivityIndicator,
   Button,
@@ -6,21 +6,25 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Colors} from '../../../../constants/color.const';
-import RouteNames from '../../../../constants/route-names.const';
-import {logout} from './services/settings.service';
-import styles from './styles/styles';
-import userStore from './../../../../common/store/user.store';
-import {ILogoutRes} from './interfaces/logout.interface';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Toast from 'react-native-toast-message';
 import Modal from 'react-native-modal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {signOutIfSignedInWithGG} from '../../../login/screens/LoginScreen/services/login.service';
-import appStore from '../../../../common/store/app.store';
 
-export default function SettingsScreen({navigation}: {navigation: any}) {
-  const [modalVisible, setModalVisible] = React.useState(false);
+import {Colors} from '../../../../constants/color.const';
+import RouteNames from '../../../../constants/route-names.const';
+import styles from './styles/styles';
+import userStore from './../../../../common/store/user.store';
+import appStore from '../../../../common/store/app.store';
+import {ILogoutRes} from './interfaces/logout.interface';
+import {logout} from './services/settings.service';
+import {signOutIfSignedInWithGG} from '../../../login/screens/LoginScreen/services/login.service';
+import {observer} from 'mobx-react';
+
+const SettingsScreen = ({navigation}: {navigation: any}) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newsNoti, setNewsNoti] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -28,8 +32,36 @@ export default function SettingsScreen({navigation}: {navigation: any}) {
         <Text style={styles.title}>Thông báo</Text>
 
         <View style={styles.contentContainer}>
-          <Text style={styles.text}>Nhắc nhở mua nhu yếu phẩm</Text>
-          <Text style={styles.text}>Nhắc nhở khuyến mãi</Text>
+          <View
+            style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <Text style={styles.text}>Nhắc nhở mua nhu yếu phẩm</Text>
+            <FontAwesomeIcon name={'toggle-on'} style={styles.notiIcon} />
+          </View>
+
+          <View
+            style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <Text style={styles.text}>Nhắc nhở khuyến mãi</Text>
+            <FontAwesomeIcon
+              onPress={() => {
+                setNewsNoti(!newsNoti);
+                userStore.setNewsNoti(newsNoti);
+              }}
+              name={userStore.newsNoti ? 'toggle-on' : 'toggle-off'}
+              style={styles.notiIcon}
+            />
+          </View>
         </View>
       </View>
 
@@ -37,8 +69,29 @@ export default function SettingsScreen({navigation}: {navigation: any}) {
         <Text style={styles.title}>Khác</Text>
 
         <View style={styles.contentContainer}>
-          <Text style={styles.text}>Thông tin ứng dụng</Text>
-          <Text style={styles.text}>Chính sách và quyền</Text>
+          <TouchableOpacity
+            style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <Text style={styles.text}>Thông tin ứng dụng</Text>
+            <FeatherIcon name={'chevron-right'} style={styles.settingIcon} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <Text style={styles.text}>Chính sách và quyền</Text>
+            <FeatherIcon name={'chevron-right'} style={styles.settingIcon} />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -46,24 +99,6 @@ export default function SettingsScreen({navigation}: {navigation: any}) {
         style={styles.button}
         onPress={() => {
           setModalVisible(!modalVisible);
-          // logout(userStore.refreshToken).then((response: ILogoutRes) => {
-          //   AsyncStorage.removeItem('accessToken');
-          //   AsyncStorage.removeItem('refreshToken');
-
-          //   if (response.statusCode === 200) {
-          //     Toast.show({
-          //       type: 'success',
-          //       text1: 'Đăng xuất thành công',
-          //       autoHide: true,
-          //       visibilityTime: 1000,
-          //       topOffset: 20,
-          //       bottomOffset: 20,
-          //       onHide: () => {
-          //         navigation.navigate(RouteNames.LOGIN as never, {} as never);
-          //       },
-          //     });
-          //   }
-          // });
         }}>
         <Text style={styles.buttonText}>Đăng xuất</Text>
       </TouchableOpacity>
@@ -104,6 +139,8 @@ export default function SettingsScreen({navigation}: {navigation: any}) {
             <TouchableOpacity
               onPress={async () => {
                 setModalVisible(!modalVisible);
+
+                // If user logged in with Google account then logout google accoutn first
                 await signOutIfSignedInWithGG();
                 const refreshToken = await AsyncStorage.getItem('refreshToken');
 
@@ -130,4 +167,6 @@ export default function SettingsScreen({navigation}: {navigation: any}) {
       <Toast position="top"></Toast>
     </View>
   );
-}
+};
+
+export default observer(SettingsScreen);

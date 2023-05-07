@@ -125,19 +125,23 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
         <View style={styles.container}>
           <TouchableOpacity
             onPress={() => {
-              launchImageLibrary({mediaType: 'mixed'}, response => {
-                console.log('Response = ', response);
+              launchImageLibrary(
+                {mediaType: 'mixed', includeBase64: true},
+                response => {
+                  // console.log('Response = ', response);
 
-                if (response.didCancel) {
-                  console.log('User cancelled image picker');
-                } else if (response.errorMessage) {
-                  console.log('ImagePicker Error: ', response.errorMessage);
-                } else {
-                  let source: Asset[] = response.assets as Asset[];
-                  console.log('source:', source[0].uri);
-                  setSelectedImages(`${source[0].uri}`);
-                }
-              });
+                  if (response.didCancel) {
+                    console.log('User cancelled image picker');
+                  } else if (response.errorMessage) {
+                    console.log('ImagePicker Error: ', response.errorMessage);
+                  } else {
+                    let source: Asset[] = response.assets as Asset[];
+                    // console.log('base64string:', source[0].base64);
+                    // console.log('source:', source[0].uri);
+                    setSelectedImages(`${source[0].uri}`);
+                  }
+                },
+              );
             }}>
             <Text>Choose image</Text>
           </TouchableOpacity>

@@ -3,11 +3,11 @@ import axios from "axios";
 import { IGoogleLoginRes, ILoginReq, ILoginRes } from "../interfaces/login.interface";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { statusCodes } from "@react-native-google-signin/google-signin";
-import { IUser } from './../../../../../interfaces/user.interface';
+import { IUser } from '../../../../../common/interfaces/user.interface';
 import userStore from "../../../../../common/store/user.store";
 import moment from "moment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { IValidateRes } from "../../../../../interfaces/validate.interface";
+import { IValidateRes } from "../../../../../common/interfaces/validate.interface";
 
 export const login = async (loginInfo: ILoginReq) => {
   const loginEndpoint = "api/auth/login/mobile";
@@ -56,7 +56,6 @@ export const validate = async (token: string) => {
   try {
     const res = await axios.get(reqUrl, {
       headers: {
-        "Content-Type": "application/json",
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
@@ -82,7 +81,6 @@ export const validate = async (token: string) => {
       return response;
     }
   }
-
 };
 
 export const googleSignIn = async () => {
@@ -92,11 +90,12 @@ export const googleSignIn = async () => {
     // Get user info (email, name, avatar)
     const userInfo = await GoogleSignin.signIn();
     const { accessToken } = await GoogleSignin.getTokens();
+    console.log("GG AT:", accessToken);
 
     // Call API to sign up with social account
     const loginEndpoint = "api/auth/mobile/google-sign-up";
     const reqUrl = `${URL_HOST}${loginEndpoint}`;
-    console.log("GG login", reqUrl);
+    console.log("GG login:", reqUrl);
 
     const response = await axios.post(reqUrl, {
       googleAccessToken: accessToken,

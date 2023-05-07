@@ -8,8 +8,11 @@ export const logout = async (refreshToken: string) => {
     console.log("Logout:", reqUrl);
 
     try {
-        const res = await axios.post(reqUrl, {
-            refreshToken: refreshToken
+        const res = await axios.post(reqUrl, {}, {
+            headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${refreshToken}`,
+            },
         });
 
         return res.data;
