@@ -9,6 +9,9 @@ import RouteNames from '../../../constants/route-names.const';
 import ProfileScreen from '../../../screens/profile/screens/ProfileScreen';
 import EditProfileScreen from '../../../screens/profile/screens/EditProfileScreen';
 import SettingsScreen from '../../../screens/settings/screens/SettingsScreen';
+import AppInfoScreen from './../../../screens/settings/screens/AppInfoScreen';
+import PoliciesScreen from './../../../screens/settings/screens/PoliciesScreen';
+
 function PackageScreen() {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -29,6 +32,14 @@ function StorageScreen() {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>Storage!</Text>
+    </View>
+  );
+}
+
+function ChatScreen() {
+  return (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Text>Chat!</Text>
     </View>
   );
 }
@@ -58,6 +69,14 @@ function SettingsScreenStack() {
       <SettingsStack.Screen
         name={RouteNames.SETTINGS}
         component={SettingsScreen}
+      />
+      <SettingsStack.Screen
+        name={RouteNames.APP_INFO}
+        component={AppInfoScreen}
+      />
+      <SettingsStack.Screen
+        name={RouteNames.POLICIES_RIGHTS}
+        component={PoliciesScreen}
       />
     </SettingsStack.Navigator>
   );
@@ -128,6 +147,16 @@ export default function BottomNavigationBar() {
           title: 'Trang cá nhân',
           tabBarIcon: ({color}) => {
             return <Icon name="user" size={20} color={color} />;
+          },
+        }}
+      />
+      <Tab.Screen
+        name={RouteNames.CHAT}
+        component={ChatScreen}
+        options={{
+          title: 'Đoạn chat',
+          tabBarIcon: ({color}) => {
+            return <Icon name="message1" size={20} color={color} />;
           },
         }}
       />

@@ -1,7 +1,7 @@
 export interface IEditInfoReq {
-    name: string;
-    phone: string;
-    dob: string;
+    name?: string;
+    phone?: string;
+    dob?: string;
 }
 
 export interface IEditInfoRes {

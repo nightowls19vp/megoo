@@ -70,6 +70,13 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontSize: 22,
   },
+  settingItem: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
 });
 
 export default styles;

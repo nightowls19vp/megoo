@@ -12,7 +12,6 @@ import Toast from 'react-native-toast-message';
 import Modal from 'react-native-modal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import styles from './styles/styles';
 import userStore from './../../../../common/store/user.store';
@@ -24,7 +23,10 @@ import {observer} from 'mobx-react';
 
 const SettingsScreen = ({navigation}: {navigation: any}) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [callNoti, setCallNoti] = useState(false);
+  const [msgNoti, setMsgNoti] = useState(false);
   const [newsNoti, setNewsNoti] = useState(false);
+  const [stockNoti, setStockNoti] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -32,31 +34,52 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
         <Text style={styles.title}>Thông báo</Text>
 
         <View style={styles.contentContainer}>
-          <View
-            style={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <Text style={styles.text}>Nhắc nhở mua nhu yếu phẩm</Text>
-            <FontAwesomeIcon name={'toggle-on'} style={styles.notiIcon} />
+          <View style={styles.settingItem}>
+            <Text style={styles.text}>Tin nhắn</Text>
+            <FontAwesomeIcon
+              onPress={() => {
+                setMsgNoti(!msgNoti);
+                userStore.setMsgNoti(msgNoti);
+                console.log('Msg noti:', userStore.msgNoti);
+              }}
+              name={userStore.msgNoti ? 'toggle-on' : 'toggle-off'}
+              style={styles.notiIcon}
+            />
           </View>
 
-          <View
-            style={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <Text style={styles.text}>Nhắc nhở khuyến mãi</Text>
+          <View style={styles.settingItem}>
+            <Text style={styles.text}>Cuộc gọi</Text>
+            <FontAwesomeIcon
+              onPress={() => {
+                setCallNoti(!callNoti);
+                userStore.setCallNoti(callNoti);
+                console.log('Call noti:', userStore.callNoti);
+              }}
+              name={userStore.callNoti ? 'toggle-on' : 'toggle-off'}
+              style={styles.notiIcon}
+            />
+          </View>
+
+          <View style={styles.settingItem}>
+            <Text style={styles.text}>Số lượng hàng hoá tồn kho</Text>
+            <FontAwesomeIcon
+              onPress={() => {
+                setStockNoti(!stockNoti);
+                userStore.setStockNoti(stockNoti);
+                console.log('Stock noti:', userStore.stockNoti);
+              }}
+              name={userStore.stockNoti ? 'toggle-on' : 'toggle-off'}
+              style={styles.notiIcon}
+            />
+          </View>
+
+          <View style={styles.settingItem}>
+            <Text style={styles.text}>Khuyến mãi/Tin tức</Text>
             <FontAwesomeIcon
               onPress={() => {
                 setNewsNoti(!newsNoti);
                 userStore.setNewsNoti(newsNoti);
+                console.log('News noti:', userStore.newsNoti);
               }}
               name={userStore.newsNoti ? 'toggle-on' : 'toggle-off'}
               style={styles.notiIcon}
@@ -70,6 +93,9 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
 
         <View style={styles.contentContainer}>
           <TouchableOpacity
+            onPress={() => {
+              navigation.navigate(RouteNames.APP_INFO as never, {} as never);
+            }}
             style={{
               width: '100%',
               display: 'flex',
@@ -82,6 +108,12 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
           </TouchableOpacity>
 
           <TouchableOpacity
+            onPress={() => {
+              navigation.navigate(
+                RouteNames.POLICIES_RIGHTS as never,
+                {} as never,
+              );
+            }}
             style={{
               width: '100%',
               display: 'flex',

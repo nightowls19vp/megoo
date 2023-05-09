@@ -28,18 +28,19 @@ import {Colors} from '../../../../constants/color.const';
 import userStore from '../../../../common/store/user.store';
 import {editInfo} from './services/edit.info.service';
 import {IEditInfoRes} from './interfaces/edit.info.interface';
+import {dateISOFormat} from '../../../../common/handle.string';
 
 const ProfileSchema = Yup.object().shape({
   name: Yup.string().required('Vui lòng nhập họ tên'),
   phone: Yup.string()
+    .optional()
     .min(10, 'Số điện thoại không hợp lệ')
     .max(12, 'Số điện thoại không hợp lệ')
     .matches(/^(\+84)|0([3|5|7|8|9])(\d{8})$/, 'Số điện thoại không hợp lệ'),
-  dob: Yup.string().required('Vui lòng nhập ngày sinh'),
 });
 
 const EditProfileScreen = ({navigation}: {navigation: any}) => {
-  const dobISOString = moment(userStore.dob, 'DD/MM/YYYY').toISOString();
+  const dobISOString = dateISOFormat(userStore.dob);
   const [date, setDate] = useState(new Date(dobISOString));
   const [selectedImages, setSelectedImages] = useState('');
 
@@ -57,60 +58,118 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
       initialValues={initialValues}
       validationSchema={ProfileSchema}
       onSubmit={values => {
-        const dobISOString = moment(values.dob, 'DD/MM/YYYY').toISOString();
-        console.log(`Date: ${dobISOString}`);
+        const dobISOString = dateISOFormat(values.dob);
 
-        // same shape as initial values
-        console.log(values);
+        // If user change info then update user store
+        if (values.name != userStore.name) {
+          console.log('after edit name');
 
-        editInfo({
-          name: values.name,
-          phone: values.phone,
-          dob: dobISOString,
-        }).then((response: IEditInfoRes) => {
-          console.log(response.statusCode);
+          editInfo({
+            name: values.name,
+          }).then((response: IEditInfoRes) => {
+            console.log(response.message);
+            userStore.setName(values.name);
+            userStore.setPhone(values.phone);
+            userStore.setDob(values.dob);
+
+            if (response.statusCode === 200) {
+              Toast.show({
+                type: 'success',
+                text1: 'Sửa thông tin thành công',
+                autoHide: true,
+                visibilityTime: 1000,
+                topOffset: 20,
+                bottomOffset: 40,
+                onHide: () => {
+                  navigation.navigate(RouteNames.PROFILE as never, {} as never);
+                },
+              });
+            } else if (response.statusCode === 401) {
+              Toast.show({
+                type: 'error',
+                text1: response.message,
+                autoHide: false,
+                topOffset: 30,
+                bottomOffset: 40,
+              });
+            } else if (response.statusCode === 404) {
+              Toast.show({
+                type: 'error',
+                text1: response.message,
+                autoHide: false,
+                topOffset: 30,
+                bottomOffset: 40,
+              });
+            } else {
+              Toast.show({
+                type: 'error',
+                text1: response.message,
+                autoHide: false,
+                topOffset: 30,
+                bottomOffset: 40,
+              });
+            }
+          });
+          console.log('after edit name');
           userStore.setName(values.name);
-          userStore.setPhone(values.phone);
-          userStore.setDob(values.dob);
+        }
 
-          if (response.statusCode === 200) {
-            Toast.show({
-              type: 'success',
-              text1: 'Sửa thông tin thành công',
-              autoHide: true,
-              visibilityTime: 1000,
-              topOffset: 20,
-              bottomOffset: 40,
-              onHide: () => {
-                navigation.navigate(RouteNames.PROFILE as never, {} as never);
-              },
-            });
-          } else if (response.statusCode === 401) {
-            Toast.show({
-              type: 'error',
-              text1: response.message,
-              autoHide: false,
-              topOffset: 30,
-              bottomOffset: 40,
-            });
-          } else if (response.statusCode === 404) {
-            Toast.show({
-              type: 'error',
-              text1: response.message,
-              autoHide: false,
-              topOffset: 30,
-              bottomOffset: 40,
-            });
-          } else {
-            Toast.show({
-              type: 'error',
-              text1: response.message,
-              autoHide: false,
-              topOffset: 30,
-              bottomOffset: 40,
-            });
-          }
-        });
+        if (values.phone != userStore.phone) {
+          userStore.setPhone(values.phone ?? '');
+        }
+
+        if (dobISOString !== userStore.dob) {
+          userStore.setDob(dobISOString);
+        }
+
+        // editInfo({
+        //   name: userStore.name,
+        //   phone: userStore.phone,
+        //   dob: dobISOString,
+        // }).then((response: IEditInfoRes) => {
+        //   console.log(response.message);
+        //   userStore.setName(values.name);
+        //   userStore.setPhone(values.phone);
+        //   userStore.setDob(values.dob);
+
+        //   if (response.statusCode === 200) {
+        //     Toast.show({
+        //       type: 'success',
+        //       text1: 'Sửa thông tin thành công',
+        //       autoHide: true,
+        //       visibilityTime: 1000,
+        //       topOffset: 20,
+        //       bottomOffset: 40,
+        //       onHide: () => {
+        //         navigation.navigate(RouteNames.PROFILE as never, {} as never);
+        //       },
+        //     });
+        //   } else if (response.statusCode === 401) {
+        //     Toast.show({
+        //       type: 'error',
+        //       text1: response.message,
+        //       autoHide: false,
+        //       topOffset: 30,
+        //       bottomOffset: 40,
+        //     });
+        //   } else if (response.statusCode === 404) {
+        //     Toast.show({
+        //       type: 'error',
+        //       text1: response.message,
+        //       autoHide: false,
+        //       topOffset: 30,
+        //       bottomOffset: 40,
+        //     });
+        //   } else {
+        //     Toast.show({
+        //       type: 'error',
+        //       text1: response.message,
+        //       autoHide: false,
+        //       topOffset: 30,
+        //       bottomOffset: 40,
+        //     });
+        //   }
+        // });
       }}>
       {({
         values,
@@ -123,6 +182,13 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
         handleSubmit,
       }) => (
         <View style={styles.container}>
+          <Image
+            source={{
+              uri: selectedImages != '' ? selectedImages : userStore.avatar,
+            }}
+            style={{width: 150, height: 150, borderRadius: 150 / 2}}
+          />
+
           <TouchableOpacity
             onPress={() => {
               launchImageLibrary(
@@ -138,20 +204,13 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
                     let source: Asset[] = response.assets as Asset[];
                     // console.log('base64string:', source[0].base64);
                     // console.log('source:', source[0].uri);
-                    setSelectedImages(`${source[0].uri}`);
+                    // setSelectedImages(`${source[0].uri}`);
                   }
                 },
               );
             }}>
             <Text>Choose image</Text>
           </TouchableOpacity>
-
-          <Image
-            source={{
-              uri: selectedImages != '' ? selectedImages : userStore.avatar,
-            }}
-            style={{width: 150, height: 150, borderRadius: 150 / 2}}
-          />
 
           {/* <Image
             source={{uri: `data:image/jpeg;base64,${base64String}`}}
@@ -248,9 +307,9 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
               name={'calendar'}
               style={styles.inputIcon}></Icon>
           </View>
-          {touched.dob && errors.dob && (
+          {/* {touched.dob && errors.dob && (
             <Text style={styles.error}>{errors.dob}</Text>
-          )}
+          )} */}
 
           <TouchableOpacity
             // onPress={() => {

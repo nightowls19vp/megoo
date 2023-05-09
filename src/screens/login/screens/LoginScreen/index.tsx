@@ -328,20 +328,20 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                     user.email = response.data?.userInfo.email ?? '';
                     user.phone = response.data?.userInfo.phone ?? '';
                     user.dob = response.data?.userInfo.dob ?? '';
-                    user.avatar = response.data?.userInfo.avatar ?? '';
+                    user.avatar =
+                      response.data?.userInfo.avatar ??
+                      'https://res.cloudinary.com/nightowls19vp/image/upload/v1683454262/cld-sample.jpg';
 
                     userStore.setUser(user);
 
                     // Store user settings
                     let settings: ISettings = {
-                      _id: '',
                       callNoti: true,
                       msgNoti: true,
                       stockNoti: true,
                       newsNoti: true,
                     };
 
-                    settings._id = response.data.userInfo.setting._id ?? '';
                     settings.callNoti =
                       response.data.userInfo.setting.callNoti ?? true;
                     settings.msgNoti =

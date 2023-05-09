@@ -15,6 +15,10 @@ export default {
   PROFILE: "Trang cá nhân",
   EDIT_PROFILE: "Chỉnh sửa thông tin cá nhân",
 
+  CHAT: "Đoạn chat",
+
   SETTINGS_STACK: "SETTINGS_STACK",
   SETTINGS: "Cài đặt",
+  APP_INFO: "Thông tin ứng dụng",
+  POLICIES_RIGHTS: "Chính sách và quyền",
 };
