@@ -14,6 +14,7 @@ export default {
   PROFILE_STACK: "PROFILE_STACK",
   PROFILE: "Trang cá nhân",
   EDIT_PROFILE: "Chỉnh sửa thông tin cá nhân",
+  CHANGE_AVATAR: "Chỉnh sửa ảnh đại diện",
 
   CHAT: "Đoạn chat",
 

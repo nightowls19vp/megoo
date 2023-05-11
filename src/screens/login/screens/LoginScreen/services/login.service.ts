@@ -61,7 +61,8 @@ export const validate = async (token: string) => {
       },
     });
 
-    // console.log("user data:", res.data.data.userInfo);
+    // console.log("Validate res data:", res.data);
+    // console.log("Validate user data:", res.data.data.userInfo);
 
     return res.data;
   } catch (error) {
@@ -101,7 +102,7 @@ export const googleSignIn = async () => {
       googleAccessToken: accessToken,
     });
 
-    console.log("Google sign up data:", response.data);
+    // console.log("Google sign up data:", response.data);
 
     return response.data;
   } catch (error) {

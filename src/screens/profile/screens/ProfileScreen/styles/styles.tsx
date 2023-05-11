@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 200 / 2,
-    marginBottom: 5,
+    marginBottom: 10,
   },
   titleContainer: {
     width: '90%',

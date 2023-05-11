@@ -11,14 +11,8 @@ import EditProfileScreen from '../../../screens/profile/screens/EditProfileScree
 import SettingsScreen from '../../../screens/settings/screens/SettingsScreen';
 import AppInfoScreen from './../../../screens/settings/screens/AppInfoScreen';
 import PoliciesScreen from './../../../screens/settings/screens/PoliciesScreen';
-
-function PackageScreen() {
-  return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Package!</Text>
-    </View>
-  );
-}
+import ChangeAvatarScreen from '../../../screens/profile/screens/ChangeAvatarScreen';
+import PackageScreen from '../../../screens/package/screens/PackageScreen';
 
 function HomeScreen() {
   return (

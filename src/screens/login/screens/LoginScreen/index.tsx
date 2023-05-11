@@ -272,7 +272,9 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             </Text>
           </View>
           <TouchableOpacity
-            onPress={handleSubmit}
+            onPress={() => {
+              handleSubmit;
+            }}
             disabled={!isValid}
             style={[
               styles.button,
@@ -295,8 +297,8 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             style={styles.socialButton}
             onPress={() => {
               googleSignIn().then((response: IGoogleLoginRes) => {
-                // console.log('GG AT:', response.data?.accessToken);
-                // console.log('GG RT:', response.data?.refreshToken);
+                console.log('GG AT:', response.data?.accessToken);
+                console.log('GG RT:', response.data?.refreshToken);
 
                 // Store user token
                 AsyncStorage.setItem(

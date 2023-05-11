@@ -21,14 +21,23 @@ import Toast from 'react-native-toast-message';
 import {observer} from 'mobx-react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import base64 from 'base64-js';
+import ImagePicker from 'react-native-image-crop-picker';
 
 import styles from './styles/styles';
 import RouteNames from '../../../../constants/route-names.const';
 import {Colors} from '../../../../constants/color.const';
 import userStore from '../../../../common/store/user.store';
-import {editInfo} from './services/edit.info.service';
+import {
+  changeAvatar,
+  dataURLtoFile,
+  editInfo,
+  urltoFile,
+} from './services/edit.info.service';
 import {IEditInfoRes} from './interfaces/edit.info.interface';
-import {dateISOFormat} from '../../../../common/handle.string';
+import {dateFormat, dateISOFormat} from '../../../../common/handle.string';
+import ImageCropPicker from 'react-native-image-crop-picker';
+import axios from 'axios';
+import {URL_HOST} from '../../../../core/config/api/api.config';
 
 const ProfileSchema = Yup.object().shape({
   name: Yup.string().required('Vui lòng nhập họ tên'),
@@ -42,7 +51,8 @@ const ProfileSchema = Yup.object().shape({
 const EditProfileScreen = ({navigation}: {navigation: any}) => {
   const dobISOString = dateISOFormat(userStore.dob);
   const [date, setDate] = useState(new Date(dobISOString));
-  const [selectedImages, setSelectedImages] = useState('');
+  const [selectedImage, setSelectedImage] = useState('');
+  const [imageFile, setImageFile] = useState<any>();
 
   const [open, setOpen] = useState(false);
 
@@ -60,18 +70,14 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
       onSubmit={values => {
         const dobISOString = dateISOFormat(values.dob);
 
-        // If user change info then update user store
-        if (values.name != userStore.name) {
-          console.log('after edit name');
+        // If user change info then call API and update user store
+        if (values.name !== userStore.name) {
+          console.log('edit name');
 
           editInfo({
             name: values.name,
           }).then((response: IEditInfoRes) => {
             console.log(response.message);
-            userStore.setName(values.name);
-            userStore.setPhone(values.phone);
-            userStore.setDob(values.dob);
-
             if (response.statusCode === 200) {
               Toast.show({
                 type: 'success',
@@ -84,6 +90,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
                   navigation.navigate(RouteNames.PROFILE as never, {} as never);
                 },
               });
+              userStore.setName(response.data.name);
             } else if (response.statusCode === 401) {
               Toast.show({
                 type: 'error',
@@ -110,66 +117,135 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
               });
             }
           });
-          console.log('after edit name');
-          userStore.setName(values.name);
         }
 
-        if (values.phone != userStore.phone) {
-          userStore.setPhone(values.phone ?? '');
+        if (values.phone !== userStore.phone) {
+          console.log('edit phone');
+
+          editInfo({
+            name: values.name,
+            phone: values.phone,
+          }).then((response: IEditInfoRes) => {
+            console.log(response);
+            if (response.statusCode === 200) {
+              Toast.show({
+                type: 'success',
+                text1: 'Sửa thông tin thành công',
+                autoHide: true,
+                visibilityTime: 1000,
+                topOffset: 20,
+                bottomOffset: 40,
+                onHide: () => {
+                  navigation.navigate(RouteNames.PROFILE as never, {} as never);
+                },
+              });
+              userStore.setPhone(response.data.phone ?? '');
+            } else if (response.statusCode === 401) {
+              Toast.show({
+                type: 'error',
+                text1: response.message,
+                autoHide: false,
+                topOffset: 30,
+                bottomOffset: 40,
+              });
+            } else if (response.statusCode === 404) {
+              Toast.show({
+                type: 'error',
+                text1: response.message,
+                autoHide: false,
+                topOffset: 30,
+                bottomOffset: 40,
+              });
+            } else {
+              Toast.show({
+                type: 'error',
+                text1: response.message,
+                autoHide: false,
+                topOffset: 30,
+                bottomOffset: 40,
+              });
+            }
+          });
         }
 
         if (dobISOString !== userStore.dob) {
-          userStore.setDob(dobISOString);
+          console.log('edit dob');
+
+          editInfo({
+            name: values.name,
+            dob: dobISOString,
+          }).then((response: IEditInfoRes) => {
+            console.log(response);
+            if (response.statusCode === 200) {
+              Toast.show({
+                type: 'success',
+                text1: 'Sửa thông tin thành công',
+                autoHide: true,
+                visibilityTime: 1000,
+                topOffset: 20,
+                bottomOffset: 40,
+                onHide: () => {
+                  navigation.navigate(RouteNames.PROFILE as never, {} as never);
+                },
+              });
+              const dob = dateFormat(response.data.dob);
+              userStore.setDob(dob ?? '');
+            } else if (response.statusCode === 401) {
+              Toast.show({
+                type: 'error',
+                text1: response.message,
+                autoHide: false,
+                topOffset: 30,
+                bottomOffset: 40,
+              });
+            } else if (response.statusCode === 404) {
+              Toast.show({
+                type: 'error',
+                text1: response.message,
+                autoHide: false,
+                topOffset: 30,
+                bottomOffset: 40,
+              });
+            } else {
+              Toast.show({
+                type: 'error',
+                text1: response.message,
+                autoHide: false,
+                topOffset: 30,
+                bottomOffset: 40,
+              });
+            }
+          });
         }
 
-        // editInfo({
-        //   name: userStore.name,
-        //   phone: userStore.phone,
-        //   dob: dobISOString,
-        // }).then((response: IEditInfoRes) => {
-        //   console.log(response.message);
-        //   userStore.setName(values.name);
-        //   userStore.setPhone(values.phone);
-        //   userStore.setDob(values.dob);
+        if (selectedImage !== userStore.avatar) {
+          // console.log('Image uri:', selectedImage);
+          // console.log('Image file:', imageFile);
 
-        //   if (response.statusCode === 200) {
-        //     Toast.show({
-        //       type: 'success',
-        //       text1: 'Sửa thông tin thành công',
-        //       autoHide: true,
-        //       visibilityTime: 1000,
-        //       topOffset: 20,
-        //       bottomOffset: 40,
-        //       onHide: () => {
-        //         navigation.navigate(RouteNames.PROFILE as never, {} as never);
-        //       },
-        //     });
-        //   } else if (response.statusCode === 401) {
-        //     Toast.show({
-        //       type: 'error',
-        //       text1: response.message,
-        //       autoHide: false,
-        //       topOffset: 30,
-        //       bottomOffset: 40,
-        //     });
-        //   } else if (response.statusCode === 404) {
-        //     Toast.show({
-        //       type: 'error',
-        //       text1: response.message,
-        //       autoHide: false,
-        //       topOffset: 30,
-        //       bottomOffset: 40,
-        //     });
-        //   } else {
-        //     Toast.show({
-        //       type: 'error',
-        //       text1: response.message,
-        //       autoHide: false,
-        //       topOffset: 30,
-        //       bottomOffset: 40,
-        //     });
-        //   }
-        // });
+          // Get image extension
+          const fileExtension = selectedImage.split('.').pop();
+
+          let body = new FormData();
+          // body.append('file', {
+          //   uri: `${selectedImage}`,
+          //   name: 'avatar.png',
+          //   type: `image/${fileExtension}`,
+          // } );
+          body.append(
+            'file',
+            JSON.parse(
+              JSON.stringify({
+                uri: selectedImage,
+                name: `avatar.${fileExtension}`,
+                type: `image/${fileExtension}`,
+              }),
+            ),
+          );
+
+          // changeAvatar(imageFile).then(response => {
+          //   console.log('Change ava res:', response);
+          // });
+        }
       }}>
       {({
         values,
@@ -182,16 +258,41 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
         handleSubmit,
       }) => (
         <View style={styles.container}>
+          {/* <Image
+            source={{
+              uri: selectedImage != '' ? selectedImage : userStore.avatar,
+            }}
+            style={{
+              width: 200,
+              height: 200,
+              borderRadius: 200 / 2,
+              marginTop: 20,
+            }}
+          /> */}
+
           <Image
             source={{
-              uri: selectedImages != '' ? selectedImages : userStore.avatar,
+              uri:
+                selectedImage != ''
+                  ? selectedImage
+                  : `data:image/jpeg;base64,${userStore.avatar}`,
             }}
-            style={{width: 150, height: 150, borderRadius: 150 / 2}}
+            style={{
+              width: 200,
+              height: 200,
+              borderWidth: 1,
+              borderColor: 'black',
+              borderRadius: 200 / 2,
+              marginTop: 20,
+            }}
           />
 
           <TouchableOpacity
-            onPress={() => {
-              launchImageLibrary(
+            style={{marginVertical: 10}}
+            onPress={async () => {
+              await launchImageLibrary(
+                // If need base64String, include this option:
+                // includeBase64: true
                 {mediaType: 'mixed', includeBase64: true},
                 response => {
                   // console.log('Response = ', response);
@@ -202,26 +303,22 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
                     console.log('ImagePicker Error: ', response.errorMessage);
                   } else {
                     let source: Asset[] = response.assets as Asset[];
-                    // console.log('base64string:', source[0].base64);
-                    // console.log('source:', source[0].uri);
-                    // setSelectedImages(`${source[0].uri}`);
+                    setSelectedImage(`${source[0].uri}`);
+                    // setImageFile(
+                    //   dataURLtoFile(
+                    //     `${source?.[0]?.base64}`,
+                    //     `${source?.[0]?.fileName}`,
+                    //     `${source?.[0]?.type}`,
+                    //   ),
+                    // );
+                    // setImageFile(source[0].base64);
+                    // console.log('File:', source[0].base64);
                   }
                 },
               );
             }}>
-            <Text>Choose image</Text>
+            <Text>Chỉnh sửa ảnh đại diện</Text>
           </TouchableOpacity>
-
-          {/* <Image
-            source={{uri: `data:image/jpeg;base64,${base64String}`}}
-            style={{
-              width: 200,
-              height: 200,
-              borderWidth: 2,
-              borderColor: 'black',
-              borderRadius: 200 / 2,
-            }}
-          /> */}
 
           <View style={[styles.inputContainer]}>
             <TextInput
@@ -283,12 +380,13 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
               confirmText={'Chọn'}
               cancelText={'Huỷ'}
               onConfirm={value => {
-                console.log(value);
+                console.log('Selected dob:', value);
 
                 setOpen(false);
                 setDate(value);
-                // setFieldValue('dob', value);
                 setFieldValue('dob', moment(value).format('DD/MM/YYYY'));
+
+                console.log('Values dob', values.dob);
               }}
               onCancel={() => {
                 setOpen(false);
@@ -315,7 +413,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
             // onPress={() => {
             //   navigation.navigate(RouteNames.PROFILE as never, {} as never);
             // }}
-            onPress={handleSubmit}
+            onPress={() => handleSubmit()}
             disabled={!isValid}
             style={[
               styles.button,

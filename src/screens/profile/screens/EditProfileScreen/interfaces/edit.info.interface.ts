@@ -7,4 +7,5 @@ export interface IEditInfoReq {
 export interface IEditInfoRes {
     statusCode: number;
     message: string;
+    data?: any;
 }

@@ -1,19 +1,32 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {observer} from 'mobx-react';
+import {
+  Asset,
+  launchCamera,
+  launchImageLibrary,
+} from 'react-native-image-picker';
+
 import userStore from '../../../../common/store/user.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import styles from './styles/styles';
 
 const ProfileScreen = ({navigation}: {navigation: any}) => {
+  const [selectedImages, setSelectedImages] = useState('');
+
   return (
     <View style={styles.container}>
-      <Image
+      {/* <Image
         source={{
           // uri: 'https://raw.githubusercontent.com/AboutReact/sampleresource/master/old_logo.png',
           uri: userStore.avatar,
         }}
+        style={styles.avatar}
+      /> */}
+
+      <Image
+        source={{uri: `data:image/jpeg;base64,${userStore.avatar}`}}
         style={styles.avatar}
       />
 
