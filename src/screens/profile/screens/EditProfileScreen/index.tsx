@@ -258,19 +258,14 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
         handleSubmit,
       }) => (
         <View style={styles.container}>
-          {/* <Image
+          <Image
             source={{
               uri: selectedImage != '' ? selectedImage : userStore.avatar,
             }}
-            style={{
-              width: 200,
-              height: 200,
-              borderRadius: 200 / 2,
-              marginTop: 20,
-            }}
-          /> */}
+            style={styles.avatar}
+          />
 
-          <Image
+          {/* <Image
             source={{
               uri:
                 selectedImage != ''
@@ -285,7 +280,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
               borderRadius: 200 / 2,
               marginTop: 20,
             }}
-          />
+          /> */}
 
           <TouchableOpacity
             style={{marginVertical: 10}}

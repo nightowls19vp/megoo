@@ -26,7 +26,8 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
       /> */}
 
       <Image
-        source={{uri: `data:image/jpeg;base64,${userStore.avatar}`}}
+        // source={{uri: `data:image/jpeg;base64,${userStore.avatar}`}}
+        source={{uri: userStore.avatar}}
         style={styles.avatar}
       />
 

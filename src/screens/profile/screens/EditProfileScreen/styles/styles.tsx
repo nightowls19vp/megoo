@@ -58,6 +58,12 @@ const styles = StyleSheet.create({
     color: Colors.error,
     textAlign: 'left',
   },
+  avatar: {
+    width: 200,
+    height: 200,
+    borderRadius: 200 / 2,
+    marginTop: 20,
+  },
 });
 
 export default styles;

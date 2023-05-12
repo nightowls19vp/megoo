@@ -1,66 +1,112 @@
 import {useEffect, useRef, useState} from 'react';
-import {View, Text, Dimensions, Image} from 'react-native';
+import {
+  View,
+  Text,
+  Dimensions,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
-import {StyleSheet} from 'react-native';
+import Icon from 'react-native-vector-icons/AntDesign';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 import styles from './styles/style';
-
-const ENTRIES1 = [
-  {
-    title: 'Beautiful and dramatic Antelope Canyon',
-    subtitle: 'Lorem ipsum dolor sit amet et nuncat mergitur',
-    illustration: 'https://naruto-official.com/common/ogp/NTOS_OG-main.png',
-  },
-  {
-    title: 'Earlier this morning, NYC',
-    subtitle: 'Lorem ipsum dolor sit amet',
-    illustration: 'https://i.imgur.com/UPrs1EWl.jpg',
-  },
-  {
-    title: 'White Pocket Sunset',
-    subtitle: 'Lorem ipsum dolor sit amet et nuncat ',
-    illustration: 'https://i.imgur.com/MABUbpDl.jpg',
-  },
-  {
-    title: 'Acrocorinth, Greece',
-    subtitle: 'Lorem ipsum dolor sit amet et nuncat mergitur',
-    illustration: 'https://i.imgur.com/KZsmUi2l.jpg',
-  },
-  {
-    title: 'The lone tree, majestic landscape of New Zealand',
-    subtitle: 'Lorem ipsum dolor sit amet',
-    illustration: 'https://i.imgur.com/2nCt3Sbl.jpg',
-  },
-];
+import {getAllPackage} from './services/package.service';
+import {Colors} from '../../../../constants/color.const';
 
 const PackageScreen = () => {
+  const [packages, setPackages] = useState([]);
+
+  const getPackages = async () => {
+    const pkgs = await getAllPackage();
+    console.log('pkgs:', pkgs.data);
+    setPackages(pkgs.data);
+  };
+
+  useEffect(() => {
+    getPackages();
+  }, []);
+
   const width = Dimensions.get('window').width;
 
   const renderItem = ({item}: {item: any}) => {
+    console.log('packages:', item);
+
     return (
-      <View
-        style={{
-          borderWidth: 1,
-          borderColor: 'black',
-          width: width * 0.5,
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-        key={item.id}>
+      <View style={styles.carouselItem} key={item._id}>
         {/* <Image
           source={{uri: item.illustration}}
           style={{width: '100%', height: '100%'}}
         /> */}
-        <Text style={styles.title} numberOfLines={2}>
-          {item.title}
-        </Text>
+        <View
+          style={{
+            display: 'flex',
+            height: '100%',
+            justifyContent: 'space-between',
+          }}>
+          <View>
+            <Text style={styles.pkgTitle} numberOfLines={2}>
+              {item.name}
+            </Text>
+            <View style={styles.infoRow}>
+              <Text>Thời hạn:</Text>
+              <Text>{item.duration} tháng</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text>Giá tiền: </Text>
+              <Text>{item.price} VND</Text>
+            </View>
+            <View style={styles.descriptionContainer}>
+              <Text>Mô tả:</Text>
+              {/* numberOfLines={5} */}
+              <Text>{item.description}</Text>
+            </View>
+          </View>
+
+          <View
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: 10,
+            }}>
+            <TouchableOpacity
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'row',
+                gap: 10,
+                // borderRadius: 10,
+                // backgroundColor: Colors.primary,
+                padding: 8,
+              }}>
+              <Icon
+                name={'shoppingcart'}
+                style={{fontSize: 24, color: Colors.primary}}
+              />
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: Colors.primary,
+                  fontWeight: 'bold',
+                }}>
+                Mua gói
+              </Text>
+            </TouchableOpacity>
+            {/* <FeatherIcon name={'shopping-cart'} style={{fontSize: 30}} /> */}
+          </View>
+        </View>
       </View>
     );
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={{
+        flexGrow: 1,
+        alignItems: 'center',
+      }}>
       <View style={styles.packageContainer}>
         <Text style={styles.title}>Gói hiện tại</Text>
         <View style={styles.contentContainer}>
@@ -72,25 +118,25 @@ const PackageScreen = () => {
         </View>
       </View>
 
-      <View style={{}}>
+      <View style={{marginBottom: 20}}>
         <Text style={styles.title}>Các gói người dùng</Text>
         <Carousel
-          // loop
+          loop={false}
           mode="parallax"
           modeConfig={{
             parallaxScrollingScale: 1,
-            parallaxScrollingOffset: 130,
+            parallaxScrollingOffset: 120,
           }}
           width={width * 0.9}
-          height={width * 0.9}
+          height={width * 0.85}
           //   autoPlay={true}
-          data={ENTRIES1}
+          data={packages}
           scrollAnimationDuration={1000}
           onSnapToItem={index => console.log('current index:', index)}
           renderItem={renderItem}
         />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

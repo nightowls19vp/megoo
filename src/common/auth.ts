@@ -96,6 +96,9 @@ export const checkLogin = async () => {
 
         userStore.setUser(user);
 
+        console.log("avatar:", userStore.avatar);
+
+
         // Store user settings
         let settings: ISettings = {
           callNoti: true,

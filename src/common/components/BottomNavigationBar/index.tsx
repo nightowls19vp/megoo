@@ -30,11 +30,16 @@ function StorageScreen() {
   );
 }
 
-function ChatScreen() {
+const PackageStack = createNativeStackNavigator();
+
+function PackageScreenStack() {
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Chat!</Text>
-    </View>
+    <ProfileStack.Navigator>
+      <ProfileStack.Screen
+        name={RouteNames.PACKAGE}
+        component={PackageScreen}
+      />
+    </ProfileStack.Navigator>
   );
 }
 
@@ -104,8 +109,9 @@ export default function BottomNavigationBar() {
       }}>
       <Tab.Screen
         name={RouteNames.PACKAGE}
-        component={PackageScreen}
+        component={PackageScreenStack}
         options={{
+          title: 'Quản lý gói',
           tabBarActiveTintColor: Colors.primary,
           tabBarIcon: ({color}) => {
             return <Icon name="addusergroup" size={22} color={color} />;
@@ -141,16 +147,6 @@ export default function BottomNavigationBar() {
           title: 'Trang cá nhân',
           tabBarIcon: ({color}) => {
             return <Icon name="user" size={20} color={color} />;
-          },
-        }}
-      />
-      <Tab.Screen
-        name={RouteNames.CHAT}
-        component={ChatScreen}
-        options={{
-          title: 'Đoạn chat',
-          tabBarIcon: ({color}) => {
-            return <Icon name="message1" size={20} color={color} />;
           },
         }}
       />

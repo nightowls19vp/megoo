@@ -23,7 +23,6 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 
 import {Colors} from '../../../../constants/color.const';
-import {IGoogleLoginRes, ILoginRes} from './interfaces/login.interface';
 import styles from './styles/styles';
 import RouteNames from '../../../../constants/route-names.const';
 import {
@@ -33,6 +32,7 @@ import {
   validate,
 } from './services/login.service';
 import userStore from '../../../../common/store/user.store';
+import {IGoogleLoginRes, ILoginRes} from './interfaces/login.interface';
 import {IUser} from '../../../../common/interfaces/user.interface';
 import {IAuthData} from '../../../../common/interfaces/data.interface';
 import {IValidateRes} from '../../../../common/interfaces/validate.interface';

@@ -3,10 +3,6 @@ import axios from "axios";
 import { IGoogleLoginRes, ILoginReq, ILoginRes } from "../interfaces/login.interface";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { statusCodes } from "@react-native-google-signin/google-signin";
-import { IUser } from '../../../../../common/interfaces/user.interface';
-import userStore from "../../../../../common/store/user.store";
-import moment from "moment";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IValidateRes } from "../../../../../common/interfaces/validate.interface";
 
 export const login = async (loginInfo: ILoginReq) => {

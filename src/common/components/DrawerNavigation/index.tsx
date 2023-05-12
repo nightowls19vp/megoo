@@ -106,18 +106,6 @@ export default function DrawerNavigation() {
       <Drawer.Screen
         options={{
           title: 'Megoo',
-          drawerLabel: 'Đoạn chat',
-          drawerIcon: ({color}) => (
-            <Icon name="message1" size={20} color={color} />
-          ),
-        }}
-        name={RouteNames.CHAT}
-        component={BottomNavigationBar}
-        initialParams={{screen: RouteNames.CHAT}}
-      />
-      <Drawer.Screen
-        options={{
-          title: 'Megoo',
           drawerLabel: 'Cài đặt',
           drawerIcon: ({color}) => (
             <Icon name="setting" size={20} color={color} />
