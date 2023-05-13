@@ -1,4 +1,6 @@
 import Icon from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {View, Text, Pressable} from 'react-native';
@@ -13,6 +15,8 @@ import AppInfoScreen from './../../../screens/settings/screens/AppInfoScreen';
 import PoliciesScreen from './../../../screens/settings/screens/PoliciesScreen';
 import ChangeAvatarScreen from '../../../screens/profile/screens/ChangeAvatarScreen';
 import PackageScreen from '../../../screens/package/screens/PackageScreen';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import CartScreen from '../../../screens/package/screens/CartScreen';
 
 function HomeScreen() {
   return (
@@ -32,22 +36,62 @@ function StorageScreen() {
 
 const PackageStack = createNativeStackNavigator();
 
-function PackageScreenStack() {
+const ChatScreen = () => {
   return (
-    <ProfileStack.Navigator>
-      <ProfileStack.Screen
+    <View style={{flex: 1, alignItems: 'center'}}>
+      <Text>Chat screen</Text>
+    </View>
+  );
+};
+
+const PackageScreenStack = ({navigation}: {navigation: any}) => {
+  return (
+    <PackageStack.Navigator initialRouteName={RouteNames.PACKAGE}>
+      <PackageStack.Screen
         name={RouteNames.PACKAGE}
         component={PackageScreen}
+        options={{
+          headerRight: ({tintColor}) => {
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  console.log('Cart');
+                  navigation.navigate(RouteNames.CART as never, {} as never);
+                }}>
+                <Icon name="shoppingcart" size={22} color={tintColor} />
+              </TouchableOpacity>
+            );
+          },
+        }}
       />
-    </ProfileStack.Navigator>
+      <PackageStack.Screen
+        name={RouteNames.CHAT}
+        component={ChatScreen}
+        // options={{
+        //   headerLeft: () => {
+        //     return (
+        //       <Pressable
+        //         style={{marginRight: 30}}
+        //         onPress={() => {
+        //           console.log('Chat');
+        //           navigation.navigate(RouteNames.PACKAGE as never, {} as never);
+        //         }}>
+        //         <FeatherIcon name="chevron-left" size={24} color={'orange'} />
+        //       </Pressable>
+        //     );
+        //   },
+        // }}
+      />
+      <PackageStack.Screen name={RouteNames.CART} component={CartScreen} />
+    </PackageStack.Navigator>
   );
-}
+};
 
 const ProfileStack = createNativeStackNavigator();
 
 function ProfileScreenStack() {
   return (
-    <ProfileStack.Navigator>
+    <ProfileStack.Navigator initialRouteName={RouteNames.PROFILE}>
       <ProfileStack.Screen
         name={RouteNames.PROFILE}
         component={ProfileScreen}
@@ -56,6 +100,7 @@ function ProfileScreenStack() {
         name={RouteNames.EDIT_PROFILE}
         component={EditProfileScreen}
       />
+      <ProfileStack.Screen name={RouteNames.CHAT} component={ChatScreen} />
     </ProfileStack.Navigator>
   );
 }
@@ -64,7 +109,7 @@ const SettingsStack = createNativeStackNavigator();
 
 function SettingsScreenStack() {
   return (
-    <SettingsStack.Navigator>
+    <SettingsStack.Navigator initialRouteName={RouteNames.SETTINGS}>
       <SettingsStack.Screen
         name={RouteNames.SETTINGS}
         component={SettingsScreen}
@@ -77,6 +122,7 @@ function SettingsScreenStack() {
         name={RouteNames.POLICIES_RIGHTS}
         component={PoliciesScreen}
       />
+      <SettingsStack.Screen name={RouteNames.CHAT} component={ChatScreen} />
     </SettingsStack.Navigator>
   );
 }
@@ -86,18 +132,9 @@ const Tab = createBottomTabNavigator();
 export default function BottomNavigationBar() {
   return (
     <Tab.Navigator
+      backBehavior="initialRoute"
       initialRouteName={RouteNames.HOME_TAB}
       screenOptions={{
-        // headerLeft: (props) => (
-        //   <Pressable style={{ paddingLeft: 15 }}>
-        //     <Icon name="bars" size={22} color={Colors.primary} />
-        //   </Pressable>
-        // ),
-        // headerRight: (props) => (
-        //   <Pressable style={{ paddingRight: 15 }}>
-        //     <Icon name="search1" size={22} color={Colors.primary} />
-        //   </Pressable>
-        // ),
         headerShown: false,
         tabBarHideOnKeyboard: true,
         tabBarLabelStyle: {paddingBottom: 6},
@@ -110,6 +147,7 @@ export default function BottomNavigationBar() {
       <Tab.Screen
         name={RouteNames.PACKAGE}
         component={PackageScreenStack}
+        initialParams={{screen: RouteNames.PACKAGE}}
         options={{
           title: 'Quản lý gói',
           tabBarActiveTintColor: Colors.primary,

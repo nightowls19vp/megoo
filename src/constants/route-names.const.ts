@@ -8,6 +8,8 @@ export default {
   HOME_DRAWER: "HOME_DRAWER",
 
   PACKAGE: "Quản lý gói",
+  CHAT: "Đoạn chat",
+  CART: "Giỏ hàng",
 
   STORAGE: "Quản lý kho",
 
@@ -15,8 +17,6 @@ export default {
   PROFILE: "Trang cá nhân",
   EDIT_PROFILE: "Chỉnh sửa thông tin cá nhân",
   CHANGE_AVATAR: "Chỉnh sửa ảnh đại diện",
-
-  CHAT: "Đoạn chat",
 
   SETTINGS_STACK: "SETTINGS_STACK",
   SETTINGS: "Cài đặt",

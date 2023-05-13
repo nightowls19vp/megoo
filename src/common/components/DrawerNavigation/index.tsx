@@ -4,11 +4,11 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-// import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import RouteNames from '../../../constants/route-names.const';
 import BottomNavigationBar from '../BottomNavigationBar';
-import {Text, View, Image} from 'react-native';
+import {Text, View, Image, TouchableOpacity} from 'react-native';
 import userStore from '../../store/user.store';
 import {Colors} from '../../../constants/color.const';
 
@@ -52,14 +52,43 @@ function CustomDrawerContent(props: any) {
   );
 }
 
-export default function DrawerNavigation() {
+const ChatScreen = () => {
+  return (
+    <View style={{flex: 1, alignItems: 'center'}}>
+      <Text>Chat screen</Text>
+    </View>
+  );
+};
+
+export default function DrawerNavigation({navigation}: {navigation: any}) {
   return (
     <Drawer.Navigator
       initialRouteName={RouteNames.HOME_TAB}
       drawerContent={props => <CustomDrawerContent {...props} />}
+      // backBehavior="initialRoute"
       screenOptions={{
         drawerLabelStyle: {marginLeft: -15},
         drawerActiveTintColor: Colors.primary,
+
+        headerRight: () => {
+          return (
+            <TouchableOpacity
+              onPress={() => {
+                console.log('Chat');
+                navigation.navigate(RouteNames.CHAT as never, {} as never);
+                // navigation.goBack();
+              }}
+              style={{
+                marginRight: 15,
+              }}>
+              <Ionicons
+                name="chatbubble-ellipses-outline"
+                size={22}
+                color={'black'}
+              />
+            </TouchableOpacity>
+          );
+        },
       }}>
       <Drawer.Screen
         options={{

@@ -1,6 +1,9 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import userStore from "../../../../../common/store/user.store";
 import { URL_HOST } from "../../../../../core/config/api/api.config";
 import { GetAllPkgRes } from "../interfaces/package.interface";
+import { CartReq } from './../interfaces/package.interface';
 
 export const getAllPackage = async () => {
   const packagesEndpoint = "api/pkg-mgmt/pkg";
@@ -9,8 +12,6 @@ export const getAllPackage = async () => {
 
   try {
     const response = await axios.get(reqUrl);
-
-    // console.log("Get all pkg res:", response);
 
     return response.data;
   } catch (error) {
@@ -22,5 +23,29 @@ export const getAllPackage = async () => {
 
       return response;
     }
+  }
+}
+
+export const updateCart = async (cart: CartReq) => {
+  const cartEndpoint = `api/users/${userStore.id}/cart`;
+  const reqUrl = `${URL_HOST}${cartEndpoint}`;
+  console.log("Update cart:", reqUrl);
+
+  const accessToken = await AsyncStorage.getItem("accessToken");
+  try {
+    const response = await axios.put(reqUrl, {
+      package: cart.cart,
+    }, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      }
+    });
+
+    console.log("Update cart response:", response);
+
+    return response.data;
+  } catch (error) {
+
   }
 }

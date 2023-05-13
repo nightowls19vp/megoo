@@ -9,14 +9,25 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: 'center',
   },
+  titleContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    marginVertical: 10,
+  },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     color: Colors.primary,
-    marginVertical: 10,
+  },
+  detailText: {
+    textAlignVertical: 'bottom',
+    includeFontPadding: false,
+    color: Colors.primary,
   },
   text: {
-    fontSize: 16,
+    fontSize: 14,
     color: Colors.text,
   },
   packageContainer: {
@@ -36,10 +47,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: Colors.primary,
-    marginVertical: 10,
+    marginTop: 10,
     textAlign: 'center',
   },
-  carouselItem: {
+  carouselItemContainer: {
     width: width * 0.55,
     backgroundColor: Colors.background,
     // borderWidth: 1,
@@ -50,13 +61,18 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     paddingHorizontal: 10,
   },
+  carouselItem: {
+    display: 'flex',
+    height: '100%',
+    justifyContent: 'space-between',
+  },
   infoRow: {
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     gap: 10,
-    marginVertical: 10,
+    marginTop: 10,
   },
   descriptionContainer: {
     width: '100%',
@@ -65,6 +81,33 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     gap: 5,
     marginVertical: 10,
+  },
+  buttonContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  button: {
+    width: '45%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    padding: 5,
+  },
+  buttonText: {
+    fontSize: 14,
+    color: Colors.primary,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
