@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   text: {
-    fontSize: 14,
+    fontSize: 16,
     color: Colors.text,
   },
   packageContainer: {
@@ -70,9 +70,9 @@ const styles = StyleSheet.create({
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     gap: 10,
-    marginTop: 10,
+    marginTop: 20,
   },
   descriptionContainer: {
     width: '100%',

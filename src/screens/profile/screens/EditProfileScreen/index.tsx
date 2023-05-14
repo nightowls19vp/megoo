@@ -225,26 +225,11 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
           // Get image extension
           const fileExtension = selectedImage.split('.').pop();
 
-          let body = new FormData();
-          // body.append('file', {
-          //   uri: `${selectedImage}`,
-          //   name: 'avatar.png',
-          //   type: `image/${fileExtension}`,
-          // } );
-          body.append(
-            'file',
-            JSON.parse(
-              JSON.stringify({
-                uri: selectedImage,
-                name: `avatar.${fileExtension}`,
-                type: `image/${fileExtension}`,
-              }),
-            ),
-          );
+          const base64String = `data:image/${fileExtension};base64,${imageFile}`;
 
-          // changeAvatar(imageFile).then(response => {
-          //   console.log('Change ava res:', response);
-          // });
+          changeAvatar(base64String).then(response => {
+            userStore.setAvatar(response.data);
+          });
         }
       }}>
       {({
@@ -264,23 +249,6 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
             }}
             style={styles.avatar}
           />
-
-          {/* <Image
-            source={{
-              uri:
-                selectedImage != ''
-                  ? selectedImage
-                  : `data:image/jpeg;base64,${userStore.avatar}`,
-            }}
-            style={{
-              width: 200,
-              height: 200,
-              borderWidth: 1,
-              borderColor: 'black',
-              borderRadius: 200 / 2,
-              marginTop: 20,
-            }}
-          /> */}
 
           <TouchableOpacity
             style={{marginVertical: 10}}
@@ -306,7 +274,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
                     //     `${source?.[0]?.type}`,
                     //   ),
                     // );
-                    // setImageFile(source[0].base64);
+                    setImageFile(source[0].base64);
                     // console.log('File:', source[0].base64);
                   }
                 },

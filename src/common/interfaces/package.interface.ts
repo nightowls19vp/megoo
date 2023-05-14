@@ -6,3 +6,14 @@ export interface IPackage {
     noOfMember: number;
     description: string;
 }
+
+export interface ICartItem {
+    package: string,
+    quantity: number,
+    noOfMemb: number,
+    duration: number,
+}
+
+export interface ICartList {
+    cart: ICartItem[],
+}

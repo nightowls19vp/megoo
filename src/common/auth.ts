@@ -24,8 +24,6 @@ export const checkLogin = async () => {
   const accessToken = await AsyncStorage.getItem('accessToken');
   const refreshToken = await AsyncStorage.getItem('refreshToken');
 
-  console.log("check RT:", refreshToken);
-
   let isLoggedIn = false;
 
   // Check if refresh token expired or not
@@ -35,6 +33,8 @@ export const checkLogin = async () => {
     const isRefreshTokenExpired = await checkValidToken(`${refreshToken}`);
     console.log('access token:', accessToken);
     console.log('refresh token:', refreshToken);
+    console.log("check refresh token:", isRefreshTokenExpired);
+
 
     /**
      * If refresh token has not expired then get user info
@@ -58,7 +58,6 @@ export const checkLogin = async () => {
           const reqUrl = `${URL_HOST}${refreshEndpoint}`;
           const response = await axios.get(reqUrl, {
             headers: {
-              'Content-Type': 'application/json',
               Accept: 'application/json',
               Authorization: `Bearer ${refreshToken}`,
             },
@@ -85,19 +84,20 @@ export const checkLogin = async () => {
           avatar: '',
         };
 
-        user._id = response.data.userInfo._id ?? '';
-        user.name = response.data.userInfo.name ?? '';
-        user.email = response.data.userInfo.email ?? '';
-        user.phone = response.data.userInfo.phone ?? '';
-        user.dob = dateFormat(response.data.userInfo.dob) ?? '';
+        console.log("ID:", response.userInfo._id);
+
+        user._id = response.userInfo._id ?? '';
+        user.name = response.userInfo.name ?? '';
+        user.email = response.userInfo.email ?? '';
+        user.phone = response.userInfo.phone ?? '';
+        user.dob = dateFormat(response.userInfo.dob) ?? '';
         user.avatar =
-          response.data.userInfo.avatar ??
+          response.userInfo.avatar ??
           'https://res.cloudinary.com/nightowls19vp/image/upload/v1683454262/cld-sample.jpg';
 
         userStore.setUser(user);
 
         console.log("avatar:", userStore.avatar);
-
 
         // Store user settings
         let settings: ISettings = {
@@ -108,13 +108,13 @@ export const checkLogin = async () => {
         };
 
         settings.callNoti =
-          response.data.userInfo.setting.callNoti;
+          response.userInfo.setting.callNoti;
         settings.msgNoti =
-          response.data.userInfo.setting.msgNoti;
+          response.userInfo.setting.msgNoti;
         settings.stockNoti =
-          response.data.userInfo.setting.stockNoti;
+          response.userInfo.setting.stockNoti;
         settings.newsNoti =
-          response.data.userInfo.setting.newsNoti;
+          response.userInfo.setting.newsNoti;
 
         userStore.setUserSettings(settings);
       }

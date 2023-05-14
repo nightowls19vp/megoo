@@ -58,7 +58,7 @@ export const validate = async (token: string) => {
     });
 
     // console.log("Validate res data:", res.data);
-    // console.log("Validate user data:", res.data.data.userInfo);
+    console.log("Validate user data:", res.data);
 
     return res.data;
   } catch (error) {

@@ -5,6 +5,10 @@ import { ISettings } from './../interfaces/settings.interface';
 import axios from 'axios';
 import { URL_HOST } from "../../core/config/api/api.config";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ICartItem, ICartList, IPackage } from "../interfaces/package.interface";
+import { updateCart } from "../../screens/package/screens/PackageScreen/services/package.service";
+import jwtDecode from "jwt-decode";
+import { IJWTToken } from "../interfaces/token.interface";
 
 class UserStore {
   @observable id = "";
@@ -13,10 +17,13 @@ class UserStore {
   @observable phone = "";
   @observable dob = "";
   @observable avatar = "";
-  @observable msgNoti!: boolean;
-  @observable callNoti!: boolean;
-  @observable newsNoti!: boolean;
-  @observable stockNoti!: boolean;
+  @observable msgNoti = true;
+  @observable callNoti = true;
+  @observable newsNoti = true;
+  @observable stockNoti = true;
+  @observable cartList: ICartList = {
+    cart: [] as ICartItem[],
+  };
 
   constructor() {
     makeAutoObservable(this);
@@ -26,11 +33,6 @@ class UserStore {
 
       async () => {
         try {
-          console.log("Msg:", this.msgNoti);
-          console.log("Call:", this.callNoti);
-          console.log("Stock:", this.stockNoti);
-          console.log("News:", this.newsNoti);
-
           const settingEndpoint = `api/users/${this.id}/setting`;
           const reqUrl = `${URL_HOST}${settingEndpoint}`;
           console.log("Setting:", reqUrl);
@@ -54,7 +56,7 @@ class UserStore {
           // this.setStockNoti(response.data.data.setting.stockNoti);
           // this.setNewsNoti(response.data.data.setting.newsNoti);
 
-          console.log("Setting update res:", response.data);
+          console.log("Setting update res:", response.data.statusCode);
         } catch (error) {
           if (axios.isAxiosError(error)) {
             let response: IValidateRes = {
@@ -66,7 +68,6 @@ class UserStore {
           }
         }
       }
-
     )
   }
 
@@ -122,7 +123,9 @@ class UserStore {
     this.avatar = avatar;
   }
 
-
+  @action addPackage(item: ICartItem) {
+    this.cartList.cart.push(item);
+  }
 
 }
 

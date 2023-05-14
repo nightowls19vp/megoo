@@ -310,53 +310,50 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                   `${response.data?.refreshToken}`,
                 );
 
-                validate(`${response.data?.accessToken}`).then(
-                  (response: IValidateRes) => {
-                    console.log('User data:', response.data);
+                validate(`${response.data?.accessToken}`).then(response => {
+                  console.log('User data:', response.userInfo);
 
-                    // Store user data
-                    let user: IUser = {
-                      _id: '',
-                      name: '',
-                      dob: '',
-                      email: '',
-                      phone: '',
-                      avatar: '',
-                    };
+                  // Store user data
+                  let user: IUser = {
+                    _id: '',
+                    name: '',
+                    dob: '',
+                    email: '',
+                    phone: '',
+                    avatar: '',
+                  };
 
-                    // Store user info
-                    user._id = response.data?.userInfo._id ?? '';
-                    user.name = response.data?.userInfo.name ?? '';
-                    user.email = response.data?.userInfo.email ?? '';
-                    user.phone = response.data?.userInfo.phone ?? '';
-                    user.dob = response.data?.userInfo.dob ?? '';
-                    user.avatar =
-                      response.data?.userInfo.avatar ??
-                      'https://res.cloudinary.com/nightowls19vp/image/upload/v1683454262/cld-sample.jpg';
+                  // Store user info
+                  user._id = response.userInfo._id ?? '';
+                  user.name = response.userInfo.name ?? '';
+                  user.email = response.userInfo.email ?? '';
+                  user.phone = response.userInfo.phone ?? '';
+                  user.dob = response.userInfo.dob ?? '';
+                  user.avatar =
+                    response.userInfo.avatar ??
+                    'https://res.cloudinary.com/nightowls19vp/image/upload/v1683454262/cld-sample.jpg';
 
-                    userStore.setUser(user);
+                  userStore.setUser(user);
 
-                    // Store user settings
-                    let settings: ISettings = {
-                      callNoti: true,
-                      msgNoti: true,
-                      stockNoti: true,
-                      newsNoti: true,
-                    };
+                  // Store user settings
+                  let settings: ISettings = {
+                    callNoti: true,
+                    msgNoti: true,
+                    stockNoti: true,
+                    newsNoti: true,
+                  };
 
-                    settings.callNoti =
-                      response.data.userInfo.setting.callNoti ?? true;
-                    settings.msgNoti =
-                      response.data.userInfo.setting.msgNoti ?? true;
-                    settings.stockNoti =
-                      response.data.userInfo.setting.stockNoti ?? true;
-                    settings.newsNoti =
-                      response.data.userInfo.setting.newsNoti ?? true;
+                  settings.callNoti =
+                    response.userInfo.setting.callNoti ?? true;
+                  settings.msgNoti = response.userInfo.setting.msgNoti ?? true;
+                  settings.stockNoti =
+                    response.userInfo.setting.stockNoti ?? true;
+                  settings.newsNoti =
+                    response.userInfo.setting.newsNoti ?? true;
 
-                    userStore.setUserSettings(settings);
-                    console.log('Call noti:', settings.callNoti);
-                  },
-                );
+                  userStore.setUserSettings(settings);
+                  console.log('Call noti:', settings.callNoti);
+                });
 
                 // Show toast message and navigate to home screen if login successfully
                 if (response.statusCode === 200) {

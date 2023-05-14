@@ -52,7 +52,7 @@ export const editInfo = async (editInfo: IEditInfoReq) => {
 };
 
 export const changeAvatar = async (base64String: string) => {
-  const changeAvaEndpoint = `api/users/${userStore.id}/avatar`;
+  const changeAvaEndpoint = "api/file/upload-avatar-with-base64";
   const reqUrl = `${URL_HOST}${changeAvaEndpoint}`;
   console.log('Change avatar:', reqUrl);
 
@@ -60,16 +60,13 @@ export const changeAvatar = async (base64String: string) => {
 
   try {
     const response = await axios.post(reqUrl, {
-      avatar: base64String,
+      base64: base64String,
     }, {
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${accessToken}`
       }
     });
-
-    // const data = await response.json();
-    // console.log("Fetch data:", data);
 
     return response.data;
   } catch (error) {

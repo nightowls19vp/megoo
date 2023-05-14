@@ -33,8 +33,8 @@ const App = () => {
   };
 
   useEffect(() => {
-    checkLoggedIn();
     setTimeout(() => {
+      checkLoggedIn();
       setLoading(false);
     }, 500);
   }, [appStore.isLoggedIn]);

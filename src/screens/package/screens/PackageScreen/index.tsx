@@ -13,9 +13,15 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
 import styles from './styles/style';
-import {getAllPackage} from './services/package.service';
+import {getAllPackage, updateCart} from './services/package.service';
 import {Colors} from '../../../../constants/color.const';
 import packageStore from '../../../../common/store/package.store';
+import {
+  ICartItem,
+  ICartList,
+} from '../../../../common/interfaces/package.interface';
+import userStore from '../../../../common/store/user.store';
+import Toast from 'react-native-toast-message';
 
 const PackageScreen = () => {
   const [packages, setPackages] = useState([]);
@@ -37,43 +43,42 @@ const PackageScreen = () => {
     const [duration, setDuration] = useState(item.duration);
     const [totalPrice, setTotalPrice] = useState(
       item.duration >= 12
-        ? (item.price + item.noOfMember * item.duration * item.coefficient) *
+        ? item.coefficient === undefined
+          ? item.price
+          : (item.price + item.noOfMember * item.duration * item.coefficient) *
             0.7
         : item.price + item.noOfMember * item.duration * item.coefficient,
     );
 
     const calculatePrice = () => {
       if (item.name === 'Family Package') {
-        let price =
-          (item.price + item.noOfMember * item.duration * item.coefficient) *
-          0.7;
+        let price = (item.price + item.noOfMember * item.duration * 0) * 0.7;
+
         setTotalPrice(price);
       } else if (item.name === 'Customized Package') {
         let price =
           duration >= 12
             ? (item.price + noOfMemb * duration * item.coefficient) * 0.7
             : item.price + noOfMemb * duration * item.coefficient;
-        console.log('Cus price:', price);
 
-        setTotalPrice(price);
+        let roundPrice = Math.round(price);
+
+        setTotalPrice(roundPrice);
       } else {
         let price =
           item.duration >= 12
             ? (item.price + noOfMemb * item.duration * item.coefficient) * 0.7
             : item.price + noOfMemb * item.duration * item.coefficient;
-        setTotalPrice(price);
+
+        let roundPrice = Math.round(price);
+
+        setTotalPrice(roundPrice);
       }
     };
 
-    // if (item.name === 'Annual Package') {
-    //   useEffect(() => {
-    //     calculatePrice();
-    //   }, [noOfMemb]);
-    // } else {
-    //   useEffect(() => {
-    //     calculatePrice();
-    //   }, [noOfMemb, duration]);
-    // }
+    useEffect(() => {
+      calculatePrice();
+    }, [noOfMemb, duration]);
 
     return (
       <View style={styles.carouselItemContainer} key={item._id}>
@@ -83,7 +88,16 @@ const PackageScreen = () => {
               {item.name}
             </Text>
 
-            <View style={styles.infoRow}>
+            <View
+              style={
+                styles.infoRow
+                // {
+                //   display: 'flex',
+                //   alignItems: 'center',
+                //   justifyContent: 'center',
+                //   marginVertical: 10,
+                // }
+              }>
               <Text style={styles.text}>Thời hạn:</Text>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
                 {duration !== item.duration ? duration : item.duration} tháng
@@ -91,7 +105,7 @@ const PackageScreen = () => {
             </View>
             {item.name === 'Customized Package' ? (
               <Slider
-                style={{width: '100%', height: 40}}
+                style={{width: '100%', height: 30}}
                 step={1}
                 value={duration !== item.duration ? duration : item.duration}
                 minimumValue={0}
@@ -103,7 +117,16 @@ const PackageScreen = () => {
               />
             ) : null}
 
-            <View style={styles.infoRow}>
+            <View
+              style={
+                // styles.infoRow
+                {
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginTop: 20,
+                }
+              }>
               <Text style={styles.text}>Số lượng thành viên:</Text>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
                 {noOfMemb !== item.noOfMember ? noOfMemb : item.noOfMember}{' '}
@@ -112,7 +135,7 @@ const PackageScreen = () => {
             </View>
             {item.name !== 'Family Package' ? (
               <Slider
-                style={{width: '100%', height: 40}}
+                style={{width: '100%', height: 30}}
                 step={1}
                 value={
                   noOfMemb !== item.noOfMember ? noOfMemb : item.noOfMember
@@ -126,21 +149,74 @@ const PackageScreen = () => {
               />
             ) : null}
 
-            <View style={styles.infoRow}>
+            <View
+              style={
+                // styles.infoRow
+                {
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginTop: 20,
+                }
+              }>
               <Text style={styles.text}>Giá tiền: </Text>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                {item.price} VND
+              <Text style={[styles.text, {fontSize: 24, fontWeight: 'bold'}]}>
+                {totalPrice} VND
               </Text>
             </View>
 
-            <View style={styles.descriptionContainer}>
+            <View
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: 20,
+              }}>
               <Text style={styles.text}>Mô tả:</Text>
-              <Text style={styles.text}>{item.description}</Text>
+              <Text
+                style={[
+                  styles.text,
+                  {textAlign: 'center', fontWeight: 'bold'},
+                ]}>
+                {item.description}
+              </Text>
             </View>
           </View>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={async () => {
+                let cartItem: ICartItem = {
+                  package: item._id,
+                  quantity: 1,
+                  noOfMemb: noOfMemb,
+                  duration: duration,
+                };
+                userStore.addPackage(cartItem);
+
+                const response = await updateCart(userStore.cartList);
+                console.log('Update cart res:', response.statusCode);
+
+                if (response.statusCode === 200) {
+                  Toast.show({
+                    type: 'success',
+                    text1: 'Thêm vào giỏ hàng thành công',
+                    autoHide: true,
+                    visibilityTime: 2000,
+                    topOffset: 30,
+                    bottomOffset: 40,
+                  });
+                } else {
+                  Toast.show({
+                    type: 'error',
+                    text1: response.message,
+                    autoHide: false,
+                    topOffset: 30,
+                    bottomOffset: 40,
+                  });
+                }
+              }}>
               <Text style={styles.buttonText} numberOfLines={2}>
                 Mua ngay
               </Text>
@@ -214,7 +290,7 @@ const PackageScreen = () => {
             parallaxScrollingOffset: 120,
           }}
           width={width * 0.9}
-          height={width * 1.1}
+          height={width * 1.3}
           //   autoPlay={true}
           data={packages}
           scrollAnimationDuration={1000}
@@ -222,6 +298,8 @@ const PackageScreen = () => {
           renderItem={renderItem}
         />
       </View>
+
+      <Toast position="top"></Toast>
     </ScrollView>
   );
 };

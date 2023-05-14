@@ -3,7 +3,7 @@ import axios from "axios";
 import userStore from "../../../../../common/store/user.store";
 import { URL_HOST } from "../../../../../core/config/api/api.config";
 import { GetAllPkgRes } from "../interfaces/package.interface";
-import { CartReq } from './../interfaces/package.interface';
+import { ICartList } from '../../../../../common/interfaces/package.interface';
 
 export const getAllPackage = async () => {
   const packagesEndpoint = "api/pkg-mgmt/pkg";
@@ -26,15 +26,16 @@ export const getAllPackage = async () => {
   }
 }
 
-export const updateCart = async (cart: CartReq) => {
+export const updateCart = async (cart: ICartList) => {
   const cartEndpoint = `api/users/${userStore.id}/cart`;
   const reqUrl = `${URL_HOST}${cartEndpoint}`;
   console.log("Update cart:", reqUrl);
 
   const accessToken = await AsyncStorage.getItem("accessToken");
+
   try {
     const response = await axios.put(reqUrl, {
-      package: cart.cart,
+      cart: cart.cart,
     }, {
       headers: {
         Accept: 'application/json',
@@ -42,10 +43,27 @@ export const updateCart = async (cart: CartReq) => {
       }
     });
 
-    console.log("Update cart response:", response);
-
     return response.data;
   } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log(error.response?.data);
 
+      let response: any = {
+        statusCode: error.response?.status ?? 500,
+        message: error.response?.data.message ?? "",
+      };
+
+      if (!error?.response) {
+        console.log("No Server Response");
+        response.message = "Mất kết nối với server";
+      } else if (error.response?.status === 400) {
+        response.message = "Dữ liệu không hợp lệ";
+      } else {
+        console.log("Add package Failed");
+        response.message = "Thêm vào giỏ hàng không thành công";
+      }
+
+      return response;
+    }
   }
 }
