@@ -1,4 +1,4 @@
-import { action, makeAutoObservable, observable, reaction } from "mobx";
+import { action, extendObservable, makeAutoObservable, observable, reaction } from "mobx";
 import { IUser } from '../interfaces/user.interface';
 import { IValidateRes } from '../interfaces/validate.interface';
 import { ISettings } from './../interfaces/settings.interface';
@@ -6,9 +6,6 @@ import axios from 'axios';
 import { URL_HOST } from "../../core/config/api/api.config";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ICartItem, ICartList, IPackage } from "../interfaces/package.interface";
-import { updateCart } from "../../screens/package/screens/PackageScreen/services/package.service";
-import jwtDecode from "jwt-decode";
-import { IJWTToken } from "../interfaces/token.interface";
 
 class UserStore {
   @observable id = "";
@@ -26,6 +23,8 @@ class UserStore {
   };
 
   constructor() {
+    // this.reset();
+
     makeAutoObservable(this);
 
     reaction(
@@ -123,10 +122,17 @@ class UserStore {
     this.avatar = avatar;
   }
 
-  @action addPackage(item: ICartItem) {
+  @action setCartList(list: ICartList) {
+    this.cartList = list;
+  }
+
+  @action addCartItem(item: ICartItem) {
     this.cartList.cart.push(item);
   }
 
+  @action resetArray() {
+    this.cartList.cart = []; // Assigning an empty array to reset the observable array
+  }
 }
 
 const userStore = new UserStore();

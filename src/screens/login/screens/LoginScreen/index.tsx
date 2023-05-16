@@ -433,4 +433,4 @@ export default function LoginScreen({navigation}: {navigation: any}) {
     // </Provider>
   );
 }
-AppRegistry.registerComponent('LoginScreen', () => LoginScreen);
+// AppRegistry.registerComponent('LoginScreen', () => LoginScreen);

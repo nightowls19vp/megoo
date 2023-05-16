@@ -1,4 +1,6 @@
 export default {
+  SPLASH: "SPLASH",
+
   LOGIN: "LOGIN",
   REGISTER: "v",
   FORGOT_PASSWORD: "FORGOT_PASSWORD",

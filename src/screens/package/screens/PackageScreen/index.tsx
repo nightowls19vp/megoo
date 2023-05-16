@@ -19,9 +19,11 @@ import packageStore from '../../../../common/store/package.store';
 import {
   ICartItem,
   ICartList,
+  IUserCart,
 } from '../../../../common/interfaces/package.interface';
 import userStore from '../../../../common/store/user.store';
 import Toast from 'react-native-toast-message';
+import {getUserCart} from '../CartScreen/services/cart.service';
 
 const PackageScreen = () => {
   const [packages, setPackages] = useState([]);
@@ -64,15 +66,17 @@ const PackageScreen = () => {
         let roundPrice = Math.round(price);
 
         setTotalPrice(roundPrice);
-      } else {
+      } else if (item.name === 'Annual Package') {
         let price =
-          item.duration >= 12
-            ? (item.price + noOfMemb * item.duration * item.coefficient) * 0.7
-            : item.price + noOfMemb * item.duration * item.coefficient;
+          (item.price + noOfMemb * item.duration * item.coefficient) * 0.7;
 
         let roundPrice = Math.round(price);
 
         setTotalPrice(roundPrice);
+      } else if (item.name === 'Experience Package') {
+        let price = item.price + noOfMemb * item.duration * item.coefficient;
+
+        setTotalPrice(price);
       }
     };
 
@@ -184,19 +188,78 @@ const PackageScreen = () => {
           </View>
 
           <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText} numberOfLines={2}>
+                Mua ngay
+              </Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
               onPress={async () => {
-                let cartItem: ICartItem = {
+                // userStore.resetArray();
+                let selectedPkg = {
                   package: item._id,
-                  quantity: 1,
-                  noOfMemb: noOfMemb,
+                  noOfMember: noOfMemb,
                   duration: duration,
                 };
-                userStore.addPackage(cartItem);
+
+                // Get user cart
+                const userCart: IUserCart = await getUserCart();
+                console.log('userCart res:', userCart.cart);
+
+                const userCartList: ICartList = {
+                  cart: [] as ICartItem[],
+                };
+
+                userCart.cart.map(object => {
+                  let item = {
+                    package: object._id,
+                    noOfMember: object.noOfMember,
+                    duration: object.duration,
+                    quantity: object.quantity,
+                  };
+
+                  userCartList.cart.push(item);
+                });
+
+                userStore.setCartList(userCartList);
+
+                // // Increase quantity for the same package
+                const index = userStore.cartList.cart.findIndex(
+                  obj =>
+                    obj.package === selectedPkg.package &&
+                    obj.noOfMember === selectedPkg.noOfMember &&
+                    obj.duration === selectedPkg.duration,
+                );
+
+                if (index === -1) {
+                  userStore.cartList.cart.push({...selectedPkg, quantity: 1});
+                } else {
+                  userStore.cartList.cart[index].quantity++;
+                }
+
+                // const map = new Map<string, number>();
+                // userStore.cartList.cart.forEach(obj => {
+                //   const key = `${obj.package}-${obj.noOfMember}-${obj.duration}`;
+                //   if (!map.has(key)) {
+                //     map.set(key, 1);
+                //   } else {
+                //     map.set(key, ((map.get(key) as number) + 1) as number);
+                //   }
+                // });
+
+                // const cartList = Array.from(map, ([key, value]) => ({
+                //   package: key.split('-')[0],
+                //   noOfMember: key.split('-')[1],
+                //   duration: key.split('-')[2],
+                //   quantity: value,
+                // }));
 
                 const response = await updateCart(userStore.cartList);
-                console.log('Update cart res:', response.statusCode);
+                console.log('update cart response:', response.data);
+
+                const getCart: IUserCart = await getUserCart();
+                console.log('userCart res:', getCart.cart);
 
                 if (response.statusCode === 200) {
                   Toast.show({
@@ -217,11 +280,6 @@ const PackageScreen = () => {
                   });
                 }
               }}>
-              <Text style={styles.buttonText} numberOfLines={2}>
-                Mua ngay
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
               <Text style={styles.buttonText} numberOfLines={2}>
                 Thêm vào giỏ hàng
               </Text>

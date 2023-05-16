@@ -18,6 +18,7 @@ import RegisterScreen from './src/screens/register/RegisterScreen';
 import {checkLogin} from './src/common/auth';
 import {observer} from 'mobx-react';
 import appStore from './src/common/store/app.store';
+import SplashScreen from './src/screens/splash/SplashScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,16 +34,18 @@ const App = () => {
   };
 
   useEffect(() => {
+    checkLoggedIn();
+
     setTimeout(() => {
-      checkLoggedIn();
       setLoading(false);
-    }, 500);
+    }, 1000);
   }, [appStore.isLoggedIn]);
 
   return (
     <View style={{flex: 1, justifyContent: 'center'}}>
       {loading ? (
-        <ActivityIndicator size="large" color="orange" />
+        // <ActivityIndicator size="large" color="orange" />
+        <SplashScreen />
       ) : (
         <NavigationContainer>
           <Stack.Navigator screenOptions={{headerShown: false}}>

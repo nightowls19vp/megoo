@@ -14,6 +14,8 @@ export const checkValidToken = async (token: string) => {
 
   const payload = jwtDecode(token) as IJWTToken;
   const isTokenExpired = Date.now() >= payload.exp * 1000;
+  console.log("Date.now():", Date.now());
+  console.log("Payload.exp:", payload.exp * 1000);
 
   return isTokenExpired;
 };
@@ -28,13 +30,9 @@ export const checkLogin = async () => {
 
   // Check if refresh token expired or not
   if (refreshToken !== null) {
-    console.log("before check RT");
-
     const isRefreshTokenExpired = await checkValidToken(`${refreshToken}`);
     console.log('access token:', accessToken);
     console.log('refresh token:', refreshToken);
-    console.log("check refresh token:", isRefreshTokenExpired);
-
 
     /**
      * If refresh token has not expired then get user info
@@ -48,28 +46,30 @@ export const checkLogin = async () => {
       console.log("Refresh token has not expired");
       const isAccessTokenExpired = await checkValidToken(`${accessToken}`);
 
-      console.log("Check access token expired:", isAccessTokenExpired);
+      if (accessToken !== null) {
+        if (isAccessTokenExpired === true) {
+          console.log("Access token expired");
 
-      if (isAccessTokenExpired === true) {
-        console.log("Access token expired");
+          try {
+            const refreshEndpoint = 'api/auth/refresh';
+            const reqUrl = `${URL_HOST}${refreshEndpoint}`;
+            const response = await axios.get(reqUrl, {
+              headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${refreshToken}`,
+              },
+            });
+            console.log("Res refresh token:", response.data);
+            AsyncStorage.setItem("accessToken", response.data.accessToken);
 
-        try {
-          const refreshEndpoint = 'api/auth/refresh';
-          const reqUrl = `${URL_HOST}${refreshEndpoint}`;
-          const response = await axios.get(reqUrl, {
-            headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer ${refreshToken}`,
-            },
-          });
-          console.log("Res refresh token:", response.data);
-        } catch (error) {
-          if (axios.isAxiosError(error)) {
-            console.log("Refresh api error:", error.response?.data);
+          } catch (error) {
+            if (axios.isAxiosError(error)) {
+              console.log("Refresh api error:", error.response?.data);
+            }
           }
+
         }
 
-      } else {
         console.log("Access token has not expired");
         const response = await validate(`${accessToken}`);
         // console.log('Validate res:', response.data.userInfo);
@@ -118,6 +118,7 @@ export const checkLogin = async () => {
 
         userStore.setUserSettings(settings);
       }
+
 
       isLoggedIn = true;
     } else {
