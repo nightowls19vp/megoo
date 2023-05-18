@@ -7,14 +7,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: Colors.primary,
     marginVertical: 10,
   },
   text: {
     color: Colors.text,
-    fontSize: 16,
+    fontSize: 14,
   },
   settingsContainer: {
     width: '90%',
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   dividerContainer: {

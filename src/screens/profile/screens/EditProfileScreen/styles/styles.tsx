@@ -4,7 +4,8 @@ import {Colors} from '../../../../../constants/color.const';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.background,
-    flex: 1,
+    // flex: 1,
+    display: 'flex',
     alignItems: 'center',
     paddingTop: 10,
     // justifyContent: 'center',

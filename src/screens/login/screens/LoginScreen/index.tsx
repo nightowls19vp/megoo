@@ -145,19 +145,6 @@ export default function LoginScreen({navigation}: {navigation: any}) {
 
           userStore.setUser(user);
 
-          // let auth: IAuthData = {
-          //   id: '',
-          //   username: '',
-          //   role: '',
-          //   password: '',
-          //   hashedPassword: '',
-          //   socialAccounts: [],
-          // };
-
-          // auth.id = response?.data?.auth['id'] ?? '';
-          // auth.role = response?.data?.auth['role'] ?? '';
-          // auth.username = response?.data?.auth['username'] ?? '';
-
           // Store user token
           AsyncStorage.setItem('accessToken', `${response?.accessToken}`);
           AsyncStorage.setItem('refreshToken', `${response?.refreshToken}`);

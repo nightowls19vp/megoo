@@ -41,7 +41,14 @@ function CustomDrawerContent(props: any) {
             marginBottom: 20,
           }}
         />
-        <Text style={{color: Colors.primary, fontSize: 20, fontWeight: 'bold'}}>
+        <Text
+          style={{
+            textAlign: 'center',
+            color: Colors.primary,
+            fontSize: 18,
+            fontWeight: 'bold',
+          }}
+          numberOfLines={2}>
           {userStore.name}
         </Text>
       </View>

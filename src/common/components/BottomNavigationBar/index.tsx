@@ -137,10 +137,10 @@ export default function BottomNavigationBar() {
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
-        tabBarLabelStyle: {paddingBottom: 6},
+        tabBarLabelStyle: {paddingBottom: 5},
         tabBarActiveTintColor: Colors.primary,
         tabBarStyle: {
-          height: 50,
+          height: 60,
           paddingBottom: 0,
         },
       }}>
@@ -149,7 +149,7 @@ export default function BottomNavigationBar() {
         component={PackageScreenStack}
         initialParams={{screen: RouteNames.PACKAGE}}
         options={{
-          title: 'Quản lý gói',
+          title: 'Gói',
           tabBarActiveTintColor: Colors.primary,
           tabBarIcon: ({color}) => {
             return <Icon name="addusergroup" size={22} color={color} />;
@@ -160,6 +160,7 @@ export default function BottomNavigationBar() {
         name={RouteNames.STORAGE}
         component={StorageScreen}
         options={{
+          title: 'Kho',
           tabBarActiveTintColor: Colors.primary,
           tabBarIcon: ({color}) => {
             return <Icon name="isv" size={20} color={color} />;
@@ -182,7 +183,7 @@ export default function BottomNavigationBar() {
         component={ProfileScreenStack}
         initialParams={{screen: RouteNames.PROFILE}}
         options={{
-          title: 'Trang cá nhân',
+          title: 'Tôi',
           tabBarIcon: ({color}) => {
             return <Icon name="user" size={20} color={color} />;
           },

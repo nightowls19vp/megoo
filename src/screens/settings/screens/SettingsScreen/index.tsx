@@ -20,6 +20,7 @@ import {ILogoutRes} from './interfaces/logout.interface';
 import {logout} from './services/settings.service';
 import {signOutIfSignedInWithGG} from '../../../login/screens/LoginScreen/services/login.service';
 import {observer} from 'mobx-react';
+import {Colors} from '../../../../constants/color.const';
 
 const SettingsScreen = ({navigation}: {navigation: any}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -146,7 +147,8 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
             gap: 20,
             padding: 20,
           }}>
-          <Text style={{fontSize: 24, textAlign: 'justify'}}>
+          <Text
+            style={{fontSize: 18, textAlign: 'justify', color: Colors.text}}>
             Đăng xuất khỏi tài khoản của bạn?
           </Text>
 
@@ -166,7 +168,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
               style={{
                 alignItems: 'center',
               }}>
-              <Text style={{fontSize: 18}}>Huỷ</Text>
+              <Text style={{fontSize: 16, color: Colors.text}}>Huỷ</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={async () => {
@@ -190,7 +192,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
               style={{
                 alignItems: 'center',
               }}>
-              <Text style={{fontSize: 18, color: 'red'}}>Đăng xuất</Text>
+              <Text style={{fontSize: 16, color: 'red'}}>Đăng xuất</Text>
             </TouchableOpacity>
           </View>
         </View>

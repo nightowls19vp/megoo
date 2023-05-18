@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {
   AppRegistry,
   Image,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -68,168 +69,210 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
       initialValues={initialValues}
       validationSchema={ProfileSchema}
       onSubmit={values => {
-        const dobISOString = dateISOFormat(values.dob);
-
-        // If user change info then call API and update user store
+        //   // If user change info then call API and update user store
         if (values.name !== userStore.name) {
           console.log('edit name');
-
           editInfo({
             name: values.name,
-          }).then((response: IEditInfoRes) => {
-            console.log(response.message);
-            if (response.statusCode === 200) {
-              Toast.show({
-                type: 'success',
-                text1: 'Sửa thông tin thành công',
-                autoHide: true,
-                visibilityTime: 1000,
-                topOffset: 20,
-                bottomOffset: 40,
-                onHide: () => {
-                  navigation.navigate(RouteNames.PROFILE as never, {} as never);
-                },
-              });
-              userStore.setName(response.data.name);
-            } else if (response.statusCode === 401) {
-              Toast.show({
-                type: 'error',
-                text1: response.message,
-                autoHide: false,
-                topOffset: 30,
-                bottomOffset: 40,
-              });
-            } else if (response.statusCode === 404) {
-              Toast.show({
-                type: 'error',
-                text1: response.message,
-                autoHide: false,
-                topOffset: 30,
-                bottomOffset: 40,
-              });
-            } else {
-              Toast.show({
-                type: 'error',
-                text1: response.message,
-                autoHide: false,
-                topOffset: 30,
-                bottomOffset: 40,
-              });
-            }
-          });
+          })
+            .then((response: IEditInfoRes) => {
+              console.log(response.message);
+              if (response.statusCode === 200) {
+                Toast.show({
+                  type: 'success',
+                  text1: 'Sửa thông tin thành công',
+                  autoHide: true,
+                  visibilityTime: 1000,
+                  topOffset: 20,
+                  bottomOffset: 40,
+                  onHide: () => {
+                    navigation.navigate(
+                      RouteNames.PROFILE as never,
+                      {} as never,
+                    );
+                  },
+                });
+                userStore.setName(response.data.name);
+              } else if (response.statusCode === 401) {
+                Toast.show({
+                  type: 'error',
+                  text1: response.message,
+                  autoHide: false,
+                  topOffset: 30,
+                  bottomOffset: 40,
+                });
+              } else if (response.statusCode === 404) {
+                Toast.show({
+                  type: 'error',
+                  text1: response.message,
+                  autoHide: false,
+                  topOffset: 30,
+                  bottomOffset: 40,
+                });
+              } else {
+                Toast.show({
+                  type: 'error',
+                  text1: response.message,
+                  autoHide: false,
+                  topOffset: 30,
+                  bottomOffset: 40,
+                });
+              }
+            })
+            .catch(error => {
+              console.log('error:', error);
+            });
         }
 
         if (values.phone !== userStore.phone) {
           console.log('edit phone');
-
           editInfo({
             name: values.name,
             phone: values.phone,
-          }).then((response: IEditInfoRes) => {
-            console.log(response);
-            if (response.statusCode === 200) {
-              Toast.show({
-                type: 'success',
-                text1: 'Sửa thông tin thành công',
-                autoHide: true,
-                visibilityTime: 1000,
-                topOffset: 20,
-                bottomOffset: 40,
-                onHide: () => {
-                  navigation.navigate(RouteNames.PROFILE as never, {} as never);
-                },
-              });
-              userStore.setPhone(response.data.phone ?? '');
-            } else if (response.statusCode === 401) {
-              Toast.show({
-                type: 'error',
-                text1: response.message,
-                autoHide: false,
-                topOffset: 30,
-                bottomOffset: 40,
-              });
-            } else if (response.statusCode === 404) {
-              Toast.show({
-                type: 'error',
-                text1: response.message,
-                autoHide: false,
-                topOffset: 30,
-                bottomOffset: 40,
-              });
-            } else {
-              Toast.show({
-                type: 'error',
-                text1: response.message,
-                autoHide: false,
-                topOffset: 30,
-                bottomOffset: 40,
-              });
-            }
-          });
+          })
+            .then((response: IEditInfoRes) => {
+              console.log(response);
+              if (response.statusCode === 200) {
+                Toast.show({
+                  type: 'success',
+                  text1: 'Sửa thông tin thành công',
+                  autoHide: true,
+                  visibilityTime: 1000,
+                  topOffset: 20,
+                  bottomOffset: 40,
+                  onHide: () => {
+                    navigation.navigate(
+                      RouteNames.PROFILE as never,
+                      {} as never,
+                    );
+                  },
+                });
+                userStore.setPhone(response.data.phone ?? '');
+              } else if (response.statusCode === 401) {
+                Toast.show({
+                  type: 'error',
+                  text1: response.message,
+                  autoHide: false,
+                  topOffset: 30,
+                  bottomOffset: 40,
+                });
+              } else if (response.statusCode === 404) {
+                Toast.show({
+                  type: 'error',
+                  text1: response.message,
+                  autoHide: false,
+                  topOffset: 30,
+                  bottomOffset: 40,
+                });
+              } else {
+                Toast.show({
+                  type: 'error',
+                  text1: response.message,
+                  autoHide: false,
+                  topOffset: 30,
+                  bottomOffset: 40,
+                });
+              }
+            })
+            .catch(error => {
+              console.log('error:', error);
+            });
         }
 
-        if (dobISOString !== userStore.dob) {
+        if (values.dob !== userStore.dob) {
+          const dobISOString = dateISOFormat(values.dob);
           console.log('edit dob');
-
           editInfo({
             name: values.name,
             dob: dobISOString,
-          }).then((response: IEditInfoRes) => {
-            console.log(response);
-            if (response.statusCode === 200) {
-              Toast.show({
-                type: 'success',
-                text1: 'Sửa thông tin thành công',
-                autoHide: true,
-                visibilityTime: 1000,
-                topOffset: 20,
-                bottomOffset: 40,
-                onHide: () => {
-                  navigation.navigate(RouteNames.PROFILE as never, {} as never);
-                },
-              });
-              const dob = dateFormat(response.data.dob);
-              userStore.setDob(dob ?? '');
-            } else if (response.statusCode === 401) {
-              Toast.show({
-                type: 'error',
-                text1: response.message,
-                autoHide: false,
-                topOffset: 30,
-                bottomOffset: 40,
-              });
-            } else if (response.statusCode === 404) {
-              Toast.show({
-                type: 'error',
-                text1: response.message,
-                autoHide: false,
-                topOffset: 30,
-                bottomOffset: 40,
-              });
-            } else {
-              Toast.show({
-                type: 'error',
-                text1: response.message,
-                autoHide: false,
-                topOffset: 30,
-                bottomOffset: 40,
-              });
-            }
-          });
+          })
+            .then((response: IEditInfoRes) => {
+              console.log(response);
+              if (response.statusCode === 200) {
+                Toast.show({
+                  type: 'success',
+                  text1: 'Sửa thông tin thành công',
+                  autoHide: true,
+                  visibilityTime: 1000,
+                  topOffset: 20,
+                  bottomOffset: 40,
+                  onHide: () => {
+                    navigation.navigate(
+                      RouteNames.PROFILE as never,
+                      {} as never,
+                    );
+                  },
+                });
+                const dob = dateFormat(response.data.dob);
+                userStore.setDob(dob ?? '');
+              } else if (response.statusCode === 401) {
+                Toast.show({
+                  type: 'error',
+                  text1: response.message,
+                  autoHide: false,
+                  topOffset: 30,
+                  bottomOffset: 40,
+                });
+              } else if (response.statusCode === 404) {
+                Toast.show({
+                  type: 'error',
+                  text1: response.message,
+                  autoHide: false,
+                  topOffset: 30,
+                  bottomOffset: 40,
+                });
+              } else {
+                Toast.show({
+                  type: 'error',
+                  text1: response.message,
+                  autoHide: false,
+                  topOffset: 30,
+                  bottomOffset: 40,
+                });
+              }
+            })
+            .catch(error => {
+              console.log('error:', error);
+            });
         }
 
-        if (selectedImage !== userStore.avatar) {
-          // console.log('Image uri:', selectedImage);
-          // console.log('Image file:', imageFile);
-
-          // Get image extension
+        if (selectedImage !== '') {
           const fileExtension = selectedImage.split('.').pop();
-
           const base64String = `data:image/${fileExtension};base64,${imageFile}`;
 
-          changeAvatar(base64String).then(response => {
-            userStore.setAvatar(response.data);
-          });
+          changeAvatar(base64String)
+            .then(response => {
+              console.log('Change avatar res:', response);
+
+              if (response.statusCode === 200) {
+                Toast.show({
+                  type: 'success',
+                  text1: 'Sửa thông tin thành công',
+                  autoHide: true,
+                  visibilityTime: 1000,
+                  topOffset: 20,
+                  bottomOffset: 40,
+                  onHide: () => {
+                    navigation.navigate(
+                      RouteNames.PROFILE as never,
+                      {} as never,
+                    );
+                  },
+                });
+                userStore.setAvatar(response.data);
+              } else if (response.statusCode === 401) {
+                Toast.show({
+                  type: 'error',
+                  text1: response.message,
+                  autoHide: false,
+                  topOffset: 30,
+                  bottomOffset: 40,
+                });
+              }
+            })
+            .catch(error => {
+              console.log('error:', error);
+            });
         }
       }}>
       {({
@@ -242,7 +285,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
         handleChange,
         handleSubmit,
       }) => (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
           <Image
             source={{
               uri: selectedImage != '' ? selectedImage : userStore.avatar,
@@ -267,28 +310,22 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
                   } else {
                     let source: Asset[] = response.assets as Asset[];
                     setSelectedImage(`${source[0].uri}`);
-                    // setImageFile(
-                    //   dataURLtoFile(
-                    //     `${source?.[0]?.base64}`,
-                    //     `${source?.[0]?.fileName}`,
-                    //     `${source?.[0]?.type}`,
-                    //   ),
-                    // );
                     setImageFile(source[0].base64);
                     // console.log('File:', source[0].base64);
                   }
                 },
               );
             }}>
-            <Text>Chỉnh sửa ảnh đại diện</Text>
+            <Text style={{color: Colors.text}}>Chỉnh sửa ảnh đại diện</Text>
           </TouchableOpacity>
 
-          <View style={[styles.inputContainer]}>
+          <View style={styles.inputContainer}>
             <TextInput
               onChangeText={value => setFieldValue('name', value)}
               onBlur={() => setFieldTouched('name')}
-              style={{flex: 1}}
+              style={{flex: 1, color: Colors.text}}
               placeholder={'Họ và tên'}
+              placeholderTextColor={Colors.secondary}
               value={values.name}
             />
 
@@ -303,12 +340,13 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
             <Text style={styles.error}>{errors.name}</Text>
           )}
 
-          <View style={[styles.inputContainer]}>
+          <View style={styles.inputContainer}>
             <TextInput
               onChangeText={value => setFieldValue('phone', value)}
               onBlur={() => setFieldTouched('phone')}
-              style={{flex: 1}}
+              style={{flex: 1, color: Colors.text}}
               placeholder={'Số điện thoại'}
+              placeholderTextColor={Colors.secondary}
               keyboardType="phone-pad"
               value={values.phone}
             />
@@ -328,8 +366,9 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
             <TextInput
               editable={false}
               onBlur={() => setFieldTouched('dob')}
-              style={{flex: 1, color: 'black'}}
+              style={{flex: 1, color: Colors.text}}
               placeholder={'Ngày sinh'}
+              placeholderTextColor={Colors.secondary}
               value={values.dob}
             />
 
@@ -376,7 +415,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
             // onPress={() => {
             //   navigation.navigate(RouteNames.PROFILE as never, {} as never);
             // }}
-            onPress={() => handleSubmit()}
+            onPress={handleSubmit}
             disabled={!isValid}
             style={[
               styles.button,
@@ -388,7 +427,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
           </TouchableOpacity>
 
           <Toast position="top"></Toast>
-        </View>
+        </ScrollView>
       )}
     </Formik>
   );

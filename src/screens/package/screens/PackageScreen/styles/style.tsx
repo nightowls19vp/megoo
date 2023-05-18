@@ -17,17 +17,18 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: Colors.primary,
   },
   detailText: {
+    fontSize: 12,
     textAlignVertical: 'bottom',
     includeFontPadding: false,
     color: Colors.primary,
   },
   text: {
-    fontSize: 16,
+    fontSize: 14,
     color: Colors.text,
   },
   packageContainer: {
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   carouselItemContainer: {
-    width: width * 0.55,
+    width: width * 0.7,
     backgroundColor: Colors.background,
     // borderWidth: 1,
     // borderColor: 'black',

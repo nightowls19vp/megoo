@@ -38,6 +38,7 @@ const PackageScreen = () => {
   }, []);
 
   const width = Dimensions.get('window').width;
+  const height = Dimensions.get('window').height;
 
   const renderItem = ({item}: {item: any}) => {
     // console.log('packages:', item);
@@ -115,6 +116,9 @@ const PackageScreen = () => {
                 minimumValue={0}
                 maximumValue={12}
                 lowerLimit={1}
+                thumbTintColor={Colors.primary}
+                minimumTrackTintColor={Colors.primary}
+                maximumTrackTintColor={Colors.secondary}
                 onValueChange={value => {
                   setDuration(value);
                 }}
@@ -146,6 +150,9 @@ const PackageScreen = () => {
                 }
                 minimumValue={0}
                 maximumValue={10}
+                thumbTintColor={Colors.primary}
+                minimumTrackTintColor={Colors.primary}
+                maximumTrackTintColor={Colors.secondary}
                 lowerLimit={1}
                 onValueChange={value => {
                   setNoOfMemb(value);
@@ -164,7 +171,7 @@ const PackageScreen = () => {
                 }
               }>
               <Text style={styles.text}>Giá tiền: </Text>
-              <Text style={[styles.text, {fontSize: 24, fontWeight: 'bold'}]}>
+              <Text style={[styles.text, {fontSize: 22, fontWeight: 'bold'}]}>
                 {totalPrice} VND
               </Text>
             </View>
@@ -238,28 +245,11 @@ const PackageScreen = () => {
                   userStore.cartList.cart[index].quantity++;
                 }
 
-                // const map = new Map<string, number>();
-                // userStore.cartList.cart.forEach(obj => {
-                //   const key = `${obj.package}-${obj.noOfMember}-${obj.duration}`;
-                //   if (!map.has(key)) {
-                //     map.set(key, 1);
-                //   } else {
-                //     map.set(key, ((map.get(key) as number) + 1) as number);
-                //   }
-                // });
-
-                // const cartList = Array.from(map, ([key, value]) => ({
-                //   package: key.split('-')[0],
-                //   noOfMember: key.split('-')[1],
-                //   duration: key.split('-')[2],
-                //   quantity: value,
-                // }));
-
                 const response = await updateCart(userStore.cartList);
-                console.log('update cart response:', response.data);
+                // console.log('update cart response:', response.data);
 
-                const getCart: IUserCart = await getUserCart();
-                console.log('userCart res:', getCart.cart);
+                // const getCart: IUserCart = await getUserCart();
+                // console.log('userCart res:', getCart.cart);
 
                 if (response.statusCode === 200) {
                   Toast.show({
@@ -326,7 +316,7 @@ const PackageScreen = () => {
       <View style={{marginBottom: 20}}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Các gói người dùng</Text>
-          <TouchableOpacity>
+          {/* <TouchableOpacity>
             <Text
               onPress={() => {
                 // navigation.navigate(
@@ -337,7 +327,7 @@ const PackageScreen = () => {
               style={styles.detailText}>
               Xem tất cả
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         <Carousel
@@ -345,11 +335,11 @@ const PackageScreen = () => {
           mode="parallax"
           modeConfig={{
             parallaxScrollingScale: 1,
-            parallaxScrollingOffset: 120,
+            parallaxScrollingOffset: 50,
           }}
           width={width * 0.9}
-          height={width * 1.3}
-          //   autoPlay={true}
+          height={height * 0.6}
+          // autoPlay={true}
           data={packages}
           scrollAnimationDuration={1000}
           onSnapToItem={index => console.log('current index:', index)}

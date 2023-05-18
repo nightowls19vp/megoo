@@ -83,3 +83,24 @@ export const checkout = async (cartList: ICartList) => {
     }
   }
 }
+
+export const getUserById = async () => {
+  const userEndpoint = `api/users/${userStore.id}`;
+  const reqUrl = `${URL_HOST}${userEndpoint}`;
+  console.log("Get user by id:", reqUrl);
+
+  const accessToken = await AsyncStorage.getItem("accessToken");
+
+  try {
+    const response = await axios.get(reqUrl, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      }
+    })
+
+    return response.data
+  } catch (error) {
+    console.log("Get user by id error:", error);
+  }
+}

@@ -2,10 +2,11 @@ import {useEffect, useState} from 'react';
 import {View, Text, ScrollView, TouchableOpacity, Linking} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import InputSpinner from 'react-native-input-spinner';
+import NumericInput from 'react-native-numeric-input';
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {getUserCart, checkout} from './services/cart.service';
+import {getUserCart, checkout, getUserById} from './services/cart.service';
 import styles from './styles/style';
 import {Colors} from '../../../../constants/color.const';
 import userStore from '../../../../common/store/user.store';
@@ -14,6 +15,8 @@ import {
   ICartList,
 } from '../../../../common/interfaces/package.interface';
 import {updateCart} from '../PackageScreen/services/package.service';
+import {URL_HOST} from '../../../../core/config/api/api.config';
+import axios from 'axios';
 
 const CartScreen = () => {
   const [cartList, setCartList] = useState<any[]>([]);
@@ -21,6 +24,7 @@ const CartScreen = () => {
     cart: [],
   });
   const [totalPrice, setTotalPrice] = useState(0);
+  const [counter, setCounter] = useState(0);
 
   const getCartList = async () => {
     const cartListRes = await getUserCart();
@@ -179,7 +183,7 @@ const CartScreen = () => {
                 gap: 10,
               }}>
               <Text style={styles.text}>Số lượng:</Text>
-              <InputSpinner
+              {/* <InputSpinner
                 max={50}
                 min={1}
                 step={1}
@@ -191,10 +195,58 @@ const CartScreen = () => {
                 // skin="modern"
                 // rounded={false}
                 // showBorder
-                height={35}
+                height={40}
                 fontSize={14}
                 width={'40%'}
-                style={{}}
+                onChange={(num: number) => {
+                  const index = cartList.findIndex(
+                    (cartItem: any) =>
+                      cartItem.package === object.package &&
+                      cartItem.noOfMember === object.noOfMember &&
+                      cartItem.duration === object.duration,
+                  );
+
+                  if (index === -1) {
+                    cartList.push({...object, quantity: num});
+                  } else {
+                    cartList[index].quantity = num;
+                  }
+
+                  const payload: ICartList = {
+                    cart: cartList.map((cartItem: any) => {
+                      return {
+                        package: cartItem.package,
+                        duration: cartItem.duration,
+                        noOfMember: cartItem.noOfMember,
+                        quantity: cartItem.quantity,
+                      };
+                    }),
+                  };
+
+                  updateCart(payload)
+                    .then(async res => {
+                      console.log('Update cart after incr:', res.data);
+                      const newCartList = await getCartList();
+                      setCartList(newCartList);
+                    })
+                    .catch(error => {
+                      console.log('update cart err:', error);
+                    });
+                }}
+              /> */}
+              <NumericInput
+                type="plus-minus"
+                minValue={1}
+                maxValue={50}
+                value={object.quantity}
+                totalWidth={150}
+                totalHeight={35}
+                iconStyle={{fontSize: 20, color: '#FFFFFF'}}
+                rightButtonBackgroundColor="#32CD32"
+                leftButtonBackgroundColor="#FF2400"
+                rounded={true}
+                textColor={Colors.text}
+                inputStyle={{fontSize: 14}}
                 onChange={(num: number) => {
                   const index = cartList.findIndex(
                     (cartItem: any) =>
@@ -286,7 +338,7 @@ const CartScreen = () => {
         <Text
           style={{
             width: '50%',
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: 'bold',
             color: Colors.text,
             textAlign: 'center',
@@ -305,6 +357,19 @@ const CartScreen = () => {
             const response = await checkout(selectedItemList);
             console.log('Checkout response:', response.order);
             Linking.openURL(response.order.order_url);
+
+            // const interValCheck = setInterval(async () => {
+            //   const getRes = await getUserById();
+            //   console.log('get user res:', getRes);
+
+            //   if (getRes.user.trxHist.length > 0) {
+            //     clearInterval(interValCheck);
+            //   }
+            // }, 30 * 1000);
+
+            // setTimeout(() => {
+            //   clearInterval(interValCheck);
+            // }, 5 * 60 * 1000);
           }}
           style={{
             display: 'flex',
@@ -316,7 +381,7 @@ const CartScreen = () => {
           }}>
           <Text
             style={{
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: 'bold',
               color: Colors.background,
             }}>

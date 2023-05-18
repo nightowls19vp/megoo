@@ -23,11 +23,12 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'left',
-    fontSize: 20,
+    fontSize: 18,
     color: Colors.primary,
     fontWeight: 'bold',
   },
   editText: {
+    fontSize: 12,
     textAlignVertical: 'bottom',
     includeFontPadding: false,
     color: Colors.primary,
@@ -48,21 +49,22 @@ const styles = StyleSheet.create({
   },
   text: {
     color: Colors.text,
-    fontSize: 16,
+    fontSize: 14,
   },
   infoText: {
     color: Colors.secondary,
-    fontSize: 16,
+    fontSize: 14,
   },
   socialContainer: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    alignItems: 'baseline',
     gap: 10,
   },
   connectText: {
     color: Colors.text,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });
