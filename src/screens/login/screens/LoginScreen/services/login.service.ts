@@ -4,6 +4,7 @@ import { IGoogleLoginRes, ILoginReq, ILoginRes } from "../interfaces/login.inter
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { statusCodes } from "@react-native-google-signin/google-signin";
 import { IValidateRes } from "../../../../../common/interfaces/validate.interface";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const login = async (loginInfo: ILoginReq) => {
   const loginEndpoint = "api/auth/login/mobile";
@@ -44,21 +45,23 @@ export const login = async (loginInfo: ILoginReq) => {
   }
 };
 
-export const validate = async (token: string) => {
+export const validate = async () => {
   const validateEndpoint = "api/auth/validate";
-  const reqUrl = `${URL_HOST}${validateEndpoint}`;
+  const reqUrl = `${URL_HOST}${validateEndpoint}?dt=${new Date().getTime()}`;
   console.log("Validate:", reqUrl);
+
+  const accessToken = await AsyncStorage.getItem("accessToken");
 
   try {
     const res = await axios.get(reqUrl, {
       headers: {
+        'Cache-Control': 'no-cache',
         Accept: "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
 
     // console.log("Validate res data:", res.data);
-    console.log("Validate user data:", res.data);
 
     return res.data;
   } catch (error) {

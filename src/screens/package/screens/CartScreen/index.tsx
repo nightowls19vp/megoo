@@ -1,5 +1,12 @@
-import {useEffect, useState} from 'react';
-import {View, Text, ScrollView, TouchableOpacity, Linking} from 'react-native';
+import {useEffect, useRef, useState} from 'react';
+import {
+  AppState,
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Linking,
+} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import InputSpinner from 'react-native-input-spinner';
 import NumericInput from 'react-native-numeric-input';
@@ -15,7 +22,6 @@ import {
   ICartList,
 } from '../../../../common/interfaces/package.interface';
 import {updateCart} from '../PackageScreen/services/package.service';
-import {URL_HOST} from '../../../../core/config/api/api.config';
 import axios from 'axios';
 
 const CartScreen = () => {
@@ -24,27 +30,38 @@ const CartScreen = () => {
     cart: [],
   });
   const [totalPrice, setTotalPrice] = useState(0);
-  const [counter, setCounter] = useState(0);
+
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
   const getCartList = async () => {
     const cartListRes = await getUserCart();
-    const newCartList = cartListRes.cart.map((cartItem: any) => {
-      return {
-        name: cartItem.name,
-        package: cartItem._id,
-        duration: cartItem.duration,
-        noOfMember: cartItem.noOfMember,
-        quantity: cartItem.quantity,
-        price: cartItem.price,
-      };
-    });
 
-    return newCartList;
+    console.log('cartListRes:', cartListRes);
+
+    if (
+      !cartListRes.cart ||
+      !cartListRes?.cart?.length ||
+      cartListRes?.cart?.length === 0
+    ) {
+      return [];
+    } else {
+      const newCartList = cartListRes.cart.map((cartItem: any) => {
+        return {
+          name: cartItem.name,
+          package: cartItem._id,
+          duration: cartItem.duration,
+          noOfMember: cartItem.noOfMember,
+          quantity: cartItem.quantity,
+          price: cartItem.price,
+        };
+      });
+
+      return newCartList;
+    }
   };
 
   useEffect(() => {
-    console.log('useEffect getCartList');
-
     getCartList().then(cartList => {
       setCartList(cartList);
       // setIsInit(true);
@@ -61,9 +78,9 @@ const CartScreen = () => {
       newValue: boolean,
       object: {
         package: string;
-        duration: number;
-        noOfMember: number;
         quantity: number;
+        noOfMember: number;
+        duration: number;
       },
     ) => {
       const updatedArray = [...toggleCheckBoxArray];
@@ -72,11 +89,22 @@ const CartScreen = () => {
 
       let cartItem: ICartItem = {
         package: object.package,
+        quantity: object.quantity,
         noOfMember: object.noOfMember,
         duration: object.duration,
-        quantity: object.quantity,
       };
+
       console.log('item pkg:', cartItem);
+      setSelectedItemList(() => ({
+        cart: selectedItemList.cart.map((item: any) => {
+          return {
+            package: item.package,
+            duration: item.duration,
+            noOfMember: item.noOfMember,
+            quantity: item.quantity,
+          };
+        }),
+      }));
 
       if (updatedArray[index] === true) {
         // If the array is empty, add the selected item to the array
@@ -100,6 +128,7 @@ const CartScreen = () => {
             }));
           }
         }
+
         console.log('selected list:', selectedItemList.cart);
 
         let price =
@@ -120,7 +149,7 @@ const CartScreen = () => {
         }));
 
         let price =
-          totalPrice - cartList[index].price * cartList[index].quantity;
+          totalPrice + cartList[index].price * cartList[index].quantity;
         setTotalPrice(price);
       }
     };
@@ -184,56 +213,56 @@ const CartScreen = () => {
               }}>
               <Text style={styles.text}>Số lượng:</Text>
               {/* <InputSpinner
-                max={50}
-                min={1}
-                step={1}
-                value={object.quantity}
-                colorPress={Colors.text}
-                colorLeft={'#ff6961'}
-                colorRight={'#77DD77'}
-                delayPressIn={10}
-                // skin="modern"
-                // rounded={false}
-                // showBorder
-                height={40}
-                fontSize={14}
-                width={'40%'}
-                onChange={(num: number) => {
-                  const index = cartList.findIndex(
-                    (cartItem: any) =>
-                      cartItem.package === object.package &&
-                      cartItem.noOfMember === object.noOfMember &&
-                      cartItem.duration === object.duration,
-                  );
-
-                  if (index === -1) {
-                    cartList.push({...object, quantity: num});
-                  } else {
-                    cartList[index].quantity = num;
-                  }
-
-                  const payload: ICartList = {
-                    cart: cartList.map((cartItem: any) => {
-                      return {
-                        package: cartItem.package,
-                        duration: cartItem.duration,
-                        noOfMember: cartItem.noOfMember,
-                        quantity: cartItem.quantity,
-                      };
-                    }),
-                  };
-
-                  updateCart(payload)
-                    .then(async res => {
-                      console.log('Update cart after incr:', res.data);
-                      const newCartList = await getCartList();
-                      setCartList(newCartList);
-                    })
-                    .catch(error => {
-                      console.log('update cart err:', error);
-                    });
-                }}
-              /> */}
+                  max={50}
+                  min={1}
+                  step={1}
+                  value={object.quantity}
+                  colorPress={Colors.text}
+                  colorLeft={'#ff6961'}
+                  colorRight={'#77DD77'}
+                  delayPressIn={10}
+                  // skin="modern"
+                  // rounded={false}
+                  // showBorder
+                  height={40}
+                  fontSize={14}
+                  width={'40%'}
+                  onChange={(num: number) => {
+                    const index = cartList.findIndex(
+                      (cartItem: any) =>
+                        cartItem.package === object.package &&
+                        cartItem.noOfMember === object.noOfMember &&
+                        cartItem.duration === object.duration,
+                    );
+  
+                    if (index === -1) {
+                      cartList.push({...object, quantity: num});
+                    } else {
+                      cartList[index].quantity = num;
+                    }
+  
+                    const payload: ICartList = {
+                      cart: cartList.map((cartItem: any) => {
+                        return {
+                          package: cartItem.package,
+                          duration: cartItem.duration,
+                          noOfMember: cartItem.noOfMember,
+                          quantity: cartItem.quantity,
+                        };
+                      }),
+                    };
+  
+                    updateCart(payload)
+                      .then(async res => {
+                        console.log('Update cart after incr:', res.data);
+                        const newCartList = await getCartList();
+                        setCartList(newCartList);
+                      })
+                      .catch(error => {
+                        console.log('update cart err:', error);
+                      });
+                  }}
+                /> */}
               <NumericInput
                 type="plus-minus"
                 minValue={1}
@@ -265,9 +294,9 @@ const CartScreen = () => {
                     cart: cartList.map((cartItem: any) => {
                       return {
                         package: cartItem.package,
-                        duration: cartItem.duration,
-                        noOfMember: cartItem.noOfMember,
                         quantity: cartItem.quantity,
+                        noOfMember: cartItem.noOfMember,
+                        duration: cartItem.duration,
                       };
                     }),
                   };
@@ -296,7 +325,7 @@ const CartScreen = () => {
                 style={[
                   {color: Colors.primary, fontSize: 18, fontWeight: 'bold'},
                 ]}>
-                {object.price * object.quantity} VND
+                {Math.round(object.price * object.quantity)} VND
               </Text>
             </View>
           </View>
@@ -344,7 +373,7 @@ const CartScreen = () => {
             textAlign: 'center',
           }}
           numberOfLines={2}>
-          {totalPrice} VND
+          {Math.round(totalPrice)} VND
         </Text>
 
         <TouchableOpacity
@@ -355,21 +384,58 @@ const CartScreen = () => {
             console.log('Selected item list:', selectedItemList.cart);
 
             const response = await checkout(selectedItemList);
-            console.log('Checkout response:', response.order);
+            console.log('Checkout response:', response);
+            const order = response.order;
+            const trans = response.trans;
+            console.log('order res:', order);
+            console.log('trans res:', trans);
+
+            const trans_id = response.trans._id;
+            console.log('trans_id', trans_id);
+
+            // Open URL for payment
             Linking.openURL(response.order.order_url);
 
-            // const interValCheck = setInterval(async () => {
-            //   const getRes = await getUserById();
-            //   console.log('get user res:', getRes);
+            const subscription = AppState.addEventListener(
+              'change',
+              nextAppState => {
+                if (appState.current.match(/inactive|background/)) {
+                  console.log('Get user running in background');
+                }
 
-            //   if (getRes.user.trxHist.length > 0) {
-            //     clearInterval(interValCheck);
-            //   }
-            // }, 30 * 1000);
+                if (
+                  appState.current.match(/inactive|background/) &&
+                  nextAppState === 'active'
+                ) {
+                  console.log('App has come to the foreground!');
 
-            // setTimeout(() => {
-            //   clearInterval(interValCheck);
-            // }, 5 * 60 * 1000);
+                  // Check if trans_id exists in user's trxHist then user paid successfully
+                  const interValCheck = setInterval(async () => {
+                    const getRes = await getUserById();
+                    console.log('get user res:', getRes);
+                    console.log('trans id in hist:', getRes.user.trxHist);
+
+                    if (getRes.user.trxHist.includes(trans_id)) {
+                      console.log(trans_id, 'exists in trxHist');
+
+                      clearInterval(interValCheck);
+                    }
+                  }, 10 * 1000);
+
+                  setTimeout(() => {
+                    clearInterval(interValCheck);
+                  }, 2 * 60 * 1000);
+                }
+
+                appState.current = nextAppState;
+                setAppStateVisible(appState.current);
+                console.log('AppState', appState.current);
+              },
+            );
+
+            return () => {
+              subscription.remove();
+            };
           }}
           style={{
             display: 'flex',

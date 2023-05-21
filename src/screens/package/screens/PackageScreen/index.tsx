@@ -45,12 +45,14 @@ const PackageScreen = () => {
     const [noOfMemb, setNoOfMemb] = useState(item.noOfMember);
     const [duration, setDuration] = useState(item.duration);
     const [totalPrice, setTotalPrice] = useState(
-      item.duration >= 12
-        ? item.coefficient === undefined
-          ? item.price
-          : (item.price + item.noOfMember * item.duration * item.coefficient) *
-            0.7
-        : item.price + item.noOfMember * item.duration * item.coefficient,
+      // item.duration >= 12
+      //   ? item.coefficient === undefined
+      //     ? item.price
+      //     : (item.price +
+      //         (item.noOfMember - 2) * item.duration * item.coefficient) *
+      //       0.7
+      //   : item.price + (item.noOfMember - 2) * item.duration * item.coefficient,
+      item.price,
     );
 
     const calculatePrice = () => {
@@ -61,21 +63,23 @@ const PackageScreen = () => {
       } else if (item.name === 'Customized Package') {
         let price =
           duration >= 12
-            ? (item.price + noOfMemb * duration * item.coefficient) * 0.7
-            : item.price + noOfMemb * duration * item.coefficient;
+            ? (item.price + (noOfMemb - 2) * duration * item.coefficient) * 0.7
+            : item.price + (noOfMemb - 2) * duration * item.coefficient;
 
         let roundPrice = Math.round(price);
 
         setTotalPrice(roundPrice);
       } else if (item.name === 'Annual Package') {
         let price =
-          (item.price + noOfMemb * item.duration * item.coefficient) * 0.7;
+          (item.price + (noOfMemb - 2) * item.duration * item.coefficient) *
+          0.7;
 
         let roundPrice = Math.round(price);
 
         setTotalPrice(roundPrice);
       } else if (item.name === 'Experience Package') {
-        let price = item.price + noOfMemb * item.duration * item.coefficient;
+        let price =
+          item.price + (noOfMemb - 2) * item.duration * item.coefficient;
 
         setTotalPrice(price);
       }
@@ -153,8 +157,10 @@ const PackageScreen = () => {
                 thumbTintColor={Colors.primary}
                 minimumTrackTintColor={Colors.primary}
                 maximumTrackTintColor={Colors.secondary}
-                lowerLimit={1}
+                lowerLimit={2}
                 onValueChange={value => {
+                  console.log('slider noofmemb value', value);
+
                   setNoOfMemb(value);
                 }}
               />
@@ -212,7 +218,7 @@ const PackageScreen = () => {
 
                 // Get user cart
                 const userCart: IUserCart = await getUserCart();
-                console.log('userCart res:', userCart.cart);
+                console.log('userCart res:', userCart);
 
                 const userCartList: ICartList = {
                   cart: [] as ICartItem[],

@@ -96,27 +96,3 @@ export const changeAvatar = async (base64String: string) => {
     }
   }
 }
-
-export const urltoFile = (url: string, filename: string, mimeType: string) => {
-  // console.log("url:", url);
-  console.log("filename:", filename);
-  console.log("mimeType:", mimeType);
-
-  return (fetch(url)
-    .then(function (res: any) { return res.arrayBuffer(); })
-    .then(function (buf: any) { return new File([buf], filename, { type: mimeType }); }).catch((error) => {
-      console.log("error:", error);
-
-    }
-    ));
-}
-
-export const dataURLtoFile = (dataurl: string, filename: string, mimeType: string) => {
-  let arr = base64.toByteArray(dataurl)
-  console.log("url length:", dataurl.length);
-
-  console.log("length:", arr.length);
-
-  return new File([arr], filename, { type: mimeType });
-}
-

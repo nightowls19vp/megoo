@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {
-  AppRegistry,
   Image,
   ScrollView,
   Text,
@@ -13,32 +12,18 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
-import {
-  Asset,
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
+import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 import {observer} from 'mobx-react';
 import Icon from 'react-native-vector-icons/Ionicons';
-import base64 from 'base64-js';
-import ImagePicker from 'react-native-image-crop-picker';
 
 import styles from './styles/styles';
 import RouteNames from '../../../../constants/route-names.const';
 import {Colors} from '../../../../constants/color.const';
 import userStore from '../../../../common/store/user.store';
-import {
-  changeAvatar,
-  dataURLtoFile,
-  editInfo,
-  urltoFile,
-} from './services/edit.info.service';
+import {changeAvatar, editInfo} from './services/edit.info.service';
 import {IEditInfoRes} from './interfaces/edit.info.interface';
 import {dateFormat, dateISOFormat} from '../../../../common/handle.string';
-import ImageCropPicker from 'react-native-image-crop-picker';
-import axios from 'axios';
-import {URL_HOST} from '../../../../core/config/api/api.config';
 
 const ProfileSchema = Yup.object().shape({
   name: Yup.string().required('Vui lòng nhập họ tên'),
@@ -387,8 +372,6 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
                 setOpen(false);
                 setDate(value);
                 setFieldValue('dob', moment(value).format('DD/MM/YYYY'));
-
-                console.log('Values dob', values.dob);
               }}
               onCancel={() => {
                 setOpen(false);
@@ -412,9 +395,6 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
           )} */}
 
           <TouchableOpacity
-            // onPress={() => {
-            //   navigation.navigate(RouteNames.PROFILE as never, {} as never);
-            // }}
             onPress={handleSubmit}
             disabled={!isValid}
             style={[

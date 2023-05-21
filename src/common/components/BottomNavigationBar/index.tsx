@@ -1,9 +1,10 @@
+import {View, Text, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {View, Text, Pressable} from 'react-native';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
 import {Colors} from '../../../constants/color.const';
 import RouteNames from '../../../constants/route-names.const';
@@ -13,10 +14,9 @@ import EditProfileScreen from '../../../screens/profile/screens/EditProfileScree
 import SettingsScreen from '../../../screens/settings/screens/SettingsScreen';
 import AppInfoScreen from './../../../screens/settings/screens/AppInfoScreen';
 import PoliciesScreen from './../../../screens/settings/screens/PoliciesScreen';
-import ChangeAvatarScreen from '../../../screens/profile/screens/ChangeAvatarScreen';
 import PackageScreen from '../../../screens/package/screens/PackageScreen';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import CartScreen from '../../../screens/package/screens/CartScreen';
+import GroupScreen from '../../../screens/profile/screens/GroupScreen';
 
 function HomeScreen() {
   return (
@@ -92,10 +92,7 @@ const ProfileStack = createNativeStackNavigator();
 function ProfileScreenStack() {
   return (
     <ProfileStack.Navigator initialRouteName={RouteNames.PROFILE}>
-      <ProfileStack.Screen
-        name={RouteNames.PROFILE}
-        component={ProfileScreen}
-      />
+      <ProfileStack.Screen name={RouteNames.PROFILE} component={GroupScreen} />
       <ProfileStack.Screen
         name={RouteNames.EDIT_PROFILE}
         component={EditProfileScreen}
@@ -104,6 +101,17 @@ function ProfileScreenStack() {
     </ProfileStack.Navigator>
   );
 }
+
+const TopTab = createMaterialTopTabNavigator();
+
+const TopTabNavigator = () => {
+  return (
+    <TopTab.Navigator initialRouteName={RouteNames.PROFILE_STACK}>
+      <TopTab.Screen name={RouteNames.PROFILE_STACK} component={ChatScreen} />
+      <TopTab.Screen name={RouteNames.GROUP_STACK} component={GroupScreen} />
+    </TopTab.Navigator>
+  );
+};
 
 const SettingsStack = createNativeStackNavigator();
 
@@ -132,7 +140,7 @@ const Tab = createBottomTabNavigator();
 export default function BottomNavigationBar() {
   return (
     <Tab.Navigator
-      backBehavior="initialRoute"
+      backBehavior="history"
       initialRouteName={RouteNames.HOME_TAB}
       screenOptions={{
         headerShown: false,
@@ -177,9 +185,8 @@ export default function BottomNavigationBar() {
           },
         }}
       />
-
       <Tab.Screen
-        name={RouteNames.PROFILE_STACK}
+        name={RouteNames.TOP_TAB}
         component={ProfileScreenStack}
         initialParams={{screen: RouteNames.PROFILE}}
         options={{

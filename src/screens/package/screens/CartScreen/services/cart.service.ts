@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import userStore from "../../../../../common/store/user.store";
 import { URL_HOST } from "../../../../../core/config/api/api.config";
-import { ICartList } from './../../../../../common/interfaces/package.interface';
+import { ICartList, IUserCart } from './../../../../../common/interfaces/package.interface';
 
 export const getUserCart = async () => {
   const userCartEndpoint = `api/users/${userStore.id}/cart`;
@@ -32,10 +32,11 @@ export const getUserCart = async () => {
       if (!error?.response) {
         console.log("No Server Response");
         response.message = "Mất kết nối với server";
-      } else {
-        console.log("Add package Failed");
-        response.message = "Thêm vào giỏ hàng không thành công";
       }
+      // else {
+      //   console.log("Add package Failed");
+      //   response.message = "Thêm vào giỏ hàng không thành công";
+      // }
 
       return response;
     }
@@ -43,7 +44,8 @@ export const getUserCart = async () => {
 }
 
 export const checkout = async (cartList: ICartList) => {
-  const checkoutEndpoint = `api/users/${userStore.id}/checkout`;
+  // const checkoutEndpoint = `api/users/${userStore.id}/checkout`;
+  const checkoutEndpoint = `api/users/checkout`;
   const reqUrl = `${URL_HOST}${checkoutEndpoint}`;
   console.log("Checkout:", reqUrl);
 

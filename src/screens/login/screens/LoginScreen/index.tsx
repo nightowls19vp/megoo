@@ -37,6 +37,7 @@ import {IUser} from '../../../../common/interfaces/user.interface';
 import {IAuthData} from '../../../../common/interfaces/data.interface';
 import {IValidateRes} from '../../../../common/interfaces/validate.interface';
 import {ISettings} from '../../../../common/interfaces/settings.interface';
+import {dateFormat} from '../../../../common/handle.string';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -120,7 +121,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
         login({
           username: values.email,
           password: values.password,
-        }).then((response: ILoginRes) => {
+        }).then(async (response: ILoginRes) => {
           console.log('User info:', response?.data?.userInfo);
           console.log('Auth data:', response?.data?.auth);
 
@@ -142,12 +143,16 @@ export default function LoginScreen({navigation}: {navigation: any}) {
 
           let dob = response.data?.userInfo['dob'] ?? '';
           user.dob = moment(dob).format('DD/MM/YYYY').toString();
+          // user.dob = dateFormat(response.userInfo.dob) ?? '';
 
           userStore.setUser(user);
 
           // Store user token
-          AsyncStorage.setItem('accessToken', `${response?.accessToken}`);
-          AsyncStorage.setItem('refreshToken', `${response?.refreshToken}`);
+          await AsyncStorage.setItem('accessToken', `${response?.accessToken}`);
+          await AsyncStorage.setItem(
+            'refreshToken',
+            `${response?.refreshToken}`,
+          );
 
           // Show toast message and navigate to home screen if login successfully
           if (response.statusCode === 200) {
@@ -209,8 +214,9 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             <TextInput
               onChangeText={value => setFieldValue('email', value)}
               onBlur={() => setFieldTouched('email')}
-              style={{flex: 1}}
+              style={{flex: 1, color: Colors.text}}
               placeholder={'Email'}
+              placeholderTextColor={Colors.text}
               value={values.email}
             />
 
@@ -231,7 +237,8 @@ export default function LoginScreen({navigation}: {navigation: any}) {
               onBlur={() => setFieldTouched('password')}
               secureTextEntry={hidePassword}
               placeholder={'Mật khẩu'}
-              style={{flex: 1}}
+              style={{flex: 1, color: Colors.text}}
+              placeholderTextColor={Colors.text}
               value={values.password}
             />
             {values.password && (
@@ -259,9 +266,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             </Text>
           </View>
           <TouchableOpacity
-            onPress={() => {
-              handleSubmit;
-            }}
+            onPress={handleSubmit}
             disabled={!isValid}
             style={[
               styles.button,
@@ -283,22 +288,26 @@ export default function LoginScreen({navigation}: {navigation: any}) {
           <TouchableOpacity
             style={styles.socialButton}
             onPress={() => {
-              googleSignIn().then((response: IGoogleLoginRes) => {
+              googleSignIn().then(async (response: IGoogleLoginRes) => {
                 console.log('GG AT:', response.data?.accessToken);
                 console.log('GG RT:', response.data?.refreshToken);
 
                 // Store user token
-                AsyncStorage.setItem(
+                await AsyncStorage.setItem(
                   'accessToken',
                   `${response.data?.accessToken}`,
                 );
-                AsyncStorage.setItem(
+                await AsyncStorage.setItem(
                   'refreshToken',
                   `${response.data?.refreshToken}`,
                 );
+                console.log(
+                  'get AT:',
+                  await AsyncStorage.getItem('accessToken'),
+                );
 
-                validate(`${response.data?.accessToken}`).then(response => {
-                  console.log('User data:', response.userInfo);
+                validate().then(res => {
+                  console.log('User data:', res);
 
                   // Store user data
                   let user: IUser = {
@@ -311,14 +320,14 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                   };
 
                   // Store user info
-                  user._id = response.userInfo._id ?? '';
-                  user.name = response.userInfo.name ?? '';
-                  user.email = response.userInfo.email ?? '';
-                  user.phone = response.userInfo.phone ?? '';
-                  user.dob = response.userInfo.dob ?? '';
+                  user._id = res.userInfo._id ?? '';
+                  user.name = res.userInfo.name ?? '';
+                  user.email = res.userInfo.email ?? '';
+                  user.phone = res.userInfo.phone ?? '';
+                  user.dob = dateFormat(res.userInfo.dob) ?? '';
                   user.avatar =
-                    response.userInfo.avatar ??
-                    'https://res.cloudinary.com/nightowls19vp/image/upload/v1683454262/cld-sample.jpg';
+                    res.userInfo.avatar ??
+                    'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9';
 
                   userStore.setUser(user);
 
@@ -330,18 +339,14 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                     newsNoti: true,
                   };
 
-                  settings.callNoti =
-                    response.userInfo.setting.callNoti ?? true;
-                  settings.msgNoti = response.userInfo.setting.msgNoti ?? true;
-                  settings.stockNoti =
-                    response.userInfo.setting.stockNoti ?? true;
-                  settings.newsNoti =
-                    response.userInfo.setting.newsNoti ?? true;
+                  settings.callNoti = res.userInfo.setting.callNoti ?? true;
+                  settings.msgNoti = res.userInfo.setting.msgNoti ?? true;
+                  settings.stockNoti = res.userInfo.setting.stockNoti ?? true;
+                  settings.newsNoti = res.userInfo.setting.newsNoti ?? true;
 
                   userStore.setUserSettings(settings);
                   console.log('Call noti:', settings.callNoti);
                 });
-
                 // Show toast message and navigate to home screen if login successfully
                 if (response.statusCode === 200) {
                   Toast.show({
@@ -358,22 +363,6 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                       );
                     },
                   });
-                } else if (response.statusCode === 401) {
-                  Toast.show({
-                    type: 'error',
-                    text1: response.message,
-                    autoHide: false,
-                    topOffset: 30,
-                    bottomOffset: 40,
-                  });
-                } else if (response.statusCode === 404) {
-                  Toast.show({
-                    type: 'error',
-                    text1: response.message,
-                    autoHide: false,
-                    topOffset: 30,
-                    bottomOffset: 40,
-                  });
                 } else {
                   Toast.show({
                     type: 'error',
@@ -383,11 +372,6 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                     bottomOffset: 40,
                   });
                 }
-
-                // navigation.navigate(
-                //   RouteNames.HOME_DRAWER as never,
-                //   {} as never,
-                // );
               });
             }}>
             <Image
@@ -407,6 +391,8 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             <Text style={styles.textPrimary}>Chưa có tài khoản?</Text>
             <TouchableOpacity
               onPress={() => {
+                console.log('Đăng ký');
+
                 navigation.navigate(RouteNames.REGISTER as never, {} as never);
               }}>
               <Text style={[styles.textPrimary, styles.registerPrimary]}>

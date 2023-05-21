@@ -21,6 +21,7 @@ export const checkValidToken = async (token: string) => {
 };
 
 export const checkLogin = async () => {
+  // await signOutIfSignedInWithGG();
   console.log("Check login");
 
   const accessToken = await AsyncStorage.getItem('accessToken');
@@ -60,7 +61,7 @@ export const checkLogin = async () => {
               },
             });
             console.log("Res refresh token:", response.data);
-            AsyncStorage.setItem("accessToken", response.data.accessToken);
+            await AsyncStorage.setItem("accessToken", response.data.accessToken);
 
           } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -71,7 +72,7 @@ export const checkLogin = async () => {
         }
 
         console.log("Access token has not expired");
-        const response = await validate(`${accessToken}`);
+        const response = await validate();
         // console.log('Validate res:', response.data.userInfo);
 
         // Store user info
@@ -84,8 +85,6 @@ export const checkLogin = async () => {
           avatar: '',
         };
 
-        console.log("ID:", response.userInfo._id);
-
         user._id = response.userInfo._id ?? '';
         user.name = response.userInfo.name ?? '';
         user.email = response.userInfo.email ?? '';
@@ -93,11 +92,9 @@ export const checkLogin = async () => {
         user.dob = dateFormat(response.userInfo.dob) ?? '';
         user.avatar =
           response.userInfo.avatar ??
-          'https://res.cloudinary.com/nightowls19vp/image/upload/v1683454262/cld-sample.jpg';
+          'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9';
 
         userStore.setUser(user);
-
-        console.log("avatar:", userStore.avatar);
 
         // Store user settings
         let settings: ISettings = {

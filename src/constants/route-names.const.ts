@@ -15,6 +15,9 @@ export default {
 
   STORAGE: "Quản lý kho",
 
+  TOP_TAB: "TOP_TAB",
+  PROFILE_TOP_TAB: "PROFILE_TOP_TAB",
+  GROUP_STACK: "GROUP_TOP_TAB",
   PROFILE_STACK: "PROFILE_STACK",
   PROFILE: "Trang cá nhân",
   EDIT_PROFILE: "Chỉnh sửa thông tin cá nhân",

@@ -133,6 +133,22 @@ class UserStore {
   @action resetArray() {
     this.cartList.cart = []; // Assigning an empty array to reset the observable array
   }
+
+  @action resetStore() {
+    this.id = "";
+    this.name = "";
+    this.email = "";
+    this.phone = "";
+    this.dob = "";
+    this.avatar = "";
+    this.msgNoti = true;
+    this.callNoti = true;
+    this.newsNoti = true;
+    this.stockNoti = true;
+    this.cartList = {
+      cart: [],
+    };
+  }
 }
 
 const userStore = new UserStore();

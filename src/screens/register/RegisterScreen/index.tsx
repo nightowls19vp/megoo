@@ -16,6 +16,16 @@ import {register} from './services/register.service';
 import {IRegisterReq, IRegisterRes} from './interfaces/register.interface';
 import {ScrollView} from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {IUser} from '../../../common/interfaces/user.interface';
+import {dateFormat} from '../../../common/handle.string';
+import userStore from '../../../common/store/user.store';
+import {ISettings} from '../../../common/interfaces/settings.interface';
+import {
+  googleSignIn,
+  validate,
+} from '../../login/screens/LoginScreen/services/login.service';
+import {IGoogleLoginRes} from '../../login/screens/LoginScreen/interfaces/login.interface';
 
 const RegisterSchema = Yup.object().shape({
   name: Yup.string().required('Vui lòng nhập họ và tên'),
@@ -48,44 +58,46 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
           dob: '',
         }}
         validationSchema={RegisterSchema}
-        onSubmit={values => {
-          const dobISOString = moment(values.dob, 'DD/MM/YYYY').toISOString();
+        onSubmit={values => {}}
+        // onSubmit={values => {
+        //   const dobISOString = moment(values.dob, 'DD/MM/YYYY').toISOString();
 
-          console.log(dobISOString);
-          // same shape as initial values
-          console.log(values);
-          register({
-            name: values.name,
-            email: values.email,
-            password: values.password,
-            phone: values.phone,
-            dob: dobISOString,
-          }).then((response: IRegisterRes) => {
-            console.log(response.statusCode);
+        //   console.log(dobISOString);
+        //   // same shape as initial values
+        //   console.log(values);
+        //   register({
+        //     name: values.name,
+        //     email: values.email,
+        //     password: values.password,
+        //     phone: values.phone,
+        //     dob: dobISOString,
+        //   }).then((response: IRegisterRes) => {
+        //     console.log(response.statusCode);
 
-            if (response.statusCode === 201) {
-              Toast.show({
-                type: 'success',
-                text1: 'Đăng ký thành công',
-                autoHide: true,
-                visibilityTime: 1000,
-                topOffset: 30,
-                bottomOffset: 40,
-                onHide: () => {
-                  navigation.navigate(RouteNames.LOGIN as never, {} as never);
-                },
-              });
-            } else {
-              Toast.show({
-                type: 'error',
-                text1: response.message,
-                autoHide: false,
-                topOffset: 30,
-                bottomOffset: 40,
-              });
-            }
-          });
-        }}>
+        //     if (response.statusCode === 201) {
+        //       Toast.show({
+        //         type: 'success',
+        //         text1: 'Đăng ký thành công',
+        //         autoHide: true,
+        //         visibilityTime: 1000,
+        //         topOffset: 30,
+        //         bottomOffset: 40,
+        //         onHide: () => {
+        //           navigation.navigate(RouteNames.LOGIN as never, {} as never);
+        //         },
+        //       });
+        //     } else {
+        //       Toast.show({
+        //         type: 'error',
+        //         text1: response.message,
+        //         autoHide: false,
+        //         topOffset: 30,
+        //         bottomOffset: 40,
+        //       });
+        //     }
+        //   });
+        // }}
+      >
         {({
           values,
           errors,
@@ -102,7 +114,8 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
               <TextInput
                 onChangeText={value => setFieldValue('name', value)}
                 onBlur={() => setFieldTouched('name')}
-                style={{flex: 1}}
+                style={{flex: 1, color: Colors.text}}
+                placeholderTextColor={Colors.text}
                 placeholder={'Họ và tên'}
                 value={values.name}
               />
@@ -122,8 +135,9 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
               <TextInput
                 onChangeText={value => setFieldValue('email', value)}
                 onBlur={() => setFieldTouched('email')}
-                style={{flex: 1}}
+                style={{flex: 1, color: Colors.text}}
                 placeholder={'Email'}
+                placeholderTextColor={Colors.text}
                 value={values.email}
                 keyboardType="email-address"
               />
@@ -145,7 +159,8 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                 onBlur={() => setFieldTouched('password')}
                 secureTextEntry={hidePassword}
                 placeholder={'Mật khẩu'}
-                style={{flex: 1}}
+                placeholderTextColor={Colors.text}
+                style={{flex: 1, color: Colors.text}}
                 value={values.password}
               />
               {values.password && (
@@ -168,8 +183,9 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
               <TextInput
                 onChangeText={value => setFieldValue('phone', value)}
                 onBlur={() => setFieldTouched('phone')}
-                style={{flex: 1}}
+                style={{flex: 1, color: Colors.text}}
                 placeholder={'Số điện thoại'}
+                placeholderTextColor={Colors.text}
                 value={values.phone}
                 keyboardType="phone-pad"
               />
@@ -190,8 +206,9 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                 // editable={false}
                 // onChangeText={value => setFieldValue('dob', value)}
                 onBlur={() => setFieldTouched('dob')}
-                style={{flex: 1, color: 'black'}}
+                style={{flex: 1, color: Colors.text}}
                 placeholder={'Ngày sinh'}
+                placeholderTextColor={Colors.text}
                 value={values.dob}
               />
 
@@ -205,12 +222,13 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                 confirmText={'Chọn'}
                 cancelText={'Huỷ'}
                 onConfirm={value => {
-                  console.log(value);
+                  console.log('Selected dob:', value);
 
                   setOpen(false);
                   setDate(value);
-                  // setFieldValue('dob', value);
                   setFieldValue('dob', moment(value).format('DD/MM/YYYY'));
+
+                  console.log('Values dob', values.dob);
                 }}
                 onCancel={() => {
                   setOpen(false);
@@ -236,7 +254,50 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
             )}
 
             <TouchableOpacity
-              onPress={handleSubmit}
+              onPress={() => {
+                const dobISOString = moment(
+                  values.dob,
+                  'DD/MM/YYYY',
+                ).toISOString();
+
+                console.log(dobISOString);
+                // same shape as initial values
+                console.log(values);
+                register({
+                  name: values.name,
+                  email: values.email,
+                  password: values.password,
+                  phone: values.phone,
+                  dob: dobISOString,
+                }).then((response: IRegisterRes) => {
+                  console.log(response);
+
+                  if (response.statusCode === 201) {
+                    Toast.show({
+                      type: 'success',
+                      text1: 'Đăng ký thành công',
+                      autoHide: true,
+                      visibilityTime: 1000,
+                      topOffset: 30,
+                      bottomOffset: 40,
+                      onHide: () => {
+                        navigation.navigate(
+                          RouteNames.LOGIN as never,
+                          {} as never,
+                        );
+                      },
+                    });
+                  } else {
+                    Toast.show({
+                      type: 'error',
+                      text1: response.message,
+                      autoHide: false,
+                      topOffset: 30,
+                      bottomOffset: 40,
+                    });
+                  }
+                });
+              }}
               disabled={!isValid}
               style={[
                 styles.button,
@@ -255,7 +316,112 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
               <View style={styles.divider} />
             </View>
 
-            <TouchableOpacity style={styles.socialButton}>
+            <TouchableOpacity
+              style={styles.socialButton}
+              onPress={() => {
+                googleSignIn().then(async (response: IGoogleLoginRes) => {
+                  console.log('GG AT:', response.data?.accessToken);
+                  console.log('GG RT:', response.data?.refreshToken);
+
+                  // Store user token
+                  await AsyncStorage.setItem(
+                    'accessToken',
+                    `${response.data?.accessToken}`,
+                  );
+                  await AsyncStorage.setItem(
+                    'refreshToken',
+                    `${response.data?.refreshToken}`,
+                  );
+
+                  validate(`${response.data?.accessToken}`).then(response => {
+                    console.log('User data:', response.userInfo);
+
+                    // Store user data
+                    let user: IUser = {
+                      _id: '',
+                      name: '',
+                      dob: '',
+                      email: '',
+                      phone: '',
+                      avatar: '',
+                    };
+
+                    // Store user info
+                    user._id = response.userInfo._id ?? '';
+                    user.name = response.userInfo.name ?? '';
+                    user.email = response.userInfo.email ?? '';
+                    user.phone = response.userInfo.phone ?? '';
+                    user.dob = dateFormat(response.userInfo.dob) ?? '';
+                    user.avatar =
+                      response.userInfo.avatar ??
+                      'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9';
+
+                    userStore.setUser(user);
+
+                    // Store user settings
+                    let settings: ISettings = {
+                      callNoti: true,
+                      msgNoti: true,
+                      stockNoti: true,
+                      newsNoti: true,
+                    };
+
+                    settings.callNoti =
+                      response.userInfo.setting.callNoti ?? true;
+                    settings.msgNoti =
+                      response.userInfo.setting.msgNoti ?? true;
+                    settings.stockNoti =
+                      response.userInfo.setting.stockNoti ?? true;
+                    settings.newsNoti =
+                      response.userInfo.setting.newsNoti ?? true;
+
+                    userStore.setUserSettings(settings);
+                    console.log('Call noti:', settings.callNoti);
+                  });
+
+                  // Show toast message and navigate to home screen if login successfully
+                  if (response.statusCode === 200) {
+                    Toast.show({
+                      type: 'success',
+                      text1: 'Đăng nhập thành công',
+                      autoHide: true,
+                      visibilityTime: 1000,
+                      topOffset: 30,
+                      bottomOffset: 40,
+                      onHide: () => {
+                        navigation.navigate(
+                          RouteNames.HOME_DRAWER as never,
+                          {} as never,
+                        );
+                      },
+                    });
+                  } else if (response.statusCode === 401) {
+                    Toast.show({
+                      type: 'error',
+                      text1: response.message,
+                      autoHide: false,
+                      topOffset: 30,
+                      bottomOffset: 40,
+                    });
+                  } else if (response.statusCode === 404) {
+                    Toast.show({
+                      type: 'error',
+                      text1: response.message,
+                      autoHide: false,
+                      topOffset: 30,
+                      bottomOffset: 40,
+                    });
+                  } else {
+                    Toast.show({
+                      type: 'error',
+                      text1: response.message,
+                      autoHide: false,
+                      topOffset: 30,
+                      bottomOffset: 40,
+                    });
+                  }
+                });
+              }}>
               <Image
                 source={require('../../../../assets/google.png')}
                 style={{...styles.socialButton.image}}
@@ -273,8 +439,8 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
               <Text style={styles.textPrimary}>Đã có tài khoản?</Text>
               <TouchableOpacity
                 onPress={() => {
+                  console.log('Đăng nhập');
                   navigation.navigate(RouteNames.LOGIN as never, {} as never);
-                  console.log('đăng nhập');
                 }}>
                 <Text style={[styles.textPrimary, styles.loginPrimary]}>
                   Đăng nhập

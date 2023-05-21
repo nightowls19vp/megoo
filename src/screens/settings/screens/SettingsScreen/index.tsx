@@ -175,19 +175,27 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
                 setModalVisible(!modalVisible);
 
                 // If user logged in with Google account then logout google accoutn first
-                await signOutIfSignedInWithGG();
                 const refreshToken = await AsyncStorage.getItem('refreshToken');
 
-                logout(`${refreshToken}`).then((response: ILogoutRes) => {
-                  console.log('Logout msg:', response.message);
+                const response = await logout(`${refreshToken}`);
 
-                  AsyncStorage.removeItem('accessToken');
-                  AsyncStorage.removeItem('refreshToken');
+                await signOutIfSignedInWithGG();
 
-                  appStore.setIsLoggedIn(false);
+                console.log('Logout msg:', response.message);
 
-                  navigation.navigate(RouteNames.LOGIN as never, {} as never);
-                });
+                await AsyncStorage.removeItem('accessToken');
+                await AsyncStorage.removeItem('refreshToken');
+                const access = await AsyncStorage.getItem('accessToken');
+                console.log('AT after logout:', access);
+
+                userStore.resetStore();
+
+                console.log('user name after logout:', userStore.name);
+                console.log('user email after logout:', userStore.email);
+
+                appStore.setIsLoggedIn(false);
+
+                navigation.navigate(RouteNames.LOGIN as never, {} as never);
               }}
               style={{
                 alignItems: 'center',
