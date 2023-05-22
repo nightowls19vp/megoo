@@ -1,17 +1,21 @@
-import {StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 import {Colors} from '../../../../../constants/color.const';
+
+const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    width: width,
   },
   avatar: {
     width: 200,
     height: 200,
     borderRadius: 200 / 2,
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   titleContainer: {
     width: '90%',
@@ -59,7 +63,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    alignItems: 'baseline',
+    alignItems: 'center',
     gap: 10,
   },
   connectText: {

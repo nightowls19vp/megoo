@@ -10,13 +10,14 @@ import {Colors} from '../../../constants/color.const';
 import RouteNames from '../../../constants/route-names.const';
 
 import ProfileScreen from '../../../screens/profile/screens/ProfileScreen';
-import EditProfileScreen from '../../../screens/profile/screens/EditProfileScreen';
 import SettingsScreen from '../../../screens/settings/screens/SettingsScreen';
 import AppInfoScreen from './../../../screens/settings/screens/AppInfoScreen';
 import PoliciesScreen from './../../../screens/settings/screens/PoliciesScreen';
 import PackageScreen from '../../../screens/package/screens/PackageScreen';
 import CartScreen from '../../../screens/package/screens/CartScreen';
 import GroupScreen from '../../../screens/profile/screens/GroupScreen';
+import UserInfoScreen from '../../../screens/profile/screens/UserInfoScreen';
+import EditProfileScreen from '../../../screens/profile/screens/EditProfileScreen';
 
 function HomeScreen() {
   return (
@@ -92,7 +93,10 @@ const ProfileStack = createNativeStackNavigator();
 function ProfileScreenStack() {
   return (
     <ProfileStack.Navigator initialRouteName={RouteNames.PROFILE}>
-      <ProfileStack.Screen name={RouteNames.PROFILE} component={GroupScreen} />
+      <ProfileStack.Screen
+        name={RouteNames.PROFILE}
+        component={UserInfoScreen}
+      />
       <ProfileStack.Screen
         name={RouteNames.EDIT_PROFILE}
         component={EditProfileScreen}
@@ -102,16 +106,16 @@ function ProfileScreenStack() {
   );
 }
 
-const TopTab = createMaterialTopTabNavigator();
+// const TopTab = createMaterialTopTabNavigator();
 
-const TopTabNavigator = () => {
-  return (
-    <TopTab.Navigator initialRouteName={RouteNames.PROFILE_STACK}>
-      <TopTab.Screen name={RouteNames.PROFILE_STACK} component={ChatScreen} />
-      <TopTab.Screen name={RouteNames.GROUP_STACK} component={GroupScreen} />
-    </TopTab.Navigator>
-  );
-};
+// const TopTabNavigator = () => {
+//   return (
+//     <TopTab.Navigator initialRouteName={RouteNames.PROFILE_STACK}>
+//       <TopTab.Screen name={RouteNames.PROFILE_STACK} component={ChatScreen} />
+//       <TopTab.Screen name={RouteNames.GROUP_STACK} component={GroupScreen} />
+//     </TopTab.Navigator>
+//   );
+// };
 
 const SettingsStack = createNativeStackNavigator();
 
@@ -186,7 +190,7 @@ export default function BottomNavigationBar() {
         }}
       />
       <Tab.Screen
-        name={RouteNames.TOP_TAB}
+        name={RouteNames.PROFILE_STACK}
         component={ProfileScreenStack}
         initialParams={{screen: RouteNames.PROFILE}}
         options={{

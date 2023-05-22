@@ -169,100 +169,27 @@ const CartScreen = () => {
             }
           />
           <View style={styles.cartItemContainer} key={index}>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'baseline',
-                gap: 10,
-              }}>
+            <View style={styles.cartInfoContainer}>
               <Text style={styles.text}>Tên gói: </Text>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
                 {object.name}
               </Text>
             </View>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                gap: 10,
-              }}>
+            <View style={styles.cartInfoContainer}>
               <Text style={styles.text}>Thời hạn:</Text>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
                 {object.duration} tháng
               </Text>
             </View>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 10,
-              }}>
+            <View style={styles.cartInfoContainer}>
               <Text style={styles.text}>Số lượng thành viên:</Text>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
                 {object.noOfMember} người
               </Text>
             </View>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 10,
-              }}>
+            <View style={styles.cartInfoContainer}>
               <Text style={styles.text}>Số lượng:</Text>
-              {/* <InputSpinner
-                  max={50}
-                  min={1}
-                  step={1}
-                  value={object.quantity}
-                  colorPress={Colors.text}
-                  colorLeft={'#ff6961'}
-                  colorRight={'#77DD77'}
-                  delayPressIn={10}
-                  // skin="modern"
-                  // rounded={false}
-                  // showBorder
-                  height={40}
-                  fontSize={14}
-                  width={'40%'}
-                  onChange={(num: number) => {
-                    const index = cartList.findIndex(
-                      (cartItem: any) =>
-                        cartItem.package === object.package &&
-                        cartItem.noOfMember === object.noOfMember &&
-                        cartItem.duration === object.duration,
-                    );
-  
-                    if (index === -1) {
-                      cartList.push({...object, quantity: num});
-                    } else {
-                      cartList[index].quantity = num;
-                    }
-  
-                    const payload: ICartList = {
-                      cart: cartList.map((cartItem: any) => {
-                        return {
-                          package: cartItem.package,
-                          duration: cartItem.duration,
-                          noOfMember: cartItem.noOfMember,
-                          quantity: cartItem.quantity,
-                        };
-                      }),
-                    };
-  
-                    updateCart(payload)
-                      .then(async res => {
-                        console.log('Update cart after incr:', res.data);
-                        const newCartList = await getCartList();
-                        setCartList(newCartList);
-                      })
-                      .catch(error => {
-                        console.log('update cart err:', error);
-                      });
-                  }}
-                /> */}
+
               <NumericInput
                 type="plus-minus"
                 minValue={1}
@@ -313,13 +240,7 @@ const CartScreen = () => {
                 }}
               />
             </View>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'baseline',
-                gap: 10,
-              }}>
+            <View style={styles.cartInfoContainer}>
               <Text style={styles.text}>Giá tiền:</Text>
               <Text
                 style={[
@@ -340,39 +261,11 @@ const CartScreen = () => {
         {renderCartItem()}
       </ScrollView>
 
-      <View
-        style={{
-          width: '100%',
-          height: 50,
-          display: 'flex',
-          alignItems: 'center',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          backgroundColor: 'white',
-          // paddingHorizontal: 20,
-          position: 'absolute',
-          bottom: 0,
-        }}>
-        <View
-          style={{
-            width: '10%',
-            height: '100%',
-            paddingLeft: 5,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
+      <View style={styles.paymentButtonContainer}>
+        <View style={styles.icon}>
           <Icon name="shoppingcart" size={30} color={Colors.primary} />
         </View>
-        <Text
-          style={{
-            width: '50%',
-            fontSize: 16,
-            fontWeight: 'bold',
-            color: Colors.text,
-            textAlign: 'center',
-          }}
-          numberOfLines={2}>
+        <Text style={styles.price} numberOfLines={2}>
           {Math.round(totalPrice)} VND
         </Text>
 
@@ -437,22 +330,8 @@ const CartScreen = () => {
               subscription.remove();
             };
           }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '40%',
-            height: '100%',
-            backgroundColor: Colors.primary,
-          }}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: 'bold',
-              color: Colors.background,
-            }}>
-            Thanh toán
-          </Text>
+          style={styles.paymentButton}>
+          <Text style={styles.paymentText}>Thanh toán</Text>
         </TouchableOpacity>
       </View>
     </View>

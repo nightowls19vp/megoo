@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   },
   settingsContainer: {
     width: '90%',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   contentContainer: {
     backgroundColor: Colors.background,
