@@ -13,7 +13,7 @@ export default {
   CHAT: 'Đoạn chat',
   CART: 'Giỏ hàng',
 
-  GROUP_ITEM: 'Thông tin chi tiết',
+  GROUP_INFO: 'Thông tin chi tiết',
 
   STORAGE: 'Quản lý kho',
 

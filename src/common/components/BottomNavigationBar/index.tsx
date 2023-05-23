@@ -15,9 +15,9 @@ import AppInfoScreen from './../../../screens/settings/screens/AppInfoScreen';
 import PoliciesScreen from './../../../screens/settings/screens/PoliciesScreen';
 import PackageScreen from '../../../screens/package/screens/PackageScreen';
 import CartScreen from '../../../screens/package/screens/CartScreen';
-import GroupScreen from '../../../screens/profile/screens/GroupScreen';
 import UserInfoScreen from '../../../screens/profile/screens/UserInfoScreen';
 import EditProfileScreen from '../../../screens/profile/screens/EditProfileScreen';
+import GroupInfoScreen from '../../../screens/profile/screens/GroupInfoScren';
 
 function HomeScreen() {
   return (
@@ -100,6 +100,10 @@ function ProfileScreenStack() {
       <ProfileStack.Screen
         name={RouteNames.EDIT_PROFILE}
         component={EditProfileScreen}
+      />
+      <ProfileStack.Screen
+        name={RouteNames.GROUP_INFO}
+        component={GroupInfoScreen}
       />
       <ProfileStack.Screen name={RouteNames.CHAT} component={ChatScreen} />
     </ProfileStack.Navigator>

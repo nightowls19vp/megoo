@@ -6,9 +6,7 @@ import {Colors} from '../../../../constants/color.const';
 import {getUserGroup} from './services/group.service';
 import styles from './styles/style';
 
-// {navigation}: {navigation: any}
-
-const GroupsScreen = () => {
+const GroupsScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
 
   const getGroups = async () => {
@@ -19,6 +17,7 @@ const GroupsScreen = () => {
     setGroups(
       groupsRes.groups.map((groupItem: any) => {
         return {
+          _id: groupItem._id,
           name: groupItem.name,
           avatar: groupItem.avatar,
           duration: groupItem.packages[0].package.duration,
@@ -42,7 +41,9 @@ const GroupsScreen = () => {
           key={index}
           onPress={() => {
             console.log('Clicked');
-            // navigation.navigate(RouteNames.GROUP_ITEM as never, {} as never);
+            navigation.navigate(RouteNames.GROUP_INFO as never, {
+              groupId: group._id,
+            });
           }}>
           <Image
             source={{

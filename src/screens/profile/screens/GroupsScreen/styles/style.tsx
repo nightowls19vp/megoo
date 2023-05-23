@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 10,
-    marginBottom: 10,
+    marginBottom: 20,
   },
   groupInfo: {
     display: 'flex',

@@ -6,20 +6,15 @@ import GroupsScreen from '../GroupsScreen';
 import ProfileScreen from '../ProfileScreen';
 import styles from './styles/style';
 
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
-
 const UserInfoScreen = ({navigation}: {navigation: any}) => {
   const [activeTab, setActiveTab] = useState('info');
 
   const renderTabContent = () => {
     if (activeTab === 'group') {
-      return <GroupsScreen />;
+      return <GroupsScreen navigation={navigation} />;
     } else {
       return <ProfileScreen navigation={navigation} />;
     }
-    // Add more cases for other tabs if needed
-    return null;
   };
 
   return (
