@@ -13,6 +13,7 @@ import NumericInput from 'react-native-numeric-input';
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import RouteNames from '../../../../constants/route-names.const';
 import {getUserCart, checkout, getUserById} from './services/cart.service';
 import styles from './styles/style';
 import {Colors} from '../../../../constants/color.const';
@@ -22,11 +23,11 @@ import {
   ICartList,
 } from '../../../../common/interfaces/package.interface';
 import {updateCart} from '../PackageScreen/services/package.service';
-import axios from 'axios';
+import Toast from 'react-native-toast-message';
 
-const CartScreen = () => {
+const CartScreen = ({navigation}: {navigation: any}) => {
   const [cartList, setCartList] = useState<any[]>([]);
-  const [selectedItemList, setSelectedItemList] = useState<ICartList>({
+  const [selectedItemList, setSelectedItemList] = useState<any>({
     cart: [],
   });
   const [totalPrice, setTotalPrice] = useState(0);
@@ -78,6 +79,7 @@ const CartScreen = () => {
       newValue: boolean,
       object: {
         package: string;
+        name: string;
         quantity: number;
         noOfMember: number;
         duration: number;
@@ -87,8 +89,9 @@ const CartScreen = () => {
       updatedArray[index] = newValue;
       setToggleCheckBoxArray(updatedArray);
 
-      let cartItem: ICartItem = {
+      let cartItem: any = {
         package: object.package,
+        name: object.name,
         quantity: object.quantity,
         noOfMember: object.noOfMember,
         duration: object.duration,
@@ -99,6 +102,7 @@ const CartScreen = () => {
         cart: selectedItemList.cart.map((item: any) => {
           return {
             package: item.package,
+            name: item.name,
             duration: item.duration,
             noOfMember: item.noOfMember,
             quantity: item.quantity,
@@ -115,7 +119,7 @@ const CartScreen = () => {
         } else {
           // If the array is not empty, check if the selected item already exists in the array
           const cartIndex = selectedItemList.cart.findIndex(
-            obj =>
+            (obj: any) =>
               obj.package === cartItem.package &&
               obj.noOfMember === cartItem.noOfMember &&
               obj.duration === cartItem.duration,
@@ -123,7 +127,7 @@ const CartScreen = () => {
 
           // If not, add the selected item to the array
           if (cartIndex === -1) {
-            setSelectedItemList(prevCartList => ({
+            setSelectedItemList((prevCartList: any) => ({
               cart: [...prevCartList.cart, cartItem],
             }));
           }
@@ -137,15 +141,17 @@ const CartScreen = () => {
       } else {
         // If the already selected item is deselected, remove it from the array
         const cartIndex = selectedItemList.cart.findIndex(
-          obj =>
+          (obj: any) =>
             obj.package === cartItem.package &&
             obj.noOfMember === cartItem.noOfMember &&
             obj.duration === cartItem.duration,
         );
 
-        setSelectedItemList(prevState => ({
+        setSelectedItemList((prevState: any) => ({
           ...prevState,
-          cart: prevState.cart.filter((item, i) => i !== cartIndex),
+          cart: prevState.cart.filter(
+            (item: any, i: number) => i !== cartIndex,
+          ),
         }));
 
         let price =
@@ -276,64 +282,26 @@ const CartScreen = () => {
             console.log('User id:', userStore.id);
             console.log('Selected item list:', selectedItemList.cart);
 
-            const response = await checkout(selectedItemList);
-            console.log('Checkout response:', response);
-            const order = response.order;
-            const trans = response.trans;
-            console.log('order res:', order);
-            console.log('trans res:', trans);
-
-            const trans_id = response.trans._id;
-            console.log('trans_id', trans_id);
-
-            // Open URL for payment
-            Linking.openURL(response.order.order_url);
-
-            const subscription = AppState.addEventListener(
-              'change',
-              nextAppState => {
-                if (appState.current.match(/inactive|background/)) {
-                  console.log('Get user running in background');
-                }
-
-                if (
-                  appState.current.match(/inactive|background/) &&
-                  nextAppState === 'active'
-                ) {
-                  console.log('App has come to the foreground!');
-
-                  // Check if trans_id exists in user's trxHist then user paid successfully
-                  const interValCheck = setInterval(async () => {
-                    const getRes = await getUserById();
-                    console.log('get user res:', getRes);
-                    console.log('trans id in hist:', getRes.user.trxHist);
-
-                    if (getRes.user.trxHist.includes(trans_id)) {
-                      console.log(trans_id, 'exists in trxHist');
-
-                      clearInterval(interValCheck);
-                    }
-                  }, 10 * 1000);
-
-                  setTimeout(() => {
-                    clearInterval(interValCheck);
-                  }, 2 * 60 * 1000);
-                }
-
-                appState.current = nextAppState;
-                setAppStateVisible(appState.current);
-                console.log('AppState', appState.current);
-              },
-            );
-
-            return () => {
-              subscription.remove();
-            };
+            if (selectedItemList.cart.length === 0) {
+              Toast.show({
+                type: 'error',
+                text1: 'Vui lòng chọn gói để thanh toán',
+                autoHide: true,
+                visibilityTime: 3000,
+                topOffset: 30,
+                bottomOffset: 40,
+              });
+            } else {
+              navigation.navigate(RouteNames.PAYMENT as never, {
+                selectedItems: selectedItemList.cart,
+              });
+            }
           }}
           style={styles.paymentButton}>
           <Text style={styles.paymentText}>Thanh toán</Text>
         </TouchableOpacity>
       </View>
+      <Toast position="top"></Toast>
     </View>
   );
 };

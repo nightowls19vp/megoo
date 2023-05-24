@@ -1,5 +1,5 @@
-const tintColorLight = "#2f95dc";
-const tintColorDark = "#fff";
+const tintColorLight = '#2f95dc';
+const tintColorDark = '#fff';
 
 // export default {
 //   light: {
@@ -20,10 +20,11 @@ const tintColorDark = "#fff";
 // };
 
 export const Colors = {
-  background: "#ffffff",
-  text: "#49454F",
-  primary: "#F58F00",
-  secondary: "#B3B3B3",
-  error: "#DD382F",
-  disabled: "#F4B051",
+  background: '#ffffff',
+  text: '#49454F',
+  primary: '#F58F00',
+  // secondary: "#B3B3B3",
+  secondary: '#A8A8A8',
+  error: '#DD382F',
+  disabled: '#F4B051',
 };

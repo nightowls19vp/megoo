@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   groupInfo: {
     display: 'flex',
     width: '100%',
-    gap: 10,
+    gap: 20,
     marginVertical: 10,
   },
   groupAvatar: {

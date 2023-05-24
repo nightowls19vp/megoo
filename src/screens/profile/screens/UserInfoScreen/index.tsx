@@ -6,19 +6,40 @@ import GroupsScreen from '../GroupsScreen';
 import ProfileScreen from '../ProfileScreen';
 import styles from './styles/style';
 
+import {RouteProp, useRoute} from '@react-navigation/native';
+
+// Define the type for the route params
+type GroupsRouteParams = {
+  activeTab: string;
+};
+
+// Specify the type for the route
+type GroupsRouteProp = RouteProp<Record<string, GroupsRouteParams>, string>;
+
 const UserInfoScreen = ({navigation}: {navigation: any}) => {
+  const route = useRoute<GroupsRouteProp>();
+
   const [activeTab, setActiveTab] = useState('info');
 
+  const tab = route.params?.activeTab;
+
   const renderTabContent = () => {
-    if (activeTab === 'group') {
+    if (tab === 'group') {
       return <GroupsScreen navigation={navigation} />;
-    } else {
+    } else if (activeTab === 'group') {
+      return <GroupsScreen navigation={navigation} />;
+    } else if (activeTab === 'info') {
       return <ProfileScreen navigation={navigation} />;
     }
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={
+        activeTab === 'group'
+          ? [styles.container, {paddingBottom: 60}]
+          : styles.container
+      }>
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[
@@ -70,6 +91,7 @@ const UserInfoScreen = ({navigation}: {navigation: any}) => {
         style={{
           position: 'relative',
           top: 60,
+          // minHeight: '100%',
         }}>
         {renderTabContent()}
       </ScrollView>

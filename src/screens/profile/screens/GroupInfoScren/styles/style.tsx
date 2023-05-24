@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     width: width,
-    minHeight: height,
+    minHeight: '100%',
   },
   tabContainer: {
     display: 'flex',

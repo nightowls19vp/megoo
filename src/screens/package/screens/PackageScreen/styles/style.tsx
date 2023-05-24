@@ -11,12 +11,14 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     display: 'flex',
+    width: '90%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'baseline',
     marginVertical: 10,
   },
   title: {
+    textAlign: 'left',
     fontSize: 18,
     fontWeight: 'bold',
     color: Colors.primary,

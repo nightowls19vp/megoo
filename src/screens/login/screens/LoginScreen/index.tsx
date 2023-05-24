@@ -1,23 +1,11 @@
-import {ErrorMessage, Formik} from 'formik';
+import {Formik} from 'formik';
 import React, {useEffect} from 'react';
-import {
-  AppRegistry,
-  Image,
-  Modal,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
-import axios from 'axios';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 // import Provider from '@ant-design/react-native/lib/provider';
 // import Toast from '@ant-design/react-native/lib/toast';
 import Toast from 'react-native-toast-message';

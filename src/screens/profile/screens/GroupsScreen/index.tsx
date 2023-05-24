@@ -53,10 +53,12 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
           />
           <View style={styles.groupInfo}>
             <View style={styles.infoRow}>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>Tên gói: </Text>
+              <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                Tên nhóm:{' '}
+              </Text>
               <Text
                 style={{
-                  width: '55%',
+                  width: '50%',
                 }}
                 ellipsizeMode={'tail'}
                 numberOfLines={1}>

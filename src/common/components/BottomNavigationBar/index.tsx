@@ -4,7 +4,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
 import {Colors} from '../../../constants/color.const';
 import RouteNames from '../../../constants/route-names.const';
@@ -18,6 +17,8 @@ import CartScreen from '../../../screens/package/screens/CartScreen';
 import UserInfoScreen from '../../../screens/profile/screens/UserInfoScreen';
 import EditProfileScreen from '../../../screens/profile/screens/EditProfileScreen';
 import GroupInfoScreen from '../../../screens/profile/screens/GroupInfoScren';
+import GroupsScreen from '../../../screens/profile/screens/GroupsScreen';
+import PaymentScreen from '../../../screens/package/screens/PaymentScreen';
 
 function HomeScreen() {
   return (
@@ -84,6 +85,10 @@ const PackageScreenStack = ({navigation}: {navigation: any}) => {
         // }}
       />
       <PackageStack.Screen name={RouteNames.CART} component={CartScreen} />
+      <PackageStack.Screen
+        name={RouteNames.PAYMENT}
+        component={PaymentScreen}
+      />
     </PackageStack.Navigator>
   );
 };
@@ -109,17 +114,6 @@ function ProfileScreenStack() {
     </ProfileStack.Navigator>
   );
 }
-
-// const TopTab = createMaterialTopTabNavigator();
-
-// const TopTabNavigator = () => {
-//   return (
-//     <TopTab.Navigator initialRouteName={RouteNames.PROFILE_STACK}>
-//       <TopTab.Screen name={RouteNames.PROFILE_STACK} component={ChatScreen} />
-//       <TopTab.Screen name={RouteNames.GROUP_STACK} component={GroupScreen} />
-//     </TopTab.Navigator>
-//   );
-// };
 
 const SettingsStack = createNativeStackNavigator();
 

@@ -9,7 +9,9 @@ const styles = StyleSheet.create({
     minHeight: '100%',
     display: 'flex',
     alignItems: 'center',
-    paddingBottom: 50,
+    paddingBottom: 60,
+    paddingTop: 10,
+    // marginVertical: 10,
   },
   cartListContainer: {
     width: '100%',
@@ -18,10 +20,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 5,
     paddingRight: 20,
+    marginVertical: 10,
   },
   cartItemContainer: {
     width: '90%',
-    marginVertical: 20,
     backgroundColor: Colors.background,
     display: 'flex',
     flexDirection: 'column',
@@ -33,7 +35,7 @@ const styles = StyleSheet.create({
   cartInfoContainer: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'baseline',
+    alignItems: 'center',
     gap: 10,
   },
   text: {
