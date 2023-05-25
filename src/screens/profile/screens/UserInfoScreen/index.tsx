@@ -25,6 +25,7 @@ const UserInfoScreen = ({navigation}: {navigation: any}) => {
 
   const renderTabContent = () => {
     if (tab === 'group') {
+      setActiveTab('group');
       return <GroupsScreen navigation={navigation} />;
     } else if (activeTab === 'group') {
       return <GroupsScreen navigation={navigation} />;

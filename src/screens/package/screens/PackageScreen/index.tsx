@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState, useCallback} from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,8 @@ import Carousel from 'react-native-reanimated-carousel';
 import Slider from '@react-native-community/slider';
 import Icon from 'react-native-vector-icons/AntDesign';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import {RouteProp, useRoute, useFocusEffect} from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 import RouteNames from '../../../../constants/route-names.const';
 import styles from './styles/style';
@@ -22,8 +24,8 @@ import {
   IUserCart,
 } from '../../../../common/interfaces/package.interface';
 import userStore from '../../../../common/store/user.store';
-import Toast from 'react-native-toast-message';
 import {getUserCart} from '../CartScreen/services/cart.service';
+import appStore from '../../../../common/store/app.store';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -182,130 +184,224 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
           </View>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={async () => {
-                // userStore.resetArray();
-                let selectedPkg = {
-                  package: item._id,
-                  noOfMember: noOfMemb,
-                  duration: duration,
-                };
+            {appStore.isExtendedPkg ? (
+              <TouchableOpacity
+                style={styles.extendButton}
+                onPress={async () => {
+                  appStore.setRenewPkgId(item._id);
 
-                // Get user cart
-                const userCart: IUserCart = await getUserCart();
-                console.log('userCart res:', userCart);
-
-                const userCartList: ICartList = {
-                  cart: [] as ICartItem[],
-                };
-
-                userCart.cart.map(object => {
-                  let item = {
-                    package: object._id,
-                    noOfMember: object.noOfMember,
-                    duration: object.duration,
-                    quantity: object.quantity,
+                  // userStore.resetArray();
+                  let selectedPkg = {
+                    package: item._id,
+                    noOfMember: noOfMemb,
+                    duration: duration,
                   };
 
-                  userCartList.cart.push(item);
-                });
+                  appStore.setRenewPkg(selectedPkg);
+                  // Get user cart
+                  const userCart: IUserCart = await getUserCart();
+                  console.log('userCart res:', userCart);
 
-                userStore.setCartList(userCartList);
-
-                // // Increase quantity for the same package
-                const index = userStore.cartList.cart.findIndex(
-                  obj =>
-                    obj.package === selectedPkg.package &&
-                    obj.noOfMember === selectedPkg.noOfMember &&
-                    obj.duration === selectedPkg.duration,
-                );
-
-                if (index === -1) {
-                  userStore.cartList.cart.push({...selectedPkg, quantity: 1});
-                } else {
-                  userStore.cartList.cart[index].quantity++;
-                }
-
-                const response = await updateCart(userStore.cartList);
-                if (response.statusCode === 200) {
-                  navigation.navigate(RouteNames.PAYMENT);
-                }
-              }}>
-              <Text style={styles.buttonText} numberOfLines={2}>
-                Mua ngay
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={async () => {
-                // userStore.resetArray();
-                let selectedPkg = {
-                  package: item._id,
-                  noOfMember: noOfMemb,
-                  duration: duration,
-                };
-
-                // Get user cart
-                const userCart: IUserCart = await getUserCart();
-                console.log('userCart res:', userCart);
-
-                const userCartList: ICartList = {
-                  cart: [] as ICartItem[],
-                };
-
-                userCart.cart.map(object => {
-                  let item = {
-                    package: object._id,
-                    noOfMember: object.noOfMember,
-                    duration: object.duration,
-                    quantity: object.quantity,
+                  const userCartList: ICartList = {
+                    cart: [] as ICartItem[],
                   };
 
-                  userCartList.cart.push(item);
-                });
+                  userCart.cart.map(object => {
+                    let item = {
+                      package: object._id,
+                      noOfMember: object.noOfMember,
+                      duration: object.duration,
+                      quantity: object.quantity,
+                    };
 
-                userStore.setCartList(userCartList);
-
-                // // Increase quantity for the same package
-                const index = userStore.cartList.cart.findIndex(
-                  obj =>
-                    obj.package === selectedPkg.package &&
-                    obj.noOfMember === selectedPkg.noOfMember &&
-                    obj.duration === selectedPkg.duration,
-                );
-
-                if (index === -1) {
-                  userStore.cartList.cart.push({...selectedPkg, quantity: 1});
-                } else {
-                  userStore.cartList.cart[index].quantity++;
-                }
-
-                const response = await updateCart(userStore.cartList);
-
-                if (response.statusCode === 200) {
-                  Toast.show({
-                    type: 'success',
-                    text1: 'Thêm vào giỏ hàng thành công',
-                    autoHide: true,
-                    visibilityTime: 2000,
-                    topOffset: 30,
-                    bottomOffset: 40,
+                    userCartList.cart.push(item);
                   });
-                } else {
-                  Toast.show({
-                    type: 'error',
-                    text1: response.message,
-                    autoHide: false,
-                    topOffset: 30,
-                    bottomOffset: 40,
-                  });
-                }
-              }}>
-              <Text style={styles.buttonText} numberOfLines={2}>
-                Thêm vào giỏ hàng
-              </Text>
-            </TouchableOpacity>
+
+                  userStore.setCartList(userCartList);
+
+                  // Increase quantity for the same package
+                  const index = userStore.cartList.cart.findIndex(
+                    obj =>
+                      obj.package === selectedPkg.package &&
+                      obj.noOfMember === selectedPkg.noOfMember &&
+                      obj.duration === selectedPkg.duration,
+                  );
+
+                  if (index === -1) {
+                    userStore.cartList.cart.push({...selectedPkg, quantity: 1});
+                  } else {
+                    userStore.cartList.cart[index].quantity++;
+                  }
+
+                  const response = await updateCart(userStore.cartList);
+
+                  if (response.statusCode === 200) {
+                    navigation.navigate(RouteNames.PAYMENT as never, {
+                      totalPrice: totalPrice,
+                      selectedItems: [
+                        {
+                          package: item._id,
+                          name: item.name,
+                          duration: item.duration,
+                          noOfMember: item.noOfMember,
+                          quantity: 1,
+                          price: totalPrice,
+                        },
+                      ],
+                    });
+                  }
+                }}>
+                <Text style={styles.buttonText} numberOfLines={2}>
+                  Mua ngay
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={async () => {
+                    // userStore.resetArray();
+                    let selectedPkg = {
+                      package: item._id,
+                      noOfMember: noOfMemb,
+                      duration: duration,
+                    };
+
+                    // Get user cart
+                    const userCart: IUserCart = await getUserCart();
+                    console.log('userCart res:', userCart);
+
+                    const userCartList: ICartList = {
+                      cart: [] as ICartItem[],
+                    };
+
+                    userCart.cart.map(object => {
+                      let item = {
+                        package: object._id,
+                        noOfMember: object.noOfMember,
+                        duration: object.duration,
+                        quantity: object.quantity,
+                      };
+
+                      userCartList.cart.push(item);
+                    });
+
+                    userStore.setCartList(userCartList);
+
+                    // // Increase quantity for the same package
+                    const index = userStore.cartList.cart.findIndex(
+                      obj =>
+                        obj.package === selectedPkg.package &&
+                        obj.noOfMember === selectedPkg.noOfMember &&
+                        obj.duration === selectedPkg.duration,
+                    );
+
+                    if (index === -1) {
+                      userStore.cartList.cart.push({
+                        ...selectedPkg,
+                        quantity: 1,
+                      });
+                    } else {
+                      userStore.cartList.cart[index].quantity++;
+                    }
+
+                    const response = await updateCart(userStore.cartList);
+
+                    if (response.statusCode === 200) {
+                      navigation.navigate(RouteNames.PAYMENT as never, {
+                        totalPrice: totalPrice,
+                        selectedItems: [
+                          {
+                            package: item._id,
+                            name: item.name,
+                            duration: item.duration,
+                            noOfMember: item.noOfMember,
+                            quantity: 1,
+                            price: totalPrice,
+                          },
+                        ],
+                      });
+                    }
+                  }}>
+                  <Text style={styles.buttonText} numberOfLines={2}>
+                    Mua ngay
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={async () => {
+                    // userStore.resetArray();
+                    let selectedPkg = {
+                      package: item._id,
+                      noOfMember: noOfMemb,
+                      duration: duration,
+                    };
+
+                    // Get user cart
+                    const userCart: IUserCart = await getUserCart();
+                    console.log('userCart res:', userCart);
+
+                    const userCartList: ICartList = {
+                      cart: [] as ICartItem[],
+                    };
+
+                    userCart.cart.map(object => {
+                      let item = {
+                        package: object._id,
+                        noOfMember: object.noOfMember,
+                        duration: object.duration,
+                        quantity: object.quantity,
+                      };
+
+                      userCartList.cart.push(item);
+                    });
+
+                    userStore.setCartList(userCartList);
+
+                    // // Increase quantity for the same package
+                    const index = userStore.cartList.cart.findIndex(
+                      obj =>
+                        obj.package === selectedPkg.package &&
+                        obj.noOfMember === selectedPkg.noOfMember &&
+                        obj.duration === selectedPkg.duration,
+                    );
+
+                    if (index === -1) {
+                      userStore.cartList.cart.push({
+                        ...selectedPkg,
+                        quantity: 1,
+                      });
+                    } else {
+                      userStore.cartList.cart[index].quantity++;
+                    }
+
+                    const response = await updateCart(userStore.cartList);
+
+                    if (response.statusCode === 200) {
+                      Toast.show({
+                        type: 'success',
+                        text1: 'Thêm vào giỏ hàng thành công',
+                        autoHide: true,
+                        visibilityTime: 2000,
+                        topOffset: 30,
+                        bottomOffset: 40,
+                      });
+                    } else {
+                      Toast.show({
+                        type: 'error',
+                        text1: response.message,
+                        autoHide: false,
+                        topOffset: 30,
+                        bottomOffset: 40,
+                      });
+                    }
+                  }}>
+                  <Text style={styles.buttonText} numberOfLines={2}>
+                    Thêm vào giỏ hàng
+                  </Text>
+                </TouchableOpacity>
+              </>
+            )}
           </View>
         </View>
       </View>

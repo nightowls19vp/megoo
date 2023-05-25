@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
+    gap: 10,
   },
 });
 

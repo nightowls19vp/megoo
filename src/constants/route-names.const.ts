@@ -10,6 +10,7 @@ export default {
   HOME_DRAWER: 'HOME_DRAWER',
 
   PACKAGE: 'Quản lý gói',
+  CURRENT_PACKAGE: 'Gói hiện tại',
   CHAT: 'Đoạn chat',
   CART: 'Giỏ hàng',
 

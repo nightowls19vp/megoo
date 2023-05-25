@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
+import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../GroupsScreen/services/group.service';
@@ -199,7 +200,13 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
       </View>
       <Text style={styles.title}>Liên kết tham gia</Text>
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          appStore.setIsExtendedPkg(true);
+          appStore.setRenewGroupId(group._id);
+          navigation.navigate(RouteNames.PACKAGE, {});
+        }}>
         <Text style={styles.buttonText}>Gia hạn gói</Text>
       </TouchableOpacity>
       <Toast position="top"></Toast>

@@ -19,6 +19,7 @@ import EditProfileScreen from '../../../screens/profile/screens/EditProfileScree
 import GroupInfoScreen from '../../../screens/profile/screens/GroupInfoScren';
 import GroupsScreen from '../../../screens/profile/screens/GroupsScreen';
 import PaymentScreen from '../../../screens/package/screens/PaymentScreen';
+import CurrentPackage from '../../../screens/profile/screens/CurrentPackageScreen';
 
 function HomeScreen() {
   return (
@@ -84,6 +85,10 @@ const PackageScreenStack = ({navigation}: {navigation: any}) => {
         //   },
         // }}
       />
+      <PackageStack.Screen
+        name={RouteNames.CURRENT_PACKAGE}
+        component={CurrentPackage}
+      />
       <PackageStack.Screen name={RouteNames.CART} component={CartScreen} />
       <PackageStack.Screen
         name={RouteNames.PAYMENT}
@@ -109,6 +114,10 @@ function ProfileScreenStack() {
       <ProfileStack.Screen
         name={RouteNames.GROUP_INFO}
         component={GroupInfoScreen}
+      />
+      <ProfileStack.Screen
+        name={RouteNames.CURRENT_PACKAGE}
+        component={CurrentPackage}
       />
       <ProfileStack.Screen name={RouteNames.CHAT} component={ChatScreen} />
     </ProfileStack.Navigator>

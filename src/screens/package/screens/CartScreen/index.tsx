@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import RouteNames from '../../../../constants/route-names.const';
-import {getUserCart, checkout, getUserById} from './services/cart.service';
+import {getUserCart} from './services/cart.service';
 import styles from './styles/style';
 import {Colors} from '../../../../constants/color.const';
 import userStore from '../../../../common/store/user.store';
@@ -83,11 +83,13 @@ const CartScreen = ({navigation}: {navigation: any}) => {
         quantity: number;
         noOfMember: number;
         duration: number;
+        price: number;
       },
     ) => {
       const updatedArray = [...toggleCheckBoxArray];
       updatedArray[index] = newValue;
       setToggleCheckBoxArray(updatedArray);
+      console.log('object price:', object.price);
 
       let cartItem: any = {
         package: object.package,
@@ -95,6 +97,7 @@ const CartScreen = ({navigation}: {navigation: any}) => {
         quantity: object.quantity,
         noOfMember: object.noOfMember,
         duration: object.duration,
+        price: object.price * object.quantity,
       };
 
       console.log('item pkg:', cartItem);
@@ -106,6 +109,7 @@ const CartScreen = ({navigation}: {navigation: any}) => {
             duration: item.duration,
             noOfMember: item.noOfMember,
             quantity: item.quantity,
+            price: item.price * item.quantity,
           };
         }),
       }));
@@ -155,7 +159,7 @@ const CartScreen = ({navigation}: {navigation: any}) => {
         }));
 
         let price =
-          totalPrice + cartList[index].price * cartList[index].quantity;
+          totalPrice - cartList[index].price * cartList[index].quantity;
         setTotalPrice(price);
       }
     };
@@ -217,6 +221,16 @@ const CartScreen = ({navigation}: {navigation: any}) => {
                       cartItem.duration === object.duration,
                   );
 
+                  // Update totalPrice
+                  if (cartList[index].quantity < num) {
+                    let price = totalPrice + cartList[index].price;
+                    setTotalPrice(price);
+                  } else if (cartList[index].quantity > num) {
+                    let price = totalPrice - cartList[index].price;
+                    setTotalPrice(price);
+                  }
+
+                  // Update cart item's quantity
                   if (index === -1) {
                     cartList.push({...object, quantity: num});
                   } else {
@@ -234,6 +248,7 @@ const CartScreen = ({navigation}: {navigation: any}) => {
                     }),
                   };
 
+                  // Update cart
                   updateCart(payload)
                     .then(async res => {
                       console.log('Update cart after incr:', res.data);
@@ -293,6 +308,7 @@ const CartScreen = ({navigation}: {navigation: any}) => {
               });
             } else {
               navigation.navigate(RouteNames.PAYMENT as never, {
+                totalPrice: totalPrice,
                 selectedItems: selectedItemList.cart,
               });
             }

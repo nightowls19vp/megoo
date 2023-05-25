@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {ICartList} from '../../../../../common/interfaces/package.interface';
+import appStore from '../../../../../common/store/app.store';
 import userStore from '../../../../../common/store/user.store';
 import {URL_HOST} from '../../../../../core/config/api/api.config';
 
@@ -69,5 +70,52 @@ export const getUserById = async () => {
     return response.data;
   } catch (error) {
     console.log('Get user by id error:', error);
+  }
+};
+
+export const renew = async (pkg: {}) => {
+  const renewEndpoint = `api/users/renew/${appStore.renewGroupId}`;
+  const reqUrl = `${URL_HOST}${renewEndpoint}`;
+  console.log('Renew:', reqUrl);
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+  console.log('pkg:', pkg);
+
+  try {
+    const response = await axios.post(
+      reqUrl,
+      {
+        cart: pkg,
+      },
+      {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log(error.response?.data);
+
+      let response: any = {
+        statusCode: error.response?.status ?? 500,
+        message: error.response?.data.message ?? '',
+      };
+
+      if (!error?.response) {
+        console.log('No Server Response');
+        response.message = 'Mất kết nối với server';
+      } else {
+        console.log('Checkout Failed');
+        console.log('Error code:', error.response?.status);
+
+        response.message = 'Checkout không thành công';
+      }
+
+      return response;
+    }
   }
 };
