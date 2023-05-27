@@ -36,6 +36,10 @@ class AppStore {
     this.renewPkg.noOfMember = pkg['noOfMember'];
     this.renewPkg.duration = pkg['duration'];
   }
+
+  @action getIsExtendedPkg() {
+    return this.isExtendedPkg;
+  }
 }
 
 const appStore = new AppStore();

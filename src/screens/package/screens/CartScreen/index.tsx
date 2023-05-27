@@ -31,6 +31,11 @@ const CartScreen = ({navigation}: {navigation: any}) => {
     cart: [],
   });
   const [totalPrice, setTotalPrice] = useState(0);
+  const [itemPrice, setItemPrice] = useState(0);
+
+  const [toggleCheckBoxArray, setToggleCheckBoxArray] = useState(
+    cartList.map(() => false),
+  );
 
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
@@ -65,15 +70,24 @@ const CartScreen = ({navigation}: {navigation: any}) => {
   useEffect(() => {
     getCartList().then(cartList => {
       setCartList(cartList);
-      // setIsInit(true);
     });
   }, []);
 
-  const renderCartItem = () => {
-    const [toggleCheckBoxArray, setToggleCheckBoxArray] = useState(
-      cartList.map(() => false),
-    );
+  useEffect(() => {
+    let totalPrice = 0;
 
+    cartList.forEach((item, index) => {
+      const itemTotalPrice = item.price * item.quantity;
+
+      if (toggleCheckBoxArray[index] === true) {
+        totalPrice += itemTotalPrice;
+      }
+    });
+
+    setTotalPrice(totalPrice);
+  }, [cartList, toggleCheckBoxArray]);
+
+  const renderCartItem = () => {
     const handleToggleCheckBox = (
       index: number,
       newValue: boolean,
@@ -90,6 +104,7 @@ const CartScreen = ({navigation}: {navigation: any}) => {
       updatedArray[index] = newValue;
       setToggleCheckBoxArray(updatedArray);
       console.log('object price:', object.price);
+      setItemPrice(object.price * object.quantity);
 
       let cartItem: any = {
         package: object.package,
@@ -140,8 +155,8 @@ const CartScreen = ({navigation}: {navigation: any}) => {
         console.log('selected list:', selectedItemList.cart);
 
         let price =
-          totalPrice + cartList[index].price * cartList[index].quantity;
-        setTotalPrice(price);
+          itemPrice + cartList[index].price * cartList[index].quantity;
+        setItemPrice(price);
       } else {
         // If the already selected item is deselected, remove it from the array
         const cartIndex = selectedItemList.cart.findIndex(
@@ -159,8 +174,8 @@ const CartScreen = ({navigation}: {navigation: any}) => {
         }));
 
         let price =
-          totalPrice - cartList[index].price * cartList[index].quantity;
-        setTotalPrice(price);
+          itemPrice - cartList[index].price * cartList[index].quantity;
+        setItemPrice(price);
       }
     };
 
@@ -221,13 +236,13 @@ const CartScreen = ({navigation}: {navigation: any}) => {
                       cartItem.duration === object.duration,
                   );
 
-                  // Update totalPrice
+                  // Update item total price
                   if (cartList[index].quantity < num) {
-                    let price = totalPrice + cartList[index].price;
-                    setTotalPrice(price);
+                    let price = itemPrice + cartList[index].price;
+                    setItemPrice(price);
                   } else if (cartList[index].quantity > num) {
-                    let price = totalPrice - cartList[index].price;
-                    setTotalPrice(price);
+                    let price = itemPrice - cartList[index].price;
+                    setItemPrice(price);
                   }
 
                   // Update cart item's quantity
@@ -254,6 +269,20 @@ const CartScreen = ({navigation}: {navigation: any}) => {
                       console.log('Update cart after incr:', res.data);
                       const newCartList = await getCartList();
                       setCartList(newCartList);
+                      // setSelectedItemList(newCartList);
+
+                      setSelectedItemList(() => ({
+                        cart: newCartList.map((item: any) => {
+                          return {
+                            package: item.package,
+                            name: item.name,
+                            duration: item.duration,
+                            noOfMember: item.noOfMember,
+                            quantity: item.quantity,
+                            price: item.price * item.quantity,
+                          };
+                        }),
+                      }));
                     })
                     .catch(error => {
                       console.log('update cart err:', error);

@@ -11,6 +11,7 @@ export default {
 
   PACKAGE: 'Quản lý gói',
   CURRENT_PACKAGE: 'Gói hiện tại',
+  OTHER_PACKAGES: 'Các gói khác',
   CHAT: 'Đoạn chat',
   CART: 'Giỏ hàng',
 

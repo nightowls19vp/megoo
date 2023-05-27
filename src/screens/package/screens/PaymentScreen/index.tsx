@@ -207,31 +207,51 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
                   ) {
                     console.log('App has come to the foreground!');
                     // Check if trans_id exists in user's trxHist then user paid successfully
-                    const interValCheck = setInterval(async () => {
+                    let intervalCheckActive = true;
+
+                    let interValCheck = setInterval(async () => {
+                      if (!intervalCheckActive) {
+                        clearInterval(interValCheck);
+                        return;
+                      }
+
                       const getRes = await getUserById();
                       console.log('get user res:', getRes);
                       console.log('trans id in hist:', getRes.user.trxHist);
                       if (getRes.user.trxHist.includes(trans_id)) {
                         console.log(trans_id, 'exists in trxHist');
                         clearInterval(interValCheck);
-                        Toast.show({
-                          type: 'success',
-                          text1: 'Thanh toán thành công',
-                          autoHide: true,
-                          visibilityTime: 1000,
-                          topOffset: 30,
-                          bottomOffset: 40,
-                          onHide: () => {
-                            navigation.navigate(RouteNames.PROFILE as never, {
-                              activeTab: 'group',
-                            });
-                          },
+
+                        intervalCheckActive = false;
+                        appStore.setIsExtendedPkg(false);
+                        appStore.setRenewPkg({
+                          package: '',
+                          noOfMember: 0,
+                          duration: 0,
                         });
                       }
                     }, 10 * 1000);
+
                     setTimeout(() => {
                       clearInterval(interValCheck);
+                      intervalCheckActive = false;
                     }, 2 * 60 * 1000);
+
+                    Toast.show({
+                      type: 'success',
+                      text1: 'Thanh toán thành công',
+                      autoHide: true,
+                      visibilityTime: 2000,
+                      topOffset: 30,
+                      bottomOffset: 40,
+                      onHide: () => {
+                        if (!intervalCheckActive) {
+                          navigation.navigate(RouteNames.PROFILE, {
+                            activeTab: 'group',
+                          });
+                        }
+                      },
+                    });
                   }
                   appState.current = nextAppState;
                   setAppStateVisible(appState.current);
@@ -258,76 +278,82 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
                 duration: appStore.renewPkg.duration,
               };
 
-              // const response = await renew(appStore.renewPkg);
-              // console.log('Renew res:', response);
+              const response = await renew(appStore.renewPkg);
+              console.log('Renew res:', response);
 
-              // const order = response.order;
-              // const trans = response.trans;
-              // console.log('order res:', order);
-              // console.log('trans res:', trans);
-              // const trans_id = response.trans._id;
-              // console.log('trans_id', trans_id);
-              // // Open URL for payment
-              // Linking.openURL(response.order.order_url);
-              // const subscription = AppState.addEventListener(
-              //   'change',
-              //   nextAppState => {
-              //     if (appState.current.match(/inactive|background/)) {
-              //       console.log('Get user running in background');
-              //     }
-              //     if (
-              //       appState.current.match(/inactive|background/) &&
-              //       nextAppState === 'active'
-              //     ) {
-              //       console.log('App has come to the foreground!');
-              //       // Check if trans_id exists in user's trxHist then user paid successfully
-              //       const interValCheck = setInterval(async () => {
-              //         const getRes = await getUserById();
-              //         console.log('get user res:', getRes);
-              //         console.log('trans id in hist:', getRes.user.trxHist);
-              //         if (getRes.user.trxHist.includes(trans_id)) {
-              //           console.log(trans_id, 'exists in trxHist');
-              //           clearInterval(interValCheck);
+              const order = response.order;
+              const trans = response.trans;
+              console.log('order res:', order);
+              console.log('trans res:', trans);
+              const trans_id = response.trans._id;
+              console.log('trans_id', trans_id);
+              // Open URL for payment
+              Linking.openURL(response.order.order_url);
+              const subscription = AppState.addEventListener(
+                'change',
+                nextAppState => {
+                  if (appState.current.match(/inactive|background/)) {
+                    console.log('Get user running in background');
+                  }
+                  if (
+                    appState.current.match(/inactive|background/) &&
+                    nextAppState === 'active'
+                  ) {
+                    console.log('App has come to the foreground!');
+                    // Check if trans_id exists in user's trxHist then user paid successfully
+                    let interValCheck = setInterval(async () => {
+                      const getRes = await getUserById();
+                      console.log('get user res:', getRes);
+                      console.log('trans id in hist:', getRes.user.trxHist);
+                      console.log('interValCheck:', interValCheck);
 
-              //           appStore.setIsExtendedPkg(false);
-              //           appStore.setRenewPkg({
-              //             package: '',
-              //             noOfMember: 0,
-              //             duration: 0,
-              //           });
+                      if (getRes.user.trxHist.includes(trans_id)) {
+                        console.log(trans_id, 'exists in trxHist');
 
-              //           Toast.show({
-              //             type: 'success',
-              //             text1: 'Gia hạn thành công',
-              //             autoHide: true,
-              //             visibilityTime: 1000,
-              //             topOffset: 30,
-              //             bottomOffset: 40,
-              //             onHide: () => {
-              //               navigation.navigate(RouteNames.PROFILE as never, {
-              //                 activeTab: 'group',
-              //               });
-              //             },
-              //           });
-              //         }
-              //       }, 10 * 1000);
-              //       setTimeout(() => {
-              //         clearInterval(interValCheck);
-              //       }, 2 * 60 * 1000);
-              //     }
-              //     appState.current = nextAppState;
-              //     setAppStateVisible(appState.current);
-              //     console.log('AppState', appState.current);
-              //   },
-              // );
-              // return () => {
-              //   subscription.remove();
-              // };
+                        clearInterval(interValCheck);
+                        interValCheck = -1;
+                      }
+                    }, 10 * 1000);
+                    setTimeout(() => {
+                      clearInterval(interValCheck);
+                    }, 2 * 60 * 1000);
+
+                    if (interValCheck === -1) {
+                      appStore.setIsExtendedPkg(false);
+                      appStore.setRenewPkg({
+                        package: '',
+                        noOfMember: 0,
+                        duration: 0,
+                      });
+
+                      Toast.show({
+                        type: 'success',
+                        text1: 'Gia hạn thành công',
+                        autoHide: true,
+                        visibilityTime: 2000,
+                        topOffset: 30,
+                        bottomOffset: 40,
+                        onHide: () => {
+                          navigation.navigate(RouteNames.PROFILE, {
+                            activeTab: 'group',
+                          });
+                        },
+                      });
+                    }
+                  }
+                  appState.current = nextAppState;
+                  setAppStateVisible(appState.current);
+                  console.log('AppState', appState.current);
+                },
+              );
+              return () => {
+                subscription.remove();
+              };
             }}>
             <Text style={styles.buttonText}>Thanh toán</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.button}
           onPress={async () => {
             console.log('route.params:', itemsInfo);
@@ -389,7 +415,7 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
             };
           }}>
           <Text style={styles.buttonText}>Thanh toán</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <Toast position="top" />
       </View>
     </>

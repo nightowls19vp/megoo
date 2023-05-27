@@ -7,13 +7,82 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Colors} from '../../../../constants/color.const';
 import styles from './styles/style';
 import CurrentPackage from '../CurrentPackageScreen';
+import OtherPackages from '../OtherPackages';
+import RouteNames from '../../../../constants/route-names.const';
+import {getUserGroup} from '../GroupsScreen/services/group.service';
+
+// Define the type for the route params
+type GroupDetailRouteParams = {
+  groupId: string;
+};
+
+// Specify the type for the route
+type GroupDetailRouteProp = RouteProp<
+  Record<string, GroupDetailRouteParams>,
+  string
+>;
 
 const GroupInfoScreen = ({navigation}: {navigation: any}) => {
+  const route = useRoute<GroupDetailRouteProp>();
+
   const [activeTab, setActiveTab] = useState('currentPackage');
+
+  const [group, setGroup] = useState({
+    _id: '',
+    name: '',
+    avatar: '',
+    duration: 0,
+    noOfMember: 0,
+    status: '',
+    members: [
+      {
+        role: '',
+        user: '',
+      },
+    ],
+  });
+
+  const getSelectedGroup = async () => {
+    // Get all user's groups
+    const groupsRes = await getUserGroup();
+    console.log('groupsRes:', groupsRes);
+    console.log('route param:', route);
+
+    const groups = groupsRes.groups.map((groupItem: any) => {
+      return {
+        _id: groupItem._id,
+        name: groupItem.name,
+        avatar: groupItem.avatar,
+        duration: groupItem.packages[0].package.duration,
+        noOfMember: groupItem.packages[0].package.noOfMember,
+        status: groupItem.packages[0].status,
+        members: groupItem.members,
+      };
+    });
+
+    const groupId = route.params?.groupId;
+
+    const selectedGroup = groups.find((group: any) => group._id === groupId);
+
+    console.log('selectedGroup', selectedGroup);
+
+    setGroup(selectedGroup);
+  };
+
+  useEffect(() => {
+    getSelectedGroup();
+  }, []);
 
   const renderTabContent = () => {
     if (activeTab === 'currentPackage') {
       return <CurrentPackage navigation={navigation} />;
+    } else if (activeTab === 'otherPackages') {
+      return (
+        <OtherPackages
+          navigation={navigation}
+          groupId={route.params?.groupId}
+        />
+      );
     }
   };
 
@@ -56,18 +125,22 @@ const GroupInfoScreen = ({navigation}: {navigation: any}) => {
             styles.tab,
             {
               backgroundColor:
-                activeTab === 'group' ? Colors.primary : Colors.background,
+                activeTab === 'otherPackages'
+                  ? Colors.primary
+                  : Colors.background,
             },
           ]}
           onPress={() => {
-            setActiveTab('group');
+            setActiveTab('otherPackages');
           }}>
           <Text
             style={[
               styles.tabText,
               {
                 color:
-                  activeTab === 'group' ? Colors.background : Colors.primary,
+                  activeTab === 'otherPackages'
+                    ? Colors.background
+                    : Colors.primary,
               },
             ]}>
             Các gói khác

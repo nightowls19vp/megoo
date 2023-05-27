@@ -19,15 +19,17 @@ type GroupsRouteProp = RouteProp<Record<string, GroupsRouteParams>, string>;
 const UserInfoScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupsRouteProp>();
 
-  const [activeTab, setActiveTab] = useState('info');
+  const [activeTab, setActiveTab] = useState(
+    route.params?.activeTab === 'group' ? 'group' : 'info',
+  );
 
   const tab = route.params?.activeTab;
 
   const renderTabContent = () => {
-    if (tab === 'group') {
-      setActiveTab('group');
-      return <GroupsScreen navigation={navigation} />;
-    } else if (activeTab === 'group') {
+    // if (tab === 'group') {
+    //   return <GroupsScreen navigation={navigation} />;
+    // } else
+    if (activeTab === 'group') {
       return <GroupsScreen navigation={navigation} />;
     } else if (activeTab === 'info') {
       return <ProfileScreen navigation={navigation} />;

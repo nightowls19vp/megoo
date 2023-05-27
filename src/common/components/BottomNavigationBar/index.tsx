@@ -20,6 +20,7 @@ import GroupInfoScreen from '../../../screens/profile/screens/GroupInfoScren';
 import GroupsScreen from '../../../screens/profile/screens/GroupsScreen';
 import PaymentScreen from '../../../screens/package/screens/PaymentScreen';
 import CurrentPackage from '../../../screens/profile/screens/CurrentPackageScreen';
+import OtherPackages from '../../../screens/profile/screens/OtherPackages';
 
 function HomeScreen() {
   return (
@@ -85,15 +86,15 @@ const PackageScreenStack = ({navigation}: {navigation: any}) => {
         //   },
         // }}
       />
-      <PackageStack.Screen
-        name={RouteNames.CURRENT_PACKAGE}
-        component={CurrentPackage}
-      />
       <PackageStack.Screen name={RouteNames.CART} component={CartScreen} />
       <PackageStack.Screen
         name={RouteNames.PAYMENT}
         component={PaymentScreen}
       />
+      {/* <PackageStack.Screen
+        name={RouteNames.PROFILE}
+        component={UserInfoScreen}
+      /> */}
     </PackageStack.Navigator>
   );
 };

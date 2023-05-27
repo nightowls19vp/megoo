@@ -32,6 +32,7 @@ const height = Dimensions.get('window').height;
 
 const PackageScreen = ({navigation}: {navigation: any}) => {
   const [packages, setPackages] = useState([]);
+  const [isExtended, setIsExtended] = useState(false);
 
   const getPackages = async () => {
     const pkgs = await getAllPackage();
@@ -41,6 +42,12 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
   useEffect(() => {
     getPackages();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsExtended(appStore.getIsExtendedPkg());
+    }, []),
+  );
 
   const renderItem = ({item}: {item: any}) => {
     const [noOfMemb, setNoOfMemb] = useState(item.noOfMember);
@@ -184,7 +191,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
           </View>
 
           <View style={styles.buttonContainer}>
-            {appStore.isExtendedPkg ? (
+            {isExtended === true ? (
               <TouchableOpacity
                 style={styles.extendButton}
                 onPress={async () => {

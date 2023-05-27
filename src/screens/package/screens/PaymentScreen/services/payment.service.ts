@@ -18,6 +18,10 @@ export const checkout = async (cartList: ICartList) => {
       reqUrl,
       {
         cart: cartList.cart,
+        method: {
+          type: 'EWALLET',
+          bank_code: 'ZALOPAY',
+        },
       },
       {
         headers: {
@@ -85,6 +89,10 @@ export const renew = async (pkg: {}) => {
     const response = await axios.post(
       reqUrl,
       {
+        method: {
+          type: 'EWALLET',
+          bank_code: 'ZALOPAY',
+        },
         cart: pkg,
       },
       {

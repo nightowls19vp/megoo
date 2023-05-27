@@ -77,43 +77,24 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Image source={{uri: group.avatar}} style={styles.avatar} />
-      <Text style={styles.title}>Thông tin nhóm</Text>
-      <View style={styles.groupInfoContainer}>
-        <View>
-          <Text style={[styles.text, {fontWeight: 'bold'}]}>Tên nhóm: </Text>
-          <Text style={styles.infoText}>{group.name}</Text>
-        </View>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            gap: 10,
-          }}>
-          <Text style={[styles.text, {fontWeight: 'bold'}]}>Thời hạn: </Text>
-          <Text style={styles.infoText}>{group.duration} tháng</Text>
-        </View>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            gap: 10,
-          }}>
-          <Text style={[styles.text, {fontWeight: 'bold'}]}>
-            Số lượng thành viên:{' '}
-          </Text>
-          <Text style={styles.infoText}>{group.noOfMember}</Text>
-        </View>
-        <View
-          style={{
-            display: 'flex',
-            maxHeight: 30,
-            flexDirection: 'row',
-            alignItems: 'baseline',
-            justifyContent: 'space-between',
-            // backgroundColor: 'pink',
-          }}>
+    <>
+      <View style={styles.container}>
+        <Image source={{uri: group.avatar}} style={styles.avatar} />
+        <Text style={styles.title}>Thông tin nhóm</Text>
+        <View style={styles.groupInfoContainer}>
+          <View>
+            <Text style={[styles.text, {fontWeight: 'bold'}]}>Tên nhóm: </Text>
+            <Text style={styles.infoText}>{group.name}</Text>
+          </View>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 10,
+            }}>
+            <Text style={[styles.text, {fontWeight: 'bold'}]}>Thời hạn: </Text>
+            <Text style={styles.infoText}>{group.duration} tháng</Text>
+          </View>
           <View
             style={{
               display: 'flex',
@@ -121,96 +102,125 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
               gap: 10,
             }}>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>
-              Trạng thái:{' '}
+              Số lượng thành viên:{' '}
             </Text>
-            <Text style={styles.infoText}>{group.status}</Text>
+            <Text style={styles.infoText}>{group.noOfMember}</Text>
           </View>
-          {group.status === 'Not Activated' ? (
-            <TouchableOpacity
+          <View
+            style={{
+              display: 'flex',
+              maxHeight: 30,
+              flexDirection: 'row',
+              alignItems: 'baseline',
+              justifyContent: 'space-between',
+              // backgroundColor: 'pink',
+            }}>
+            <View
               style={{
-                width: '25%',
-                height: 30,
-
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: Colors.primary,
-                borderRadius: 10,
-              }}
-              onPress={async () => {
-                const response = await activate(group._id, {
-                  noOfMember: group.noOfMember,
-                  duration: group.duration,
-                  _id: group._id,
-                });
-
-                console.log('Activate response:', response);
-
-                if (response.statusCode === 200) {
-                  Toast.show({
-                    type: 'success',
-                    text1: 'Kích hoạt thành công',
-                    autoHide: true,
-                    visibilityTime: 1000,
-                    topOffset: 30,
-                    bottomOffset: 40,
-                    onHide: () => {
-                      navigation.navigate(RouteNames.PROFILE as never, {
-                        activeTab: 'group',
-                      });
-                    },
-                  });
-                } else {
-                  Toast.show({
-                    type: 'error',
-                    text1: response.message,
-                    autoHide: false,
-                    topOffset: 30,
-                    bottomOffset: 40,
-                  });
-                }
+                flexDirection: 'row',
+                gap: 10,
               }}>
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  color: Colors.background,
-                }}>
-                Kích hoạt
+              <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                Trạng thái:{' '}
               </Text>
-            </TouchableOpacity>
-          ) : null}
-        </View>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 10,
-          }}>
-          <Text style={[styles.text, {fontWeight: 'bold'}]}>
-            Danh sách thành viên:{' '}
-          </Text>
-          {group.members.map((member, index) => {
-            return (
-              <View key={index}>
-                <Text style={styles.infoText}>{member.user}</Text>
-              </View>
-            );
-          })}
-        </View>
-      </View>
-      <Text style={styles.title}>Liên kết tham gia</Text>
+              <Text style={styles.infoText}>{group.status}</Text>
+            </View>
+            {group.status === 'Not Activated' ? (
+              <TouchableOpacity
+                style={{
+                  width: '25%',
+                  height: 30,
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          appStore.setIsExtendedPkg(true);
-          appStore.setRenewGroupId(group._id);
-          navigation.navigate(RouteNames.PACKAGE, {});
-        }}>
-        <Text style={styles.buttonText}>Gia hạn gói</Text>
-      </TouchableOpacity>
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: Colors.primary,
+                  borderRadius: 10,
+                }}
+                onPress={async () => {
+                  const response = await activate(group._id, {
+                    noOfMember: group.noOfMember,
+                    duration: group.duration,
+                    _id: group._id,
+                  });
+
+                  console.log('Activate response:', response);
+
+                  if (response.statusCode === 200) {
+                    Toast.show({
+                      type: 'success',
+                      text1: 'Kích hoạt thành công',
+                      autoHide: true,
+                      visibilityTime: 1000,
+                      topOffset: 30,
+                      bottomOffset: 40,
+                      onHide: () => {
+                        navigation.navigate(RouteNames.PROFILE as never, {
+                          activeTab: 'group',
+                        });
+                      },
+                    });
+                  } else {
+                    Toast.show({
+                      type: 'error',
+                      text1: response.message,
+                      autoHide: false,
+                      topOffset: 30,
+                      bottomOffset: 40,
+                    });
+                  }
+                }}>
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    color: Colors.background,
+                  }}>
+                  Kích hoạt
+                </Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 10,
+            }}>
+            <Text style={[styles.text, {fontWeight: 'bold'}]}>
+              Danh sách thành viên:{' '}
+            </Text>
+            {group.members.map((member, index) => {
+              return (
+                <View key={index}>
+                  <Text style={styles.infoText}>{member.user}</Text>
+                </View>
+              );
+            })}
+          </View>
+        </View>
+        {group.status === 'Active' ? (
+          <>
+            <Text style={styles.title}>Liên kết tham gia</Text>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                appStore.setIsExtendedPkg(true);
+                appStore.setRenewGroupId(group._id);
+                setTimeout(() => {
+                  console.log('appStore.isExtendedPkg', appStore.isExtendedPkg);
+
+                  navigation.navigate(RouteNames.PACKAGE, {});
+                }, 2 * 1000);
+              }}>
+              <Text style={styles.buttonText}>Gia hạn gói</Text>
+            </TouchableOpacity>
+          </>
+        ) : null}
+      </View>
       <Toast position="top"></Toast>
-    </View>
+    </>
   );
 };
 
