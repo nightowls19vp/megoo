@@ -35,8 +35,13 @@ const ProfileSchema = Yup.object().shape({
 });
 
 const EditProfileScreen = ({navigation}: {navigation: any}) => {
-  const dobISOString = dateISOFormat(userStore.dob);
-  const [date, setDate] = useState(new Date(dobISOString));
+  const dobISOString = dateISOFormat(userStore.dob ? userStore.dob : '');
+  const [date, setDate] = useState(
+    dobISOString !== null ? new Date(dobISOString) : new Date(),
+  );
+
+  console.log('date:', date);
+
   const [selectedImage, setSelectedImage] = useState('');
   const [imageFile, setImageFile] = useState<any>();
 
@@ -361,6 +366,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
               modal
               open={open}
               date={date}
+              maximumDate={new Date()}
               mode={'date'}
               locale={'vi'}
               title={'Chọn ngày'}

@@ -44,12 +44,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: 'white',
     borderRadius: 10,
+    gap: 20,
+    padding: 10,
   },
   infoRow: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    margin: 10,
   },
   text: {
     color: Colors.text,

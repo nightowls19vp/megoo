@@ -12,28 +12,24 @@ import ProfileScreen from '../../../screens/profile/screens/ProfileScreen';
 import SettingsScreen from '../../../screens/settings/screens/SettingsScreen';
 import AppInfoScreen from './../../../screens/settings/screens/AppInfoScreen';
 import PoliciesScreen from './../../../screens/settings/screens/PoliciesScreen';
+
 import PackageScreen from '../../../screens/package/screens/PackageScreen';
 import CartScreen from '../../../screens/package/screens/CartScreen';
+import PaymentScreen from '../../../screens/package/screens/PaymentScreen';
+
 import UserInfoScreen from '../../../screens/profile/screens/UserInfoScreen';
 import EditProfileScreen from '../../../screens/profile/screens/EditProfileScreen';
 import GroupInfoScreen from '../../../screens/profile/screens/GroupInfoScren';
 import GroupsScreen from '../../../screens/profile/screens/GroupsScreen';
-import PaymentScreen from '../../../screens/package/screens/PaymentScreen';
 import CurrentPackage from '../../../screens/profile/screens/CurrentPackageScreen';
 import OtherPackages from '../../../screens/profile/screens/OtherPackages';
+
+import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
 
 function HomeScreen() {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>Home!</Text>
-    </View>
-  );
-}
-
-function StorageScreen() {
-  return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Storage!</Text>
     </View>
   );
 }
@@ -62,7 +58,8 @@ const PackageScreenStack = ({navigation}: {navigation: any}) => {
                   console.log('Cart');
                   navigation.navigate(RouteNames.CART as never, {} as never);
                 }}>
-                <Icon name="shoppingcart" size={22} color={tintColor} />
+                {/* <Icon name="shoppingcart" size={22} color={tintColor} /> */}
+                <Ionicons name="cart-outline" size={24} color={tintColor} />
               </TouchableOpacity>
             );
           },
@@ -178,7 +175,7 @@ export default function BottomNavigationBar() {
       />
       <Tab.Screen
         name={RouteNames.STORAGE}
-        component={StorageScreen}
+        component={StorageLocationScreen}
         options={{
           title: 'Kho',
           tabBarActiveTintColor: Colors.primary,

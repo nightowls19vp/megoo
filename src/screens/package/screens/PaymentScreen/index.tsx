@@ -1,4 +1,4 @@
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {RouteProp, useRoute, NavigationAction} from '@react-navigation/native';
 import {useRef, useState, useEffect} from 'react';
 import {
   Text,
@@ -193,74 +193,69 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
               console.log('trans res:', trans);
               const trans_id = response.trans._id;
               console.log('trans_id', trans_id);
+              // Toast.show({
+              //   type: 'success',
+              //   text1: 'Thanh toán thành công',
+              //   autoHide: true,
+              //   visibilityTime: 3000,
+              //   topOffset: 20,
+              //   onHide: () => {
+              //     navigation.navigate('PROFILE_STACK', {
+              //       params: {
+              //         screen: 'PROFILE',
+              //         activeTab: 'group',
+              //       },
+              //     });
+              //   },
+              // });
+
               // Open URL for payment
               Linking.openURL(response.order.order_url);
-              const subscription = AppState.addEventListener(
-                'change',
-                nextAppState => {
-                  if (appState.current.match(/inactive|background/)) {
-                    console.log('Get user running in background');
-                  }
-                  if (
-                    appState.current.match(/inactive|background/) &&
-                    nextAppState === 'active'
-                  ) {
-                    console.log('App has come to the foreground!');
-                    // Check if trans_id exists in user's trxHist then user paid successfully
-                    let intervalCheckActive = true;
 
-                    let interValCheck = setInterval(async () => {
-                      if (!intervalCheckActive) {
-                        clearInterval(interValCheck);
-                        return;
-                      }
+              let intervalCheckActive = true;
+              let interValCheck = setInterval(async () => {
+                if (!intervalCheckActive) {
+                  clearInterval(interValCheck);
+                  return;
+                }
 
-                      const getRes = await getUserById();
-                      console.log('get user res:', getRes);
-                      console.log('trans id in hist:', getRes.user.trxHist);
-                      if (getRes.user.trxHist.includes(trans_id)) {
-                        console.log(trans_id, 'exists in trxHist');
-                        clearInterval(interValCheck);
+                const getRes = await getUserById();
+                console.log('trans id in hist:', getRes.user.trxHist);
+                if (getRes.user.trxHist.includes(trans_id)) {
+                  console.log(trans_id, 'exists in trxHist');
+                  clearInterval(interValCheck);
 
-                        intervalCheckActive = false;
-                        appStore.setIsExtendedPkg(false);
-                        appStore.setRenewPkg({
-                          package: '',
-                          noOfMember: 0,
-                          duration: 0,
-                        });
-                      }
-                    }, 10 * 1000);
+                  intervalCheckActive = false;
+                  appStore.setIsExtendedPkg(false);
+                  appStore.setRenewPkg({
+                    package: '',
+                    noOfMember: 0,
+                    duration: 0,
+                  });
+                }
+                if (!intervalCheckActive) {
+                  Toast.show({
+                    type: 'success',
+                    text1: 'Thanh toán thành công',
+                    autoHide: true,
+                    visibilityTime: 3000,
+                    topOffset: 20,
+                    onHide: () => {
+                      navigation.navigate('PROFILE_STACK', {
+                        params: {
+                          screen: 'PROFILE',
+                          activeTab: 'group',
+                        },
+                      });
+                    },
+                  });
+                }
+              }, 10 * 1000);
 
-                    setTimeout(() => {
-                      clearInterval(interValCheck);
-                      intervalCheckActive = false;
-                    }, 2 * 60 * 1000);
-
-                    Toast.show({
-                      type: 'success',
-                      text1: 'Thanh toán thành công',
-                      autoHide: true,
-                      visibilityTime: 2000,
-                      topOffset: 30,
-                      bottomOffset: 40,
-                      onHide: () => {
-                        if (!intervalCheckActive) {
-                          navigation.navigate(RouteNames.PROFILE, {
-                            activeTab: 'group',
-                          });
-                        }
-                      },
-                    });
-                  }
-                  appState.current = nextAppState;
-                  setAppStateVisible(appState.current);
-                  console.log('AppState', appState.current);
-                },
-              );
-              return () => {
-                subscription.remove();
-              };
+              setTimeout(() => {
+                clearInterval(interValCheck);
+                intervalCheckActive = false;
+              }, 2 * 60 * 1000);
             }}>
             <Text style={styles.buttonText}>Thanh toán</Text>
           </TouchableOpacity>
@@ -289,66 +284,50 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
               console.log('trans_id', trans_id);
               // Open URL for payment
               Linking.openURL(response.order.order_url);
-              const subscription = AppState.addEventListener(
-                'change',
-                nextAppState => {
-                  if (appState.current.match(/inactive|background/)) {
-                    console.log('Get user running in background');
-                  }
-                  if (
-                    appState.current.match(/inactive|background/) &&
-                    nextAppState === 'active'
-                  ) {
-                    console.log('App has come to the foreground!');
-                    // Check if trans_id exists in user's trxHist then user paid successfully
-                    let interValCheck = setInterval(async () => {
-                      const getRes = await getUserById();
-                      console.log('get user res:', getRes);
-                      console.log('trans id in hist:', getRes.user.trxHist);
-                      console.log('interValCheck:', interValCheck);
+              let intervalCheckActive = true;
+              let interValCheck = setInterval(async () => {
+                if (!intervalCheckActive) {
+                  clearInterval(interValCheck);
+                  return;
+                }
 
-                      if (getRes.user.trxHist.includes(trans_id)) {
-                        console.log(trans_id, 'exists in trxHist');
+                const getRes = await getUserById();
+                console.log('trans id in hist:', getRes.user.trxHist);
+                if (getRes.user.trxHist.includes(trans_id)) {
+                  console.log(trans_id, 'exists in trxHist');
+                  clearInterval(interValCheck);
 
-                        clearInterval(interValCheck);
-                        interValCheck = -1;
-                      }
-                    }, 10 * 1000);
-                    setTimeout(() => {
-                      clearInterval(interValCheck);
-                    }, 2 * 60 * 1000);
-
-                    if (interValCheck === -1) {
-                      appStore.setIsExtendedPkg(false);
-                      appStore.setRenewPkg({
-                        package: '',
-                        noOfMember: 0,
-                        duration: 0,
-                      });
-
-                      Toast.show({
-                        type: 'success',
-                        text1: 'Gia hạn thành công',
-                        autoHide: true,
-                        visibilityTime: 2000,
-                        topOffset: 30,
-                        bottomOffset: 40,
-                        onHide: () => {
-                          navigation.navigate(RouteNames.PROFILE, {
-                            activeTab: 'group',
-                          });
+                  intervalCheckActive = false;
+                  appStore.setIsExtendedPkg(false);
+                  appStore.setRenewPkg({
+                    package: '',
+                    noOfMember: 0,
+                    duration: 0,
+                  });
+                }
+                if (!intervalCheckActive) {
+                  Toast.show({
+                    type: 'success',
+                    text1: 'Gia hạn thành công',
+                    autoHide: true,
+                    visibilityTime: 3000,
+                    topOffset: 20,
+                    onHide: () => {
+                      navigation.navigate('PROFILE_STACK', {
+                        params: {
+                          screen: 'PROFILE',
+                          activeTab: 'group',
                         },
                       });
-                    }
-                  }
-                  appState.current = nextAppState;
-                  setAppStateVisible(appState.current);
-                  console.log('AppState', appState.current);
-                },
-              );
-              return () => {
-                subscription.remove();
-              };
+                    },
+                  });
+                }
+              }, 10 * 1000);
+
+              setTimeout(() => {
+                clearInterval(interValCheck);
+                intervalCheckActive = false;
+              }, 2 * 60 * 1000);
             }}>
             <Text style={styles.buttonText}>Thanh toán</Text>
           </TouchableOpacity>
@@ -416,8 +395,8 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
           }}>
           <Text style={styles.buttonText}>Thanh toán</Text>
         </TouchableOpacity> */}
-        <Toast position="top" />
       </View>
+      <Toast position="top" />
     </>
   );
 };

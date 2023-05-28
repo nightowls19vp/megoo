@@ -50,13 +50,21 @@ const GroupInfoScreen = ({navigation}: {navigation: any}) => {
 
     const groups = groupsRes.groups.map((groupItem: any) => {
       return {
-        _id: groupItem._id,
-        name: groupItem.name,
-        avatar: groupItem.avatar,
-        duration: groupItem.packages[0].package.duration,
-        noOfMember: groupItem.packages[0].package.noOfMember,
-        status: groupItem.packages[0].status,
-        members: groupItem.members,
+        _id: groupItem._id ? groupItem._id : '',
+        name: groupItem.name ? groupItem.name : '',
+        avatar: groupItem.avatar
+          ? groupItem.avatar
+          : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
+        duration: groupItem.packages[0].package.duration
+          ? groupItem.packages[0].package.duration
+          : 0,
+        noOfMember: groupItem.packages[0].package.noOfMember
+          ? groupItem.packages[0].package.noOfMember
+          : 0,
+        status: groupItem.packages[0].status
+          ? groupItem.packages[0].status
+          : '',
+        members: groupItem.members ? groupItem.members : [],
       };
     });
 

@@ -79,21 +79,35 @@ export default function DrawerNavigation({navigation}: {navigation: any}) {
 
         headerRight: () => {
           return (
-            <TouchableOpacity
-              onPress={() => {
-                console.log('Chat');
-                navigation.navigate(RouteNames.CHAT as never, {} as never);
-                // navigation.goBack();
-              }}
+            <View
               style={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: 15,
                 marginRight: 15,
               }}>
-              <Ionicons
-                name="chatbubble-ellipses-outline"
-                size={22}
-                color={'black'}
-              />
-            </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  console.log('Search');
+                  // navigation.navigate(RouteNames.CHAT as never, {} as never);
+                  // navigation.goBack();
+                }}>
+                <Ionicons name="search-outline" size={24} color={'black'} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  console.log('Chat');
+                  navigation.navigate(RouteNames.CHAT as never, {} as never);
+                  // navigation.goBack();
+                }}>
+                <Ionicons
+                  // name="chatbubble-ellipses-outline"
+                  name="md-chatbubble-ellipses-outline"
+                  size={24}
+                  color={'black'}
+                />
+              </TouchableOpacity>
+            </View>
           );
         },
       }}>

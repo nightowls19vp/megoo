@@ -130,8 +130,15 @@ export default function LoginScreen({navigation}: {navigation: any}) {
           user.avatar = response?.data?.userInfo['avatar'] ?? '';
 
           let dob = response.data?.userInfo['dob'] ?? '';
-          user.dob = moment(dob).format('DD/MM/YYYY').toString();
+
+          if (dob.length > 0) {
+            user.dob = dateFormat(dob);
+            // user.dob = moment(dob).format('DD/MM/YYYY').toString();
+          } else {
+            user.dob = '';
+          }
           // user.dob = dateFormat(response.userInfo.dob) ?? '';
+          console.log('user.dob:', user.dob);
 
           userStore.setUser(user);
 

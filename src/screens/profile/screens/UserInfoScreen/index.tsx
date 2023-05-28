@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {Dimensions, Text, View} from 'react-native';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 import {Colors} from '../../../../constants/color.const';
@@ -6,7 +6,7 @@ import GroupsScreen from '../GroupsScreen';
 import ProfileScreen from '../ProfileScreen';
 import styles from './styles/style';
 
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {RouteProp, useRoute, useFocusEffect} from '@react-navigation/native';
 
 // Define the type for the route params
 type GroupsRouteParams = {
@@ -26,15 +26,21 @@ const UserInfoScreen = ({navigation}: {navigation: any}) => {
   const tab = route.params?.activeTab;
 
   const renderTabContent = () => {
-    // if (tab === 'group') {
-    //   return <GroupsScreen navigation={navigation} />;
-    // } else
     if (activeTab === 'group') {
       return <GroupsScreen navigation={navigation} />;
     } else if (activeTab === 'info') {
       return <ProfileScreen navigation={navigation} />;
     }
   };
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const param = route.params?.activeTab;
+  //     setActiveTab(param);
+  //     console.log('route from payment screen:', route);
+  //     console.log('param from payment screen:', param);
+  //   }, []),
+  // );
 
   return (
     <View

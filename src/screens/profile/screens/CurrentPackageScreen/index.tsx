@@ -48,22 +48,32 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
   const getSelectedGroup = async () => {
     // Get all user's groups
     const groupsRes = await getUserGroup();
+    console.log('groupsRes:', groupsRes.groups[0].name);
     console.log('groupsRes:', groupsRes);
     console.log('route param:', route);
 
-    const groups = groupsRes.groups.map((groupItem: any) => {
+    const groups = groupsRes?.groups.map((groupItem: any) => {
       return {
-        _id: groupItem._id,
-        name: groupItem.name,
-        avatar: groupItem.avatar,
-        duration: groupItem.packages[0].package.duration,
-        noOfMember: groupItem.packages[0].package.noOfMember,
-        status: groupItem.packages[0].status,
-        members: groupItem.members,
+        _id: groupItem._id ? groupItem._id : '',
+        name: groupItem.name ? groupItem.name : '',
+        avatar: groupItem.avatar
+          ? groupItem.avatar
+          : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
+        duration: groupItem.packages[0].package.duration
+          ? groupItem.packages[0].package.duration
+          : 0,
+        noOfMember: groupItem.packages[0].package.noOfMember
+          ? groupItem.packages[0].package.noOfMember
+          : 0,
+        status: groupItem.packages[0].status
+          ? groupItem.packages[0].status
+          : '',
+        members: groupItem.members ? groupItem.members : [],
       };
     });
 
     const groupId = route.params?.groupId;
+    console.log('route param id:', groupId);
 
     const selectedGroup = groups.find((group: any) => group._id === groupId);
 
@@ -79,12 +89,30 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
   return (
     <>
       <View style={styles.container}>
-        <Image source={{uri: group.avatar}} style={styles.avatar} />
+        <Image
+          source={{
+            uri: group.avatar,
+          }}
+          style={styles.avatar}
+        />
         <Text style={styles.title}>Thông tin nhóm</Text>
         <View style={styles.groupInfoContainer}>
-          <View>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 10,
+            }}>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>Tên nhóm: </Text>
-            <Text style={styles.infoText}>{group.name}</Text>
+            <Text
+              style={{
+                width: '80%',
+                paddingRight: 20,
+              }}
+              ellipsizeMode={'tail'}
+              numberOfLines={1}>
+              {group.name}
+            </Text>
           </View>
           <View
             style={{
@@ -126,7 +154,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
               </Text>
               <Text style={styles.infoText}>{group.status}</Text>
             </View>
-            {group.status === 'Not Activated' ? (
+            {group.status === 'Not activated' ? (
               <TouchableOpacity
                 style={{
                   width: '25%',
@@ -139,6 +167,8 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                   borderRadius: 10,
                 }}
                 onPress={async () => {
+                  console.log('groupId:', group._id);
+
                   const response = await activate(group._id, {
                     noOfMember: group.noOfMember,
                     duration: group.duration,
@@ -153,8 +183,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                       text1: 'Kích hoạt thành công',
                       autoHide: true,
                       visibilityTime: 1000,
-                      topOffset: 30,
-                      bottomOffset: 40,
+                      topOffset: 0,
                       onHide: () => {
                         navigation.navigate(RouteNames.PROFILE as never, {
                           activeTab: 'group',
@@ -166,8 +195,6 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                       type: 'error',
                       text1: response.message,
                       autoHide: false,
-                      topOffset: 30,
-                      bottomOffset: 40,
                     });
                   }
                 }}>
@@ -181,7 +208,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
               </TouchableOpacity>
             ) : null}
           </View>
-          <View
+          {/* <View
             style={{
               display: 'flex',
               flexDirection: 'column',
@@ -197,7 +224,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                 </View>
               );
             })}
-          </View>
+          </View> */}
         </View>
         {group.status === 'Active' ? (
           <>
@@ -212,7 +239,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                   console.log('appStore.isExtendedPkg', appStore.isExtendedPkg);
 
                   navigation.navigate(RouteNames.PACKAGE, {});
-                }, 2 * 1000);
+                }, 1000);
               }}>
               <Text style={styles.buttonText}>Gia hạn gói</Text>
             </TouchableOpacity>

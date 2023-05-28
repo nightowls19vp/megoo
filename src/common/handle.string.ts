@@ -1,13 +1,13 @@
-import moment from "moment";
+import moment from 'moment';
 
 export const dateFormat = (dob: string) => {
-    const date = moment(dob).format('DD/MM/YYYY').toString();
+  const date = moment(dob).format('DD/MM/YYYY').toString();
 
-    return date;
+  return date;
 };
 
 export const dateISOFormat = (dob: string) => {
-    const dateISO = moment(dob, 'DD/MM/YYYY').toISOString();
+  const dateISO = moment(dob, 'DD/MM/YYYY').toISOString();
 
-    return dateISO;
+  return dateISO;
 };
