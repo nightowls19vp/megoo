@@ -1,19 +1,26 @@
 import {RouteProp, useRoute} from '@react-navigation/native';
+import {Formik} from 'formik';
+import * as Yup from 'yup';
 import {useEffect, useState} from 'react';
 import {
   Dimensions,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
+import Icon from 'react-native-vector-icons/Ionicons';
+
 import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../GroupsScreen/services/group.service';
-import {activate} from './services/group.info.service';
+import {activate, invite} from './services/group.info.service';
 import styles from './styles/style';
 
 // Define the type for the route params
@@ -26,6 +33,10 @@ type GroupDetailRouteProp = RouteProp<
   Record<string, GroupDetailRouteParams>,
   string
 >;
+
+const InviteSchema = Yup.object().shape({
+  email: Yup.string().email('Email không hợp lệ'),
+});
 
 const CurrentPackage = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupDetailRouteProp>();
@@ -44,6 +55,8 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
       },
     ],
   });
+
+  const [emails, setEmails] = useState<string[]>([]);
 
   const getSelectedGroup = async () => {
     // Get all user's groups
@@ -228,7 +241,215 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
         </View>
         {group.status === 'Active' ? (
           <>
-            <Text style={styles.title}>Liên kết tham gia</Text>
+            <Text style={styles.title}>Mời thành viên</Text>
+
+            <Formik
+              initialValues={{
+                email: '',
+                password: '',
+              }}
+              validationSchema={InviteSchema}
+              onSubmit={values => {
+                setEmails(prevMembers => [...prevMembers, values.email]);
+                // setFieldValue('email', '');
+              }}>
+              {({
+                values,
+                errors,
+                touched,
+                handleSubmit,
+                setFieldTouched,
+                setFieldValue,
+              }) => (
+                <KeyboardAvoidingView
+                  style={{
+                    width: '90%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    // gap: 10,
+                    padding: 10,
+                    marginBottom: 20,
+                    backgroundColor: Colors.background,
+                    borderRadius: 10,
+                  }}
+                  // behavior={Platform.OS === 'android' ? 'height' : 'padding'}
+                  // keyboardVerticalOffset={
+                  //   Platform.OS === 'android' ? -200 : 200
+                  // }
+                >
+                  <View
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}>
+                    <View
+                      style={{
+                        width: '70%',
+                        height: 40,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingHorizontal: 15,
+                        borderColor: Colors.secondary,
+                        borderWidth: 1,
+                        borderRadius: 10,
+                      }}>
+                      <TextInput
+                        onChangeText={value => {
+                          setFieldValue('email', value);
+                        }}
+                        // onSubmitEditing={handleSubmit}
+                        onBlur={() => setFieldTouched('email')}
+                        style={{flex: 1, color: Colors.text}}
+                        placeholder={'Email'}
+                        placeholderTextColor={Colors.secondary}
+                        value={values.email}
+                        keyboardType={'email-address'}
+                      />
+
+                      {values.email && (
+                        <Icon
+                          onPress={() => setFieldValue('email', '')}
+                          name={'close'}
+                          style={{
+                            fontWeight: '200',
+                            color: Colors.secondary,
+                            fontSize: 20,
+                          }}
+                        />
+                      )}
+                    </View>
+                    <TouchableOpacity
+                      onPress={handleSubmit}
+                      style={{
+                        width: '25%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: 10,
+                        borderWidth: 1,
+                        borderColor: Colors.primary,
+                        borderRadius: 10,
+                        backgroundColor: Colors.background,
+                      }}>
+                      <Text
+                        style={{
+                          color: Colors.primary,
+                          fontWeight: 'bold',
+                          fontSize: 14,
+                        }}>
+                        Thêm
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  {touched.email && errors.email && (
+                    <Text
+                      style={{
+                        marginTop: 10,
+                        width: '90%',
+                        color: Colors.error,
+                        textAlign: 'left',
+                      }}>
+                      {errors.email}
+                    </Text>
+                  )}
+
+                  <View>
+                    {emails.map((object, index) => {
+                      return (
+                        <View
+                          key={index}
+                          style={{
+                            display: 'flex',
+                          }}>
+                          <View
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              marginVertical: 10,
+                            }}
+                            key={index}>
+                            <View
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: 10,
+                              }}>
+                              <Text style={{fontSize: 20}}>•</Text>
+                              <Text style={{fontSize: 16}}>{object}</Text>
+                            </View>
+                            <TouchableOpacity>
+                              <Icon
+                                onPress={() => {
+                                  const emailIndex = emails.findIndex(
+                                    (email: any) => email === object,
+                                  );
+
+                                  setEmails(prevMembers => {
+                                    const updatedMembers = [...prevMembers];
+                                    updatedMembers.splice(index, 1); // Remove the email at the specified index
+                                    return updatedMembers;
+                                  });
+                                  console.log('members:', emails);
+                                  console.log('emailIndex:', emailIndex);
+                                }}
+                                name={'remove-circle'}
+                                style={{
+                                  fontWeight: '200',
+                                  color: 'red',
+                                  fontSize: 24,
+                                }}
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                      );
+                    })}
+
+                    {emails.length > 0 ? (
+                      <TouchableOpacity
+                        style={{
+                          width: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          marginTop: 20,
+                          padding: 10,
+                          borderWidth: 1,
+                          borderColor: Colors.primary,
+                          borderRadius: 10,
+                          backgroundColor: Colors.background,
+                        }}
+                        onPress={async () => {
+                          console.log('groupId:', group._id);
+                          console.log('emails:', emails);
+
+                          const response = await invite(group._id, emails);
+
+                          console.log('Invite response:', response);
+
+                          if (response.statusCode === 200) {
+                            setFieldValue('email', '');
+                            setEmails([]);
+                          }
+                        }}>
+                        <Text
+                          style={{
+                            color: Colors.primary,
+                            fontWeight: 'bold',
+                          }}>
+                          Mời tất cả
+                        </Text>
+                      </TouchableOpacity>
+                    ) : null}
+                  </View>
+                </KeyboardAvoidingView>
+              )}
+            </Formik>
 
             <TouchableOpacity
               style={styles.button}
@@ -238,7 +459,12 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                 setTimeout(() => {
                   console.log('appStore.isExtendedPkg', appStore.isExtendedPkg);
 
-                  navigation.navigate(RouteNames.PACKAGE, {});
+                  navigation.navigate(RouteNames.PACKAGE_STACK, {
+                    params: {
+                      screen: RouteNames.PACKAGE,
+                      extendPkgId: group._id,
+                    },
+                  });
                 }, 1000);
               }}>
               <Text style={styles.buttonText}>Gia hạn gói</Text>

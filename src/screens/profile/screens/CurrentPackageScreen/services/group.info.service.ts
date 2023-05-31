@@ -34,3 +34,32 @@ export const activate = async (groupId: string, pkg: Object) => {
     }
   }
 };
+
+export const invite = async (groupId: string, emails: string[]) => {
+  const inviteEndpoint = `api/pkg-mgmt/gr/inv`;
+  const reqUrl = `${URL_HOST}${inviteEndpoint}`;
+  console.log('Invite:', reqUrl);
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+
+  try {
+    const response = await axios.post(
+      reqUrl,
+      {
+        grId: groupId,
+        emails: emails,
+        feUrl: 'http://localhost:8080/pkg-mgmt/gr/join',
+      },
+      {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log('Invite error:', error);
+  }
+};

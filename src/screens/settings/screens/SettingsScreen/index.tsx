@@ -148,7 +148,11 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
             padding: 20,
           }}>
           <Text
-            style={{fontSize: 18, textAlign: 'justify', color: Colors.text}}>
+            style={{
+              fontSize: 18,
+              textAlign: 'justify',
+              color: Colors.textPrimary,
+            }}>
             Đăng xuất khỏi tài khoản của bạn?
           </Text>
 
@@ -168,7 +172,9 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
               style={{
                 alignItems: 'center',
               }}>
-              <Text style={{fontSize: 16, color: Colors.text}}>Huỷ</Text>
+              <Text style={{fontSize: 16, color: Colors.textSecondary}}>
+                Huỷ
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={async () => {

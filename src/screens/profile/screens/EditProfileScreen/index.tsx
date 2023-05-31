@@ -366,7 +366,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
               modal
               open={open}
               date={date}
-              maximumDate={new Date()}
+              // maximumDate={new Date()}
               mode={'date'}
               locale={'vi'}
               title={'Chọn ngày'}

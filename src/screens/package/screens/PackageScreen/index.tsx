@@ -384,6 +384,8 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
 
                     const response = await updateCart(userStore.cartList);
 
+                    console.log('Update cart res:', response);
+
                     if (response.statusCode === 200) {
                       Toast.show({
                         type: 'success',

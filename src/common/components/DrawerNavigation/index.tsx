@@ -21,10 +21,11 @@ function CustomDrawerContent(props: any) {
       contentContainerStyle={{
         flex: 1,
         paddingTop: 0,
+        // backgroundColor: Colors.itemBackground,
       }}>
       <View
         style={{
-          // backgroundColor: Colors.primary,
+          backgroundColor: Colors.itemBackground,
           height: '30%',
           display: 'flex',
           justifyContent: 'center',
@@ -44,7 +45,7 @@ function CustomDrawerContent(props: any) {
         <Text
           style={{
             textAlign: 'center',
-            color: Colors.primary,
+            color: Colors.textSecondary,
             fontSize: 18,
             fontWeight: 'bold',
           }}
@@ -75,8 +76,7 @@ export default function DrawerNavigation({navigation}: {navigation: any}) {
       // backBehavior="initialRoute"
       screenOptions={{
         drawerLabelStyle: {marginLeft: -15},
-        drawerActiveTintColor: Colors.primary,
-
+        drawerActiveTintColor: Colors.drawerItem,
         headerRight: () => {
           return (
             <View

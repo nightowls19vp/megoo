@@ -211,7 +211,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
               onBlur={() => setFieldTouched('email')}
               style={{flex: 1, color: Colors.text}}
               placeholder={'Email'}
-              placeholderTextColor={Colors.text}
+              placeholderTextColor={Colors.secondary}
               value={values.email}
             />
 
@@ -233,7 +233,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
               secureTextEntry={hidePassword}
               placeholder={'Mật khẩu'}
               style={{flex: 1, color: Colors.text}}
-              placeholderTextColor={Colors.text}
+              placeholderTextColor={Colors.secondary}
               value={values.password}
             />
             {values.password && (

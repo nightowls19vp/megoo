@@ -9,6 +9,7 @@ export default {
   HOME_TAB: 'Trang chủ',
   HOME_DRAWER: 'HOME_DRAWER',
 
+  PACKAGE_STACK: 'PACKAGE_STACK',
   PACKAGE: 'Quản lý gói',
   CURRENT_PACKAGE: 'Gói hiện tại',
   OTHER_PACKAGES: 'Các gói khác',
@@ -20,7 +21,10 @@ export default {
 
   PAYMENT: 'Thanh toán',
 
+  STORAGE_STACK: 'STORAGE_STACK',
   STORAGE: 'Quản lý kho',
+  PRODUCTS: 'Danh sách sản phẩm',
+  PRODUCT_DETAIL: 'Chi tiết sản phẩm',
 
   TOP_TAB: 'TOP_TAB',
   PROFILE_TOP_TAB: 'PROFILE_TOP_TAB',

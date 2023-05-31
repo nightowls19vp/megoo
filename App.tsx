@@ -11,6 +11,7 @@ import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import DrawerNavigation from './src/common/components/DrawerNavigation';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import notifee from '@notifee/react-native';
 
 import RoutesName from './src/constants/route-names.const';
 import LoginScreen from './src/screens/login/screens/LoginScreen';

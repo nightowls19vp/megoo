@@ -1,28 +1,56 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
-import { URL_HOST } from '../core/config/api/api.config';
-import { IJWTToken } from './interfaces/token.interface';
-import { IUser } from './interfaces/user.interface';
-import { signOutIfSignedInWithGG, validate } from '../screens/login/screens/LoginScreen/services/login.service';
+import {io, Socket} from 'socket.io-client';
+
+import {URL_HOST} from '../core/config/api/api.config';
+import {IJWTToken} from './interfaces/token.interface';
+import {IUser} from './interfaces/user.interface';
+import {
+  signOutIfSignedInWithGG,
+  validate,
+} from '../screens/login/screens/LoginScreen/services/login.service';
 import userStore from './store/user.store';
-import { ISettings } from './interfaces/settings.interface';
-import { dateFormat } from './handle.string';
+import {ISettings} from './interfaces/settings.interface';
+import {dateFormat} from './handle.string';
 
 export const checkValidToken = async (token: string) => {
   // console.log("AT:", accessToken);
 
   const payload = jwtDecode(token) as IJWTToken;
   const isTokenExpired = Date.now() >= payload.exp * 1000;
-  console.log("Date.now():", Date.now());
-  console.log("Payload.exp:", payload.exp * 1000);
+  console.log('Date.now():', Date.now());
+  console.log('Payload.exp:', payload.exp * 1000);
 
   return isTokenExpired;
 };
 
+export let socket: Socket;
+
+export const connectSocket = (userId: string) => {
+  // Connect socket
+  const token = userId;
+  console.log('socket token:', token);
+
+  const URL = 'http://localhost:3001';
+  socket = io(URL, {
+    autoConnect: false,
+    query: {token},
+  });
+
+  // Event listeners
+  socket.on('connect', () => {
+    console.log('Connected to server');
+  });
+
+  socket.on('zpCallback', data => {
+    console.log('Socket on data:', data);
+  });
+};
+
 export const checkLogin = async () => {
   // await signOutIfSignedInWithGG();
-  console.log("Check login");
+  console.log('Check login');
 
   const accessToken = await AsyncStorage.getItem('accessToken');
   const refreshToken = await AsyncStorage.getItem('refreshToken');
@@ -44,12 +72,12 @@ export const checkLogin = async () => {
      */
 
     if (isRefreshTokenExpired === false) {
-      console.log("Refresh token has not expired");
+      console.log('Refresh token has not expired');
       const isAccessTokenExpired = await checkValidToken(`${accessToken}`);
 
       if (accessToken !== null) {
         if (isAccessTokenExpired === true) {
-          console.log("Access token expired");
+          console.log('Access token expired');
 
           try {
             const refreshEndpoint = 'api/auth/refresh';
@@ -60,18 +88,19 @@ export const checkLogin = async () => {
                 Authorization: `Bearer ${refreshToken}`,
               },
             });
-            console.log("Res refresh token:", response.data);
-            await AsyncStorage.setItem("accessToken", response.data.accessToken);
-
+            console.log('Res refresh token:', response.data);
+            await AsyncStorage.setItem(
+              'accessToken',
+              response.data.accessToken,
+            );
           } catch (error) {
             if (axios.isAxiosError(error)) {
-              console.log("Refresh api error:", error.response?.data);
+              console.log('Refresh api error:', error.response?.data);
             }
           }
-
         }
 
-        console.log("Access token has not expired");
+        console.log('Access token has not expired');
         const response = await validate();
         // console.log('Validate res:', response.data.userInfo);
 
@@ -104,22 +133,19 @@ export const checkLogin = async () => {
           newsNoti: true,
         };
 
-        settings.callNoti =
-          response.userInfo.setting.callNoti;
-        settings.msgNoti =
-          response.userInfo.setting.msgNoti;
-        settings.stockNoti =
-          response.userInfo.setting.stockNoti;
-        settings.newsNoti =
-          response.userInfo.setting.newsNoti;
+        settings.callNoti = response.userInfo.setting.callNoti;
+        settings.msgNoti = response.userInfo.setting.msgNoti;
+        settings.stockNoti = response.userInfo.setting.stockNoti;
+        settings.newsNoti = response.userInfo.setting.newsNoti;
 
         userStore.setUserSettings(settings);
-      }
 
+        connectSocket(user._id);
+      }
 
       isLoggedIn = true;
     } else {
-      console.log("Refresh token expired");
+      console.log('Refresh token expired');
       await signOutIfSignedInWithGG();
       isLoggedIn = false;
     }

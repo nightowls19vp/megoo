@@ -25,6 +25,8 @@ import CurrentPackage from '../../../screens/profile/screens/CurrentPackageScree
 import OtherPackages from '../../../screens/profile/screens/OtherPackages';
 
 import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
+import ProductsScreen from '../../../screens/storage/screens/ProductsScreen';
+import ProductDetailScreen from '../../../screens/storage/screens/ProductDetailScreen';
 
 function HomeScreen() {
   return (
@@ -96,6 +98,28 @@ const PackageScreenStack = ({navigation}: {navigation: any}) => {
   );
 };
 
+const StorageStack = createNativeStackNavigator();
+
+const StorageScreenStack = () => {
+  return (
+    <StorageStack.Navigator initialRouteName={RouteNames.STORAGE}>
+      <StorageStack.Screen
+        name={RouteNames.STORAGE}
+        component={StorageLocationScreen}
+      />
+      <StorageStack.Screen
+        name={RouteNames.PRODUCTS}
+        component={ProductsScreen}
+      />
+      <StorageStack.Screen
+        name={RouteNames.PRODUCT_DETAIL}
+        component={ProductDetailScreen}
+      />
+      <StorageStack.Screen name={RouteNames.CHAT} component={ChatScreen} />
+    </StorageStack.Navigator>
+  );
+};
+
 const ProfileStack = createNativeStackNavigator();
 
 function ProfileScreenStack() {
@@ -155,30 +179,31 @@ export default function BottomNavigationBar() {
         headerShown: false,
         tabBarHideOnKeyboard: true,
         tabBarLabelStyle: {paddingBottom: 5},
-        tabBarActiveTintColor: Colors.primary,
+        tabBarActiveTintColor: Colors.bottomTabActiveIcon,
+        tabBarInactiveTintColor: Colors.bottomTabInactiveIcon,
         tabBarStyle: {
-          height: 60,
-          paddingBottom: 0,
+          // height: 60,
+          // paddingBottom: 0,
+          backgroundColor: Colors.bottomTabBackground,
         },
       }}>
       <Tab.Screen
-        name={RouteNames.PACKAGE}
+        name={RouteNames.PACKAGE_STACK}
         component={PackageScreenStack}
         initialParams={{screen: RouteNames.PACKAGE}}
         options={{
           title: 'Gói',
-          tabBarActiveTintColor: Colors.primary,
           tabBarIcon: ({color}) => {
             return <Icon name="addusergroup" size={22} color={color} />;
           },
         }}
       />
       <Tab.Screen
-        name={RouteNames.STORAGE}
-        component={StorageLocationScreen}
+        name={RouteNames.STORAGE_STACK}
+        component={StorageScreenStack}
+        initialParams={{screen: RouteNames.STORAGE}}
         options={{
           title: 'Kho',
-          tabBarActiveTintColor: Colors.primary,
           tabBarIcon: ({color}) => {
             return <Icon name="isv" size={20} color={color} />;
           },
@@ -188,7 +213,6 @@ export default function BottomNavigationBar() {
         name={RouteNames.HOME_TAB}
         component={HomeScreen}
         options={{
-          tabBarActiveTintColor: Colors.primary,
           tabBarIcon: ({color}) => {
             return <Icon name="home" size={20} color={color} />;
           },

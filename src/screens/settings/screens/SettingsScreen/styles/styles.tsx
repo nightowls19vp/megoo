@@ -5,15 +5,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    backgroundColor: Colors.screenBackground,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: Colors.primary,
+    color: Colors.textSecondary,
     marginVertical: 10,
   },
   text: {
-    color: Colors.text,
+    color: Colors.textPrimary,
     fontSize: 14,
   },
   settingsContainer: {
@@ -21,7 +22,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   contentContainer: {
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.itemBackground,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -37,12 +38,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     margin: 10,
+    marginTop: 40,
     padding: 8,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.screenBackground,
     borderRadius: 10,
+    borderColor: Colors.buttonSecondary,
+    borderWidth: 1,
   },
   buttonText: {
-    color: 'white',
+    color: Colors.textSecondary,
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -62,12 +66,12 @@ const styles = StyleSheet.create({
   },
   settingIcon: {
     fontWeight: '200',
-    color: Colors.text,
+    color: Colors.buttonPrimary,
     fontSize: 22,
   },
   notiIcon: {
     fontWeight: '200',
-    color: Colors.primary,
+    color: Colors.buttonPrimary,
     fontSize: 22,
   },
   settingItem: {
