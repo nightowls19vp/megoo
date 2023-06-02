@@ -20,6 +20,7 @@ export const checkout = async (cartList: ICartList) => {
         cart: cartList.cart,
         method: {
           type: 'EWALLET',
+          // bank_code: 'VNPAY',
           bank_code: 'ZALOPAY',
         },
       },
@@ -91,7 +92,7 @@ export const renew = async (pkg: {}) => {
       {
         method: {
           type: 'EWALLET',
-          bank_code: 'ZALOPAY',
+          bank_code: 'VNPAY',
         },
         cart: pkg,
       },

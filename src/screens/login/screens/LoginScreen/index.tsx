@@ -26,6 +26,7 @@ import {IAuthData} from '../../../../common/interfaces/data.interface';
 import {IValidateRes} from '../../../../common/interfaces/validate.interface';
 import {ISettings} from '../../../../common/interfaces/settings.interface';
 import {dateFormat} from '../../../../common/handle.string';
+import {connectSocket} from '../../../../common/auth';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -141,6 +142,8 @@ export default function LoginScreen({navigation}: {navigation: any}) {
           console.log('user.dob:', user.dob);
 
           userStore.setUser(user);
+
+          connectSocket(user._id);
 
           // Store user token
           await AsyncStorage.setItem('accessToken', `${response?.accessToken}`);

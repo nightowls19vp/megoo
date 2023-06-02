@@ -26,6 +26,7 @@ import {
 import userStore from '../../../../common/store/user.store';
 import {getUserCart} from '../CartScreen/services/cart.service';
 import appStore from '../../../../common/store/app.store';
+import {connectSocket} from '../../../../common/auth';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -41,6 +42,8 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
 
   useEffect(() => {
     getPackages();
+    connectSocket(userStore.id);
+    console.log('after');
   }, []);
 
   useFocusEffect(

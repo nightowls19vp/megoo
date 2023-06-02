@@ -38,6 +38,11 @@ export const connectSocket = (userId: string) => {
     query: {token},
   });
 
+  socket.connect();
+
+  console.log(socket.connect());
+  console.log('connect');
+
   // Event listeners
   socket.on('connect', () => {
     console.log('Connected to server');
@@ -140,7 +145,47 @@ export const checkLogin = async () => {
 
         userStore.setUserSettings(settings);
 
-        connectSocket(user._id);
+        const token = user._id;
+        console.log('socket token:', token);
+
+        // const URL = 'ws://localhost:3001';
+        // socket = io(URL, {
+        //   autoConnect: false,
+        //   query: {token},
+        // });
+
+        const URL =
+          'https://d575-2402-800-631d-f2fa-8047-ce0d-dcb7-4de0.ngrok-free.app';
+        const socket1 = io(URL, {
+          autoConnect: false,
+          query: {token},
+        });
+
+        socket1.connect();
+
+        socket1.on('connect', () => {
+          console.log('Connected to server');
+          console.log('socket id:', socket1.id);
+        });
+
+        setTimeout(() => {
+          // socket1.disconnect();
+          // socket1.on('disconnect', () => {
+          //   console.log('Disconnect to server');
+          //   console.log('socket id:', socket1.id);
+          // });
+          socket1.emit('receive-message', token);
+          console.log('emit successfully');
+
+          socket1.on('send-message', data => {
+            console.log('socket id:', socket1.id);
+            console.log('send-message data:', data);
+          });
+        }, 2000);
+
+        // socket1.on('zpCallback', data => {
+        //   console.log('zpCallback data:', data);
+        // });
       }
 
       isLoggedIn = true;

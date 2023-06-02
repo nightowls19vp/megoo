@@ -211,6 +211,7 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
 
               // Open URL for payment
               Linking.openURL(response.order.order_url);
+              // Linking.openURL(response.data);
 
               let intervalCheckActive = true;
               let interValCheck = setInterval(async () => {
