@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.primary,
   },
+
   button: {
     width: '90%',
     content: 'fill',
@@ -59,11 +60,17 @@ const styles = StyleSheet.create({
     color: Colors.error,
     textAlign: 'left',
   },
+  avatarContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    alignSelf: 'center',
+    marginVertical: 10,
+  },
   avatar: {
     width: 200,
     height: 200,
     borderRadius: 200 / 2,
-    marginTop: 20,
   },
 });
 

@@ -7,43 +7,18 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
-  TextInput,
-  StyleSheet,
 } from 'react-native';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
+import RouteNames from '../../../../constants/route-names.const';
 import {Colors} from '../../../../constants/color.const';
 import styles from './styles/styles';
-import {useCameraDevices} from 'react-native-vision-camera';
-import {Camera} from 'react-native-vision-camera';
-import {useScanBarcodes, BarcodeFormat} from 'vision-camera-code-scanner';
 
 const ProductsScreen = ({navigation}: {navigation: any}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [products, setProducts] = useState<object[]>([]);
-
-  const [hasPermission, setHasPermission] = useState(false);
-  const devices = useCameraDevices();
-  const device = devices.back;
-
-  // Here is where useScanBarcodes() hook is called.
-  // Specify your barcode format inside.
-  // Detected barcodes are assigned into the 'barcodes' variable.
-  const [frameProcessor, barcodes] = useScanBarcodes([BarcodeFormat.QR_CODE], {
-    checkInverted: true,
-  });
-
-  // Permissions added here.
-  useEffect(() => {
-    (async () => {
-      const status = await Camera.requestCameraPermission();
-      setHasPermission(status === 'authorized');
-    })();
-  }, []);
 
   const onSuccess = (e: any) => {
     console.log('onSuccess', e);
@@ -149,16 +124,46 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
               padding: 20,
               borderRadius: 5,
             }}>
-            <Text
+            <View
               style={{
                 width: '100%',
-                textAlign: 'center',
-                fontSize: 18,
-                fontWeight: 'bold',
-                color: Colors.primary,
+                display: 'flex',
+                flexDirection: 'row',
               }}>
-              Thêm nơi lưu trữ
-            </Text>
+              <View
+                style={{
+                  width: '15%',
+                }}
+              />
+              <Text
+                style={{
+                  width: '70%',
+                  textAlign: 'center',
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  color: Colors.primary,
+                }}>
+                Thêm sản phẩm
+              </Text>
+              <TouchableOpacity
+                style={{
+                  width: '15%',
+                }}
+                onPress={() => {
+                  setModalVisible(false);
+                }}>
+                <Ionicons
+                  name="close"
+                  size={22}
+                  color={Colors.primary}
+                  style={{
+                    width: '100%',
+                    textAlign: 'right',
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
+
             <View
               style={{
                 width: '100%',
@@ -182,29 +187,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
                   borderWidth: 1,
                   borderColor: Colors.primary,
                 }}
-                onPress={() => {
-                  return (
-                    device != null &&
-                    hasPermission && (
-                      <>
-                        <Camera
-                          style={StyleSheet.absoluteFill}
-                          device={device}
-                          isActive={true}
-                          frameProcessor={frameProcessor}
-                          frameProcessorFps={5}
-                        />
-                        {barcodes.map((barcode, idx) => (
-                          <View key={idx} style={{padding: 50}}>
-                            <Text style={styles.barcodeTextURL}>
-                              {barcode.displayValue}
-                            </Text>
-                          </View>
-                        ))}
-                      </>
-                    )
-                  );
-                }}>
+                onPress={() => {}}>
                 <AntDesignIcon
                   name="barcode"
                   size={30}
@@ -226,6 +209,12 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
                   borderRadius: 10,
                   borderWidth: 1,
                   borderColor: Colors.primary,
+                }}
+                onPress={() => {
+                  navigation.navigate(
+                    RouteNames.ADD_PRODUCT_INFO as never,
+                    {} as never,
+                  );
                 }}>
                 <AntDesignIcon name="edit" size={30} color={Colors.primary} />
                 <Text style={{fontWeight: 'bold', color: Colors.primary}}>

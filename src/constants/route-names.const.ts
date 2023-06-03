@@ -25,6 +25,7 @@ export default {
   STORAGE: 'Quản lý kho',
   PRODUCTS: 'Danh sách sản phẩm',
   PRODUCT_DETAIL: 'Chi tiết sản phẩm',
+  ADD_PRODUCT_INFO: 'Nhập thông tin sản phẩm',
 
   TOP_TAB: 'TOP_TAB',
   PROFILE_TOP_TAB: 'PROFILE_TOP_TAB',

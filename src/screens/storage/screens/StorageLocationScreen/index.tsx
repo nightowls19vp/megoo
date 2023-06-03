@@ -108,16 +108,45 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
               padding: 20,
               borderRadius: 5,
             }}>
-            <Text
+            <View
               style={{
                 width: '100%',
-                textAlign: 'center',
-                fontSize: 18,
-                fontWeight: 'bold',
-                color: Colors.primary,
+                display: 'flex',
+                flexDirection: 'row',
               }}>
-              Thêm nơi lưu trữ
-            </Text>
+              <View
+                style={{
+                  width: '15%',
+                }}
+              />
+              <Text
+                style={{
+                  width: '70%',
+                  textAlign: 'center',
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  color: Colors.primary,
+                }}>
+                Thêm nơi lưu trữ
+              </Text>
+              <TouchableOpacity
+                style={{
+                  width: '15%',
+                }}
+                onPress={() => {
+                  setModalVisible(false);
+                }}>
+                <Icon
+                  name="close"
+                  size={22}
+                  color={Colors.primary}
+                  style={{
+                    width: '100%',
+                    textAlign: 'right',
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
 
             <Formik
               initialValues={{location: '', description: ''}}

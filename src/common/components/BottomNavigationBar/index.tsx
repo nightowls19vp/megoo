@@ -27,6 +27,7 @@ import OtherPackages from '../../../screens/profile/screens/OtherPackages';
 import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
 import ProductsScreen from '../../../screens/storage/screens/ProductsScreen';
 import ProductDetailScreen from '../../../screens/storage/screens/ProductDetailScreen';
+import AddProdInfoScreen from '../../../screens/storage/screens/AddProdInfoScreen';
 
 function HomeScreen() {
   return (
@@ -114,6 +115,10 @@ const StorageScreenStack = () => {
       <StorageStack.Screen
         name={RouteNames.PRODUCT_DETAIL}
         component={ProductDetailScreen}
+      />
+      <StorageStack.Screen
+        name={RouteNames.ADD_PRODUCT_INFO}
+        component={AddProdInfoScreen}
       />
       <StorageStack.Screen name={RouteNames.CHAT} component={ChatScreen} />
     </StorageStack.Navigator>

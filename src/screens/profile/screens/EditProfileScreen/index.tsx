@@ -276,38 +276,45 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
         handleSubmit,
       }) => (
         <ScrollView contentContainerStyle={styles.container}>
-          <Image
-            source={{
-              uri: selectedImage != '' ? selectedImage : userStore.avatar,
-            }}
-            style={styles.avatar}
-          />
+          <View style={styles.avatarContainer}>
+            <Image
+              source={{
+                uri: selectedImage != '' ? selectedImage : userStore.avatar,
+              }}
+              style={styles.avatar}
+            />
 
-          <TouchableOpacity
-            style={{marginVertical: 10}}
-            onPress={async () => {
-              await launchImageLibrary(
-                // If need base64String, include this option:
-                // includeBase64: true
-                {mediaType: 'mixed', includeBase64: true},
-                response => {
-                  // console.log('Response = ', response);
+            <TouchableOpacity
+              style={{
+                display: 'flex',
+                position: 'absolute',
+                right: 20,
+                bottom: 0,
+              }}
+              onPress={async () => {
+                await launchImageLibrary(
+                  // If need base64String, include this option:
+                  // includeBase64: true
+                  {mediaType: 'mixed', includeBase64: true},
+                  response => {
+                    // console.log('Response = ', response);
 
-                  if (response.didCancel) {
-                    console.log('User cancelled image picker');
-                  } else if (response.errorMessage) {
-                    console.log('ImagePicker Error: ', response.errorMessage);
-                  } else {
-                    let source: Asset[] = response.assets as Asset[];
-                    setSelectedImage(`${source[0].uri}`);
-                    setImageFile(source[0].base64);
-                    // console.log('File:', source[0].base64);
-                  }
-                },
-              );
-            }}>
-            <Text style={{color: Colors.text}}>Chỉnh sửa ảnh đại diện</Text>
-          </TouchableOpacity>
+                    if (response.didCancel) {
+                      console.log('User cancelled image picker');
+                    } else if (response.errorMessage) {
+                      console.log('ImagePicker Error: ', response.errorMessage);
+                    } else {
+                      let source: Asset[] = response.assets as Asset[];
+                      setSelectedImage(`${source[0].uri}`);
+                      setImageFile(source[0].base64);
+                      // console.log('File:', source[0].base64);
+                    }
+                  },
+                );
+              }}>
+              <Icon name="camera" size={40} color={Colors.text} />
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.inputContainer}>
             <TextInput
