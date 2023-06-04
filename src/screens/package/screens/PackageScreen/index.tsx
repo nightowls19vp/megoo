@@ -6,10 +6,11 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Modal,
 } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import Slider from '@react-native-community/slider';
-import Icon from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {RouteProp, useRoute, useFocusEffect} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
@@ -27,13 +28,16 @@ import userStore from '../../../../common/store/user.store';
 import {getUserCart} from '../CartScreen/services/cart.service';
 import appStore from '../../../../common/store/app.store';
 import {connectSocket} from '../../../../common/auth';
+import {observer} from 'mobx-react';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+const fontScale = Dimensions.get('window').fontScale;
 
 const PackageScreen = ({navigation}: {navigation: any}) => {
   const [packages, setPackages] = useState([]);
   const [isExtended, setIsExtended] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const getPackages = async () => {
     const pkgs = await getAllPackage();
@@ -43,7 +47,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
   useEffect(() => {
     getPackages();
     connectSocket(userStore.id);
-    console.log('after');
+    console.log('fontScale:', fontScale);
   }, []);
 
   useFocusEffect(
@@ -170,7 +174,11 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                 }
               }>
               <Text style={styles.text}>Giá tiền: </Text>
-              <Text style={[styles.text, {fontSize: 22, fontWeight: 'bold'}]}>
+              <Text
+                style={[
+                  styles.text,
+                  {fontSize: fontScale * 15, fontWeight: 'bold'},
+                ]}>
                 {totalPrice} VND
               </Text>
             </View>
@@ -194,82 +202,13 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
           </View>
 
           <View style={styles.buttonContainer}>
-            {isExtended === true ? (
-              <TouchableOpacity
-                style={styles.extendButton}
-                onPress={async () => {
-                  appStore.setRenewPkgId(item._id);
-
-                  // userStore.resetArray();
-                  let selectedPkg = {
-                    package: item._id,
-                    noOfMember: noOfMemb,
-                    duration: duration,
-                  };
-
-                  appStore.setRenewPkg(selectedPkg);
-                  // Get user cart
-                  const userCart: IUserCart = await getUserCart();
-                  console.log('userCart res:', userCart);
-
-                  const userCartList: ICartList = {
-                    cart: [] as ICartItem[],
-                  };
-
-                  userCart.cart.map(object => {
-                    let item = {
-                      package: object._id,
-                      noOfMember: object.noOfMember,
-                      duration: object.duration,
-                      quantity: object.quantity,
-                    };
-
-                    userCartList.cart.push(item);
-                  });
-
-                  userStore.setCartList(userCartList);
-
-                  // Increase quantity for the same package
-                  const index = userStore.cartList.cart.findIndex(
-                    obj =>
-                      obj.package === selectedPkg.package &&
-                      obj.noOfMember === selectedPkg.noOfMember &&
-                      obj.duration === selectedPkg.duration,
-                  );
-
-                  if (index === -1) {
-                    userStore.cartList.cart.push({...selectedPkg, quantity: 1});
-                  } else {
-                    userStore.cartList.cart[index].quantity++;
-                  }
-
-                  const response = await updateCart(userStore.cartList);
-
-                  if (response.statusCode === 200) {
-                    navigation.navigate(RouteNames.PAYMENT as never, {
-                      totalPrice: totalPrice,
-                      selectedItems: [
-                        {
-                          package: item._id,
-                          name: item.name,
-                          duration: item.duration,
-                          noOfMember: item.noOfMember,
-                          quantity: 1,
-                          price: totalPrice,
-                        },
-                      ],
-                    });
-                  }
-                }}>
-                <Text style={styles.buttonText} numberOfLines={2}>
-                  Mua ngay
-                </Text>
-              </TouchableOpacity>
-            ) : (
-              <>
+            {appStore.isLoggedIn ? (
+              isExtended === true ? (
                 <TouchableOpacity
-                  style={styles.button}
+                  style={styles.extendButton}
                   onPress={async () => {
+                    appStore.setRenewPkgId(item._id);
+
                     // userStore.resetArray();
                     let selectedPkg = {
                       package: item._id,
@@ -277,6 +216,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                       duration: duration,
                     };
 
+                    appStore.setRenewPkg(selectedPkg);
                     // Get user cart
                     const userCart: IUserCart = await getUserCart();
                     console.log('userCart res:', userCart);
@@ -298,7 +238,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
 
                     userStore.setCartList(userCartList);
 
-                    // // Increase quantity for the same package
+                    // Increase quantity for the same package
                     const index = userStore.cartList.cart.findIndex(
                       obj =>
                         obj.package === selectedPkg.package &&
@@ -337,81 +277,287 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                     Mua ngay
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={async () => {
-                    // userStore.resetArray();
-                    let selectedPkg = {
-                      package: item._id,
-                      noOfMember: noOfMemb,
-                      duration: duration,
-                    };
-
-                    // Get user cart
-                    const userCart: IUserCart = await getUserCart();
-                    console.log('userCart res:', userCart);
-
-                    const userCartList: ICartList = {
-                      cart: [] as ICartItem[],
-                    };
-
-                    userCart.cart.map(object => {
-                      let item = {
-                        package: object._id,
-                        noOfMember: object.noOfMember,
-                        duration: object.duration,
-                        quantity: object.quantity,
+              ) : (
+                <>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={async () => {
+                      // userStore.resetArray();
+                      let selectedPkg = {
+                        package: item._id,
+                        noOfMember: noOfMemb,
+                        duration: duration,
                       };
 
-                      userCartList.cart.push(item);
-                    });
+                      // Get user cart
+                      const userCart: IUserCart = await getUserCart();
+                      console.log('userCart res:', userCart);
 
-                    userStore.setCartList(userCartList);
+                      const userCartList: ICartList = {
+                        cart: [] as ICartItem[],
+                      };
 
-                    // // Increase quantity for the same package
-                    const index = userStore.cartList.cart.findIndex(
-                      obj =>
-                        obj.package === selectedPkg.package &&
-                        obj.noOfMember === selectedPkg.noOfMember &&
-                        obj.duration === selectedPkg.duration,
-                    );
+                      userCart.cart.map(object => {
+                        let item = {
+                          package: object._id,
+                          noOfMember: object.noOfMember,
+                          duration: object.duration,
+                          quantity: object.quantity,
+                        };
 
-                    if (index === -1) {
-                      userStore.cartList.cart.push({
-                        ...selectedPkg,
-                        quantity: 1,
+                        userCartList.cart.push(item);
                       });
-                    } else {
-                      userStore.cartList.cart[index].quantity++;
-                    }
 
-                    const response = await updateCart(userStore.cartList);
+                      userStore.setCartList(userCartList);
 
-                    console.log('Update cart res:', response);
+                      // // Increase quantity for the same package
+                      const index = userStore.cartList.cart.findIndex(
+                        obj =>
+                          obj.package === selectedPkg.package &&
+                          obj.noOfMember === selectedPkg.noOfMember &&
+                          obj.duration === selectedPkg.duration,
+                      );
 
-                    if (response.statusCode === 200) {
-                      Toast.show({
-                        type: 'success',
-                        text1: 'Thêm vào giỏ hàng thành công',
-                        autoHide: true,
-                        visibilityTime: 2000,
-                        topOffset: 30,
-                        bottomOffset: 40,
+                      if (index === -1) {
+                        userStore.cartList.cart.push({
+                          ...selectedPkg,
+                          quantity: 1,
+                        });
+                      } else {
+                        userStore.cartList.cart[index].quantity++;
+                      }
+
+                      const response = await updateCart(userStore.cartList);
+
+                      if (response.statusCode === 200) {
+                        navigation.navigate(RouteNames.PAYMENT as never, {
+                          totalPrice: totalPrice,
+                          selectedItems: [
+                            {
+                              package: item._id,
+                              name: item.name,
+                              duration: item.duration,
+                              noOfMember: item.noOfMember,
+                              quantity: 1,
+                              price: totalPrice,
+                            },
+                          ],
+                        });
+                      }
+                    }}>
+                    <Text style={styles.buttonText} numberOfLines={2}>
+                      Mua ngay
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={async () => {
+                      // userStore.resetArray();
+                      let selectedPkg = {
+                        package: item._id,
+                        noOfMember: noOfMemb,
+                        duration: duration,
+                      };
+
+                      // Get user cart
+                      const userCart: IUserCart = await getUserCart();
+                      console.log('userCart res:', userCart);
+
+                      const userCartList: ICartList = {
+                        cart: [] as ICartItem[],
+                      };
+
+                      userCart.cart.map(object => {
+                        let item = {
+                          package: object._id,
+                          noOfMember: object.noOfMember,
+                          duration: object.duration,
+                          quantity: object.quantity,
+                        };
+
+                        userCartList.cart.push(item);
                       });
-                    } else {
-                      Toast.show({
-                        type: 'error',
-                        text1: response.message,
-                        autoHide: false,
-                        topOffset: 30,
-                        bottomOffset: 40,
-                      });
-                    }
+
+                      userStore.setCartList(userCartList);
+
+                      // // Increase quantity for the same package
+                      const index = userStore.cartList.cart.findIndex(
+                        obj =>
+                          obj.package === selectedPkg.package &&
+                          obj.noOfMember === selectedPkg.noOfMember &&
+                          obj.duration === selectedPkg.duration,
+                      );
+
+                      if (index === -1) {
+                        userStore.cartList.cart.push({
+                          ...selectedPkg,
+                          quantity: 1,
+                        });
+                      } else {
+                        userStore.cartList.cart[index].quantity++;
+                      }
+
+                      const response = await updateCart(userStore.cartList);
+
+                      console.log('Update cart res:', response);
+
+                      if (response.statusCode === 200) {
+                        Toast.show({
+                          type: 'success',
+                          text1: 'Thêm vào giỏ hàng thành công',
+                          autoHide: true,
+                          visibilityTime: 2000,
+                          topOffset: 30,
+                          bottomOffset: 40,
+                        });
+                      } else {
+                        Toast.show({
+                          type: 'error',
+                          text1: response.message,
+                          autoHide: false,
+                          topOffset: 30,
+                          bottomOffset: 40,
+                        });
+                      }
+                    }}>
+                    <Text style={styles.buttonText} numberOfLines={2}>
+                      Thêm vào giỏ hàng
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              )
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => {
+                    setModalVisible(true);
+                  }}>
+                  <Text style={styles.buttonText} numberOfLines={2}>
+                    Mua ngay
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => {
+                    setModalVisible(true);
                   }}>
                   <Text style={styles.buttonText} numberOfLines={2}>
                     Thêm vào giỏ hàng
                   </Text>
                 </TouchableOpacity>
+                <Modal
+                  visible={modalVisible}
+                  animationType="slide"
+                  transparent={true}
+                  onRequestClose={() => setModalVisible(false)}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                    }}>
+                    <View
+                      style={{
+                        width: '90%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        backgroundColor: '#fff',
+                        padding: 10,
+                        borderRadius: 5,
+                      }}>
+                      <TouchableOpacity
+                        style={{
+                          width: '100%',
+                          // backgroundColor: 'pink',
+                        }}
+                        onPress={() => {
+                          setModalVisible(false);
+                        }}>
+                        <Ionicons
+                          name="close"
+                          size={22}
+                          color={Colors.text}
+                          style={{
+                            width: '100%',
+                            textAlign: 'right',
+                          }}
+                        />
+                      </TouchableOpacity>
+
+                      <Text
+                        style={{
+                          width: '80%',
+                          textAlign: 'justify',
+                          fontSize: 18,
+                          color: Colors.text,
+                        }}>
+                        Vui lòng đăng nhập/đăng ký để sử dụng chức năng này.
+                      </Text>
+
+                      <View
+                        style={{
+                          width: '100%',
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginTop: 20,
+                          marginBottom: 10,
+                          // backgroundColor: 'pink',
+                        }}>
+                        {/* <TouchableOpacity
+                            style={{
+                              width: '45%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: 10,
+                              padding: 10,
+                              borderRadius: 10,
+                              borderWidth: 1,
+                              borderColor: Colors.primary,
+                            }}
+                            onPress={openCamera}>
+                            <AntDesignIcon
+                              name="barcode"
+                              size={30}
+                              color={Colors.primary}
+                            />
+                            <Text style={{fontWeight: 'bold', color: Colors.primary}}>
+                              Quét barcode
+                            </Text>
+                          </TouchableOpacity>
+            
+                          <TouchableOpacity
+                            style={{
+                              width: '45%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: 10,
+                              padding: 10,
+                              borderRadius: 10,
+                              borderWidth: 1,
+                              borderColor: Colors.primary,
+                            }}
+                            onPress={() => {
+                              setModalVisible(false);
+                              navigation.navigate(
+                                RouteNames.ADD_PRODUCT_INFO as never,
+                                {} as never,
+                              );
+                            }}>
+                            <AntDesignIcon name="edit" size={30} color={Colors.primary} />
+                            <Text style={{fontWeight: 'bold', color: Colors.primary}}>
+                              Nhập thông tin
+                            </Text>
+                          </TouchableOpacity> */}
+                      </View>
+                    </View>
+                  </View>
+                </Modal>
               </>
             )}
           </View>
@@ -446,7 +592,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
           parallaxScrollingOffset: 50,
         }}
         width={width * 0.9}
-        height={height * 0.6}
+        height={height * 0.7}
         // autoPlay={true}
         data={packages}
         scrollAnimationDuration={1000}
@@ -459,4 +605,4 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
   );
 };
 
-export default PackageScreen;
+export default observer(PackageScreen);

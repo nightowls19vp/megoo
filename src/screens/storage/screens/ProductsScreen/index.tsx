@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
 import {
   Image,
@@ -7,10 +7,12 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
+  Linking,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import {Camera, useCameraDevices} from 'react-native-vision-camera';
 
 import RouteNames from '../../../../constants/route-names.const';
 import {Colors} from '../../../../constants/color.const';
@@ -19,61 +21,74 @@ import styles from './styles/styles';
 const ProductsScreen = ({navigation}: {navigation: any}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [products, setProducts] = useState<object[]>([]);
+  const [showCamera, setShowCamera] = useState(false);
 
-  const onSuccess = (e: any) => {
-    console.log('onSuccess', e);
+  const devices = useCameraDevices();
+  const device = devices.back;
+
+  const requestCameraPermission = useCallback(async () => {
+    const permission = await Camera.requestCameraPermission();
+
+    if (permission === 'denied') {
+      await Linking.openSettings();
+    }
+  }, []);
+
+  useEffect(() => {
+    requestCameraPermission();
+  }, []);
+
+  const openCamera = useCallback(() => {
+    setModalVisible(false);
+    setShowCamera(true);
+  }, []);
+
+  const renderCamera = () => {
+    if (!showCamera) {
+      return <View style={{flex: 1}} />;
+    } else if (!device) {
+      return <Text>No camera device available</Text>;
+    } else {
+      return (
+        <View>
+          <Camera
+            style={{flex: 1, width: '100%', height: '100%'}}
+            device={device}
+            isActive={true}
+            enableZoomGesture
+          />
+        </View>
+      );
+    }
   };
 
   const renderLocationItem = () => {
     return (
-      <TouchableOpacity
-        style={{
-          width: '90%',
-          backgroundColor: Colors.background,
-          borderRadius: 10,
-          display: 'flex',
-          flexDirection: 'row',
-          // justifyContent: 'center',
-          // padding: 10,
-        }}>
+      <TouchableOpacity style={styles.productItemContainer}>
         <Image
           source={{
             uri: 'https://wonder-day.com/wp-content/uploads/2022/03/wonder-day-cute-drawings-11.jpg',
           }}
-          style={styles.locationImg}
+          style={styles.prodImg}
         />
-        <View
-          style={{
-            display: 'flex',
-            gap: 10,
-            padding: 10,
-          }}>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 10,
-            }}>
-            <Text style={{fontWeight: 'bold'}}>Tên sản phẩm: </Text>
-            <Text style={{}}>Sữa</Text>
+        <View style={styles.productInfoContainer}>
+          <View style={styles.productInfo}>
+            <Text style={[styles.text, {fontWeight: 'bold'}]}>
+              Tên sản phẩm:{' '}
+            </Text>
+            <Text style={styles.text} numberOfLines={3}>
+              Sữa abcdefghijklmnopqrstuvw
+            </Text>
           </View>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 10,
-            }}>
-            <Text style={{fontWeight: 'bold'}}>Số lượng: </Text>
-            <Text style={{}}>3 lóc</Text>
+          <View style={styles.productInfo}>
+            <Text style={[styles.text, {fontWeight: 'bold'}]}>Số lượng: </Text>
+            <Text style={styles.text}>3 lóc</Text>
           </View>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 10,
-            }}>
-            <Text style={{fontWeight: 'bold'}}>Hạn sử dụng: </Text>
-            <Text style={{}}>1 năm</Text>
+          <View style={styles.productInfo}>
+            <Text style={[styles.text, {fontWeight: 'bold'}]}>
+              Hạn sử dụng:{' '}
+            </Text>
+            <Text style={styles.text}>1 năm</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -82,17 +97,12 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
 
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          width: '90%',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
+      <View style={styles.contentContainer}>
         <Text style={styles.title}>Danh sách sản phẩm</Text>
         <TouchableOpacity
           onPress={() => {
+            console.log('open modal add product');
+
             setModalVisible(true);
           }}>
           <Ionicons
@@ -108,43 +118,15 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
         animationType="slide"
         transparent={true}
         onRequestClose={() => setModalVisible(false)}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          }}>
-          <View
-            style={{
-              width: '90%',
-              display: 'flex',
-              alignItems: 'center',
-              backgroundColor: '#fff',
-              padding: 20,
-              borderRadius: 5,
-            }}>
-            <View
-              style={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'row',
-              }}>
+        <View style={styles.modal}>
+          <View style={styles.modalContentContainer}>
+            <View style={styles.modalTitleContainer}>
               <View
                 style={{
                   width: '15%',
                 }}
               />
-              <Text
-                style={{
-                  width: '70%',
-                  textAlign: 'center',
-                  fontSize: 18,
-                  fontWeight: 'bold',
-                  color: Colors.primary,
-                }}>
-                Thêm sản phẩm
-              </Text>
+              <Text style={styles.modalTitle}>Thêm sản phẩm</Text>
               <TouchableOpacity
                 style={{
                   width: '15%',
@@ -164,30 +146,8 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
               </TouchableOpacity>
             </View>
 
-            <View
-              style={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginTop: 20,
-                marginBottom: 10,
-                // backgroundColor: 'pink',
-              }}>
-              <TouchableOpacity
-                style={{
-                  width: '45%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: 10,
-                  padding: 10,
-                  borderRadius: 10,
-                  borderWidth: 1,
-                  borderColor: Colors.primary,
-                }}
-                onPress={() => {}}>
+            <View style={styles.modalOptionsContainer}>
+              <TouchableOpacity style={styles.modalOption} onPress={openCamera}>
                 <AntDesignIcon
                   name="barcode"
                   size={30}
@@ -199,18 +159,9 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={{
-                  width: '45%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: 10,
-                  padding: 10,
-                  borderRadius: 10,
-                  borderWidth: 1,
-                  borderColor: Colors.primary,
-                }}
+                style={styles.modalOption}
                 onPress={() => {
+                  setModalVisible(false);
                   navigation.navigate(
                     RouteNames.ADD_PRODUCT_INFO as never,
                     {} as never,
@@ -227,6 +178,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
       </Modal>
 
       {renderLocationItem()}
+      {showCamera ? renderCamera() : null}
     </View>
   );
 };

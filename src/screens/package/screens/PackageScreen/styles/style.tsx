@@ -2,6 +2,7 @@ import {Dimensions, StyleSheet} from 'react-native';
 import {Colors} from '../../../../../constants/color.const';
 
 const width = Dimensions.get('window').width;
+const fontScale = Dimensions.get('window').fontScale;
 
 const styles = StyleSheet.create({
   container: {
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   text: {
-    fontSize: 14,
+    fontSize: 12,
     color: Colors.text,
   },
   packageContainer: {
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   contentContainer: {
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.primary,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   pkgTitle: {
-    fontSize: 20,
+    fontSize: 14,
     fontWeight: 'bold',
     color: Colors.primary,
     marginTop: 10,
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     // alignItems: 'center',
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
   },
   carouselItem: {
     display: 'flex',
@@ -91,7 +92,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
+    // marginHorizontal: 15,
   },
   button: {
     width: '45%',
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   buttonText: {
-    fontSize: 14,
+    fontSize: 12,
     color: Colors.primary,
     fontWeight: 'bold',
     textAlign: 'center',

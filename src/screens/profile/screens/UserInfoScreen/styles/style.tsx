@@ -2,8 +2,26 @@ import {Dimensions, StyleSheet} from 'react-native';
 import {Colors} from '../../../../../constants/color.const';
 
 const width = Dimensions.get('window').width;
+const fontScale = Dimensions.get('window').fontScale;
 
 const styles = StyleSheet.create({
+  loginContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: width,
+    height: '100%',
+  },
+  loginTextContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  loginText: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: Colors.text,
+  },
   container: {
     display: 'flex',
     flexDirection: 'column',

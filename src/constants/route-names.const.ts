@@ -1,9 +1,9 @@
 export default {
   SPLASH: 'SPLASH',
 
-  LOGIN: 'LOGIN',
-  REGISTER: 'v',
-  FORGOT_PASSWORD: 'FORGOT_PASSWORD',
+  LOGIN: 'Đăng nhập',
+  REGISTER: 'Đăng ký',
+  FORGOT_PASSWORD: 'Quên mật khẩu',
 
   HOME_NAV: 'MEGOO',
   HOME_TAB: 'Trang chủ',

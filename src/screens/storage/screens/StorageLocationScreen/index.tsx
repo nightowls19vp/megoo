@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 
 import {
   Image,
@@ -18,16 +18,37 @@ import {RNCamera} from 'react-native-camera';
 import styles from './styles/style';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
+import appStore from '../../../../common/store/app.store';
+import {observer} from 'mobx-react';
 
 const StorageLocationScreen = ({navigation}: {navigation: any}) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [addLocModalVisible, setAddLocModalVisible] = useState(false);
   const [locations, setLocations] = useState<object[]>([]);
+
+  const locationsArr = [
+    {
+      location: 'Tủ đựng đồ ăn vặt',
+      description: 'Bên trái tủ lạnh ở tầng trệt',
+    },
+    {
+      location: 'Phòng giặt',
+      description: 'Tầng thượng',
+    },
+    {
+      location: 'Tủ gia vị',
+      description: 'Bếp',
+    },
+  ];
+
+  useEffect(() => {
+    setLocations(locationsArr);
+  }, []);
 
   const renderLocationItem = () => {
     return locations.map((location: any, index) => {
       return (
         <TouchableOpacity
-          style={styles.locationItem}
+          style={styles.locationContainer}
           key={index}
           onPress={() => {
             navigation.navigate(RouteNames.PRODUCTS, {});
@@ -39,7 +60,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
             style={styles.locationImg}
           />
           <View style={styles.locationInfoContainer}>
-            <View style={styles.locationInfoRow}>
+            <View style={[styles.locationInfoRow]}>
               <Text
                 style={[
                   styles.text,
@@ -49,9 +70,11 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                 ]}>
                 Nơi lưu trữ:
               </Text>
-              <Text style={styles.text}>{location.location}</Text>
+              <Text style={styles.text} numberOfLines={3}>
+                {location.location}
+              </Text>
             </View>
-            <View style={[styles.locationInfoRow, {width: '70%'}]}>
+            <View style={[styles.locationInfoRow]}>
               <Text
                 style={[
                   styles.text,
@@ -71,7 +94,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
     });
   };
 
-  return (
+  return appStore.isLoggedIn ? (
     <View style={styles.container}>
       <View
         style={{
@@ -82,16 +105,16 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
           alignItems: 'center',
         }}>
         <Text style={styles.title}>Nơi lưu trữ</Text>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <TouchableOpacity onPress={() => setAddLocModalVisible(true)}>
           <Icon name="add-circle-outline" size={24} color={Colors.primary} />
         </TouchableOpacity>
       </View>
 
       <Modal
-        visible={modalVisible}
+        visible={addLocModalVisible}
         animationType="slide"
         transparent={true}
-        onRequestClose={() => setModalVisible(false)}>
+        onRequestClose={() => setAddLocModalVisible(false)}>
         <View
           style={{
             flex: 1,
@@ -134,7 +157,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                   width: '15%',
                 }}
                 onPress={() => {
-                  setModalVisible(false);
+                  setAddLocModalVisible(false);
                 }}>
                 <Icon
                   name="close"
@@ -152,7 +175,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
               initialValues={{location: '', description: ''}}
               onSubmit={values => {
                 console.log('values:', values);
-                setModalVisible(false);
+                setAddLocModalVisible(false);
                 setLocations(prevLocations => [
                   ...prevLocations,
                   {
@@ -280,7 +303,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
         </View>
       </Modal>
 
-      <ScrollView contentContainerStyle={styles.locationContainer}>
+      <ScrollView contentContainerStyle={styles.locationsContainer}>
         {/* <TouchableOpacity style={styles.locationItem}>
           <Image
             source={{
@@ -322,7 +345,22 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
       </ScrollView>
       {/* {locations.length > 0 ? {} : null } */}
     </View>
+  ) : (
+    <View style={styles.loginContainer}>
+      <View style={styles.loginTextContainer}>
+        <Text style={styles.loginText}>Vui lòng </Text>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate(RouteNames.LOGIN, {});
+          }}>
+          <Text style={[styles.loginText, {color: Colors.primary}]}>
+            đăng nhập/đăng ký
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.loginText}>để sử dụng chức năng này.</Text>
+    </View>
   );
 };
 
-export default StorageLocationScreen;
+export default observer(StorageLocationScreen);

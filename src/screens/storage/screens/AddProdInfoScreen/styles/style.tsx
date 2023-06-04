@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   },
   infoInput: {
     width: '100%',
-    height: 40,
+    height: 50,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '100%',
-    height: 40,
+    height: 50,
     marginVertical: 20,
     display: 'flex',
     alignItems: 'center',

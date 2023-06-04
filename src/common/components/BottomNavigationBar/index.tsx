@@ -7,6 +7,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import {Colors} from '../../../constants/color.const';
 import RouteNames from '../../../constants/route-names.const';
+import appStore from './../../store/app.store';
 
 import ProfileScreen from '../../../screens/profile/screens/ProfileScreen';
 import SettingsScreen from '../../../screens/settings/screens/SettingsScreen';
@@ -55,7 +56,7 @@ const PackageScreenStack = ({navigation}: {navigation: any}) => {
         component={PackageScreen}
         options={{
           headerRight: ({tintColor}) => {
-            return (
+            return appStore.isLoggedIn ? (
               <TouchableOpacity
                 onPress={() => {
                   console.log('Cart');
@@ -64,7 +65,7 @@ const PackageScreenStack = ({navigation}: {navigation: any}) => {
                 {/* <Icon name="shoppingcart" size={22} color={tintColor} /> */}
                 <Ionicons name="cart-outline" size={24} color={tintColor} />
               </TouchableOpacity>
-            );
+            ) : null;
           },
         }}
       />

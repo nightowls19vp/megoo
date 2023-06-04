@@ -1,12 +1,16 @@
 import {useState, useEffect, useCallback} from 'react';
 import {Dimensions, Text, View} from 'react-native';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
+import {RouteProp, useRoute, useFocusEffect} from '@react-navigation/native';
+
+import styles from './styles/style';
 import {Colors} from '../../../../constants/color.const';
+import RouteNames from '../../../../constants/route-names.const';
+import appStore from '../../../../common/store/app.store';
+
 import GroupsScreen from '../GroupsScreen';
 import ProfileScreen from '../ProfileScreen';
-import styles from './styles/style';
-
-import {RouteProp, useRoute, useFocusEffect} from '@react-navigation/native';
+import {observer} from 'mobx-react';
 
 // Define the type for the route params
 type GroupsRouteParams = {
@@ -42,7 +46,7 @@ const UserInfoScreen = ({navigation}: {navigation: any}) => {
   //   }, []),
   // );
 
-  return (
+  return appStore.isLoggedIn ? (
     <View
       style={
         activeTab === 'group'
@@ -105,7 +109,22 @@ const UserInfoScreen = ({navigation}: {navigation: any}) => {
         {renderTabContent()}
       </ScrollView>
     </View>
+  ) : (
+    <View style={styles.loginContainer}>
+      <View style={styles.loginTextContainer}>
+        <Text style={styles.loginText}>Vui lòng </Text>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate(RouteNames.LOGIN, {});
+          }}>
+          <Text style={[styles.loginText, {color: Colors.primary}]}>
+            đăng nhập/đăng ký
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.loginText}>để sử dụng chức năng này.</Text>
+    </View>
   );
 };
 
-export default UserInfoScreen;
+export default observer(UserInfoScreen);

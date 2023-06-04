@@ -49,10 +49,10 @@ const App = () => {
         <SplashScreen />
       ) : (
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Navigator>
             <>
               {appStore.isLoggedIn ? (
-                <Stack.Group>
+                <Stack.Group screenOptions={{headerShown: false}}>
                   <Stack.Screen
                     name={RoutesName.HOME_DRAWER}
                     component={DrawerNavigation}
@@ -65,16 +65,17 @@ const App = () => {
               ) : (
                 <Stack.Group>
                   <Stack.Screen
+                    options={{headerShown: false}}
+                    name={RoutesName.HOME_DRAWER}
+                    component={DrawerNavigation}
+                  />
+                  <Stack.Screen
                     name={RoutesName.LOGIN}
                     component={LoginScreen}
                   />
                   <Stack.Screen
                     name={RoutesName.REGISTER}
                     component={RegisterScreen}
-                  />
-                  <Stack.Screen
-                    name={RoutesName.HOME_DRAWER}
-                    component={DrawerNavigation}
                   />
                 </Stack.Group>
               )}

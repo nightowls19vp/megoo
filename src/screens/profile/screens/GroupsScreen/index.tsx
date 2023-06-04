@@ -13,30 +13,38 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
   const getGroups = async () => {
     // Get all user's groups
     const groupsRes = await getUserGroup();
-    console.log('groupsRes:', groupsRes.groups[0].packages[0].package.name);
-    console.log('groupsRes:', groupsRes);
+    if (
+      !groupsRes.groups ||
+      !groupsRes?.groups?.length ||
+      groupsRes?.groups?.length === 0
+    ) {
+      return [];
+    } else {
+      console.log('groupsRes:', groupsRes.groups[0].packages[0].package.name);
+      console.log('groupsRes:', groupsRes);
 
-    setGroups(
-      groupsRes.groups.map((groupItem: any) => {
-        return {
-          _id: groupItem._id ? groupItem._id : '',
-          name: groupItem.name ? groupItem.name : '',
-          avatar: groupItem.avatar,
-          // ? groupItem.avatar
-          // : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
-          duration: groupItem.packages[0].package.duration
-            ? groupItem.packages[0].package.duration
-            : 0,
-          noOfMember: groupItem.packages[0].package.noOfMember
-            ? groupItem.packages[0].package.noOfMember
-            : 0,
-          status: groupItem.packages[0].status
-            ? groupItem.packages[0].status
-            : '',
-          members: groupItem.members ? groupItem.members : [],
-        };
-      }),
-    );
+      setGroups(
+        groupsRes.groups.map((groupItem: any) => {
+          return {
+            _id: groupItem._id ? groupItem._id : '',
+            name: groupItem.name ? groupItem.name : '',
+            avatar: groupItem.avatar,
+            // ? groupItem.avatar
+            // : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
+            duration: groupItem.packages[0].package.duration
+              ? groupItem.packages[0].package.duration
+              : 0,
+            noOfMember: groupItem.packages[0].package.noOfMember
+              ? groupItem.packages[0].package.noOfMember
+              : 0,
+            status: groupItem.packages[0].status
+              ? groupItem.packages[0].status
+              : '',
+            members: groupItem.members ? groupItem.members : [],
+          };
+        }),
+      );
+    }
   };
 
   useEffect(() => {

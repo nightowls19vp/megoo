@@ -27,6 +27,7 @@ import {IValidateRes} from '../../../../common/interfaces/validate.interface';
 import {ISettings} from '../../../../common/interfaces/settings.interface';
 import {dateFormat} from '../../../../common/handle.string';
 import {connectSocket} from '../../../../common/auth';
+import appStore from '../../../../common/store/app.store';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -166,6 +167,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                   RouteNames.HOME_DRAWER as never,
                   {} as never,
                 );
+                appStore.setIsLoggedIn(true);
               },
             });
           } else if (response.statusCode === 401) {
@@ -359,6 +361,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                         RouteNames.HOME_DRAWER as never,
                         {} as never,
                       );
+                      appStore.setIsLoggedIn(true);
                     },
                   });
                 } else {

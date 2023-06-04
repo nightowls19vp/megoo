@@ -333,7 +333,7 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                     `${response.data?.refreshToken}`,
                   );
 
-                  validate(`${response.data?.accessToken}`).then(response => {
+                  validate().then(response => {
                     console.log('User data:', response.userInfo);
 
                     // Store user data

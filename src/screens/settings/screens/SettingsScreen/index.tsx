@@ -31,63 +31,65 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.settingsContainer}>
-        <Text style={styles.title}>Thông báo</Text>
+      {appStore.isLoggedIn ? (
+        <View style={styles.settingsContainer}>
+          <Text style={styles.title}>Thông báo</Text>
 
-        <View style={styles.contentContainer}>
-          <View style={styles.settingItem}>
-            <Text style={styles.text}>Tin nhắn</Text>
-            <FontAwesomeIcon
-              onPress={() => {
-                setMsgNoti(!msgNoti);
-                userStore.setMsgNoti(msgNoti);
-                console.log('Msg noti:', userStore.msgNoti);
-              }}
-              name={userStore.msgNoti ? 'toggle-on' : 'toggle-off'}
-              style={styles.notiIcon}
-            />
-          </View>
+          <View style={styles.contentContainer}>
+            <View style={styles.settingItem}>
+              <Text style={styles.text}>Tin nhắn</Text>
+              <FontAwesomeIcon
+                onPress={() => {
+                  setMsgNoti(!msgNoti);
+                  userStore.setMsgNoti(msgNoti);
+                  console.log('Msg noti:', userStore.msgNoti);
+                }}
+                name={userStore.msgNoti ? 'toggle-on' : 'toggle-off'}
+                style={styles.notiIcon}
+              />
+            </View>
 
-          <View style={styles.settingItem}>
-            <Text style={styles.text}>Cuộc gọi</Text>
-            <FontAwesomeIcon
-              onPress={() => {
-                setCallNoti(!callNoti);
-                userStore.setCallNoti(callNoti);
-                console.log('Call noti:', userStore.callNoti);
-              }}
-              name={userStore.callNoti ? 'toggle-on' : 'toggle-off'}
-              style={styles.notiIcon}
-            />
-          </View>
+            <View style={styles.settingItem}>
+              <Text style={styles.text}>Cuộc gọi</Text>
+              <FontAwesomeIcon
+                onPress={() => {
+                  setCallNoti(!callNoti);
+                  userStore.setCallNoti(callNoti);
+                  console.log('Call noti:', userStore.callNoti);
+                }}
+                name={userStore.callNoti ? 'toggle-on' : 'toggle-off'}
+                style={styles.notiIcon}
+              />
+            </View>
 
-          <View style={styles.settingItem}>
-            <Text style={styles.text}>Số lượng hàng hoá tồn kho</Text>
-            <FontAwesomeIcon
-              onPress={() => {
-                setStockNoti(!stockNoti);
-                userStore.setStockNoti(stockNoti);
-                console.log('Stock noti:', userStore.stockNoti);
-              }}
-              name={userStore.stockNoti ? 'toggle-on' : 'toggle-off'}
-              style={styles.notiIcon}
-            />
-          </View>
+            <View style={styles.settingItem}>
+              <Text style={styles.text}>Số lượng hàng hoá tồn kho</Text>
+              <FontAwesomeIcon
+                onPress={() => {
+                  setStockNoti(!stockNoti);
+                  userStore.setStockNoti(stockNoti);
+                  console.log('Stock noti:', userStore.stockNoti);
+                }}
+                name={userStore.stockNoti ? 'toggle-on' : 'toggle-off'}
+                style={styles.notiIcon}
+              />
+            </View>
 
-          <View style={styles.settingItem}>
-            <Text style={styles.text}>Khuyến mãi/Tin tức</Text>
-            <FontAwesomeIcon
-              onPress={() => {
-                setNewsNoti(!newsNoti);
-                userStore.setNewsNoti(newsNoti);
-                console.log('News noti:', userStore.newsNoti);
-              }}
-              name={userStore.newsNoti ? 'toggle-on' : 'toggle-off'}
-              style={styles.notiIcon}
-            />
+            <View style={styles.settingItem}>
+              <Text style={styles.text}>Khuyến mãi/Tin tức</Text>
+              <FontAwesomeIcon
+                onPress={() => {
+                  setNewsNoti(!newsNoti);
+                  userStore.setNewsNoti(newsNoti);
+                  console.log('News noti:', userStore.newsNoti);
+                }}
+                name={userStore.newsNoti ? 'toggle-on' : 'toggle-off'}
+                style={styles.notiIcon}
+              />
+            </View>
           </View>
         </View>
-      </View>
+      ) : null}
 
       <View style={styles.settingsContainer}>
         <Text style={styles.title}>Khác</Text>
@@ -128,89 +130,103 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
         </View>
       </View>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          setModalVisible(!modalVisible);
-        }}>
-        <Text style={styles.buttonText}>Đăng xuất</Text>
-      </TouchableOpacity>
-
-      <Modal isVisible={modalVisible}>
-        <View
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'white',
-            borderRadius: 10,
-            gap: 20,
-            padding: 20,
-          }}>
-          <Text
-            style={{
-              fontSize: 18,
-              textAlign: 'justify',
-              color: Colors.textPrimary,
+      {appStore.isLoggedIn ? (
+        <>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              setModalVisible(!modalVisible);
             }}>
-            Đăng xuất khỏi tài khoản của bạn?
-          </Text>
+            <Text style={styles.buttonText}>Đăng xuất</Text>
+          </TouchableOpacity>
 
-          <View
-            style={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-              flexDirection: 'row',
-              gap: 30,
-            }}>
-            <TouchableOpacity
-              onPress={() => {
-                setModalVisible(!modalVisible);
-              }}
+          <Modal isVisible={modalVisible}>
+            <View
               style={{
+                display: 'flex',
+                justifyContent: 'center',
                 alignItems: 'center',
+                backgroundColor: 'white',
+                borderRadius: 10,
+                gap: 20,
+                padding: 20,
               }}>
-              <Text style={{fontSize: 16, color: Colors.textSecondary}}>
-                Huỷ
+              <Text
+                style={{
+                  fontSize: 18,
+                  textAlign: 'justify',
+                  color: Colors.textPrimary,
+                }}>
+                Đăng xuất khỏi tài khoản của bạn?
               </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={async () => {
-                setModalVisible(!modalVisible);
 
-                // If user logged in with Google account then logout google accoutn first
-                const refreshToken = await AsyncStorage.getItem('refreshToken');
+              <View
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  gap: 30,
+                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setModalVisible(!modalVisible);
+                  }}
+                  style={{
+                    alignItems: 'center',
+                  }}>
+                  <Text style={{fontSize: 16, color: Colors.textSecondary}}>
+                    Huỷ
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={async () => {
+                    setModalVisible(!modalVisible);
 
-                const response = await logout(`${refreshToken}`);
+                    // If user logged in with Google account then logout google accoutn first
+                    const refreshToken = await AsyncStorage.getItem(
+                      'refreshToken',
+                    );
 
-                await signOutIfSignedInWithGG();
+                    const response = await logout(`${refreshToken}`);
 
-                console.log('Logout msg:', response.message);
+                    // await signOutIfSignedInWithGG();
 
-                await AsyncStorage.removeItem('accessToken');
-                await AsyncStorage.removeItem('refreshToken');
-                const access = await AsyncStorage.getItem('accessToken');
-                console.log('AT after logout:', access);
+                    console.log('Logout msg:', response.message);
 
-                userStore.resetStore();
+                    await AsyncStorage.removeItem('accessToken');
+                    await AsyncStorage.removeItem('refreshToken');
+                    const access = await AsyncStorage.getItem('accessToken');
+                    console.log('AT after logout:', access);
 
-                console.log('user name after logout:', userStore.name);
-                console.log('user email after logout:', userStore.email);
+                    userStore.resetStore();
 
-                appStore.setIsLoggedIn(false);
+                    appStore.setIsLoggedIn(false);
 
-                navigation.navigate(RouteNames.LOGIN as never, {} as never);
-              }}
-              style={{
-                alignItems: 'center',
-              }}>
-              <Text style={{fontSize: 16, color: 'red'}}>Đăng xuất</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+                    navigation.navigate(
+                      RouteNames.HOME_DRAWER as never,
+                      {} as never,
+                    );
+                  }}
+                  style={{
+                    alignItems: 'center',
+                  }}>
+                  <Text style={{fontSize: 16, color: 'red'}}>Đăng xuất</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        </>
+      ) : (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            navigation.navigate(RouteNames.LOGIN, {});
+          }}>
+          <Text style={styles.buttonText}>Đăng nhập/đăng ký</Text>
+        </TouchableOpacity>
+      )}
 
       <Toast position="top"></Toast>
     </View>

@@ -11,10 +11,13 @@ import BottomNavigationBar from '../BottomNavigationBar';
 import {Text, View, Image, TouchableOpacity} from 'react-native';
 import userStore from '../../store/user.store';
 import {Colors} from '../../../constants/color.const';
+import appStore from '../../store/app.store';
+import {useNavigation} from '@react-navigation/native';
 
 const Drawer = createDrawerNavigator();
 
 function CustomDrawerContent(props: any) {
+  const navigation = useNavigation();
   return (
     <DrawerContentScrollView
       {...props}
@@ -31,27 +34,60 @@ function CustomDrawerContent(props: any) {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <Image
-          source={{
-            uri: userStore.avatar,
-          }}
-          style={{
-            width: 150,
-            height: 150,
-            borderRadius: 150 / 2,
-            marginBottom: 20,
-          }}
-        />
-        <Text
-          style={{
-            textAlign: 'center',
-            color: Colors.textSecondary,
-            fontSize: 18,
-            fontWeight: 'bold',
-          }}
-          numberOfLines={2}>
-          {userStore.name}
-        </Text>
+        {appStore.isLoggedIn ? (
+          <>
+            <Image
+              source={{
+                uri: userStore.avatar,
+              }}
+              style={{
+                width: 150,
+                height: 150,
+                borderRadius: 150 / 2,
+                marginBottom: 20,
+              }}
+            />
+            <Text
+              style={{
+                textAlign: 'center',
+                color: Colors.textSecondary,
+                fontSize: 18,
+                fontWeight: 'bold',
+              }}
+              numberOfLines={2}>
+              {userStore.name}
+            </Text>
+          </>
+        ) : (
+          <>
+            <Image
+              source={{
+                uri: 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
+              }}
+              style={{
+                width: 150,
+                height: 150,
+                borderRadius: 150 / 2,
+                marginBottom: 20,
+              }}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate(RouteNames.LOGIN as never);
+              }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: Colors.textSecondary,
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                }}
+                numberOfLines={2}>
+                Đăng nhập/Đăng ký
+              </Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
       <View style={{flex: 1}}>
         <DrawerItemList {...props} />
@@ -94,19 +130,21 @@ export default function DrawerNavigation({navigation}: {navigation: any}) {
                 }}>
                 <Ionicons name="search-outline" size={24} color={'black'} />
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  console.log('Chat');
-                  navigation.navigate(RouteNames.CHAT as never, {} as never);
-                  // navigation.goBack();
-                }}>
-                <Ionicons
-                  // name="chatbubble-ellipses-outline"
-                  name="md-chatbubble-ellipses-outline"
-                  size={24}
-                  color={'black'}
-                />
-              </TouchableOpacity>
+              {appStore.isLoggedIn ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    console.log('Chat');
+                    navigation.navigate(RouteNames.CHAT as never, {} as never);
+                    // navigation.goBack();
+                  }}>
+                  <Ionicons
+                    // name="chatbubble-ellipses-outline"
+                    name="md-chatbubble-ellipses-outline"
+                    size={24}
+                    color={'black'}
+                  />
+                </TouchableOpacity>
+              ) : null}
             </View>
           );
         },

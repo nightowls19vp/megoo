@@ -87,8 +87,8 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
               gap: 10,
               padding: 10,
             }}>
-            <Text>Tên gói:</Text>
-            <Text style={{fontWeight: 'bold'}}>{item.name}</Text>
+            <Text style={styles.text}>Tên gói:</Text>
+            <Text style={[styles.text, {fontWeight: 'bold'}]}>{item.name}</Text>
           </View>
           <View
             style={{
@@ -97,8 +97,10 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
               gap: 10,
               padding: 10,
             }}>
-            <Text>Thời hạn:</Text>
-            <Text style={{fontWeight: 'bold'}}>{item.duration} tháng</Text>
+            <Text style={styles.text}>Thời hạn:</Text>
+            <Text style={[styles.text, {fontWeight: 'bold'}]}>
+              {item.duration} tháng
+            </Text>
           </View>
           <View
             style={{
@@ -107,8 +109,10 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
               gap: 10,
               padding: 10,
             }}>
-            <Text>Số lượng thành viên:</Text>
-            <Text style={{fontWeight: 'bold'}}>{item.noOfMember}</Text>
+            <Text style={styles.text}>Số lượng thành viên:</Text>
+            <Text style={[styles.text, {fontWeight: 'bold'}]}>
+              {item.noOfMember}
+            </Text>
           </View>
           <View
             style={{
@@ -117,8 +121,10 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
               gap: 10,
               padding: 10,
             }}>
-            <Text>Số lượng gói:</Text>
-            <Text style={{fontWeight: 'bold'}}>{item.quantity}</Text>
+            <Text style={styles.text}>Số lượng gói:</Text>
+            <Text style={[styles.text, {fontWeight: 'bold'}]}>
+              {item.quantity}
+            </Text>
           </View>
           <View
             style={{
@@ -127,8 +133,8 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
               gap: 10,
               padding: 10,
             }}>
-            <Text>Thành tiền:</Text>
-            <Text style={{fontWeight: 'bold'}}>
+            <Text style={styles.text}>Thành tiền:</Text>
+            <Text style={[styles.text, {fontWeight: 'bold'}]}>
               {Math.round(item.price)} VND
             </Text>
           </View>

@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: Colors.screenBackground,
+    // backgroundColor: Colors.screenBackground,
   },
   title: {
     fontSize: 18,
@@ -40,13 +40,13 @@ const styles = StyleSheet.create({
     margin: 10,
     marginTop: 40,
     padding: 8,
-    backgroundColor: Colors.screenBackground,
+    backgroundColor: Colors.primary,
     borderRadius: 10,
-    borderColor: Colors.buttonSecondary,
-    borderWidth: 1,
+    // borderColor: Colors.buttonSecondary,
+    // borderWidth: 1,
   },
   buttonText: {
-    color: Colors.textSecondary,
+    color: Colors.background,
     fontSize: 18,
     fontWeight: 'bold',
   },

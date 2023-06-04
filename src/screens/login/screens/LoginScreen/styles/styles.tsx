@@ -1,5 +1,7 @@
-import {StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 import {Colors} from '../../../../../constants/color.const';
+
+const fontScale = Dimensions.get('window').fontScale;
 
 const styles = StyleSheet.create({
   container: {
@@ -9,7 +11,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: 'bold',
     color: Colors.primary,
   },
@@ -51,7 +53,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   socialButton: {
@@ -76,7 +78,7 @@ const styles = StyleSheet.create({
     },
   },
   text: {
-    fontSize: 16,
+    fontSize: 14,
     color: Colors.text,
   },
   flexRow: {
@@ -86,7 +88,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textPrimary: {
-    fontSize: 16,
+    fontSize: 14,
     color: 'orange',
     marginVertical: 10,
   },

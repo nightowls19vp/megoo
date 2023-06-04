@@ -1,14 +1,14 @@
-import { URL_HOST } from '../../../../core/config/api/api.config';
+import {URL_HOST} from '../../../../core/config/api/api.config';
 import axios from 'axios';
-import { IRegisterReq, IRegisterRes } from './../interfaces/register.interface';
+import {IRegisterReq, IRegisterRes} from './../interfaces/register.interface';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const register = async (registerInfo: IRegisterReq) => {
   const registerEndpoint = 'api/auth/register';
   const reqUrl = `${URL_HOST}${registerEndpoint}`;
-  console.log("Register:", reqUrl);
+  console.log('Register:', reqUrl);
 
-  const accessToken = await AsyncStorage.getItem("accessToken");
+  const accessToken = await AsyncStorage.getItem('accessToken');
 
   try {
     const res = await axios.post(reqUrl, {
@@ -18,7 +18,8 @@ export const register = async (registerInfo: IRegisterReq) => {
       email: registerInfo.email,
       phone: registerInfo.phone,
       dob: registerInfo.dob,
-      avatar: "https://res.cloudinary.com/nightowls19vp/image/upload/v1683454262/cld-sample.jpg"
+      avatar:
+        'https://res.cloudinary.com/nightowls19vp/image/upload/v1683454262/cld-sample.jpg',
     });
     console.log(`Data: ${res.data}`);
 
