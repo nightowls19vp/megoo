@@ -25,10 +25,14 @@ import GroupsScreen from '../../../screens/profile/screens/GroupsScreen';
 import CurrentPackage from '../../../screens/profile/screens/CurrentPackageScreen';
 import OtherPackages from '../../../screens/profile/screens/OtherPackages';
 
+import UserGroupsScreen from '../../../screens/storage/screens/GroupsScreen';
 import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
 import ProductsScreen from '../../../screens/storage/screens/ProductsScreen';
 import ProductDetailScreen from '../../../screens/storage/screens/ProductDetailScreen';
 import AddProdInfoScreen from '../../../screens/storage/screens/AddProdInfoScreen';
+import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScreen';
+import ChatScreen from '../../../screens/chat/screens/ChatScreen';
+import GroupChatsScreen from '../../../screens/chat/screens/GroupChatsScreen';
 
 function HomeScreen() {
   return (
@@ -38,15 +42,26 @@ function HomeScreen() {
   );
 }
 
-const PackageStack = createNativeStackNavigator();
-
-const ChatScreen = () => {
+const ChatStack = createNativeStackNavigator();
+const ChatScreenStack = () => {
   return (
-    <View style={{flex: 1, alignItems: 'center'}}>
-      <Text>Chat screen</Text>
-    </View>
+    <ChatStack.Navigator
+      initialRouteName={RouteNames.GROUP_CHATS}
+      screenOptions={{headerShown: false}}>
+      <ChatStack.Screen
+        name={RouteNames.CHAT}
+        component={ChatScreen}
+        options={{}}
+      />
+      <ChatStack.Screen
+        name={RouteNames.GROUP_CHATS}
+        component={GroupChatsScreen}
+      />
+    </ChatStack.Navigator>
   );
 };
+
+const PackageStack = createNativeStackNavigator();
 
 const PackageScreenStack = ({navigation}: {navigation: any}) => {
   return (
@@ -69,33 +84,18 @@ const PackageScreenStack = ({navigation}: {navigation: any}) => {
           },
         }}
       />
-      <PackageStack.Screen
-        name={RouteNames.CHAT}
-        component={ChatScreen}
-        // options={{
-        //   headerLeft: () => {
-        //     return (
-        //       <Pressable
-        //         style={{marginRight: 30}}
-        //         onPress={() => {
-        //           console.log('Chat');
-        //           navigation.navigate(RouteNames.PACKAGE as never, {} as never);
-        //         }}>
-        //         <FeatherIcon name="chevron-left" size={24} color={'orange'} />
-        //       </Pressable>
-        //     );
-        //   },
-        // }}
-      />
       <PackageStack.Screen name={RouteNames.CART} component={CartScreen} />
       <PackageStack.Screen
         name={RouteNames.PAYMENT}
         component={PaymentScreen}
       />
-      {/* <PackageStack.Screen
-        name={RouteNames.PROFILE}
-        component={UserInfoScreen}
-      /> */}
+      <PackageStack.Screen
+        name={RouteNames.CHAT_STACK}
+        component={ChatScreenStack}
+        options={{
+          title: 'Nhóm chat',
+        }}
+      />
     </PackageStack.Navigator>
   );
 };
@@ -104,10 +104,14 @@ const StorageStack = createNativeStackNavigator();
 
 const StorageScreenStack = () => {
   return (
-    <StorageStack.Navigator initialRouteName={RouteNames.STORAGE}>
+    <StorageStack.Navigator initialRouteName={RouteNames.STORAGE_GROUPS}>
       <StorageStack.Screen
         name={RouteNames.STORAGE}
         component={StorageLocationScreen}
+      />
+      <StorageStack.Screen
+        name={RouteNames.STORAGE_GROUPS}
+        component={UserGroupsScreen}
       />
       <StorageStack.Screen
         name={RouteNames.PRODUCTS}
@@ -121,7 +125,17 @@ const StorageScreenStack = () => {
         name={RouteNames.ADD_PRODUCT_INFO}
         component={AddProdInfoScreen}
       />
-      <StorageStack.Screen name={RouteNames.CHAT} component={ChatScreen} />
+      <StorageStack.Screen
+        name={RouteNames.SCAN_BARCODE}
+        component={ScanBarcodeScreen}
+      />
+      <StorageStack.Screen
+        name={RouteNames.CHAT_STACK}
+        component={ChatScreenStack}
+        options={{
+          title: 'Nhóm chat',
+        }}
+      />
     </StorageStack.Navigator>
   );
 };
@@ -147,7 +161,13 @@ function ProfileScreenStack() {
         name={RouteNames.CURRENT_PACKAGE}
         component={CurrentPackage}
       />
-      <ProfileStack.Screen name={RouteNames.CHAT} component={ChatScreen} />
+      <ProfileStack.Screen
+        name={RouteNames.CHAT_STACK}
+        component={ChatScreenStack}
+        options={{
+          title: 'Nhóm chat',
+        }}
+      />
     </ProfileStack.Navigator>
   );
 }
@@ -169,7 +189,13 @@ function SettingsScreenStack() {
         name={RouteNames.POLICIES_RIGHTS}
         component={PoliciesScreen}
       />
-      <SettingsStack.Screen name={RouteNames.CHAT} component={ChatScreen} />
+      <SettingsStack.Screen
+        name={RouteNames.CHAT_STACK}
+        component={ChatScreenStack}
+        options={{
+          title: 'Nhóm chat',
+        }}
+      />
     </SettingsStack.Navigator>
   );
 }
@@ -179,7 +205,7 @@ const Tab = createBottomTabNavigator();
 export default function BottomNavigationBar() {
   return (
     <Tab.Navigator
-      backBehavior="history"
+      backBehavior="none"
       initialRouteName={RouteNames.HOME_TAB}
       screenOptions={{
         headerShown: false,
@@ -198,6 +224,7 @@ export default function BottomNavigationBar() {
         component={PackageScreenStack}
         initialParams={{screen: RouteNames.PACKAGE}}
         options={{
+          unmountOnBlur: true,
           title: 'Gói',
           tabBarIcon: ({color}) => {
             return <Icon name="addusergroup" size={22} color={color} />;
@@ -207,8 +234,9 @@ export default function BottomNavigationBar() {
       <Tab.Screen
         name={RouteNames.STORAGE_STACK}
         component={StorageScreenStack}
-        initialParams={{screen: RouteNames.STORAGE}}
+        initialParams={{screen: RouteNames.STORAGE_GROUPS}}
         options={{
+          unmountOnBlur: true,
           title: 'Kho',
           tabBarIcon: ({color}) => {
             return <Icon name="isv" size={20} color={color} />;
@@ -219,6 +247,7 @@ export default function BottomNavigationBar() {
         name={RouteNames.HOME_TAB}
         component={HomeScreen}
         options={{
+          unmountOnBlur: true,
           tabBarIcon: ({color}) => {
             return <Icon name="home" size={20} color={color} />;
           },
@@ -229,6 +258,7 @@ export default function BottomNavigationBar() {
         component={ProfileScreenStack}
         initialParams={{screen: RouteNames.PROFILE}}
         options={{
+          unmountOnBlur: true,
           title: 'Tôi',
           tabBarIcon: ({color}) => {
             return <Icon name="user" size={20} color={color} />;
@@ -240,6 +270,7 @@ export default function BottomNavigationBar() {
         component={SettingsScreenStack}
         initialParams={{screen: RouteNames.SETTINGS}}
         options={{
+          unmountOnBlur: true,
           title: 'Cài đặt',
           tabBarIcon: ({color}) => {
             return <Icon name="setting" size={20} color={color} />;

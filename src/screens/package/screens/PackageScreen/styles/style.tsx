@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   text: {
-    fontSize: 12,
+    fontSize: 14,
     color: Colors.text,
   },
   packageContainer: {
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   pkgTitle: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: 'bold',
     color: Colors.primary,
     marginTop: 10,

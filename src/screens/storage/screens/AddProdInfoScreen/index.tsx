@@ -18,6 +18,16 @@ import {useEffect, useState} from 'react';
 import moment from 'moment';
 
 const AddProdInfoScreen = () => {
+  const initialValues = {
+    prodName: '',
+    brand: '',
+    category: '',
+    description: '',
+    price: '',
+    region: '',
+    exp: '',
+  };
+
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedImage, setSelectedImage] = useState('');
@@ -99,7 +109,7 @@ const AddProdInfoScreen = () => {
         </TouchableOpacity> */}
 
         <Formik
-          initialValues={{prodName: '', exp: '', type: '', description: ''}}
+          initialValues={initialValues}
           onSubmit={values => {
             console.log('values:', values);
           }}>
@@ -137,14 +147,14 @@ const AddProdInfoScreen = () => {
               <View style={styles.infoInput}>
                 <TextInput
                   onChangeText={value => {
-                    setFieldValue('type', value);
+                    setFieldValue('category', value);
                   }}
                   // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('type')}
+                  onBlur={() => setFieldTouched('category')}
                   style={{flex: 1, color: Colors.text}}
                   placeholder={'Loại sản phẩm'}
                   placeholderTextColor={Colors.secondary}
-                  value={values.type}
+                  value={values.category}
                 />
 
                 {values.prodName && (

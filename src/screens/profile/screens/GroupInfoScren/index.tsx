@@ -9,7 +9,7 @@ import styles from './styles/style';
 import CurrentPackage from '../CurrentPackageScreen';
 import OtherPackages from '../OtherPackages';
 import RouteNames from '../../../../constants/route-names.const';
-import {getUserGroup} from '../GroupsScreen/services/group.service';
+import {getUserGroup} from '../../../../services/group.service';
 
 // Define the type for the route params
 type GroupDetailRouteParams = {

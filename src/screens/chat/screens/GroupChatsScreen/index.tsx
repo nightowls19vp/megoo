@@ -7,7 +7,7 @@ import {getUserGroup} from '../../../../services/group.service';
 import styles from './styles/style';
 import {useFocusEffect} from '@react-navigation/native';
 
-const GroupsScreen = ({navigation}: {navigation: any}) => {
+const GroupChatsScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
 
   const getGroups = async () => {
@@ -62,15 +62,13 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
 
   const renderGroupItem = () => {
     return groups.map((group: any, index) => {
-      return (
+      return group.status === 'Active' ? (
         <TouchableOpacity
           style={styles.groupContainer}
           key={index}
           onPress={() => {
             console.log('Clicked');
-            navigation.navigate(RouteNames.GROUP_INFO as never, {
-              groupId: group._id,
-            });
+            navigation.navigate(RouteNames.CHAT);
           }}>
           <Image
             source={{
@@ -92,34 +90,13 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
                 {group.name}
               </Text>
             </View>
-
-            <View style={styles.infoRow}>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Thời hạn:{' '}
-              </Text>
-              <Text>{group.duration} tháng</Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Số lượng thành viên:{' '}
-              </Text>
-              <Text>{group.noOfMember}</Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Trạng thái:{' '}
-              </Text>
-              <Text>{group.status}</Text>
-            </View>
           </View>
         </TouchableOpacity>
-      );
+      ) : null;
     });
   };
 
   return <View style={styles.container}>{renderGroupItem()}</View>;
 };
 
-export default GroupsScreen;
+export default GroupChatsScreen;

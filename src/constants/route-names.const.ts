@@ -13,7 +13,6 @@ export default {
   PACKAGE: 'Quản lý gói',
   CURRENT_PACKAGE: 'Gói hiện tại',
   OTHER_PACKAGES: 'Các gói khác',
-  CHAT: 'Đoạn chat',
   CART: 'Giỏ hàng',
 
   GROUPS: 'Danh sách nhóm',
@@ -22,10 +21,12 @@ export default {
   PAYMENT: 'Thanh toán',
 
   STORAGE_STACK: 'STORAGE_STACK',
+  STORAGE_GROUPS: 'Nhóm của người dùng',
   STORAGE: 'Quản lý kho',
   PRODUCTS: 'Danh sách sản phẩm',
   PRODUCT_DETAIL: 'Chi tiết sản phẩm',
   ADD_PRODUCT_INFO: 'Nhập thông tin sản phẩm',
+  SCAN_BARCODE: 'Quét barcode',
 
   TOP_TAB: 'TOP_TAB',
   PROFILE_TOP_TAB: 'PROFILE_TOP_TAB',
@@ -39,4 +40,8 @@ export default {
   SETTINGS: 'Cài đặt',
   APP_INFO: 'Thông tin ứng dụng',
   POLICIES_RIGHTS: 'Chính sách và quyền',
+
+  CHAT_STACK: 'CHAT_STACK',
+  CHAT: 'Đoạn chat',
+  GROUP_CHATS: 'Nhóm chat',
 };

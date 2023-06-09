@@ -174,11 +174,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                 }
               }>
               <Text style={styles.text}>Giá tiền: </Text>
-              <Text
-                style={[
-                  styles.text,
-                  {fontSize: fontScale * 15, fontWeight: 'bold'},
-                ]}>
+              <Text style={[styles.text, {fontSize: 24, fontWeight: 'bold'}]}>
                 {totalPrice} VND
               </Text>
             </View>
@@ -592,7 +588,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
           parallaxScrollingOffset: 50,
         }}
         width={width * 0.9}
-        height={height * 0.7}
+        height={height * 0.6}
         // autoPlay={true}
         data={packages}
         scrollAnimationDuration={1000}

@@ -32,7 +32,7 @@ export const connectSocket = (userId: string) => {
   const token = userId;
   console.log('socket token:', token);
 
-  const URL = 'http://localhost:3001';
+  const URL = 'https://e4a7-14-186-146-44.ngrok-free.app';
   socket = io(URL, {
     autoConnect: false,
     query: {token},
@@ -154,8 +154,7 @@ export const checkLogin = async () => {
         //   query: {token},
         // });
 
-        const URL =
-          'https://d575-2402-800-631d-f2fa-8047-ce0d-dcb7-4de0.ngrok-free.app';
+        const URL = 'https://3d69-14-186-146-44.ngrok-free.app';
         const socket1 = io(URL, {
           autoConnect: false,
           query: {token},
@@ -168,20 +167,32 @@ export const checkLogin = async () => {
           console.log('socket id:', socket1.id);
         });
 
-        setTimeout(() => {
-          // socket1.disconnect();
-          // socket1.on('disconnect', () => {
-          //   console.log('Disconnect to server');
-          //   console.log('socket id:', socket1.id);
-          // });
-          socket1.emit('receive-message', token);
-          console.log('emit successfully');
+        socket1.emit('receive-message', token);
+        console.log('emit successfully');
 
-          socket1.on('send-message', data => {
-            console.log('socket id:', socket1.id);
-            console.log('send-message data:', data);
-          });
-        }, 2000);
+        socket1.on('send-message', data => {
+          console.log('socket id:', socket1.id);
+          console.log('send-message data:', data);
+        });
+
+        socket1.on('zpCallback', data => {
+          console.log('zpCallback data:', data);
+        });
+
+        // setTimeout(() => {
+        //   // socket1.disconnect();
+        //   // socket1.on('disconnect', () => {
+        //   //   console.log('Disconnect to server');
+        //   //   console.log('socket id:', socket1.id);
+        //   // });
+        //   socket1.emit('receive-message', token);
+        //   console.log('emit successfully');
+
+        //   socket1.on('send-message', data => {
+        //     console.log('socket id:', socket1.id);
+        //     console.log('send-message data:', data);
+        //   });
+        // }, 2000);
 
         // socket1.on('zpCallback', data => {
         //   console.log('zpCallback data:', data);
@@ -191,11 +202,11 @@ export const checkLogin = async () => {
       isLoggedIn = true;
     } else {
       console.log('Refresh token expired');
-      await signOutIfSignedInWithGG();
+      // await signOutIfSignedInWithGG();
       isLoggedIn = false;
     }
   } else {
-    await signOutIfSignedInWithGG();
+    // await signOutIfSignedInWithGG();
     isLoggedIn = false;
   }
 

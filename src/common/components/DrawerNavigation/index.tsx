@@ -13,6 +13,7 @@ import userStore from '../../store/user.store';
 import {Colors} from '../../../constants/color.const';
 import appStore from '../../store/app.store';
 import {useNavigation} from '@react-navigation/native';
+import {observer} from 'mobx-react-lite';
 
 const Drawer = createDrawerNavigator();
 
@@ -104,12 +105,12 @@ const ChatScreen = () => {
   );
 };
 
-export default function DrawerNavigation({navigation}: {navigation: any}) {
+const DrawerNavigation = ({navigation}: {navigation: any}) => {
   return (
     <Drawer.Navigator
       initialRouteName={RouteNames.HOME_TAB}
       drawerContent={props => <CustomDrawerContent {...props} />}
-      // backBehavior="initialRoute"
+      backBehavior="none"
       screenOptions={{
         drawerLabelStyle: {marginLeft: -15},
         drawerActiveTintColor: Colors.drawerItem,
@@ -125,8 +126,6 @@ export default function DrawerNavigation({navigation}: {navigation: any}) {
               <TouchableOpacity
                 onPress={() => {
                   console.log('Search');
-                  // navigation.navigate(RouteNames.CHAT as never, {} as never);
-                  // navigation.goBack();
                 }}>
                 <Ionicons name="search-outline" size={24} color={'black'} />
               </TouchableOpacity>
@@ -134,7 +133,7 @@ export default function DrawerNavigation({navigation}: {navigation: any}) {
                 <TouchableOpacity
                   onPress={() => {
                     console.log('Chat');
-                    navigation.navigate(RouteNames.CHAT as never, {} as never);
+                    navigation.navigate(RouteNames.CHAT_STACK);
                     // navigation.goBack();
                   }}>
                   <Ionicons
@@ -167,7 +166,7 @@ export default function DrawerNavigation({navigation}: {navigation: any}) {
             <Icon name="addusergroup" size={20} color={color} />
           ),
         }}
-        name={RouteNames.PACKAGE}
+        name={RouteNames.PACKAGE_STACK}
         component={BottomNavigationBar}
         initialParams={{screen: RouteNames.PACKAGE}}
       />
@@ -177,7 +176,7 @@ export default function DrawerNavigation({navigation}: {navigation: any}) {
           drawerLabel: 'Quản lý kho',
           drawerIcon: ({color}) => <Icon name="isv" size={20} color={color} />,
         }}
-        name={RouteNames.STORAGE}
+        name={RouteNames.STORAGE_STACK}
         component={BottomNavigationBar}
         initialParams={{screen: RouteNames.STORAGE}}
       />
@@ -205,4 +204,5 @@ export default function DrawerNavigation({navigation}: {navigation: any}) {
       />
     </Drawer.Navigator>
   );
-}
+};
+export default observer(DrawerNavigation);

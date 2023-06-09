@@ -147,7 +147,12 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
             </View>
 
             <View style={styles.modalOptionsContainer}>
-              <TouchableOpacity style={styles.modalOption} onPress={openCamera}>
+              <TouchableOpacity
+                style={styles.modalOption}
+                onPress={() => {
+                  setModalVisible(false);
+                  navigation.navigate(RouteNames.SCAN_BARCODE, {});
+                }}>
                 <AntDesignIcon
                   name="barcode"
                   size={30}
@@ -178,7 +183,6 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
       </Modal>
 
       {renderLocationItem()}
-      {showCamera ? renderCamera() : null}
     </View>
   );
 };

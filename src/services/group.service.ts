@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {URL_HOST} from '../../../../../core/config/api/api.config';
+import {URL_HOST} from '../core/config/api/api.config';
 
 export const getUserGroup = async () => {
   const groupEndpoint = `api/pkg-mgmt/gr/user_id?role=All`;

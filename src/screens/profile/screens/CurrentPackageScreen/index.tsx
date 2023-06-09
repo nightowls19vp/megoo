@@ -19,7 +19,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
-import {getUserGroup} from '../GroupsScreen/services/group.service';
+import {getUserGroup} from '../../../../services/group.service';
 import {activate, invite} from './services/group.info.service';
 import styles from './styles/style';
 
