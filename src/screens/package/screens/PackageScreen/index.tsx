@@ -323,23 +323,25 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                         userStore.cartList.cart[index].quantity++;
                       }
 
-                      const response = await updateCart(userStore.cartList);
+                      updateCart(userStore.cartList).then(response => {
+                        console.log('Update cart response:', response);
 
-                      if (response.statusCode === 200) {
-                        navigation.navigate(RouteNames.PAYMENT as never, {
-                          totalPrice: totalPrice,
-                          selectedItems: [
-                            {
-                              package: item._id,
-                              name: item.name,
-                              duration: item.duration,
-                              noOfMember: item.noOfMember,
-                              quantity: 1,
-                              price: totalPrice,
-                            },
-                          ],
-                        });
-                      }
+                        if (response.statusCode === 200) {
+                          navigation.navigate(RouteNames.PAYMENT as never, {
+                            totalPrice: totalPrice,
+                            selectedItems: [
+                              {
+                                package: item._id,
+                                name: item.name,
+                                duration: item.duration,
+                                noOfMember: item.noOfMember,
+                                quantity: 1,
+                                price: totalPrice,
+                              },
+                            ],
+                          });
+                        }
+                      });
                     }}>
                     <Text style={styles.buttonText} numberOfLines={2}>
                       Mua ngay

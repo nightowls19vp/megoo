@@ -28,6 +28,7 @@ import {ISettings} from '../../../../common/interfaces/settings.interface';
 import {dateFormat} from '../../../../common/handle.string';
 import {connectSocket} from '../../../../common/auth';
 import appStore from '../../../../common/store/app.store';
+import {connectSendBird} from '../../../../services/chat.service';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -144,7 +145,12 @@ export default function LoginScreen({navigation}: {navigation: any}) {
 
           userStore.setUser(user);
 
-          connectSocket(user._id);
+          // connectSocket(user._id);
+
+          // Connect user to SendBird server
+          console.log('before connect to sendbird');
+          const userSendBird = await connectSendBird(user._id, user.name);
+          console.log('userSendBird:', userSendBird);
 
           // Store user token
           await AsyncStorage.setItem('accessToken', `${response?.accessToken}`);
@@ -306,7 +312,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                   await AsyncStorage.getItem('accessToken'),
                 );
 
-                validate().then(res => {
+                validate().then(async res => {
                   console.log('User data:', res);
 
                   // Store user data
@@ -346,6 +352,14 @@ export default function LoginScreen({navigation}: {navigation: any}) {
 
                   userStore.setUserSettings(settings);
                   console.log('Call noti:', settings.callNoti);
+
+                  // Connect user to SendBird server
+                  console.log('before connect to sendbird');
+                  const userSendBird = await connectSendBird(
+                    user._id,
+                    user.name,
+                  );
+                  console.log('userSendBird from gg login:', userSendBird);
                 });
                 // Show toast message and navigate to home screen if login successfully
                 if (response.statusCode === 200) {

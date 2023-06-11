@@ -44,6 +44,8 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
   const selectedItems = route.params.selectedItems;
 
   useEffect(() => {
+    console.log('selectedItems: ', selectedItems);
+
     setItemsInfo(() => ({
       cart: selectedItems.map((item: any) => {
         return {
@@ -199,21 +201,6 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
               console.log('trans res:', trans);
               const trans_id = response.trans._id;
               console.log('trans_id', trans_id);
-              // Toast.show({
-              //   type: 'success',
-              //   text1: 'Thanh toán thành công',
-              //   autoHide: true,
-              //   visibilityTime: 3000,
-              //   topOffset: 20,
-              //   onHide: () => {
-              //     navigation.navigate('PROFILE_STACK', {
-              //       params: {
-              //         screen: 'PROFILE',
-              //         activeTab: 'group',
-              //       },
-              //     });
-              //   },
-              // });
 
               // Open URL for payment
               Linking.openURL(response.order.order_url);
@@ -233,12 +220,12 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
                   clearInterval(interValCheck);
 
                   intervalCheckActive = false;
-                  appStore.setIsExtendedPkg(false);
-                  appStore.setRenewPkg({
-                    package: '',
-                    noOfMember: 0,
-                    duration: 0,
-                  });
+                  // appStore.setIsExtendedPkg(false);
+                  // appStore.setRenewPkg({
+                  //   package: '',
+                  //   noOfMember: 0,
+                  //   duration: 0,
+                  // });
                 }
                 if (!intervalCheckActive) {
                   Toast.show({
@@ -289,8 +276,10 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
               console.log('trans res:', trans);
               const trans_id = response.trans._id;
               console.log('trans_id', trans_id);
+
               // Open URL for payment
               Linking.openURL(response.order.order_url);
+
               let intervalCheckActive = true;
               let interValCheck = setInterval(async () => {
                 if (!intervalCheckActive) {
@@ -334,6 +323,12 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
               setTimeout(() => {
                 clearInterval(interValCheck);
                 intervalCheckActive = false;
+                appStore.setIsExtendedPkg(false);
+                appStore.setRenewPkg({
+                  package: '',
+                  noOfMember: 0,
+                  duration: 0,
+                });
               }, 2 * 60 * 1000);
             }}>
             <Text style={styles.buttonText}>Thanh toán</Text>

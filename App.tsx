@@ -23,7 +23,7 @@ import appStore from './src/common/store/app.store';
 import SplashScreen from './src/screens/splash/SplashScreen';
 
 const appId = 'ADD4546B-CF09-4980-B6AC-DB7FFD2E70EC';
-const sendbird = new SendBird({appId});
+export const sendbird = new SendBird({appId});
 
 const initialState = {
   sendbird,

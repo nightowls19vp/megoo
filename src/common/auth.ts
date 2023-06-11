@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import {io, Socket} from 'socket.io-client';
+import notifee from '@notifee/react-native';
 
 import {URL_HOST} from '../core/config/api/api.config';
 import {IJWTToken} from './interfaces/token.interface';
@@ -13,6 +14,7 @@ import {
 import userStore from './store/user.store';
 import {ISettings} from './interfaces/settings.interface';
 import {dateFormat} from './handle.string';
+import {connectSendBird} from '../services/chat.service';
 
 export const checkValidToken = async (token: string) => {
   // console.log("AT:", accessToken);
@@ -145,6 +147,9 @@ export const checkLogin = async () => {
 
         userStore.setUserSettings(settings);
 
+        const userSendBird = await connectSendBird(user._id, user.name);
+        console.log('userSendBird from auth:', userSendBird);
+
         const token = user._id;
         console.log('socket token:', token);
 
@@ -154,7 +159,7 @@ export const checkLogin = async () => {
         //   query: {token},
         // });
 
-        const URL = 'https://3d69-14-186-146-44.ngrok-free.app';
+        const URL = 'https://3169-14-186-146-44.ngrok-free.app';
         const socket1 = io(URL, {
           autoConnect: false,
           query: {token},
@@ -175,28 +180,32 @@ export const checkLogin = async () => {
           console.log('send-message data:', data);
         });
 
-        socket1.on('zpCallback', data => {
+        socket1.on('zpCallback', async data => {
           console.log('zpCallback data:', data);
+          console.log('zpCallback app trans id:', data.app_trans_id);
+          // Request permissions (required for iOS)
+          // await notifee.requestPermission();
+
+          // Create a channel (required for Android)
+          const channelId = await notifee.createChannel({
+            id: 'default',
+            name: 'Default Channel',
+          });
+
+          // Display a notification
+          await notifee.displayNotification({
+            title: 'Thanh toán',
+            body: `Đơn hàng ${data.app_trans_id} của bạn đã thanh toán thành công. Nhóm của bạn đã được tạo.`,
+            android: {
+              channelId,
+              // smallIcon: 'name-of-a-small-icon', // optional, defaults to 'ic_launcher'.
+              // pressAction is needed if you want the notification to open the app when pressed
+              pressAction: {
+                id: 'default',
+              },
+            },
+          });
         });
-
-        // setTimeout(() => {
-        //   // socket1.disconnect();
-        //   // socket1.on('disconnect', () => {
-        //   //   console.log('Disconnect to server');
-        //   //   console.log('socket id:', socket1.id);
-        //   // });
-        //   socket1.emit('receive-message', token);
-        //   console.log('emit successfully');
-
-        //   socket1.on('send-message', data => {
-        //     console.log('socket id:', socket1.id);
-        //     console.log('send-message data:', data);
-        //   });
-        // }, 2000);
-
-        // socket1.on('zpCallback', data => {
-        //   console.log('zpCallback data:', data);
-        // });
       }
 
       isLoggedIn = true;

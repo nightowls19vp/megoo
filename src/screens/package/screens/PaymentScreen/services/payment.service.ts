@@ -13,6 +13,17 @@ export const checkout = async (cartList: ICartList) => {
 
   const accessToken = await AsyncStorage.getItem('accessToken');
 
+  const reqObject = {
+    cart: cartList.cart,
+    method: {
+      type: 'EWALLET',
+      // bank_code: 'VNPAY',
+      bank_code: 'ZALOPAY',
+    },
+  };
+
+  console.log('Checkout reqObject:', reqObject);
+
   try {
     const response = await axios.post(
       reqUrl,
@@ -84,7 +95,7 @@ export const renew = async (pkg: {}) => {
   console.log('Renew:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('pkg:', pkg);
+  console.log('pkg renew:', pkg);
 
   try {
     const response = await axios.post(
@@ -92,7 +103,8 @@ export const renew = async (pkg: {}) => {
       {
         method: {
           type: 'EWALLET',
-          bank_code: 'VNPAY',
+          // bank_code: 'VNPAY',
+          bank_code: 'ZALOPAY',
         },
         cart: pkg,
       },

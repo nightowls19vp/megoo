@@ -4,6 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {SendbirdUIKitContainer} from '@sendbird/uikit-react-native';
 
 import {Colors} from '../../../constants/color.const';
 import RouteNames from '../../../constants/route-names.const';

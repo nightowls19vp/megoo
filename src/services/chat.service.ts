@@ -1,9 +1,10 @@
 import SendBird from 'sendbird';
+import {sendbird} from '../../App';
 
-const appId = 'ADD4546B-CF09-4980-B6AC-DB7FFD2E70EC';
-const sendbird = new SendBird({appId});
+// const appId = 'ADD4546B-CF09-4980-B6AC-DB7FFD2E70EC';
+// const sendbird = new SendBird({appId});
 
-export const connect = (userId: string, nickname: string) => {
+export const connectSendBird = (userId: string, nickname: string) => {
   return new Promise((resolve, reject) => {
     const sb = SendBird.getInstance();
     sb.connect(userId, (user, error) => {

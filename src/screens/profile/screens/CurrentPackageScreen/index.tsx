@@ -22,6 +22,7 @@ import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
 import {activate, invite} from './services/group.info.service';
 import styles from './styles/style';
+import {createChannel} from '../../../../services/chat.service';
 
 // Define the type for the route params
 type GroupDetailRouteParams = {
@@ -51,7 +52,11 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
     members: [
       {
         role: '',
-        user: '',
+        user: {
+          user: {
+            _id: '',
+          },
+        },
       },
     ],
   });
@@ -191,6 +196,10 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                   console.log('Activate response:', response);
 
                   if (response.statusCode === 200) {
+                    await createChannel(group.name, [
+                      `${group.members[0].user.user._id}`,
+                    ]);
+
                     Toast.show({
                       type: 'success',
                       text1: 'Kích hoạt thành công',
@@ -435,6 +444,24 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                           if (response.statusCode === 200) {
                             setFieldValue('email', '');
                             setEmails([]);
+
+                            Toast.show({
+                              type: 'success',
+                              text1: 'Đăng nhập thành công',
+                              autoHide: true,
+                              visibilityTime: 1000,
+                              topOffset: 30,
+                              // onHide: () => {},
+                            });
+                          } else {
+                            Toast.show({
+                              type: 'error',
+                              text1: 'Mời thành viên thất bại',
+                              autoHide: true,
+                              visibilityTime: 1000,
+                              topOffset: 20,
+                              // onHide: () => {},
+                            });
                           }
                         }}>
                         <Text
@@ -450,6 +477,8 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                 </KeyboardAvoidingView>
               )}
             </Formik>
+
+            <Toast position="top" />
 
             <TouchableOpacity
               style={styles.button}
