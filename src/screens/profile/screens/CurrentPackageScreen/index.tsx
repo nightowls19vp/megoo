@@ -22,7 +22,7 @@ import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
 import {activate, invite} from './services/group.info.service';
 import styles from './styles/style';
-import {createChannel} from '../../../../services/chat.service';
+import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
 
 // Define the type for the route params
 type GroupDetailRouteParams = {
@@ -196,9 +196,28 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                   console.log('Activate response:', response);
 
                   if (response.statusCode === 200) {
-                    await createChannel(group.name, [
-                      `${group.members[0].user.user._id}`,
-                    ]);
+                    const channelResponse =
+                      await SendBirdChatService.getInstance().createGroupChannel(
+                        group.name,
+                        [`${group.members[0].user.user._id}`],
+                      );
+
+                    console.log(
+                      'Create sendbird channel url:',
+                      channelResponse?.url,
+                    );
+
+                    // Check if channel is created successfully
+                    if (channelResponse?.url) {
+                      const createChannelRes =
+                        await SendBirdChatService.getInstance().createChannel(
+                          group._id,
+                          `${channelResponse?.url}`,
+                        );
+                      console.log('createChannelRes:', createChannelRes);
+                    } else {
+                      // todo: handle error
+                    }
 
                     Toast.show({
                       type: 'success',

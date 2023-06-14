@@ -6,9 +6,14 @@ import {Colors} from '../../../../constants/color.const';
 import {getUserGroup} from '../../../../services/group.service';
 import styles from './styles/style';
 import {useFocusEffect} from '@react-navigation/native';
+import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
+
+// const appId = 'ADD4546B-CF09-4980-B6AC-DB7FFD2E70EC';
+// export const sendbird = new SendBird({appId});
 
 const GroupChatsScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
+  const [channelUrls, setChannelUrls] = useState<string[]>([]);
 
   const getGroups = async () => {
     // Get all user's groups
@@ -31,6 +36,7 @@ const GroupChatsScreen = ({navigation}: {navigation: any}) => {
             avatar: groupItem.avatar,
             // ? groupItem.avatar
             // : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
+            channelUrl: groupItem.channel ? groupItem.channel : '',
             duration: groupItem.packages[0].package.duration
               ? groupItem.packages[0].package.duration
               : 0,
@@ -47,8 +53,15 @@ const GroupChatsScreen = ({navigation}: {navigation: any}) => {
     }
   };
 
+  const getGroupChannels = async () => {
+    const channelsRes = await SendBirdChatService.getInstance().getChannels();
+    console.log('Get channels res:', channelsRes);
+    setChannelUrls(channelsRes.channels);
+  };
+
   useEffect(() => {
     getGroups();
+    // getGroupChannels();
   }, []);
 
   useFocusEffect(
@@ -62,13 +75,17 @@ const GroupChatsScreen = ({navigation}: {navigation: any}) => {
 
   const renderGroupItem = () => {
     return groups.map((group: any, index) => {
-      return group.status === 'Active' ? (
+      return group.channelUrl ? (
         <TouchableOpacity
           style={styles.groupContainer}
           key={index}
           onPress={() => {
             console.log('Clicked');
-            navigation.navigate(RouteNames.CHAT);
+            console.log('Group channel:', group.channelUrl);
+
+            navigation.navigate(RouteNames.CHAT, {
+              channelUrl: group.channelUrl,
+            });
           }}>
           <Image
             source={{
@@ -77,19 +94,15 @@ const GroupChatsScreen = ({navigation}: {navigation: any}) => {
             style={styles.groupAvatar}
           />
           <View style={styles.groupInfo}>
-            <View style={styles.infoRow}>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Tên nhóm:{' '}
-              </Text>
-              <Text
-                style={{
-                  width: '50%',
-                }}
-                ellipsizeMode={'tail'}
-                numberOfLines={1}>
-                {group.name}
-              </Text>
-            </View>
+            <Text
+              style={{
+                width: '75%',
+                fontWeight: 'bold',
+              }}
+              ellipsizeMode={'tail'}
+              numberOfLines={1}>
+              {group.name}
+            </Text>
           </View>
         </TouchableOpacity>
       ) : null;

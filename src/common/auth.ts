@@ -1,20 +1,21 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import {io, Socket} from 'socket.io-client';
+
 import notifee from '@notifee/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {URL_HOST} from '../core/config/api/api.config';
-import {IJWTToken} from './interfaces/token.interface';
-import {IUser} from './interfaces/user.interface';
 import {
   signOutIfSignedInWithGG,
   validate,
 } from '../screens/login/screens/LoginScreen/services/login.service';
-import userStore from './store/user.store';
-import {ISettings} from './interfaces/settings.interface';
 import {dateFormat} from './handle.string';
-import {connectSendBird} from '../services/chat.service';
+import {ISettings} from './interfaces/settings.interface';
+import {IJWTToken} from './interfaces/token.interface';
+import {IUser} from './interfaces/user.interface';
+import userStore from './store/user.store';
+import {SendBirdChatService} from '../services/sendbird-chat.service';
 
 export const checkValidToken = async (token: string) => {
   // console.log("AT:", accessToken);
@@ -147,7 +148,9 @@ export const checkLogin = async () => {
 
         userStore.setUserSettings(settings);
 
-        const userSendBird = await connectSendBird(user._id, user.name);
+        const userSendBird = await SendBirdChatService.getInstance().connect(
+          user._id,
+        );
         console.log('userSendBird from auth:', userSendBird);
 
         const token = user._id;
@@ -159,7 +162,7 @@ export const checkLogin = async () => {
         //   query: {token},
         // });
 
-        const URL = 'https://3169-14-186-146-44.ngrok-free.app';
+        const URL = 'https://9385-14-186-161-174.ngrok-free.app';
         const socket1 = io(URL, {
           autoConnect: false,
           query: {token},

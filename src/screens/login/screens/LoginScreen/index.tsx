@@ -1,34 +1,35 @@
 import {Formik} from 'formik';
+import moment from 'moment';
 import React, {useEffect} from 'react';
 import {Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import * as Yup from 'yup';
-import moment from 'moment';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 // import Provider from '@ant-design/react-native/lib/provider';
 // import Toast from '@ant-design/react-native/lib/toast';
 import Toast from 'react-native-toast-message';
+import Icon from 'react-native-vector-icons/Ionicons';
+import * as Yup from 'yup';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+
+import {connectSocket} from '../../../../common/auth';
+import {dateFormat} from '../../../../common/handle.string';
+import {IAuthData} from '../../../../common/interfaces/data.interface';
+import {ISettings} from '../../../../common/interfaces/settings.interface';
+import {IUser} from '../../../../common/interfaces/user.interface';
+import {IValidateRes} from '../../../../common/interfaces/validate.interface';
+import appStore from '../../../../common/store/app.store';
+import userStore from '../../../../common/store/user.store';
 import {Colors} from '../../../../constants/color.const';
-import styles from './styles/styles';
 import RouteNames from '../../../../constants/route-names.const';
+import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
+import {IGoogleLoginRes, ILoginRes} from './interfaces/login.interface';
 import {
   googleSignIn,
   isUserSignedIn,
   login,
   validate,
 } from './services/login.service';
-import userStore from '../../../../common/store/user.store';
-import {IGoogleLoginRes, ILoginRes} from './interfaces/login.interface';
-import {IUser} from '../../../../common/interfaces/user.interface';
-import {IAuthData} from '../../../../common/interfaces/data.interface';
-import {IValidateRes} from '../../../../common/interfaces/validate.interface';
-import {ISettings} from '../../../../common/interfaces/settings.interface';
-import {dateFormat} from '../../../../common/handle.string';
-import {connectSocket} from '../../../../common/auth';
-import appStore from '../../../../common/store/app.store';
-import {connectSendBird} from '../../../../services/chat.service';
+import styles from './styles/styles';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -149,7 +150,9 @@ export default function LoginScreen({navigation}: {navigation: any}) {
 
           // Connect user to SendBird server
           console.log('before connect to sendbird');
-          const userSendBird = await connectSendBird(user._id, user.name);
+          const userSendBird = await SendBirdChatService.getInstance().connect(
+            user._id,
+          );
           console.log('userSendBird:', userSendBird);
 
           // Store user token
@@ -354,11 +357,8 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                   console.log('Call noti:', settings.callNoti);
 
                   // Connect user to SendBird server
-                  console.log('before connect to sendbird');
-                  const userSendBird = await connectSendBird(
-                    user._id,
-                    user.name,
-                  );
+                  const userSendBird =
+                    await SendBirdChatService.getInstance().connect(user._id);
                   console.log('userSendBird from gg login:', userSendBird);
                 });
                 // Show toast message and navigate to home screen if login successfully
