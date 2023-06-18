@@ -1,6 +1,4 @@
-import {RouteProp, useRoute} from '@react-navigation/native';
 import {Formik} from 'formik';
-import * as Yup from 'yup';
 import {useEffect, useState} from 'react';
 import {
   Dimensions,
@@ -15,14 +13,17 @@ import {
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as Yup from 'yup';
+
+import {RouteProp, useRoute} from '@react-navigation/native';
 
 import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
-import {getUserGroup} from '../../../../services/group.service';
-import {activate, invite} from './services/group.info.service';
-import styles from './styles/style';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
+import {activate, getGroupInfo, invite} from './services/group.info.service';
+import styles from './styles/style';
+import {dateFormat} from '../../../../common/handle.string';
 
 // Define the type for the route params
 type GroupDetailRouteParams = {
@@ -42,13 +43,18 @@ const InviteSchema = Yup.object().shape({
 const CurrentPackage = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupDetailRouteProp>();
 
+  const [packages, setPackages] = useState([]);
+
   const [group, setGroup] = useState({
     _id: '',
     name: '',
+    channelUrl: '',
     avatar: '',
     duration: 0,
     noOfMember: 0,
     status: '',
+    startDate: '',
+    endDate: '',
     members: [
       {
         role: '',
@@ -63,46 +69,99 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
 
   const [emails, setEmails] = useState<string[]>([]);
 
+  const groupId = route.params?.groupId;
+  console.log('route param id:', groupId);
+
   const getSelectedGroup = async () => {
-    // Get all user's groups
-    const groupsRes = await getUserGroup();
-    console.log('groupsRes:', groupsRes.groups[0].name);
-    console.log('groupsRes:', groupsRes);
+    // Get group info by id
+    const groupRes = await getGroupInfo(groupId);
+    console.log('groupsRes group:', groupRes.group);
     console.log('route param:', route);
 
-    const groups = groupsRes?.groups.map((groupItem: any) => {
-      return {
-        _id: groupItem._id ? groupItem._id : '',
-        name: groupItem.name ? groupItem.name : '',
-        avatar: groupItem.avatar
-          ? groupItem.avatar
-          : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
-        duration: groupItem.packages[0].package.duration
-          ? groupItem.packages[0].package.duration
-          : 0,
-        noOfMember: groupItem.packages[0].package.noOfMember
-          ? groupItem.packages[0].package.noOfMember
-          : 0,
-        status: groupItem.packages[0].status
-          ? groupItem.packages[0].status
-          : '',
-        members: groupItem.members ? groupItem.members : [],
-      };
+    const activePackage = groupRes.group.packages.find(
+      (pkg: any) => pkg.status === 'Active',
+    );
+
+    console.log('activePackage:', activePackage);
+
+    setGroup({
+      _id: groupRes?.group._id ? groupRes?.group._id : '',
+      name: groupRes?.group.name ? groupRes?.group.name : '',
+      channelUrl: groupRes?.group.channel ? groupRes?.group.channel : '',
+      avatar: groupRes?.group.avatar
+        ? groupRes?.group.avatar
+        : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
+      duration: groupRes?.group.packages[0].package.duration
+        ? groupRes?.group.packages[0].package.duration
+        : 0,
+      noOfMember: groupRes?.group.packages[0].package.noOfMember
+        ? groupRes?.group.packages[0].package.noOfMember
+        : 0,
+      // duration: activePackage?.package.duration
+      //   ? activePackage?.package.duration
+      //   : 0,
+      // noOfMember: activePackage?.package.noOfMember
+      //   ? activePackage?.package.noOfMember
+      //   : 0,
+      // status: activePackage?.status ? activePackage?.status : '',
+      status: groupRes?.group.packages[0].status
+        ? groupRes?.group.packages[0].status
+        : '',
+      startDate: activePackage?.startDate
+        ? dateFormat(activePackage?.startDate)
+        : '',
+      endDate: activePackage?.endDate ? dateFormat(activePackage?.endDate) : '',
+      members: groupRes?.group.members ? groupRes?.group.members : [],
     });
+  };
 
-    const groupId = route.params?.groupId;
-    console.log('route param id:', groupId);
+  // Extend package when package in group is expired
+  const extendPackage = async () => {
+    const extendPkgRes = await getGroupInfo(groupId);
+    console.log('Extend pkg res:', extendPkgRes);
 
-    const selectedGroup = groups.find((group: any) => group._id === groupId);
-
-    console.log('selectedGroup', selectedGroup);
-
-    setGroup(selectedGroup);
+    // Set new package to user's group
+    setGroup({
+      _id: extendPkgRes?.group._id ? extendPkgRes?.group._id : '',
+      name: extendPkgRes?.group.name ? extendPkgRes?.group.name : '',
+      channelUrl: extendPkgRes?.group.channel
+        ? extendPkgRes?.group.channel
+        : '',
+      avatar: extendPkgRes?.group.avatar
+        ? extendPkgRes?.group.avatar
+        : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
+      duration: extendPkgRes?.group.packages[0].package.duration
+        ? extendPkgRes?.group.packages[0].package.duration
+        : 0,
+      noOfMember: extendPkgRes?.group.packages[0].package.noOfMember
+        ? extendPkgRes?.group.packages[0].package.noOfMember
+        : 0,
+      status: extendPkgRes?.group.packages[0].status
+        ? extendPkgRes?.group.packages[0].status
+        : '',
+      startDate: extendPkgRes?.group.packages[0].startDate
+        ? dateFormat(extendPkgRes?.group.packages[0].startDate)
+        : '',
+      endDate: extendPkgRes?.group.packages[0].endDate
+        ? dateFormat(extendPkgRes?.group.packages[0].endDate)
+        : '',
+      members: extendPkgRes?.group.members ? extendPkgRes?.group.members : [],
+    });
   };
 
   useEffect(() => {
     getSelectedGroup();
+    if (group.status === 'Expired') {
+      console.log('Package expired');
+      extendPackage();
+    } else {
+      console.log("Package isn't expired");
+    }
   }, []);
+
+  // useEffect(() => {
+
+  // }, [group.status]);
 
   return (
     <>
@@ -123,10 +182,13 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
             }}>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>Tên nhóm: </Text>
             <Text
-              style={{
-                width: '80%',
-                paddingRight: 20,
-              }}
+              style={[
+                styles.infoText,
+                {
+                  width: '80%',
+                  paddingRight: 20,
+                },
+              ]}
               ellipsizeMode={'tail'}
               numberOfLines={1}>
               {group.name}
@@ -152,6 +214,58 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
             </Text>
             <Text style={styles.infoText}>{group.noOfMember}</Text>
           </View>
+          {group.status === 'Active' ? (
+            <>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: 10,
+                }}>
+                <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                  Ngày kích hoạt:{' '}
+                </Text>
+                <Text style={styles.infoText}>{group.startDate}</Text>
+              </View>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: 10,
+                }}>
+                <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                  Ngày hết hạn:{' '}
+                </Text>
+                <Text style={styles.infoText}>{group.endDate}</Text>
+              </View>
+            </>
+          ) : null}
+
+          {/* <>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: 10,
+              }}>
+              <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                Ngày kích hoạt:{' '}
+              </Text>
+              <Text style={styles.infoText}>{group.startDate}</Text>
+            </View>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: 10,
+              }}>
+              <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                Ngày hết hạn:{' '}
+              </Text>
+              <Text style={styles.infoText}>{group.endDate}</Text>
+            </View>
+          </> */}
+
           <View
             style={{
               display: 'flex',
@@ -159,7 +273,6 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
               flexDirection: 'row',
               alignItems: 'baseline',
               justifyContent: 'space-between',
-              // backgroundColor: 'pink',
             }}>
             <View
               style={{

@@ -1,29 +1,26 @@
 import {useEffect, useRef, useState} from 'react';
 import {
   AppState,
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
   Linking,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
-import InputSpinner from 'react-native-input-spinner';
 import NumericInput from 'react-native-numeric-input';
+import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/AntDesign';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CheckBox from '@react-native-community/checkbox';
+
+import {ICartList} from '../../../../common/interfaces/package.interface';
+import userStore from '../../../../common/store/user.store';
+import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
+import {updateCart} from '../PackageScreen/services/package.service';
 import {getUserCart} from './services/cart.service';
 import styles from './styles/style';
-import {Colors} from '../../../../constants/color.const';
-import userStore from '../../../../common/store/user.store';
-import {
-  ICartItem,
-  ICartList,
-} from '../../../../common/interfaces/package.interface';
-import {updateCart} from '../PackageScreen/services/package.service';
-import Toast from 'react-native-toast-message';
 
 const CartScreen = ({navigation}: {navigation: any}) => {
   const [cartList, setCartList] = useState<any[]>([]);
@@ -307,6 +304,21 @@ const CartScreen = ({navigation}: {navigation: any}) => {
 
   return (
     <View>
+      {/* <View style={styles.cartListContainer}>
+        <CheckBox
+          style={{
+            marginLeft: 5,
+          }}
+          tintColors={{true: Colors.primary}}
+          disabled={false}
+          // value={toggleCheckBoxArray[index]}
+          // onValueChange={newValue =>
+          //   handleToggleCheckBox(index, newValue, object)
+          // }
+        />
+        <Text>Chọn tất cả</Text>
+      </View> */}
+
       <ScrollView contentContainerStyle={styles.container}>
         {renderCartItem()}
       </ScrollView>

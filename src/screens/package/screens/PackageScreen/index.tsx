@@ -323,6 +323,8 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                         userStore.cartList.cart[index].quantity++;
                       }
 
+                      console.log('item noOfMember:', item.noOfMember);
+
                       updateCart(userStore.cartList).then(response => {
                         console.log('Update cart response:', response);
 
@@ -333,8 +335,8 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                               {
                                 package: item._id,
                                 name: item.name,
-                                duration: item.duration,
-                                noOfMember: item.noOfMember,
+                                duration: selectedPkg.duration,
+                                noOfMember: selectedPkg.noOfMember,
                                 quantity: 1,
                                 price: totalPrice,
                               },

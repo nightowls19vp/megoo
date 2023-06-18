@@ -16,7 +16,7 @@ export const getMessages = async (channel: GroupChannel) => {
       0,
       params,
     );
-    console.log('messages by timestamp', JSON.stringify(messages));
+    console.log('messages by timestamp', messages.length);
 
     // Reverse message array by message.createdAt
     messages.reverse();
@@ -35,6 +35,8 @@ export const getMessages = async (channel: GroupChannel) => {
     });
   } catch (e) {
     // Todo: Handle error
+    console.log('get messages error', e);
+
     return [];
   }
 };

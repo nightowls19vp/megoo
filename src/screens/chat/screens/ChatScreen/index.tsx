@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState} from 'react';
-import {Dimensions} from 'react-native';
+import {KeyboardAvoidingView, Platform, TouchableOpacity} from 'react-native';
 import {
   Bubble,
   Composer,
@@ -11,20 +11,15 @@ import {
   Send,
   SystemMessage,
 } from 'react-native-gifted-chat';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {GroupChannel} from '@sendbird/chat/groupChannel';
-import {
-  AppleCriticalAlertOptions,
-  BaseMessage,
-  MessageListParams,
-  UserMessage,
-  UserMessageCreateParams,
-} from '@sendbird/chat/message';
 
 import userStore from '../../../../common/store/user.store';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
 import {getMessages, sendMessage} from './services/chat.service';
+import {Colors} from '../../../../constants/color.const';
 
 // Define the type for the route params
 type ChannelUrlRouteParams = {
@@ -36,6 +31,7 @@ type ChannelUrlRouteProp = RouteProp<
   Record<string, ChannelUrlRouteParams>,
   string
 >;
+
 const renderBubble = (props: any) => (
   <Bubble
     {...props}
@@ -114,6 +110,7 @@ const renderInputToolbar = (props: any) => (
     containerStyle={{
       // backgroundColor: '#222B45',
       paddingTop: 6,
+      paddingLeft: -10,
     }}
     primaryStyle={{alignItems: 'center'}}
   />
@@ -124,15 +121,23 @@ const renderSend = (props: any) => (
     {...props}
     // disabled={!props.text}
     containerStyle={{
-      width: 50,
-      height: 44,
+      width: 40,
+      height: 40,
       alignItems: 'center',
-      justifyContent: 'center',
-      marginHorizontal: 4,
+      justifyContent: 'flex-end',
     }}
-    label={'Gửi'}
+    // label={'Gửi'}
     // textStyle={{color: 'orange'}}
-  ></Send>
+  >
+    <Ionicons
+      name="send"
+      size={24}
+      color="#007aff"
+      style={{
+        paddingBottom: 10,
+      }}
+    />
+  </Send>
 );
 
 const renderComposer = (props: any) => {
@@ -171,7 +176,7 @@ const ChatScreen = () => {
         channel = groupChannel;
         console.log('Get channel from SB:', channel.url);
         getMessages(channel).then((messages: any) => {
-          console.log('abc msg:', messages);
+          console.log('abc msg:', messages.length);
 
           setMessages(messages);
         });
@@ -203,6 +208,22 @@ const ChatScreen = () => {
       user={{
         _id: userStore.id,
       }}
+      renderActions={() => (
+        <TouchableOpacity
+          style={{
+            marginRight: -5,
+          }}>
+          <Ionicons
+            name="image"
+            size={24}
+            color={Colors.secondary}
+            style={{
+              paddingBottom: 5,
+              paddingLeft: 10,
+            }}
+          />
+        </TouchableOpacity>
+      )}
     />
   );
 };

@@ -162,7 +162,7 @@ export const checkLogin = async () => {
         //   query: {token},
         // });
 
-        const URL = 'https://9385-14-186-161-174.ngrok-free.app';
+        const URL = 'https://c816-14-186-161-174.ngrok-free.app';
         const socket1 = io(URL, {
           autoConnect: false,
           query: {token},
@@ -198,7 +198,7 @@ export const checkLogin = async () => {
           // Display a notification
           await notifee.displayNotification({
             title: 'Thanh toán',
-            body: `Đơn hàng ${data.app_trans_id} của bạn đã thanh toán thành công. Nhóm của bạn đã được tạo.`,
+            body: `Đơn hàng ${data.data.app_trans_id} của bạn đã thanh toán thành công. Nhóm của bạn đã được tạo.`,
             android: {
               channelId,
               // smallIcon: 'name-of-a-small-icon', // optional, defaults to 'ic_launcher'.
