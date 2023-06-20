@@ -120,14 +120,7 @@ const UserGroupsScreen = ({navigation}: {navigation: any}) => {
     });
   };
 
-  return (
-    <View style={styles.container}>
-      {renderGroupItem()}
-      <TouchableOpacity onPress={onDisplayNotification}>
-        <Text>Display Notification</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  return <View style={styles.container}>{renderGroupItem()}</View>;
 };
 
 export default UserGroupsScreen;

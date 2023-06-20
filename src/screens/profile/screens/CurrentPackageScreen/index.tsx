@@ -14,7 +14,6 @@ import {
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
-
 import {RouteProp, useRoute} from '@react-navigation/native';
 
 import appStore from '../../../../common/store/app.store';
@@ -24,6 +23,8 @@ import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
 import {activate, getGroupInfo, invite} from './services/group.info.service';
 import styles from './styles/style';
 import {dateFormat} from '../../../../common/handle.string';
+
+const height = Dimensions.get('screen').height;
 
 // Define the type for the route params
 type GroupDetailRouteParams = {
@@ -579,10 +580,10 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
 
                             Toast.show({
                               type: 'success',
-                              text1: 'Đăng nhập thành công',
+                              text1: 'Mời thành viên thành công',
                               autoHide: true,
                               visibilityTime: 1000,
-                              topOffset: 30,
+                              topOffset: height * 0.17,
                               // onHide: () => {},
                             });
                           } else {
@@ -591,7 +592,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                               text1: 'Mời thành viên thất bại',
                               autoHide: true,
                               visibilityTime: 1000,
-                              topOffset: 20,
+                              topOffset: height * 0.2,
                               // onHide: () => {},
                             });
                           }
@@ -610,7 +611,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
               )}
             </Formik>
 
-            <Toast position="top" />
+            {/* <Toast position="top" /> */}
 
             <TouchableOpacity
               style={styles.button}

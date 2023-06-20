@@ -7,6 +7,8 @@ import {getUserGroup} from '../../../../services/group.service';
 import styles from './styles/style';
 import {useFocusEffect} from '@react-navigation/native';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
+import userStore from '../../../../common/store/user.store';
+import {GroupChannel} from '@sendbird/chat/groupChannel';
 
 // const appId = 'ADD4546B-CF09-4980-B6AC-DB7FFD2E70EC';
 // export const sendbird = new SendBird({appId});
@@ -55,23 +57,59 @@ const GroupChatsScreen = ({navigation}: {navigation: any}) => {
 
   const getGroupChannels = async () => {
     const channelsRes = await SendBirdChatService.getInstance().getChannels();
+
     console.log('Get channels res:', channelsRes);
-    setChannelUrls(channelsRes.channels);
+    // setChannelUrls(channelsRes.channels);
+
+    channelsRes.channels.forEach((channelUrl: string) => {
+      console.log('channelUrl:', channelUrl);
+
+      // SendBirdChatService.getInstance()
+      //   .sendbird.groupChannel.getChannel(channelUrl)
+      //   .then((groupChannel: GroupChannel) => {
+      //     const channel = groupChannel;
+      //     // Invite user to channel then accept invitation then join channel
+      //     // if user is not a member of channel
+      //     const members = channel.members;
+      //     console.log('members:', members);
+
+      // const isUserInMembersArray = members.some(
+      //   member => member.userId === userStore.id,
+      // );
+      // console.log('isUserInMembersArray:', isUserInMembersArray);
+
+      // if (isUserInMembersArray === false) {
+      //   console.log("User isn't a member of channel");
+
+      //   channel.inviteWithUserIds([userStore.id]).then(() => {
+      //     console.log('Invite user to channel successfully');
+
+      //     channel.acceptInvitation().then(() => {
+      //       console.log('Accept invitation successfully');
+
+      //       channel.join().then(() => {
+      //         console.log('Join channel successfully');
+      //       });
+      //     });
+      //   });
+      // }
+      //     });
+    });
   };
 
   useEffect(() => {
     getGroups();
-    // getGroupChannels();
+    getGroupChannels();
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      getGroups();
-      return () => {
-        // Code to clean up the effect when the screen is unfocused
-      };
-    }, []),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     getGroups();
+  //     return () => {
+  //       // Code to clean up the effect when the screen is unfocused
+  //     };
+  //   }, []),
+  // );
 
   const renderGroupItem = () => {
     return groups.map((group: any, index) => {

@@ -12,8 +12,8 @@ import {
   SystemMessage,
 } from 'react-native-gifted-chat';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
 import {RouteProp, useRoute} from '@react-navigation/native';
+import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import {GroupChannel} from '@sendbird/chat/groupChannel';
 
 import userStore from '../../../../common/store/user.store';
@@ -165,7 +165,8 @@ const ChatScreen = () => {
       };
     }[]
   >([]);
-
+  const [selectedImage, setSelectedImage] = useState('');
+  const [imageFile, setImageFile] = useState<any>();
   const [message, setMessage] = useState('');
   let channel: GroupChannel;
 
@@ -174,6 +175,7 @@ const ChatScreen = () => {
       .sendbird.groupChannel.getChannel(channelUrl)
       .then((groupChannel: GroupChannel) => {
         channel = groupChannel;
+
         console.log('Get channel from SB:', channel.url);
         getMessages(channel).then((messages: any) => {
           console.log('abc msg:', messages.length);
@@ -187,7 +189,7 @@ const ChatScreen = () => {
     setMessages(previousMessages =>
       GiftedChat.append(previousMessages, messages),
     );
-    sendMessage(channel, messages[0].text);
+    // sendMessage(channel, messages[0].text);
   }, []);
 
   return (
@@ -212,6 +214,27 @@ const ChatScreen = () => {
         <TouchableOpacity
           style={{
             marginRight: -5,
+          }}
+          onPress={async () => {
+            await launchImageLibrary(
+              // If need base64String, include this option:
+              // includeBase64: true
+              {mediaType: 'mixed', includeBase64: true},
+              response => {
+                // console.log('Response = ', response);
+
+                if (response.didCancel) {
+                  console.log('User cancelled image picker');
+                } else if (response.errorMessage) {
+                  console.log('ImagePicker Error: ', response.errorMessage);
+                } else {
+                  let source: Asset[] = response.assets as Asset[];
+                  setSelectedImage(`${source[0].uri}`);
+                  setImageFile(source[0].base64);
+                  console.log('Image file:', source[0].uri);
+                }
+              },
+            );
           }}>
           <Ionicons
             name="image"

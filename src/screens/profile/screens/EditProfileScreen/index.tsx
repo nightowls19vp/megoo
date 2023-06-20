@@ -59,7 +59,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
       initialValues={initialValues}
       validationSchema={ProfileSchema}
       onSubmit={values => {
-        //   // If user change info then call API and update user store
+        // If user change info then call API and update user store
         if (values.name !== userStore.name) {
           console.log('edit name');
           editInfo({
