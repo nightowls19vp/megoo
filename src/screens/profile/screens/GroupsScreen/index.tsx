@@ -80,9 +80,7 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
           />
           <View style={styles.groupInfo}>
             <View style={styles.infoRow}>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Tên nhóm:{' '}
-              </Text>
+              <Text style={[styles.text, {fontWeight: 'bold'}]}>Tên nhóm:</Text>
               <Text
                 style={{
                   width: '50%',
@@ -94,22 +92,20 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
             </View>
 
             <View style={styles.infoRow}>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Thời hạn:{' '}
-              </Text>
+              <Text style={[styles.text, {fontWeight: 'bold'}]}>Thời hạn:</Text>
               <Text>{group.duration} tháng</Text>
             </View>
 
             <View style={styles.infoRow}>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Số lượng thành viên:{' '}
+                Số lượng thành viên:
               </Text>
               <Text>{group.noOfMember}</Text>
             </View>
 
             <View style={styles.infoRow}>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Trạng thái:{' '}
+                Trạng thái:
               </Text>
               <Text>{group.status}</Text>
             </View>

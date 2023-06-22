@@ -64,36 +64,37 @@ const GroupChatsScreen = ({navigation}: {navigation: any}) => {
     channelsRes.channels.forEach((channelUrl: string) => {
       console.log('channelUrl:', channelUrl);
 
-      // SendBirdChatService.getInstance()
-      //   .sendbird.groupChannel.getChannel(channelUrl)
-      //   .then((groupChannel: GroupChannel) => {
-      //     const channel = groupChannel;
-      //     // Invite user to channel then accept invitation then join channel
-      //     // if user is not a member of channel
-      //     const members = channel.members;
-      //     console.log('members:', members);
+      SendBirdChatService.getInstance()
+        .sendbird.groupChannel.getChannel(channelUrl)
+        .then((groupChannel: GroupChannel) => {
+          const channel = groupChannel;
 
-      // const isUserInMembersArray = members.some(
-      //   member => member.userId === userStore.id,
-      // );
-      // console.log('isUserInMembersArray:', isUserInMembersArray);
+          // Invite user to channel then accept invitation then join channel
+          // if user is not a member of channel
+          const members = channel.members;
+          console.log('members:', members);
 
-      // if (isUserInMembersArray === false) {
-      //   console.log("User isn't a member of channel");
+          // const isUserInMembersArray = members.some(
+          //   member => member.userId === userStore.id,
+          // );
+          // console.log('isUserInMembersArray:', isUserInMembersArray);
 
-      //   channel.inviteWithUserIds([userStore.id]).then(() => {
-      //     console.log('Invite user to channel successfully');
+          // if (isUserInMembersArray === false) {
+          //   console.log("User isn't a member of channel");
 
-      //     channel.acceptInvitation().then(() => {
-      //       console.log('Accept invitation successfully');
+          //   channel.inviteWithUserIds([userStore.id]).then(() => {
+          //     console.log('Invite user to channel successfully');
 
-      //       channel.join().then(() => {
-      //         console.log('Join channel successfully');
-      //       });
-      //     });
-      //   });
-      // }
-      //     });
+          //     channel.acceptInvitation().then(() => {
+          //       console.log('Accept invitation successfully');
+
+          //       channel.join().then(() => {
+          //         console.log('Join channel successfully');
+          //       });
+          //     });
+          //   });
+          // }
+        });
     });
   };
 

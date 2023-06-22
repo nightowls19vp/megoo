@@ -62,7 +62,6 @@ const ChatScreenStack = () => {
 };
 
 const PackageStack = createNativeStackNavigator();
-
 const PackageScreenStack = ({navigation}: {navigation: any}) => {
   return (
     <PackageStack.Navigator initialRouteName={RouteNames.PACKAGE}>
@@ -101,17 +100,16 @@ const PackageScreenStack = ({navigation}: {navigation: any}) => {
 };
 
 const StorageStack = createNativeStackNavigator();
-
 const StorageScreenStack = () => {
   return (
     <StorageStack.Navigator initialRouteName={RouteNames.STORAGE_GROUPS}>
       <StorageStack.Screen
-        name={RouteNames.STORAGE}
-        component={StorageLocationScreen}
-      />
-      <StorageStack.Screen
         name={RouteNames.STORAGE_GROUPS}
         component={UserGroupsScreen}
+      />
+      <StorageStack.Screen
+        name={RouteNames.STORAGE}
+        component={StorageLocationScreen}
       />
       <StorageStack.Screen
         name={RouteNames.PRODUCTS}
@@ -141,7 +139,6 @@ const StorageScreenStack = () => {
 };
 
 const ProfileStack = createNativeStackNavigator();
-
 function ProfileScreenStack() {
   return (
     <ProfileStack.Navigator initialRouteName={RouteNames.PROFILE}>
@@ -173,7 +170,6 @@ function ProfileScreenStack() {
 }
 
 const SettingsStack = createNativeStackNavigator();
-
 function SettingsScreenStack() {
   return (
     <SettingsStack.Navigator initialRouteName={RouteNames.SETTINGS}>
@@ -220,7 +216,7 @@ export default function BottomNavigationBar() {
         },
       }}>
       <Tab.Screen
-        name={RouteNames.PACKAGE_STACK}
+        name={RouteNames.PACKAGE_STACK_BOTTOM}
         component={PackageScreenStack}
         initialParams={{screen: RouteNames.PACKAGE}}
         options={{
@@ -232,7 +228,7 @@ export default function BottomNavigationBar() {
         }}
       />
       <Tab.Screen
-        name={RouteNames.STORAGE_STACK}
+        name={RouteNames.STORAGE_STACK_BOTTOM}
         component={StorageScreenStack}
         initialParams={{screen: RouteNames.STORAGE_GROUPS}}
         options={{
@@ -266,7 +262,7 @@ export default function BottomNavigationBar() {
         }}
       />
       <Tab.Screen
-        name={RouteNames.SETTINGS_STACK}
+        name={RouteNames.SETTINGS_STACK_BOTTOM}
         component={SettingsScreenStack}
         initialParams={{screen: RouteNames.SETTINGS}}
         options={{

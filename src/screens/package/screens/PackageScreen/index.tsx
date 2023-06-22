@@ -47,7 +47,6 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
   useEffect(() => {
     getPackages();
     connectSocket(userStore.id);
-    console.log('fontScale:', fontScale);
   }, []);
 
   useFocusEffect(

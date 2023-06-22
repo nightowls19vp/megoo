@@ -112,6 +112,11 @@ export class SendBirdChatService {
     modules: [new GroupChannelModule()],
   };
 
+  private URL_SENDBIRD: string = `https://api-${SendBirdChatService.appId}.sendbird.com/v3`;
+
+  private SENDBIRD_SECONDARY_TOKEN: string =
+    '52c924b0bad3d93048240e561c59da60849c6127';
+
   public sendbird = SendbirdChat.init(SendBirdChatService.params);
 
   private constructor() {}
@@ -123,6 +128,12 @@ export class SendBirdChatService {
 
     return SendBirdChatService.instance;
   }
+
+  /**
+   * Connect user to SendBird's server
+   * @param userId
+   * @return user object
+   */
 
   public async connect(userId: string) {
     try {
@@ -161,6 +172,10 @@ export class SendBirdChatService {
     }
   }
 
+  /**
+   * Get SendBird channels url from server
+   * @return response from server containing array of channels url
+   */
   public async getChannels() {
     const getChannelsEndpoint = `api/pkg-mgmt/gr/user_id/channel`;
     const reqUrl = `${URL_HOST}${getChannelsEndpoint}`;
@@ -182,6 +197,12 @@ export class SendBirdChatService {
     }
   }
 
+  /**
+   *
+   * @param groupId
+   * @param channelUrl : SendBird channel url
+   * @returns
+   */
   public async createChannel(groupId: string, channelUrl: string) {
     const createChannelEndpoint = `api/pkg-mgmt/gr/${groupId}/channel`;
     const reqUrl = `${URL_HOST}${createChannelEndpoint}`;
@@ -206,6 +227,68 @@ export class SendBirdChatService {
       return response.data;
     } catch (error) {
       console.log('Create channel error:', error);
+    }
+  }
+
+  public async inviteUserToChannel(channelUrl: string, userIds: string[]) {
+    const inviteUserEndpoint = `/group_channels/${channelUrl}/invite`;
+    const reqUrl = `${this.URL_SENDBIRD}${inviteUserEndpoint}`;
+
+    try {
+      const response = await axios.post(
+        reqUrl,
+        {
+          channel_url: channelUrl,
+          user_ids: userIds,
+        },
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Api-Token': this.SENDBIRD_SECONDARY_TOKEN,
+          },
+        },
+      );
+
+      console.log('Invite user to channel response:', response.data);
+
+      return response.data;
+    } catch (error) {
+      console.log('Error inviting user to channel:', error);
+    }
+  }
+
+  /**
+   * Accept invitation to join a SendBird channel
+   * @param channelUrl
+   * @param userId
+   * @returns
+   */
+  public async acceptInvitation(channelUrl: string, userId: string) {
+    const acceptInvitationEndpoint = `/group_channels/${channelUrl}/invite`;
+    const reqUrl = `${this.URL_SENDBIRD}${acceptInvitationEndpoint}`;
+
+    try {
+      const response = await axios.put(
+        reqUrl,
+        {
+          channel_url: channelUrl,
+          user_id: userId,
+        },
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Api-Token': this.SENDBIRD_SECONDARY_TOKEN,
+          },
+        },
+      );
+
+      console.log('Accept invitation response:', response.data);
+
+      return response.data;
+    } catch (error) {
+      console.log('Error accepting invitation:', error);
     }
   }
 }

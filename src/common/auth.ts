@@ -16,6 +16,7 @@ import {IJWTToken} from './interfaces/token.interface';
 import {IUser} from './interfaces/user.interface';
 import userStore from './store/user.store';
 import {SendBirdChatService} from '../services/sendbird-chat.service';
+import {GroupChannel} from '@sendbird/chat/groupChannel';
 
 export const checkValidToken = async (token: string) => {
   // console.log("AT:", accessToken);
@@ -153,16 +154,44 @@ export const checkLogin = async () => {
         );
         console.log('userSendBird from auth:', userSendBird);
 
+        // Get user's SendBird's channels
+        const channelsUrl =
+          await SendBirdChatService.getInstance().getChannels();
+        console.log('channelsUrl:', channelsUrl);
+
+        channelsUrl.channels.forEach((channelUrl: string) => {
+          SendBirdChatService.getInstance()
+            .sendbird.groupChannel.getChannel(channelUrl)
+            .then((groupChannel: GroupChannel) => {
+              console.log('groupChannel:', groupChannel);
+
+              // Invite user to channel then accept invitation then join channel
+              // if user is not a member of channel
+              const members = groupChannel.members;
+              console.log('members:', members);
+
+              const isUserInMembersArray = members.some(
+                member => member.userId === userStore.id,
+              );
+              console.log('isUserInMembersArray:', isUserInMembersArray);
+
+              if (isUserInMembersArray === false) {
+                console.log("User isn't a member of channel");
+                SendBirdChatService.getInstance()
+                  .inviteUserToChannel(channelUrl, [user._id])
+                  .then(res => {
+                    console.log('Invite user to channel res:', res);
+                  });
+              }
+            });
+        });
+
+        // Connect socket
         const token = user._id;
         console.log('socket token:', token);
 
-        // const URL = 'ws://localhost:3001';
-        // socket = io(URL, {
-        //   autoConnect: false,
-        //   query: {token},
-        // });
-
-        const URL = 'https://9879-14-186-154-98.ngrok-free.app';
+        // Connect socket on port 3001, change to ngrok link if can't connect by localhost
+        const URL = 'https://12d5-14-186-154-98.ngrok-free.app';
         const socket1 = io(URL, {
           autoConnect: false,
           query: {token},
@@ -170,6 +199,7 @@ export const checkLogin = async () => {
 
         socket1.connect();
 
+        // Listen for socket events
         socket1.on('connect', () => {
           console.log('Connected to server');
           console.log('socket id:', socket1.id);
@@ -184,8 +214,12 @@ export const checkLogin = async () => {
         });
 
         socket1.on('zpCallback', async data => {
-          console.log('type zpCallback data:', typeof data);
-          console.log('zpCallback app trans id:', data.app_trans_id);
+          console.log('type zpCallback data:', data);
+          //{"app_id":2553,"app_trans_id":"230622_164636725","app_time":1687427196852,"app_user":"64940af1536c05ee69e5361a","amount":150000,"embed_data":"{\"redirecturl\":\"https://www.youtube.com/watch?v=q8AzTS4Yq3I\u0026ab_channel=Quy%C3%AAnLouis\"}","item":"[{\"id\":\"6494016fc50761022fe09041\",\"name\":\"Experience Package\",\"price\":150000,\"quantity\":1,\"duration\":1,\"noOfMember\":6}]","zp_trans_id":230622000003245,"server_time":1687427252734,"channel":36,"merchant_user_id":"","zp_user_id":"","user_fee_amount":0,"discount_amount":0}
+          //convert line above to object
+          const dataObj = JSON.parse(data);
+          console.log('dataObj app trans id:', dataObj.app_trans_id);
+
           // Request permissions (required for iOS)
           // await notifee.requestPermission();
 
@@ -198,7 +232,7 @@ export const checkLogin = async () => {
           // Display a notification
           await notifee.displayNotification({
             title: 'Thanh toán',
-            body: `Đơn hàng ${data.app_trans_id} của bạn đã thanh toán thành công. Nhóm của bạn đã được tạo.`,
+            body: `Đơn hàng ${dataObj.app_trans_id} của bạn đã thanh toán thành công. Nhóm của bạn đã được tạo.`,
             android: {
               channelId,
               // smallIcon: 'name-of-a-small-icon', // optional, defaults to 'ic_launcher'.

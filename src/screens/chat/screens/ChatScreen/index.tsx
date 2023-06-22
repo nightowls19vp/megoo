@@ -189,7 +189,7 @@ const ChatScreen = () => {
     setMessages(previousMessages =>
       GiftedChat.append(previousMessages, messages),
     );
-    // sendMessage(channel, messages[0].text);
+    sendMessage(channel, messages[0].text);
   }, []);
 
   return (

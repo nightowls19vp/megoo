@@ -166,9 +166,9 @@ const DrawerNavigation = ({navigation}: {navigation: any}) => {
             <Icon name="addusergroup" size={20} color={color} />
           ),
         }}
-        name={RouteNames.PACKAGE_STACK}
+        name={RouteNames.PACKAGE_STACK_DRAWER}
         component={BottomNavigationBar}
-        initialParams={{screen: RouteNames.PACKAGE}}
+        initialParams={{screen: RouteNames.PACKAGE_STACK_BOTTOM}}
       />
       <Drawer.Screen
         options={{
@@ -176,9 +176,9 @@ const DrawerNavigation = ({navigation}: {navigation: any}) => {
           drawerLabel: 'Quản lý kho',
           drawerIcon: ({color}) => <Icon name="isv" size={20} color={color} />,
         }}
-        name={RouteNames.STORAGE_STACK}
+        name={RouteNames.STORAGE_STACK_DRAWER}
         component={BottomNavigationBar}
-        initialParams={{screen: RouteNames.STORAGE}}
+        initialParams={{screen: RouteNames.STORAGE_STACK_BOTTOM}}
       />
       <Drawer.Screen
         options={{
@@ -198,9 +198,9 @@ const DrawerNavigation = ({navigation}: {navigation: any}) => {
             <Icon name="setting" size={20} color={color} />
           ),
         }}
-        name={RouteNames.SETTINGS_STACK}
+        name={RouteNames.SETTINGS_STACK_DRAWER}
         component={BottomNavigationBar}
-        initialParams={{screen: RouteNames.SETTINGS_STACK}}
+        initialParams={{screen: RouteNames.SETTINGS_STACK_BOTTOM}}
       />
     </Drawer.Navigator>
   );

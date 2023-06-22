@@ -9,7 +9,8 @@ export default {
   HOME_TAB: 'Trang chủ',
   HOME_DRAWER: 'HOME_DRAWER',
 
-  PACKAGE_STACK: 'PACKAGE_STACK',
+  PACKAGE_STACK_DRAWER: 'PACKAGE_STACK_DRAWER',
+  PACKAGE_STACK_BOTTOM: 'PACKAGE_STACK_BOTTOM',
   PACKAGE: 'Quản lý gói',
   CURRENT_PACKAGE: 'Gói hiện tại',
   OTHER_PACKAGES: 'Các gói khác',
@@ -20,8 +21,9 @@ export default {
 
   PAYMENT: 'Thanh toán',
 
-  STORAGE_STACK: 'STORAGE_STACK',
-  STORAGE_GROUPS: 'Nhóm của người dùng',
+  STORAGE_STACK_DRAWER: 'STORAGE_STACK_DRAWER',
+  STORAGE_STACK_BOTTOM: 'STORAGE_STACK_BOTTOM',
+  STORAGE_GROUPS: 'Danh sách nhóm',
   STORAGE: 'Quản lý kho',
   PRODUCTS: 'Danh sách sản phẩm',
   PRODUCT_DETAIL: 'Chi tiết sản phẩm',
@@ -36,7 +38,8 @@ export default {
   EDIT_PROFILE: 'Chỉnh sửa thông tin cá nhân',
   CHANGE_AVATAR: 'Chỉnh sửa ảnh đại diện',
 
-  SETTINGS_STACK: 'SETTINGS_STACK',
+  SETTINGS_STACK_DRAWER: 'SETTINGS_STACK_DRAWER',
+  SETTINGS_STACK_BOTTOM: 'SETTINGS_STACK_BOTTOM',
   SETTINGS: 'Cài đặt',
   APP_INFO: 'Thông tin ứng dụng',
   POLICIES_RIGHTS: 'Chính sách và quyền',
