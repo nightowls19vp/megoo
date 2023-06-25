@@ -1,17 +1,21 @@
+import {Dimensions} from 'react-native';
 import {StyleSheet} from 'react-native';
 import {Colors} from '../../../../constants/color.const';
 
+const height = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.background.white,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: height,
   },
   title: {
     fontSize: 30,
     fontWeight: 'bold',
-    color: Colors.primary,
+    color: Colors.text.orange,
   },
   dividerContainer: {
     width: '80%',
@@ -23,15 +27,15 @@ const styles = StyleSheet.create({
   divider: {
     marginVertical: 20,
     width: '40%',
-    borderBottomColor: Colors.secondary,
+    borderBottomColor: Colors.border.lightgrey,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   input: {
     width: '80%',
     padding: 10,
     margin: 15,
-    backgroundColor: 'white',
-    borderColor: Colors.secondary,
+    backgroundColor: Colors.background.white,
+    borderColor: Colors.border.lightgrey,
     borderWidth: 1,
     borderRadius: 10,
   },
@@ -49,7 +53,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   textButton: {
-    color: 'white',
+    color: Colors.buttonText.white,
     fontSize: 20,
     fontWeight: 'bold',
   },
@@ -64,8 +68,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     padding: 10,
     paddingLeft: 20,
-    backgroundColor: 'white',
-    borderColor: Colors.secondary,
+    backgroundColor: Colors.buttonBackground.white,
+    borderColor: Colors.border.lightgrey,
     borderWidth: 1,
     borderRadius: 10,
 
@@ -76,7 +80,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    color: Colors.text,
+    color: Colors.text.grey,
   },
   flexRow: {
     width: '80%',
@@ -86,7 +90,7 @@ const styles = StyleSheet.create({
   },
   textPrimary: {
     fontSize: 16,
-    color: 'orange',
+    color: Colors.text.orange,
     marginVertical: 10,
   },
   loginPrimary: {
@@ -101,18 +105,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginTop: 15,
     marginBottom: 5,
-    borderColor: Colors.secondary,
+    borderColor: Colors.border.lightgrey,
     borderWidth: 1,
     borderRadius: 10,
   },
   inputIcon: {
     fontWeight: '200',
-    color: Colors.secondary,
+    color: Colors.icon.lightgrey,
     fontSize: 20,
   },
+  inputText: {flex: 1, color: Colors.text.grey},
   error: {
     width: '80%',
-    color: Colors.error,
+    color: Colors.text.red,
     textAlign: 'left',
   },
   modal: {
@@ -121,7 +126,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: '30%',
-    backgroundColor: 'white',
+    backgroundColor: Colors.background.white,
     borderRadius: 10,
     borderWidth: 1,
     marginVertical: 150,
@@ -132,7 +137,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  textButtonModal: {color: Colors.text, fontSize: 16, fontWeight: 'bold'},
+  textButtonModal: {color: Colors.text.grey, fontSize: 16, fontWeight: 'bold'},
 });
 
 export default styles;

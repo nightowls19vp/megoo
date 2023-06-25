@@ -1,14 +1,11 @@
-import {useEffect, useState, useCallback} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {GroupChannel} from '@sendbird/chat/groupChannel';
 
 import RouteNames from '../../../../constants/route-names.const';
-import {Colors} from '../../../../constants/color.const';
 import {getUserGroup} from '../../../../services/group.service';
-import styles from './styles/style';
-import {useFocusEffect} from '@react-navigation/native';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
-import userStore from '../../../../common/store/user.store';
-import {GroupChannel} from '@sendbird/chat/groupChannel';
+import styles from './styles/style';
 
 // const appId = 'ADD4546B-CF09-4980-B6AC-DB7FFD2E70EC';
 // export const sendbird = new SendBird({appId});

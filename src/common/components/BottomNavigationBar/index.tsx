@@ -33,14 +33,8 @@ import AddProdInfoScreen from '../../../screens/storage/screens/AddProdInfoScree
 import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScreen';
 import ChatScreen from '../../../screens/chat/screens/ChatScreen';
 import GroupChatsScreen from '../../../screens/chat/screens/GroupChatsScreen';
-
-function HomeScreen() {
-  return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Home!</Text>
-    </View>
-  );
-}
+import HomeScreen from '../../../screens/home';
+import BillScreen from '../../../screens/home/screens/bill/BillScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -58,6 +52,23 @@ const ChatScreenStack = () => {
         component={GroupChatsScreen}
       />
     </ChatStack.Navigator>
+  );
+};
+
+const HomeStack = createNativeStackNavigator();
+const HomeScreenStack = () => {
+  return (
+    <HomeStack.Navigator initialRouteName={RouteNames.HOME}>
+      <HomeStack.Screen
+        name={RouteNames.CHAT_STACK}
+        component={ChatScreenStack}
+        options={{
+          title: 'Nhóm chat',
+        }}
+      />
+      <HomeStack.Screen name={RouteNames.HOME} component={HomeScreen} />
+      <HomeStack.Screen name={RouteNames.BILL} component={BillScreen} />
+    </HomeStack.Navigator>
   );
 };
 
@@ -202,7 +213,7 @@ export default function BottomNavigationBar() {
   return (
     <Tab.Navigator
       backBehavior="none"
-      initialRouteName={RouteNames.HOME_TAB}
+      initialRouteName={RouteNames.HOME_STACK_BOTTOM}
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
@@ -240,10 +251,11 @@ export default function BottomNavigationBar() {
         }}
       />
       <Tab.Screen
-        name={RouteNames.HOME_TAB}
-        component={HomeScreen}
+        name={RouteNames.HOME_STACK_BOTTOM}
+        component={HomeScreenStack}
         options={{
           unmountOnBlur: true,
+          title: 'Trang chủ',
           tabBarIcon: ({color}) => {
             return <Icon name="home" size={20} color={color} />;
           },

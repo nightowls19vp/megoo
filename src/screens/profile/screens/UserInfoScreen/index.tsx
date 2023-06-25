@@ -1,4 +1,4 @@
-import {useState, useEffect, useCallback} from 'react';
+import {useState} from 'react';
 import {Dimensions, Text, View} from 'react-native';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 import {RouteProp, useRoute, useFocusEffect} from '@react-navigation/native';
@@ -59,7 +59,9 @@ const UserInfoScreen = ({navigation}: {navigation: any}) => {
             styles.tab,
             {
               backgroundColor:
-                activeTab === 'info' ? Colors.primary : Colors.background,
+                activeTab === 'info'
+                  ? Colors.buttonBackground.orange
+                  : Colors.buttonBackground.white,
             },
           ]}
           onPress={() => {
@@ -70,7 +72,9 @@ const UserInfoScreen = ({navigation}: {navigation: any}) => {
               styles.tabText,
               {
                 color:
-                  activeTab === 'info' ? Colors.background : Colors.primary,
+                  activeTab === 'info'
+                    ? Colors.buttonText.white
+                    : Colors.buttonText.orange,
               },
             ]}>
             Thông tin
@@ -81,7 +85,9 @@ const UserInfoScreen = ({navigation}: {navigation: any}) => {
             styles.tab,
             {
               backgroundColor:
-                activeTab === 'group' ? Colors.primary : Colors.background,
+                activeTab === 'group'
+                  ? Colors.buttonBackground.orange
+                  : Colors.buttonBackground.white,
             },
           ]}
           onPress={() => {
@@ -92,7 +98,9 @@ const UserInfoScreen = ({navigation}: {navigation: any}) => {
               styles.tabText,
               {
                 color:
-                  activeTab === 'group' ? Colors.background : Colors.primary,
+                  activeTab === 'group'
+                    ? Colors.buttonText.white
+                    : Colors.buttonText.orange,
               },
             ]}>
             Nhóm

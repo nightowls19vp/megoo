@@ -23,23 +23,23 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'left',
     fontSize: 18,
-    color: Colors.primary,
+    color: Colors.title.orange,
     fontWeight: 'bold',
   },
   text: {
     fontSize: 14,
-    color: Colors.text,
+    color: Colors.text.grey,
   },
   infoText: {
     fontSize: 14,
-    color: Colors.secondary,
+    color: Colors.text.lightgrey,
   },
   packageContainer: {
     width: '90%',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: Colors.background.white,
     borderRadius: 10,
     marginBottom: 20,
     padding: 10,

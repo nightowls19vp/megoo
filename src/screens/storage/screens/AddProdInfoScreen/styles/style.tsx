@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     minHeight: '100%',
     display: 'flex',
     alignItems: 'center',
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.background.white,
   },
   contentContainer: {
     width: '90%',
@@ -47,13 +47,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
-    borderColor: Colors.secondary,
+    borderColor: Colors.border.lightgrey,
     borderWidth: 1,
     borderRadius: 10,
   },
   icon: {
     fontWeight: '200',
-    color: Colors.secondary,
+    color: Colors.icon.lightgrey,
     fontSize: 20,
   },
   button: {
@@ -63,11 +63,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.buttonBackground.orange,
     borderRadius: 10,
   },
   buttonText: {
-    color: Colors.background,
+    color: Colors.buttonText.white,
     fontSize: 16,
     fontWeight: 'bold',
   },

@@ -22,18 +22,25 @@ import RoutesName from './src/constants/route-names.const';
 import LoginScreen from './src/screens/login/screens/LoginScreen';
 import RegisterScreen from './src/screens/register/RegisterScreen';
 import SplashScreen from './src/screens/splash/SplashScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   const [loading, setLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const checkLoggedIn = async () => {
-    const response = await checkLogin();
-    if (response == true) {
-      appStore.setIsLoggedIn(true);
+    if (appStore.isLoggedIn === false) {
+      const response = await checkLogin();
+      if (response == true) {
+        appStore.setIsLoggedIn(true);
+      }
     }
+    // await AsyncStorage.setItem(
+    //   'accessToken',
+    //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoidXNlcjAiLCJ1c2VybmFtZSI6InVzZXIwIiwiZW1haWwiOiJ1c2VyMEBnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInVzZXJJbmZvSWQiOiI2NDk2NTFlNmQ0OTFlZmMxNWJiMmEyMDQiLCJzb2NpYWxBY2NvdW50cyI6W119LCJpYXQiOjE2ODc2Nzk0NDQsImV4cCI6MTY4Nzc2NTg0NH0.JCJfehOag5CrR1EXGSPN-tltc2pr0Ec26mLnMRRQqR8',
+    // );
+    // appStore.setIsLoggedIn(true);
   };
 
   useEffect(() => {

@@ -1,21 +1,20 @@
-import {RouteProp, useRoute, NavigationAction} from '@react-navigation/native';
-import {useRef, useState, useEffect} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {
-  Text,
-  View,
-  TouchableOpacity,
-  Linking,
   AppState,
+  Linking,
   ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 
-import RouteNames from '../../../../constants/route-names.const';
+import {RouteProp, useRoute} from '@react-navigation/native';
+
+import {ICartList} from '../../../../common/interfaces/package.interface';
+import appStore from '../../../../common/store/app.store';
 import {checkout, getUserById, renew} from './services/payment.service';
 import styles from './styles/style';
-import {ICartList} from './../../../../common/interfaces/package.interface';
-import {Colors} from '../../../../constants/color.const';
-import appStore from '../../../../common/store/app.store';
 
 // Define the type for the route params
 type SelectedItemsRouteParams = {
@@ -30,8 +29,6 @@ type SelectedItemsRouteProp = RouteProp<
 >;
 
 const PaymentScreen = ({navigation}: {navigation: any}) => {
-  const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const route = useRoute<SelectedItemsRouteProp>();
   const [selectedItemList, setSelectedItemList] = useState<ICartList>({
     cart: [],
@@ -76,65 +73,30 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
   const renderItem = () => {
     return itemsInfo.cart.map((item: any, index: any) => {
       return (
-        <View
-          style={{
-            backgroundColor: Colors.background,
-            borderRadius: 10,
-          }}
-          key={index}>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 10,
-              padding: 10,
-            }}>
+        <View style={styles.packageContainer} key={index}>
+          <View style={styles.infoRow}>
             <Text style={styles.text}>Tên gói:</Text>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>{item.name}</Text>
           </View>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 10,
-              padding: 10,
-            }}>
+          <View style={styles.infoRow}>
             <Text style={styles.text}>Thời hạn:</Text>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>
               {item.duration} tháng
             </Text>
           </View>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 10,
-              padding: 10,
-            }}>
+          <View style={styles.infoRow}>
             <Text style={styles.text}>Số lượng thành viên:</Text>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>
               {item.noOfMember}
             </Text>
           </View>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 10,
-              padding: 10,
-            }}>
+          <View style={styles.infoRow}>
             <Text style={styles.text}>Số lượng gói:</Text>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>
               {item.quantity}
             </Text>
           </View>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 10,
-              padding: 10,
-            }}>
+          <View style={styles.infoRow}>
             <Text style={styles.text}>Thành tiền:</Text>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>
               {Math.round(item.price)} VND
@@ -147,47 +109,12 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
 
   return (
     <>
-      <ScrollView
-        contentContainerStyle={{
-          width: '100%',
-          minHeight: '100%',
-          display: 'flex',
-          alignItems: 'center',
-        }}>
-        <View
-          style={{
-            width: '90%',
-            display: 'flex',
-            gap: 20,
-            paddingBottom: 50,
-            marginVertical: 20,
-          }}>
-          {renderItem()}
-        </View>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.itemsContainer}>{renderItem()}</View>
       </ScrollView>
 
-      <View
-        style={{
-          width: '100%',
-          height: 50,
-          display: 'flex',
-          alignItems: 'center',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          backgroundColor: 'white',
-          position: 'absolute',
-          bottom: 0,
-        }}>
-        <Text
-          style={{
-            width: '60%',
-            fontSize: 18,
-            fontWeight: 'bold',
-            color: Colors.text,
-            textAlign: 'center',
-          }}>
-          {totalPrice} VND
-        </Text>
+      <View style={styles.paymentContainer}>
+        <Text style={styles.priceText}>{totalPrice} VND</Text>
         {appStore.isExtendedPkg === false ? (
           <TouchableOpacity
             style={styles.button}
@@ -334,69 +261,6 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
             <Text style={styles.buttonText}>Thanh toán</Text>
           </TouchableOpacity>
         )}
-        {/* <TouchableOpacity
-          style={styles.button}
-          onPress={async () => {
-            console.log('route.params:', itemsInfo);
-            const response = await checkout(selectedItemList);
-            console.log('Checkout response:', response);
-            const order = response.order;
-            const trans = response.trans;
-            console.log('order res:', order);
-            console.log('trans res:', trans);
-            const trans_id = response.trans._id;
-            console.log('trans_id', trans_id);
-            // Open URL for payment
-            Linking.openURL(response.order.order_url);
-            const subscription = AppState.addEventListener(
-              'change',
-              nextAppState => {
-                if (appState.current.match(/inactive|background/)) {
-                  console.log('Get user running in background');
-                }
-                if (
-                  appState.current.match(/inactive|background/) &&
-                  nextAppState === 'active'
-                ) {
-                  console.log('App has come to the foreground!');
-                  // Check if trans_id exists in user's trxHist then user paid successfully
-                  const interValCheck = setInterval(async () => {
-                    const getRes = await getUserById();
-                    console.log('get user res:', getRes);
-                    console.log('trans id in hist:', getRes.user.trxHist);
-                    if (getRes.user.trxHist.includes(trans_id)) {
-                      console.log(trans_id, 'exists in trxHist');
-                      clearInterval(interValCheck);
-                      Toast.show({
-                        type: 'success',
-                        text1: 'Thanh toán thành công',
-                        autoHide: true,
-                        visibilityTime: 1000,
-                        topOffset: 30,
-                        bottomOffset: 40,
-                        onHide: () => {
-                          navigation.navigate(RouteNames.PROFILE as never, {
-                            activeTab: 'group',
-                          });
-                        },
-                      });
-                    }
-                  }, 10 * 1000);
-                  setTimeout(() => {
-                    clearInterval(interValCheck);
-                  }, 2 * 60 * 1000);
-                }
-                appState.current = nextAppState;
-                setAppStateVisible(appState.current);
-                console.log('AppState', appState.current);
-              },
-            );
-            return () => {
-              subscription.remove();
-            };
-          }}>
-          <Text style={styles.buttonText}>Thanh toán</Text>
-        </TouchableOpacity> */}
       </View>
       <Toast position="top" />
     </>

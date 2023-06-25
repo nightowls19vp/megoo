@@ -24,7 +24,7 @@ import {activate, getGroupInfo, invite} from './services/group.info.service';
 import styles from './styles/style';
 import {dateFormat} from '../../../../common/handle.string';
 
-const height = Dimensions.get('screen').height;
+const height = Dimensions.get('window').height;
 
 // Define the type for the route params
 type GroupDetailRouteParams = {
@@ -175,12 +175,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
         />
         <Text style={styles.title}>Thông tin nhóm</Text>
         <View style={styles.groupInfoContainer}>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 10,
-            }}>
+          <View style={styles.infoRow}>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>Tên nhóm: </Text>
             <Text
               style={[
@@ -195,21 +190,11 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
               {group.name}
             </Text>
           </View>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 10,
-            }}>
+          <View style={styles.infoRow}>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>Thời hạn: </Text>
             <Text style={styles.infoText}>{group.duration} tháng</Text>
           </View>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 10,
-            }}>
+          <View style={styles.infoRow}>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>
               Số lượng thành viên:{' '}
             </Text>
@@ -217,23 +202,13 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
           </View>
           {group.status === 'Active' ? (
             <>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: 10,
-                }}>
+              <View style={styles.infoRow}>
                 <Text style={[styles.text, {fontWeight: 'bold'}]}>
                   Ngày kích hoạt:{' '}
                 </Text>
                 <Text style={styles.infoText}>{group.startDate}</Text>
               </View>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: 10,
-                }}>
+              <View style={styles.infoRow}>
                 <Text style={[styles.text, {fontWeight: 'bold'}]}>
                   Ngày hết hạn:{' '}
                 </Text>
@@ -267,20 +242,8 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
             </View>
           </> */}
 
-          <View
-            style={{
-              display: 'flex',
-              maxHeight: 30,
-              flexDirection: 'row',
-              alignItems: 'baseline',
-              justifyContent: 'space-between',
-            }}>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                gap: 10,
-              }}>
+          <View style={styles.activateGroupContainer}>
+            <View style={styles.infoRow}>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
                 Trạng thái:{' '}
               </Text>
@@ -288,16 +251,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
             </View>
             {group.status === 'Not activated' ? (
               <TouchableOpacity
-                style={{
-                  width: '25%',
-                  height: 30,
-
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: Colors.primary,
-                  borderRadius: 10,
-                }}
+                style={styles.activateGroupButton}
                 onPress={async () => {
                   console.log('groupId:', group._id);
 
@@ -353,13 +307,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                     });
                   }
                 }}>
-                <Text
-                  style={{
-                    fontWeight: 'bold',
-                    color: Colors.background,
-                  }}>
-                  Kích hoạt
-                </Text>
+                <Text style={styles.activateGroupButtonText}>Kích hoạt</Text>
               </TouchableOpacity>
             ) : null}
           </View>
@@ -411,7 +359,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                     // gap: 10,
                     padding: 10,
                     marginBottom: 20,
-                    backgroundColor: Colors.background,
+                    backgroundColor: Colors.background.white,
                     borderRadius: 10,
                   }}
                   // behavior={Platform.OS === 'android' ? 'height' : 'padding'}
@@ -426,27 +374,16 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                     }}>
-                    <View
-                      style={{
-                        width: '70%',
-                        height: 40,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        paddingHorizontal: 15,
-                        borderColor: Colors.secondary,
-                        borderWidth: 1,
-                        borderRadius: 10,
-                      }}>
+                    <View style={styles.inputContainer}>
                       <TextInput
                         onChangeText={value => {
                           setFieldValue('email', value);
                         }}
                         // onSubmitEditing={handleSubmit}
                         onBlur={() => setFieldTouched('email')}
-                        style={{flex: 1, color: Colors.text}}
+                        style={styles.inputText}
                         placeholder={'Email'}
-                        placeholderTextColor={Colors.secondary}
+                        placeholderTextColor={Colors.text.lightgrey}
                         value={values.email}
                         keyboardType={'email-address'}
                       />
@@ -455,47 +392,19 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                         <Icon
                           onPress={() => setFieldValue('email', '')}
                           name={'close'}
-                          style={{
-                            fontWeight: '200',
-                            color: Colors.secondary,
-                            fontSize: 20,
-                          }}
+                          style={styles.inputIcon}
                         />
                       )}
                     </View>
                     <TouchableOpacity
                       onPress={handleSubmit}
-                      style={{
-                        width: '25%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: 10,
-                        borderWidth: 1,
-                        borderColor: Colors.primary,
-                        borderRadius: 10,
-                        backgroundColor: Colors.background,
-                      }}>
-                      <Text
-                        style={{
-                          color: Colors.primary,
-                          fontWeight: 'bold',
-                          fontSize: 14,
-                        }}>
-                        Thêm
-                      </Text>
+                      style={styles.addButton}>
+                      <Text style={styles.addButtonText}>Thêm</Text>
                     </TouchableOpacity>
                   </View>
 
                   {touched.email && errors.email && (
-                    <Text
-                      style={{
-                        marginTop: 10,
-                        width: '90%',
-                        color: Colors.error,
-                        textAlign: 'left',
-                      }}>
-                      {errors.email}
-                    </Text>
+                    <Text style={styles.errorText}>{errors.email}</Text>
                   )}
 
                   <View>
@@ -506,22 +415,8 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                           style={{
                             display: 'flex',
                           }}>
-                          <View
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                              marginVertical: 10,
-                            }}
-                            key={index}>
-                            <View
-                              style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                gap: 10,
-                              }}>
+                          <View style={styles.emailsContainer} key={index}>
+                            <View style={styles.email}>
                               <Text style={{fontSize: 20}}>•</Text>
                               <Text style={{fontSize: 16}}>{object}</Text>
                             </View>
@@ -555,17 +450,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
 
                     {emails.length > 0 ? (
                       <TouchableOpacity
-                        style={{
-                          width: '100%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          marginTop: 20,
-                          padding: 10,
-                          borderWidth: 1,
-                          borderColor: Colors.primary,
-                          borderRadius: 10,
-                          backgroundColor: Colors.background,
-                        }}
+                        style={styles.inviteButton}
                         onPress={async () => {
                           console.log('groupId:', group._id);
                           console.log('emails:', emails);
@@ -597,13 +482,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                             });
                           }
                         }}>
-                        <Text
-                          style={{
-                            color: Colors.primary,
-                            fontWeight: 'bold',
-                          }}>
-                          Mời tất cả
-                        </Text>
+                        <Text style={styles.inviteButtonText}>Mời tất cả</Text>
                       </TouchableOpacity>
                     ) : null}
                   </View>
@@ -621,7 +500,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                 setTimeout(() => {
                   console.log('appStore.isExtendedPkg', appStore.isExtendedPkg);
 
-                  navigation.navigate(RouteNames.PACKAGE_STACK, {
+                  navigation.navigate(RouteNames.PACKAGE_STACK_BOTTOM, {
                     params: {
                       screen: RouteNames.PACKAGE,
                       extendPkgId: group._id,
@@ -634,7 +513,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
           </>
         ) : null}
       </View>
-      <Toast position="top"></Toast>
+      <Toast position="top" />
     </>
   );
 };

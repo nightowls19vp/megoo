@@ -5,16 +5,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    // backgroundColor: Colors.screenBackground,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: Colors.textSecondary,
+    color: Colors.text.orange,
     marginVertical: 10,
   },
   text: {
-    color: Colors.textPrimary,
+    color: Colors.text.grey,
     fontSize: 14,
   },
   settingsContainer: {
@@ -22,7 +21,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   contentContainer: {
-    backgroundColor: Colors.itemBackground,
+    backgroundColor: Colors.background.white,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -40,13 +39,13 @@ const styles = StyleSheet.create({
     margin: 10,
     marginTop: 40,
     padding: 8,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.buttonBackground.orange,
     borderRadius: 10,
     // borderColor: Colors.buttonSecondary,
     // borderWidth: 1,
   },
   buttonText: {
-    color: Colors.background,
+    color: Colors.buttonText.white,
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -56,22 +55,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  dividerText: {textAlignVertical: 'center', color: 'grey'},
+  dividerText: {textAlignVertical: 'center', color: Colors.text.grey},
   divider: {
     marginVertical: 20,
     width: '40%',
-    borderBottomColor: Colors.secondary,
+    borderBottomColor: Colors.border.lightgrey,
     // borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomWidth: 1,
   },
   settingIcon: {
     fontWeight: '200',
-    color: Colors.buttonPrimary,
+    color: Colors.icon.orange,
     fontSize: 22,
   },
   notiIcon: {
     fontWeight: '200',
-    color: Colors.buttonPrimary,
+    color: Colors.icon.orange,
     fontSize: 22,
   },
   settingItem: {

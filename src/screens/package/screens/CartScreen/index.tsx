@@ -219,11 +219,11 @@ const CartScreen = ({navigation}: {navigation: any}) => {
                 value={object.quantity}
                 totalWidth={150}
                 totalHeight={35}
-                iconStyle={{fontSize: 20, color: '#FFFFFF'}}
+                iconStyle={{fontSize: 20, color: Colors.text.white}}
                 rightButtonBackgroundColor="#32CD32"
                 leftButtonBackgroundColor="#FF2400"
                 rounded={true}
-                textColor={Colors.text}
+                textColor={Colors.text.grey}
                 inputStyle={{fontSize: 14}}
                 onChange={(num: number) => {
                   const index = cartList.findIndex(

@@ -2,7 +2,6 @@ import {Dimensions, StyleSheet} from 'react-native';
 import {Colors} from '../../../../../constants/color.const';
 
 const width = Dimensions.get('window').width;
-const fontScale = Dimensions.get('window').fontScale;
 
 const styles = StyleSheet.create({
   container: {
@@ -11,22 +10,30 @@ const styles = StyleSheet.create({
     width: width,
     minHeight: '100%',
   },
-  groupInfoContainer: {
+  itemsContainer: {
+    width: '90%',
     display: 'flex',
-    width: width * 0.9,
     gap: 20,
+    paddingBottom: 50,
+    marginVertical: 20,
+  },
+  packageContainer: {
+    backgroundColor: Colors.background.white,
     borderRadius: 10,
+  },
+  infoRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 10,
     padding: 10,
-    marginBottom: 20,
-    backgroundColor: Colors.background,
   },
   text: {
     fontSize: 14,
-    color: Colors.text,
+    color: Colors.text.grey,
   },
   infoText: {
     fontSize: 14,
-    color: Colors.secondary,
+    color: Colors.text.lightgrey,
   },
   title: {
     width: '90%',
@@ -36,17 +43,25 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontWeight: 'bold',
   },
+  paymentContainer: {
+    width: '100%',
+    height: 50,
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: 'white',
+    position: 'absolute',
+    bottom: 0,
+  },
+  priceText: {
+    width: '60%',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: Colors.text.grey,
+    textAlign: 'center',
+  },
   button: {
-    // width: '90%',
-    // content: 'fill',
-    // display: 'flex',
-    // justifyContent: 'center',
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // margin: 10,
-    // padding: 8,
-    // backgroundColor: Colors.primary,
-    // borderRadius: 10,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

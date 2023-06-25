@@ -48,408 +48,368 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <ScrollView contentContainerStyle={{flex: 1}}>
-      <Formik
-        initialValues={{
-          name: '',
-          email: '',
-          password: '',
-          phone: '',
-          dob: '',
-        }}
-        validationSchema={RegisterSchema}
-        onSubmit={values => {}}
-        // onSubmit={values => {
-        //   const dobISOString = moment(values.dob, 'DD/MM/YYYY').toISOString();
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={{flex: 1, width: '100%'}}>
+        <Formik
+          initialValues={{
+            name: '',
+            email: '',
+            password: '',
+            phone: '',
+            dob: '',
+          }}
+          validationSchema={RegisterSchema}
+          // onSubmit={values => {}}
+          onSubmit={values => {
+            const dobISOString = moment(values.dob, 'DD/MM/YYYY').toISOString();
 
-        //   console.log(dobISOString);
-        //   // same shape as initial values
-        //   console.log(values);
-        //   register({
-        //     name: values.name,
-        //     email: values.email,
-        //     password: values.password,
-        //     phone: values.phone,
-        //     dob: dobISOString,
-        //   }).then((response: IRegisterRes) => {
-        //     console.log(response.statusCode);
+            console.log(dobISOString);
+            // same shape as initial values
+            console.log(values);
+            register({
+              name: values.name,
+              email: values.email,
+              password: values.password,
+              phone: values.phone,
+              dob: dobISOString,
+            }).then((response: IRegisterRes) => {
+              console.log(response.statusCode);
 
-        //     if (response.statusCode === 201) {
-        //       Toast.show({
-        //         type: 'success',
-        //         text1: 'Đăng ký thành công',
-        //         autoHide: true,
-        //         visibilityTime: 1000,
-        //         topOffset: 30,
-        //         bottomOffset: 40,
-        //         onHide: () => {
-        //           navigation.navigate(RouteNames.LOGIN as never, {} as never);
-        //         },
-        //       });
-        //     } else {
-        //       Toast.show({
-        //         type: 'error',
-        //         text1: response.message,
-        //         autoHide: false,
-        //         topOffset: 30,
-        //         bottomOffset: 40,
-        //       });
-        //     }
-        //   });
-        // }}
-      >
-        {({
-          values,
-          errors,
-          touched,
-          setFieldTouched,
-          setFieldValue,
-          isValid,
-          handleChange,
-          handleSubmit,
-        }) => (
-          <View style={styles.container}>
-            <Text style={styles.title}>Đăng ký</Text>
-            <View style={[styles.inputContainer]}>
-              <TextInput
-                onChangeText={value => setFieldValue('name', value)}
-                onBlur={() => setFieldTouched('name')}
-                style={{flex: 1, color: Colors.text}}
-                placeholderTextColor={Colors.text}
-                placeholder={'Họ và tên'}
-                value={values.name}
-              />
-
-              {values.name && (
-                <Icon
-                  onPress={() => setFieldValue('name', '')}
-                  name={'close'}
-                  style={styles.inputIcon}></Icon>
-              )}
-            </View>
-            {touched.name && errors.name && (
-              <Text style={styles.error}>{errors.name}</Text>
-            )}
-
-            <View style={[styles.inputContainer]}>
-              <TextInput
-                onChangeText={value => setFieldValue('email', value)}
-                onBlur={() => setFieldTouched('email')}
-                style={{flex: 1, color: Colors.text}}
-                placeholder={'Email'}
-                placeholderTextColor={Colors.text}
-                value={values.email}
-                keyboardType="email-address"
-              />
-
-              {values.email && (
-                <Icon
-                  onPress={() => setFieldValue('email', '')}
-                  name={'close'}
-                  style={styles.inputIcon}></Icon>
-              )}
-            </View>
-            {touched.email && errors.email && (
-              <Text style={styles.error}>{errors.email}</Text>
-            )}
-
-            <View style={styles.inputContainer}>
-              <TextInput
-                onChangeText={value => setFieldValue('password', value)}
-                onBlur={() => setFieldTouched('password')}
-                secureTextEntry={hidePassword}
-                placeholder={'Mật khẩu'}
-                placeholderTextColor={Colors.text}
-                style={{flex: 1, color: Colors.text}}
-                value={values.password}
-              />
-              {values.password && (
-                <Icon
-                  onPress={() => setFieldValue('password', '')}
-                  name={'close'}
-                  style={[styles.inputIcon, {marginRight: 5}]}
+              if (response.statusCode === 201) {
+                Toast.show({
+                  type: 'success',
+                  text1: 'Đăng ký thành công',
+                  autoHide: true,
+                  visibilityTime: 1000,
+                  topOffset: 30,
+                  bottomOffset: 40,
+                  onHide: () => {
+                    navigation.navigate(RouteNames.LOGIN, {});
+                  },
+                });
+              } else {
+                Toast.show({
+                  type: 'error',
+                  text1: response.message,
+                  autoHide: false,
+                  topOffset: 30,
+                  bottomOffset: 40,
+                });
+              }
+            });
+          }}>
+          {({
+            values,
+            errors,
+            touched,
+            setFieldTouched,
+            setFieldValue,
+            isValid,
+            handleChange,
+            handleSubmit,
+          }) => (
+            <View style={styles.container}>
+              <Text style={styles.title}>Đăng ký</Text>
+              <View style={[styles.inputContainer]}>
+                <TextInput
+                  onChangeText={value => setFieldValue('name', value)}
+                  onBlur={() => setFieldTouched('name')}
+                  style={styles.inputText}
+                  placeholderTextColor={Colors.text.grey}
+                  placeholder={'Họ và tên'}
+                  value={values.name}
                 />
+
+                {values.name && (
+                  <Icon
+                    onPress={() => setFieldValue('name', '')}
+                    name={'close'}
+                    style={styles.inputIcon}></Icon>
+                )}
+              </View>
+              {touched.name && errors.name && (
+                <Text style={styles.error}>{errors.name}</Text>
               )}
-              <Icon
-                onPress={() => setHidePassword(!hidePassword)}
-                name={hidePassword ? 'eye' : 'eye-off'}
-                style={styles.inputIcon}></Icon>
-            </View>
-            {touched.password && errors.password && (
-              <Text style={[styles.error]}>{errors.password}</Text>
-            )}
 
-            <View style={[styles.inputContainer]}>
-              <TextInput
-                onChangeText={value => setFieldValue('phone', value)}
-                onBlur={() => setFieldTouched('phone')}
-                style={{flex: 1, color: Colors.text}}
-                placeholder={'Số điện thoại'}
-                placeholderTextColor={Colors.text}
-                value={values.phone}
-                keyboardType="phone-pad"
-              />
+              <View style={[styles.inputContainer]}>
+                <TextInput
+                  onChangeText={value => setFieldValue('email', value)}
+                  onBlur={() => setFieldTouched('email')}
+                  placeholder={'Email'}
+                  style={styles.inputText}
+                  placeholderTextColor={Colors.text.grey}
+                  value={values.email}
+                  keyboardType="email-address"
+                />
 
-              {values.phone && (
+                {values.email && (
+                  <Icon
+                    onPress={() => setFieldValue('email', '')}
+                    name={'close'}
+                    style={styles.inputIcon}></Icon>
+                )}
+              </View>
+              {touched.email && errors.email && (
+                <Text style={styles.error}>{errors.email}</Text>
+              )}
+
+              <View style={styles.inputContainer}>
+                <TextInput
+                  onChangeText={value => setFieldValue('password', value)}
+                  onBlur={() => setFieldTouched('password')}
+                  secureTextEntry={hidePassword}
+                  placeholder={'Mật khẩu'}
+                  style={styles.inputText}
+                  placeholderTextColor={Colors.text.grey}
+                  value={values.password}
+                />
+                {values.password && (
+                  <Icon
+                    onPress={() => setFieldValue('password', '')}
+                    name={'close'}
+                    style={[styles.inputIcon, {marginRight: 5}]}
+                  />
+                )}
                 <Icon
-                  onPress={() => setFieldValue('phone', '')}
-                  name={'close'}
+                  onPress={() => setHidePassword(!hidePassword)}
+                  name={hidePassword ? 'eye' : 'eye-off'}
                   style={styles.inputIcon}></Icon>
+              </View>
+              {touched.password && errors.password && (
+                <Text style={[styles.error]}>{errors.password}</Text>
               )}
-            </View>
-            {touched.phone && errors.phone && (
-              <Text style={styles.error}>{errors.phone}</Text>
-            )}
 
-            <View style={[styles.inputContainer]}>
-              <TextInput
-                // editable={false}
-                // onChangeText={value => setFieldValue('dob', value)}
-                onBlur={() => setFieldTouched('dob')}
-                style={{flex: 1, color: Colors.text}}
-                placeholder={'Ngày sinh'}
-                placeholderTextColor={Colors.text}
-                value={values.dob}
-              />
+              <View style={[styles.inputContainer]}>
+                <TextInput
+                  onChangeText={value => setFieldValue('phone', value)}
+                  onBlur={() => setFieldTouched('phone')}
+                  placeholder={'Số điện thoại'}
+                  style={styles.inputText}
+                  placeholderTextColor={Colors.text.grey}
+                  value={values.phone}
+                  keyboardType="phone-pad"
+                />
 
-              <DatePicker
-                modal
-                open={open}
-                date={date}
-                mode={'date'}
-                locale={'vi'}
-                title={'Chọn ngày'}
-                confirmText={'Chọn'}
-                cancelText={'Huỷ'}
-                onConfirm={value => {
-                  console.log('Selected dob:', value);
+                {values.phone && (
+                  <Icon
+                    onPress={() => setFieldValue('phone', '')}
+                    name={'close'}
+                    style={styles.inputIcon}></Icon>
+                )}
+              </View>
+              {touched.phone && errors.phone && (
+                <Text style={styles.error}>{errors.phone}</Text>
+              )}
 
-                  setOpen(false);
-                  setDate(value);
-                  setFieldValue('dob', moment(value).format('DD/MM/YYYY'));
+              <View style={[styles.inputContainer]}>
+                <TextInput
+                  // editable={false}
+                  // onChangeText={value => setFieldValue('dob', value)}
+                  onBlur={() => setFieldTouched('dob')}
+                  placeholder={'Ngày sinh'}
+                  style={styles.inputText}
+                  placeholderTextColor={Colors.text.grey}
+                  value={values.dob}
+                />
 
-                  console.log('Values dob', values.dob);
-                }}
-                onCancel={() => {
-                  setOpen(false);
-                }}
-              />
+                <DatePicker
+                  modal
+                  open={open}
+                  date={date}
+                  mode={'date'}
+                  locale={'vi'}
+                  title={'Chọn ngày'}
+                  confirmText={'Chọn'}
+                  cancelText={'Huỷ'}
+                  onConfirm={value => {
+                    console.log('Selected dob:', value);
 
-              {values.dob && (
+                    setOpen(false);
+                    setDate(value);
+                    setFieldValue('dob', moment(value).format('DD/MM/YYYY'));
+
+                    console.log('Values dob', values.dob);
+                  }}
+                  onCancel={() => {
+                    setOpen(false);
+                  }}
+                />
+
+                {values.dob && (
+                  <Icon
+                    onPress={() => setFieldValue('dob', '')}
+                    name={'close'}
+                    style={[styles.inputIcon, {marginRight: 5}]}></Icon>
+                )}
                 <Icon
-                  onPress={() => setFieldValue('dob', '')}
-                  name={'close'}
-                  style={[styles.inputIcon, {marginRight: 5}]}></Icon>
+                  onPress={() => {
+                    setOpen(true);
+                  }}
+                  name={'calendar'}
+                  style={styles.inputIcon}></Icon>
+              </View>
+
+              {touched.dob && errors.dob && (
+                <Text style={styles.error}>{errors.dob}</Text>
               )}
-              <Icon
-                onPress={() => {
-                  setOpen(true);
-                }}
-                name={'calendar'}
-                style={styles.inputIcon}></Icon>
-            </View>
 
-            {touched.dob && errors.dob && (
-              <Text style={styles.error}>{errors.dob}</Text>
-            )}
-
-            <TouchableOpacity
-              onPress={() => {
-                const dobISOString = moment(
-                  values.dob,
-                  'DD/MM/YYYY',
-                ).toISOString();
-
-                console.log(dobISOString);
-                // same shape as initial values
-                console.log(values);
-                register({
-                  name: values.name,
-                  email: values.email,
-                  password: values.password,
-                  phone: values.phone,
-                  dob: dobISOString,
-                }).then((response: IRegisterRes) => {
-                  console.log(response);
-
-                  if (response.statusCode === 201) {
-                    Toast.show({
-                      type: 'success',
-                      text1: 'Đăng ký thành công',
-                      autoHide: true,
-                      visibilityTime: 1000,
-                      topOffset: 30,
-                      bottomOffset: 40,
-                      onHide: () => {
-                        navigation.navigate(
-                          RouteNames.LOGIN as never,
-                          {} as never,
-                        );
-                      },
-                    });
-                  } else {
-                    Toast.show({
-                      type: 'error',
-                      text1: response.message,
-                      autoHide: false,
-                      topOffset: 30,
-                      bottomOffset: 40,
-                    });
-                  }
-                });
-              }}
-              disabled={!isValid}
-              style={[
-                styles.button,
-                {
-                  backgroundColor: isValid ? Colors.primary : Colors.disabled,
-                },
-              ]}>
-              <Text style={styles.textButton}>Đăng ký</Text>
-            </TouchableOpacity>
-
-            <Toast position="top"></Toast>
-
-            <View style={styles.dividerContainer}>
-              <View style={styles.divider} />
-              <Text style={styles.textDivider}>Hoặc</Text>
-              <View style={styles.divider} />
-            </View>
-
-            <TouchableOpacity
-              style={styles.socialButton}
-              onPress={() => {
-                googleSignIn().then(async (response: IGoogleLoginRes) => {
-                  console.log('GG AT:', response.data?.accessToken);
-                  console.log('GG RT:', response.data?.refreshToken);
-
-                  // Store user token
-                  await AsyncStorage.setItem(
-                    'accessToken',
-                    `${response.data?.accessToken}`,
-                  );
-                  await AsyncStorage.setItem(
-                    'refreshToken',
-                    `${response.data?.refreshToken}`,
-                  );
-
-                  validate().then(response => {
-                    console.log('User data:', response.userInfo);
-
-                    // Store user data
-                    let user: IUser = {
-                      _id: '',
-                      name: '',
-                      dob: '',
-                      email: '',
-                      phone: '',
-                      avatar: '',
-                    };
-
-                    // Store user info
-                    user._id = response.userInfo._id ?? '';
-                    user.name = response.userInfo.name ?? '';
-                    user.email = response.userInfo.email ?? '';
-                    user.phone = response.userInfo.phone ?? '';
-                    user.dob = dateFormat(response.userInfo.dob) ?? '';
-                    user.avatar =
-                      response.userInfo.avatar ??
-                      'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9';
-
-                    userStore.setUser(user);
-
-                    // Store user settings
-                    let settings: ISettings = {
-                      callNoti: true,
-                      msgNoti: true,
-                      stockNoti: true,
-                      newsNoti: true,
-                    };
-
-                    settings.callNoti =
-                      response.userInfo.setting.callNoti ?? true;
-                    settings.msgNoti =
-                      response.userInfo.setting.msgNoti ?? true;
-                    settings.stockNoti =
-                      response.userInfo.setting.stockNoti ?? true;
-                    settings.newsNoti =
-                      response.userInfo.setting.newsNoti ?? true;
-
-                    userStore.setUserSettings(settings);
-                    console.log('Call noti:', settings.callNoti);
-                  });
-
-                  // Show toast message and navigate to home screen if login successfully
-                  if (response.statusCode === 200) {
-                    Toast.show({
-                      type: 'success',
-                      text1: 'Đăng nhập thành công',
-                      autoHide: true,
-                      visibilityTime: 1000,
-                      topOffset: 30,
-                      bottomOffset: 40,
-                      onHide: () => {
-                        navigation.navigate(
-                          RouteNames.HOME_DRAWER as never,
-                          {} as never,
-                        );
-                      },
-                    });
-                  } else if (response.statusCode === 401) {
-                    Toast.show({
-                      type: 'error',
-                      text1: response.message,
-                      autoHide: false,
-                      topOffset: 30,
-                      bottomOffset: 40,
-                    });
-                  } else if (response.statusCode === 404) {
-                    Toast.show({
-                      type: 'error',
-                      text1: response.message,
-                      autoHide: false,
-                      topOffset: 30,
-                      bottomOffset: 40,
-                    });
-                  } else {
-                    Toast.show({
-                      type: 'error',
-                      text1: response.message,
-                      autoHide: false,
-                      topOffset: 30,
-                      bottomOffset: 40,
-                    });
-                  }
-                });
-              }}>
-              <Image
-                source={require('../../../../assets/google.png')}
-                style={{...styles.socialButton.image}}
-              />
-              <Text style={styles.text}>Tiếp tục với Google</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
-              <Image
-                source={require('../../../../assets/facebook.png')}
-                style={{...styles.socialButton.image}}
-              />
-              <Text style={styles.text}>Tiếp tục với Facebook</Text>
-            </TouchableOpacity>
-            <View style={styles.flexRow}>
-              <Text style={styles.textPrimary}>Đã có tài khoản?</Text>
               <TouchableOpacity
-                onPress={() => {
-                  console.log('Đăng nhập');
-                  navigation.navigate(RouteNames.LOGIN as never, {} as never);
-                }}>
-                <Text style={[styles.textPrimary, styles.loginPrimary]}>
-                  Đăng nhập
-                </Text>
+                onPress={handleSubmit}
+                disabled={!isValid}
+                style={[
+                  styles.button,
+                  {
+                    backgroundColor: isValid
+                      ? Colors.buttonBackground.orange
+                      : Colors.buttonBackground.lightorange,
+                  },
+                ]}>
+                <Text style={styles.textButton}>Đăng ký</Text>
               </TouchableOpacity>
+
+              <Toast position="top" />
+
+              <View style={styles.dividerContainer}>
+                <View style={styles.divider} />
+                <Text style={styles.textDivider}>Hoặc</Text>
+                <View style={styles.divider} />
+              </View>
+
+              <TouchableOpacity
+                style={styles.socialButton}
+                onPress={() => {
+                  googleSignIn().then(async (response: IGoogleLoginRes) => {
+                    console.log('GG AT:', response.data?.accessToken);
+                    console.log('GG RT:', response.data?.refreshToken);
+
+                    // Store user token
+                    await AsyncStorage.setItem(
+                      'accessToken',
+                      `${response.data?.accessToken}`,
+                    );
+                    await AsyncStorage.setItem(
+                      'refreshToken',
+                      `${response.data?.refreshToken}`,
+                    );
+
+                    validate().then(response => {
+                      console.log('User data:', response.userInfo);
+
+                      // Store user data
+                      let user: IUser = {
+                        _id: '',
+                        name: '',
+                        dob: '',
+                        email: '',
+                        phone: '',
+                        avatar: '',
+                      };
+
+                      // Store user info
+                      user._id = response.userInfo._id ?? '';
+                      user.name = response.userInfo.name ?? '';
+                      user.email = response.userInfo.email ?? '';
+                      user.phone = response.userInfo.phone ?? '';
+                      user.dob = dateFormat(response.userInfo.dob) ?? '';
+                      user.avatar =
+                        response.userInfo.avatar ??
+                        'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9';
+
+                      userStore.setUser(user);
+
+                      // Store user settings
+                      let settings: ISettings = {
+                        callNoti: true,
+                        msgNoti: true,
+                        stockNoti: true,
+                        newsNoti: true,
+                      };
+
+                      settings.callNoti =
+                        response.userInfo.setting.callNoti ?? true;
+                      settings.msgNoti =
+                        response.userInfo.setting.msgNoti ?? true;
+                      settings.stockNoti =
+                        response.userInfo.setting.stockNoti ?? true;
+                      settings.newsNoti =
+                        response.userInfo.setting.newsNoti ?? true;
+
+                      userStore.setUserSettings(settings);
+                      console.log('Call noti:', settings.callNoti);
+                    });
+
+                    // Show toast message and navigate to home screen if login successfully
+                    if (response.statusCode === 200) {
+                      Toast.show({
+                        type: 'success',
+                        text1: 'Đăng nhập thành công',
+                        autoHide: true,
+                        visibilityTime: 1000,
+                        topOffset: 30,
+                        bottomOffset: 40,
+                        onHide: () => {
+                          navigation.navigate(
+                            RouteNames.HOME_DRAWER as never,
+                            {} as never,
+                          );
+                        },
+                      });
+                    } else if (response.statusCode === 401) {
+                      Toast.show({
+                        type: 'error',
+                        text1: response.message,
+                        autoHide: false,
+                        topOffset: 30,
+                        bottomOffset: 40,
+                      });
+                    } else if (response.statusCode === 404) {
+                      Toast.show({
+                        type: 'error',
+                        text1: response.message,
+                        autoHide: false,
+                        topOffset: 30,
+                        bottomOffset: 40,
+                      });
+                    } else {
+                      Toast.show({
+                        type: 'error',
+                        text1: response.message,
+                        autoHide: false,
+                        topOffset: 30,
+                        bottomOffset: 40,
+                      });
+                    }
+                  });
+                }}>
+                <Image
+                  source={require('../../../../assets/google.png')}
+                  style={{...styles.socialButton.image}}
+                />
+                <Text style={styles.text}>Tiếp tục với Google</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.socialButton}>
+                <Image
+                  source={require('../../../../assets/facebook.png')}
+                  style={{...styles.socialButton.image}}
+                />
+                <Text style={styles.text}>Tiếp tục với Facebook</Text>
+              </TouchableOpacity>
+              <View style={styles.flexRow}>
+                <Text style={styles.textPrimary}>Đã có tài khoản?</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    console.log('Đăng nhập');
+                    navigation.navigate(RouteNames.LOGIN, {});
+                  }}>
+                  <Text style={[styles.textPrimary, styles.loginPrimary]}>
+                    Đăng nhập
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        )}
-      </Formik>
+          )}
+        </Formik>
+      </View>
     </ScrollView>
   );
 }

@@ -108,8 +108,8 @@ const GroupInfoScreen = ({navigation}: {navigation: any}) => {
             {
               backgroundColor:
                 activeTab === 'currentPackage'
-                  ? Colors.primary
-                  : Colors.background,
+                  ? Colors.buttonBackground.orange
+                  : Colors.buttonBackground.white,
             },
           ]}
           onPress={() => {
@@ -121,8 +121,8 @@ const GroupInfoScreen = ({navigation}: {navigation: any}) => {
               {
                 color:
                   activeTab === 'currentPackage'
-                    ? Colors.background
-                    : Colors.primary,
+                    ? Colors.text.white
+                    : Colors.text.orange,
               },
             ]}>
             Gói hiện tại
@@ -134,8 +134,8 @@ const GroupInfoScreen = ({navigation}: {navigation: any}) => {
             {
               backgroundColor:
                 activeTab === 'otherPackages'
-                  ? Colors.primary
-                  : Colors.background,
+                  ? Colors.buttonBackground.orange
+                  : Colors.buttonBackground.white,
             },
           ]}
           onPress={() => {
@@ -147,8 +147,8 @@ const GroupInfoScreen = ({navigation}: {navigation: any}) => {
               {
                 color:
                   activeTab === 'otherPackages'
-                    ? Colors.background
-                    : Colors.primary,
+                    ? Colors.text.white
+                    : Colors.text.orange,
               },
             ]}>
             Các gói khác

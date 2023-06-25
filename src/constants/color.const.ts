@@ -20,41 +20,50 @@ const tintColorDark = '#fff';
 // };
 
 export const Colors = {
-  // screenBackground: '#FFFFFF',
-  // purpleBackground: '#9B3B73',
-  // itemBackground: '#fef1e0',
+  background: {
+    white: '#FFFFFF',
+    orange: '#F58F00',
+    lightorange: '#F4B051',
+  },
 
-  // title: '#9B3B73',
-  // textWhite: '#FFFFFF',
-  // lightOrange: '#F3BC86',
-  // textPrimary: '#9B3B73',
-  // textSecondary: '#F58F00',
-  // textTeritary: '#BCB0A1',
+  title: {
+    orange: '#F58F00',
+  },
 
-  // buttonPrimary: '#9B3B73',
-  // buttonSecondary: '#F58F00',
+  text: {
+    grey: '#49454F',
+    lightgrey: '#A8A8A8',
+    white: '#FFFFFF',
+    orange: '#F58F00',
+    red: '#DD382F',
+  },
 
-  // bottomTabBackground: '#782B57',
-  // bottomTabInactiveIcon: '#A47490',
-  // bottomTabActiveIcon: '#FFFFFF',
+  icon: {
+    orange: '#F58F00',
+    lightgrey: '#A8A8A8',
+  },
 
-  // screenBackground: '#FFFFFF',
-  background: '#ffffff',
-  purpleBackground: '#9B3B73',
-  itemBackground: '#ffffff',
+  border: {
+    orange: '#F58F00',
+    lightgrey: '#A8A8A8',
+  },
 
-  title: '#9B3B73',
-  textWhite: '#FFFFFF',
-  lightOrange: '#F3BC86',
   textPrimary: '#49454F',
-  text: '#49454F',
   textSecondary: '#F58F00',
   textTeritary: '#BCB0A1',
 
-  buttonPrimary: '#F58F00',
-  buttonSecondary: '#F58F00',
+  buttonText: {
+    white: '#FFFFFF',
+    orange: '#F58F00',
+  },
 
-  bottomTabBackground: '#ffffff',
+  buttonBackground: {
+    white: '#FFFFFF',
+    orange: '#F58F00',
+    lightorange: '#F4B051',
+  },
+
+  bottomTabBackground: '#FFFFFF',
   bottomTabInactiveIcon: '#A8A8A8',
   bottomTabActiveIcon: '#F58F00',
 

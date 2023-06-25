@@ -22,13 +22,13 @@ const styles = StyleSheet.create({
     width: '90%',
     textAlign: 'left',
     fontSize: 18,
-    color: Colors.primary,
+    color: Colors.title.orange,
     fontWeight: 'bold',
     paddingVertical: 10,
   },
   productItemContainer: {
     width: '90%',
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.background.white,
     borderRadius: 10,
     display: 'flex',
     flexDirection: 'row',
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-    color: Colors.text,
+    color: Colors.text.grey,
     textAlign: 'justify',
   },
   modal: {
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     fontWeight: 'bold',
-    color: Colors.primary,
+    color: Colors.title.orange,
   },
   modalOptionsContainer: {
     width: '100%',
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: Colors.primary,
+    borderColor: Colors.border.orange,
   },
   centerText: {
     flex: 1,
@@ -125,9 +125,9 @@ const styles = StyleSheet.create({
   },
   barcodeTextURL: {
     fontSize: 20,
-    color: 'white',
+    color: Colors.text.grey,
     fontWeight: 'bold',
-    backgroundColor: 'red',
+    // backgroundColor: 'red',
   },
 });
 

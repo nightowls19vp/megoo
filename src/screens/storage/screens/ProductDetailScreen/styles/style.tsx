@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     width: '90%',
     textAlign: 'left',
     fontSize: 18,
-    color: Colors.primary,
+    color: Colors.title.orange,
     fontWeight: 'bold',
     paddingVertical: 10,
   },
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     padding: 10,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.background.white,
     borderRadius: 10,
   },
   locationImg: {
@@ -53,12 +53,12 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: fontScale * 14,
-    color: Colors.text,
+    color: Colors.text.grey,
     textAlign: 'justify',
   },
   infoText: {
     fontSize: fontScale * 14,
-    color: Colors.secondary,
+    color: Colors.text.lightgrey,
     textAlign: 'justify',
   },
 });

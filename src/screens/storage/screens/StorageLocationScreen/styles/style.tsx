@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   loginText: {
     fontSize: 16,
     textAlign: 'center',
-    color: Colors.text,
+    color: Colors.text.grey,
   },
   container: {
     width: width,
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     // gap: 10,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.background.white,
     borderRadius: 10,
   },
   locationImg: {
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-    color: Colors.text,
+    color: Colors.text.grey,
     textAlign: 'justify',
   },
   infoText: {

@@ -2,7 +2,6 @@ import {useEffect, useState, useCallback} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 
 import RouteNames from '../../../../constants/route-names.const';
-import {Colors} from '../../../../constants/color.const';
 import {getUserGroup} from '../../../../services/group.service';
 import styles from './styles/style';
 import {useFocusEffect} from '@react-navigation/native';

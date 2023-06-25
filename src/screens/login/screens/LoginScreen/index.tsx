@@ -7,7 +7,7 @@ import {Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
-
+import notifee from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
@@ -30,6 +30,7 @@ import {
   validate,
 } from './services/login.service';
 import styles from './styles/styles';
+import {io} from 'socket.io-client';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -146,7 +147,63 @@ export default function LoginScreen({navigation}: {navigation: any}) {
 
           userStore.setUser(user);
 
-          // connectSocket(user._id);
+          // Connect socket
+          const token = user._id;
+          console.log('socket token:', token);
+
+          // Connect socket on port 3001, change to ngrok link if can't connect by localhost
+          const URL = 'https://eb85-14-186-154-98.ngrok-free.app';
+          const socket1 = io(URL, {
+            autoConnect: false,
+            query: {token},
+          });
+
+          socket1.connect();
+
+          // Listen for socket events
+          socket1.on('connect', () => {
+            console.log('Connected to server');
+            console.log('socket id:', socket1.id);
+          });
+
+          socket1.emit('receive-message', token);
+          console.log('emit successfully');
+
+          socket1.on('send-message', data => {
+            console.log('socket id:', socket1.id);
+            console.log('send-message data:', data);
+          });
+
+          socket1.on('zpCallback', async data => {
+            console.log('type zpCallback data:', data);
+            //{"app_id":2553,"app_trans_id":"230622_164636725","app_time":1687427196852,"app_user":"64940af1536c05ee69e5361a","amount":150000,"embed_data":"{\"redirecturl\":\"https://www.youtube.com/watch?v=q8AzTS4Yq3I\u0026ab_channel=Quy%C3%AAnLouis\"}","item":"[{\"id\":\"6494016fc50761022fe09041\",\"name\":\"Experience Package\",\"price\":150000,\"quantity\":1,\"duration\":1,\"noOfMember\":6}]","zp_trans_id":230622000003245,"server_time":1687427252734,"channel":36,"merchant_user_id":"","zp_user_id":"","user_fee_amount":0,"discount_amount":0}
+            //convert line above to object
+            const dataObj = JSON.parse(data);
+            console.log('dataObj app trans id:', dataObj.app_trans_id);
+
+            // Request permissions (required for iOS)
+            // await notifee.requestPermission();
+
+            // Create a channel (required for Android)
+            const channelId = await notifee.createChannel({
+              id: 'default',
+              name: 'Default Channel',
+            });
+
+            // Display a notification
+            await notifee.displayNotification({
+              title: 'Thanh toán',
+              body: `Đơn hàng ${dataObj.app_trans_id} của bạn đã thanh toán thành công. Nhóm của bạn đã được tạo.`,
+              android: {
+                channelId,
+                // smallIcon: 'name-of-a-small-icon', // optional, defaults to 'ic_launcher'.
+                // pressAction is needed if you want the notification to open the app when pressed
+                pressAction: {
+                  id: 'default',
+                },
+              },
+            });
+          });
 
           // Connect user to SendBird server
           console.log('before connect to sendbird');
@@ -223,9 +280,9 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             <TextInput
               onChangeText={value => setFieldValue('email', value)}
               onBlur={() => setFieldTouched('email')}
-              style={{flex: 1, color: Colors.text}}
+              style={styles.inputText}
               placeholder={'Email'}
-              placeholderTextColor={Colors.secondary}
+              placeholderTextColor={Colors.border.lightgrey}
               value={values.email}
             />
 
@@ -246,8 +303,8 @@ export default function LoginScreen({navigation}: {navigation: any}) {
               onBlur={() => setFieldTouched('password')}
               secureTextEntry={hidePassword}
               placeholder={'Mật khẩu'}
-              style={{flex: 1, color: Colors.text}}
-              placeholderTextColor={Colors.secondary}
+              style={styles.inputText}
+              placeholderTextColor={Colors.border.lightgrey}
               value={values.password}
             />
             {values.password && (
@@ -280,7 +337,9 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             style={[
               styles.button,
               {
-                backgroundColor: isValid ? Colors.primary : Colors.disabled,
+                backgroundColor: isValid
+                  ? Colors.buttonBackground.orange
+                  : Colors.buttonBackground.lightorange,
               },
             ]}>
             <Text style={styles.buttonText}>Đăng nhập</Text>
@@ -355,6 +414,64 @@ export default function LoginScreen({navigation}: {navigation: any}) {
 
                   userStore.setUserSettings(settings);
                   console.log('Call noti:', settings.callNoti);
+
+                  // Connect socket
+                  const token = user._id;
+                  console.log('socket token:', token);
+
+                  // Connect socket on port 3001, change to ngrok link if can't connect by localhost
+                  const URL = 'https://eb85-14-186-154-98.ngrok-free.app';
+                  const socket1 = io(URL, {
+                    autoConnect: false,
+                    query: {token},
+                  });
+
+                  socket1.connect();
+
+                  // Listen for socket events
+                  socket1.on('connect', () => {
+                    console.log('Connected to server');
+                    console.log('socket id:', socket1.id);
+                  });
+
+                  socket1.emit('receive-message', token);
+                  console.log('emit successfully');
+
+                  socket1.on('send-message', data => {
+                    console.log('socket id:', socket1.id);
+                    console.log('send-message data:', data);
+                  });
+
+                  socket1.on('zpCallback', async data => {
+                    console.log('type zpCallback data:', data);
+                    //{"app_id":2553,"app_trans_id":"230622_164636725","app_time":1687427196852,"app_user":"64940af1536c05ee69e5361a","amount":150000,"embed_data":"{\"redirecturl\":\"https://www.youtube.com/watch?v=q8AzTS4Yq3I\u0026ab_channel=Quy%C3%AAnLouis\"}","item":"[{\"id\":\"6494016fc50761022fe09041\",\"name\":\"Experience Package\",\"price\":150000,\"quantity\":1,\"duration\":1,\"noOfMember\":6}]","zp_trans_id":230622000003245,"server_time":1687427252734,"channel":36,"merchant_user_id":"","zp_user_id":"","user_fee_amount":0,"discount_amount":0}
+                    //convert line above to object
+                    const dataObj = JSON.parse(data);
+                    console.log('dataObj app trans id:', dataObj.app_trans_id);
+
+                    // Request permissions (required for iOS)
+                    // await notifee.requestPermission();
+
+                    // Create a channel (required for Android)
+                    const channelId = await notifee.createChannel({
+                      id: 'default',
+                      name: 'Default Channel',
+                    });
+
+                    // Display a notification
+                    await notifee.displayNotification({
+                      title: 'Thanh toán',
+                      body: `Đơn hàng ${dataObj.app_trans_id} của bạn đã thanh toán thành công. Nhóm của bạn đã được tạo.`,
+                      android: {
+                        channelId,
+                        // smallIcon: 'name-of-a-small-icon', // optional, defaults to 'ic_launcher'.
+                        // pressAction is needed if you want the notification to open the app when pressed
+                        pressAction: {
+                          id: 'default',
+                        },
+                      },
+                    });
+                  });
 
                   // Connect user to SendBird server
                   const userSendBird =

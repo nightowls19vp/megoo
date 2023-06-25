@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
   cartItemContainer: {
     width: '90%',
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.background.white,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-    color: Colors.text,
+    color: Colors.text.grey,
   },
   paymentButtonContainer: {
     width: '100%',
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: 'white',
+    backgroundColor: Colors.buttonBackground.white,
     // paddingHorizontal: 20,
     position: 'absolute',
     bottom: 0,
@@ -66,13 +66,13 @@ const styles = StyleSheet.create({
     width: '50%',
     fontSize: 16,
     fontWeight: 'bold',
-    color: Colors.text,
+    color: Colors.text.grey,
     textAlign: 'center',
   },
   paymentText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: Colors.background,
+    color: Colors.text.white,
   },
   paymentButton: {
     display: 'flex',
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '40%',
     height: '100%',
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.buttonBackground.orange,
   },
 });
 

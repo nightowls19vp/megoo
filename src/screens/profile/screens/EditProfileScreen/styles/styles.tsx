@@ -3,8 +3,7 @@ import {Colors} from '../../../../../constants/color.const';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background,
-    // flex: 1,
+    backgroundColor: Colors.background.white,
     display: 'flex',
     alignItems: 'center',
     paddingTop: 10,
@@ -13,7 +12,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: 'bold',
-    color: Colors.primary,
+    color: Colors.title.orange,
   },
 
   button: {
@@ -30,13 +29,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   buttonText: {
-    color: 'white',
+    color: Colors.buttonText.white,
     fontSize: 20,
     fontWeight: 'bold',
   },
   text: {
     fontSize: 16,
-    color: Colors.text,
+    color: Colors.text.grey,
   },
   inputContainer: {
     width: '90%',
@@ -46,15 +45,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginTop: 15,
     marginBottom: 5,
-    borderColor: Colors.secondary,
+    borderColor: Colors.border.lightgrey,
     borderWidth: 1,
     borderRadius: 10,
   },
   inputIcon: {
     fontWeight: '200',
-    color: Colors.secondary,
+    color: Colors.icon.lightgrey,
     fontSize: 20,
   },
+  inputText: {flex: 1, color: Colors.text.grey},
   error: {
     width: '80%',
     color: Colors.error,

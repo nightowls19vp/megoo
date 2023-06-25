@@ -462,14 +462,13 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                         width: '90%',
                         display: 'flex',
                         alignItems: 'center',
-                        backgroundColor: '#fff',
+                        backgroundColor: Colors.background.white,
                         padding: 10,
                         borderRadius: 5,
                       }}>
                       <TouchableOpacity
                         style={{
                           width: '100%',
-                          // backgroundColor: 'pink',
                         }}
                         onPress={() => {
                           setModalVisible(false);
@@ -477,7 +476,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                         <Ionicons
                           name="close"
                           size={22}
-                          color={Colors.text}
+                          color={Colors.text.grey}
                           style={{
                             width: '100%',
                             textAlign: 'right',
@@ -490,7 +489,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                           width: '80%',
                           textAlign: 'justify',
                           fontSize: 18,
-                          color: Colors.text,
+                          color: Colors.text.grey,
                         }}>
                         Vui lòng đăng nhập/đăng ký để sử dụng chức năng này.
                       </Text>
@@ -504,7 +503,6 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                           justifyContent: 'space-between',
                           marginTop: 20,
                           marginBottom: 10,
-                          // backgroundColor: 'pink',
                         }}>
                         {/* <TouchableOpacity
                             style={{

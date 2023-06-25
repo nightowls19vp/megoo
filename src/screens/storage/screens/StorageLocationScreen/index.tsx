@@ -127,7 +127,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
               width: '90%',
               display: 'flex',
               alignItems: 'center',
-              backgroundColor: '#fff',
+              backgroundColor: Colors.background.white,
               padding: 20,
               borderRadius: 5,
             }}>
@@ -148,7 +148,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                   textAlign: 'center',
                   fontSize: 18,
                   fontWeight: 'bold',
-                  color: Colors.primary,
+                  color: Colors.icon.orange,
                 }}>
                 Thêm nơi lưu trữ
               </Text>
@@ -162,7 +162,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                 <Icon
                   name="close"
                   size={22}
-                  color={Colors.primary}
+                  color={Colors.icon.orange}
                   style={{
                     width: '100%',
                     textAlign: 'right',
@@ -212,7 +212,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                       flexDirection: 'row',
                       alignItems: 'center',
                       paddingHorizontal: 15,
-                      borderColor: Colors.secondary,
+                      borderColor: Colors.border.lightgrey,
                       borderWidth: 1,
                       borderRadius: 10,
                     }}>
@@ -222,9 +222,9 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                       }}
                       // onSubmitEditing={handleSubmit}
                       onBlur={() => setFieldTouched('location')}
-                      style={{flex: 1, color: Colors.text}}
+                      style={{flex: 1, color: Colors.text.grey}}
                       placeholder={'Vị trí lưu trữ'}
-                      placeholderTextColor={Colors.secondary}
+                      placeholderTextColor={Colors.border.lightgrey}
                       value={values.location}
                     />
 
@@ -234,7 +234,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                         name={'close'}
                         style={{
                           fontWeight: '200',
-                          color: Colors.secondary,
+                          color: Colors.icon.lightgrey,
                           fontSize: 20,
                         }}></Icon>
                     )}
@@ -248,7 +248,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                       flexDirection: 'row',
                       alignItems: 'center',
                       paddingHorizontal: 15,
-                      borderColor: Colors.secondary,
+                      borderColor: Colors.border.lightgrey,
                       borderWidth: 1,
                       borderRadius: 10,
                     }}>
@@ -258,7 +258,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                       }}
                       // onSubmitEditing={handleSubmit}
                       onBlur={() => setFieldTouched('description')}
-                      style={{flex: 1, color: Colors.text}}
+                      style={{flex: 1, color: Colors.text.grey}}
                       placeholder={'Ghi chú'}
                       placeholderTextColor={Colors.secondary}
                       value={values.description}
@@ -270,7 +270,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                         name={'close'}
                         style={{
                           fontWeight: '200',
-                          color: Colors.secondary,
+                          color: Colors.icon.lightgrey,
                           fontSize: 20,
                         }}></Icon>
                     )}
@@ -283,13 +283,13 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      backgroundColor: Colors.primary,
+                      backgroundColor: Colors.buttonBackground.orange,
                       borderRadius: 10,
                     }}
                     onPress={handleSubmit}>
                     <Text
                       style={{
-                        color: Colors.background,
+                        color: Colors.text.white,
                         fontSize: 16,
                         fontWeight: 'bold',
                       }}>

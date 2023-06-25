@@ -2,7 +2,6 @@ import {Dimensions, StyleSheet} from 'react-native';
 import {Colors} from '../../../../../constants/color.const';
 
 const width = Dimensions.get('window').width;
-const fontScale = Dimensions.get('window').fontScale;
 
 const styles = StyleSheet.create({
   loginContainer: {
@@ -20,7 +19,7 @@ const styles = StyleSheet.create({
   loginText: {
     fontSize: 18,
     textAlign: 'center',
-    color: Colors.text,
+    color: Colors.text.grey,
   },
   container: {
     display: 'flex',

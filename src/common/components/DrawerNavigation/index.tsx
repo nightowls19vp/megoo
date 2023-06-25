@@ -108,7 +108,7 @@ const ChatScreen = () => {
 const DrawerNavigation = ({navigation}: {navigation: any}) => {
   return (
     <Drawer.Navigator
-      initialRouteName={RouteNames.HOME_TAB}
+      initialRouteName={RouteNames.HOME_STACK_DRAWER}
       drawerContent={props => <CustomDrawerContent {...props} />}
       backBehavior="none"
       screenOptions={{
@@ -154,9 +154,9 @@ const DrawerNavigation = ({navigation}: {navigation: any}) => {
           drawerLabel: 'Trang chủ',
           drawerIcon: ({color}) => <Icon name="home" size={20} color={color} />,
         }}
-        name={RouteNames.HOME_TAB}
+        name={RouteNames.HOME_STACK_DRAWER}
         component={BottomNavigationBar}
-        initialParams={{screen: RouteNames.HOME_TAB}}
+        initialParams={{screen: RouteNames.HOME_STACK_BOTTOM}}
       />
       <Drawer.Screen
         options={{

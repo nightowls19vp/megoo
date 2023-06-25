@@ -1,7 +1,6 @@
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import {io, Socket} from 'socket.io-client';
-
 import notifee from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -191,7 +190,7 @@ export const checkLogin = async () => {
         console.log('socket token:', token);
 
         // Connect socket on port 3001, change to ngrok link if can't connect by localhost
-        const URL = 'https://12d5-14-186-154-98.ngrok-free.app';
+        const URL = 'https://eb85-14-186-154-98.ngrok-free.app';
         const socket1 = io(URL, {
           autoConnect: false,
           query: {token},

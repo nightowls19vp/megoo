@@ -53,11 +53,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   text: {
-    color: Colors.text,
+    color: Colors.text.grey,
     fontSize: 14,
   },
   infoText: {
-    color: Colors.secondary,
+    color: Colors.text.lightgrey,
     fontSize: 14,
   },
   socialContainer: {
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   connectText: {
-    color: Colors.text,
+    color: Colors.text.grey,
     fontSize: 14,
     fontWeight: 'bold',
   },

@@ -1,3 +1,6 @@
+import {Formik} from 'formik';
+import {observer} from 'mobx-react';
+import moment from 'moment';
 import React, {useState} from 'react';
 import {
   Image,
@@ -7,23 +10,19 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-import {Formik} from 'formik';
-import * as Yup from 'yup';
 import DatePicker from 'react-native-date-picker';
-import moment from 'moment';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
-import {observer} from 'mobx-react';
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as Yup from 'yup';
 
-import styles from './styles/styles';
-import RouteNames from '../../../../constants/route-names.const';
-import {Colors} from '../../../../constants/color.const';
-import userStore from '../../../../common/store/user.store';
-import {changeAvatar, editInfo} from './services/edit.info.service';
-import {IEditInfoRes} from './interfaces/edit.info.interface';
 import {dateFormat, dateISOFormat} from '../../../../common/handle.string';
+import userStore from '../../../../common/store/user.store';
+import {Colors} from '../../../../constants/color.const';
+import RouteNames from '../../../../constants/route-names.const';
+import {IEditInfoRes} from './interfaces/edit.info.interface';
+import {changeAvatar, editInfo} from './services/edit.info.service';
+import styles from './styles/styles';
 
 const ProfileSchema = Yup.object().shape({
   name: Yup.string().required('Vui lòng nhập họ tên'),
@@ -312,7 +311,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
                   },
                 );
               }}>
-              <Icon name="camera" size={40} color={Colors.text} />
+              <Icon name="camera" size={40} color={Colors.text.grey} />
             </TouchableOpacity>
           </View>
 
@@ -320,9 +319,9 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
             <TextInput
               onChangeText={value => setFieldValue('name', value)}
               onBlur={() => setFieldTouched('name')}
-              style={{flex: 1, color: Colors.text}}
+              style={styles.inputText}
               placeholder={'Họ và tên'}
-              placeholderTextColor={Colors.secondary}
+              placeholderTextColor={Colors.text.lightgrey}
               value={values.name}
             />
 
@@ -341,9 +340,9 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
             <TextInput
               onChangeText={value => setFieldValue('phone', value)}
               onBlur={() => setFieldTouched('phone')}
-              style={{flex: 1, color: Colors.text}}
+              style={styles.inputText}
               placeholder={'Số điện thoại'}
-              placeholderTextColor={Colors.secondary}
+              placeholderTextColor={Colors.text.lightgrey}
               keyboardType="phone-pad"
               value={values.phone}
             />
@@ -363,9 +362,9 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
             <TextInput
               editable={false}
               onBlur={() => setFieldTouched('dob')}
-              style={{flex: 1, color: Colors.text}}
+              style={styles.inputText}
               placeholder={'Ngày sinh'}
-              placeholderTextColor={Colors.secondary}
+              placeholderTextColor={Colors.text.lightgrey}
               value={values.dob}
             />
 
@@ -413,13 +412,15 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
             style={[
               styles.button,
               {
-                backgroundColor: isValid ? Colors.primary : Colors.disabled,
+                backgroundColor: isValid
+                  ? Colors.buttonBackground.orange
+                  : Colors.buttonBackground.lightorange,
               },
             ]}>
             <Text style={styles.buttonText}>Lưu thông tin</Text>
           </TouchableOpacity>
 
-          <Toast position="top"></Toast>
+          <Toast position="top" />
         </ScrollView>
       )}
     </Formik>
