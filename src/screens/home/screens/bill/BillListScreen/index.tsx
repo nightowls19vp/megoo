@@ -10,11 +10,18 @@ import {Colors} from '../../../../../constants/color.const';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const BillScreen = () => {
+const BillListScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Hóa đơn</Text>
+        <Text style={styles.title}>Danh sách phân chia chi tiêu</Text>
+        <TouchableOpacity>
+          <Ionicons
+            name="add-circle-outline"
+            size={24}
+            color={Colors.icon.orange}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -46,4 +53,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BillScreen;
+export default BillListScreen;

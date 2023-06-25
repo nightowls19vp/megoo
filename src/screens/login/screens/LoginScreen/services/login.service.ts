@@ -92,7 +92,7 @@ export const googleSignIn = async () => {
     await GoogleSignin.hasPlayServices();
 
     // Get user info (email, name, avatar)
-    const userInfo = await GoogleSignin.signIn();
+    await GoogleSignin.signIn();
     const {accessToken} = await GoogleSignin.getTokens();
     console.log('GG AT:', accessToken);
 

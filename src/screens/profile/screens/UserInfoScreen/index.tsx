@@ -1,7 +1,7 @@
 import {useState} from 'react';
-import {Dimensions, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
-import {RouteProp, useRoute, useFocusEffect} from '@react-navigation/native';
+import {RouteProp, useRoute} from '@react-navigation/native';
 
 import styles from './styles/style';
 import {Colors} from '../../../../constants/color.const';
@@ -26,8 +26,6 @@ const UserInfoScreen = ({navigation}: {navigation: any}) => {
   const [activeTab, setActiveTab] = useState(
     route.params?.activeTab === 'group' ? 'group' : 'info',
   );
-
-  const tab = route.params?.activeTab;
 
   const renderTabContent = () => {
     if (activeTab === 'group') {

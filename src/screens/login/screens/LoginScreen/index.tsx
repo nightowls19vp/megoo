@@ -1,5 +1,4 @@
 import {Formik} from 'formik';
-import moment from 'moment';
 import React, {useEffect} from 'react';
 import {Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
 // import Provider from '@ant-design/react-native/lib/provider';
@@ -11,12 +10,9 @@ import notifee from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
-import {connectSocket} from '../../../../common/auth';
 import {dateFormat} from '../../../../common/handle.string';
-import {IAuthData} from '../../../../common/interfaces/data.interface';
 import {ISettings} from '../../../../common/interfaces/settings.interface';
 import {IUser} from '../../../../common/interfaces/user.interface';
-import {IValidateRes} from '../../../../common/interfaces/validate.interface';
 import appStore from '../../../../common/store/app.store';
 import userStore from '../../../../common/store/user.store';
 import {Colors} from '../../../../constants/color.const';
@@ -41,11 +37,6 @@ const LoginSchema = Yup.object().shape({
 
 export default function LoginScreen({navigation}: {navigation: any}) {
   const [hidePassword, setHidePassword] = React.useState(true);
-  const [isModalVisible, setIsModalVisible] = React.useState(true);
-
-  const onClose = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    console.log(e, 'I was closed.');
-  };
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -269,9 +260,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
         touched,
         setFieldTouched,
         setFieldValue,
-        setErrors,
         isValid,
-        handleChange,
         handleSubmit,
       }) => (
         <View style={styles.container}>

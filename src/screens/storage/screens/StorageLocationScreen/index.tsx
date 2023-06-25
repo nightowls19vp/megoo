@@ -106,7 +106,11 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
         }}>
         <Text style={styles.title}>Nơi lưu trữ</Text>
         <TouchableOpacity onPress={() => setAddLocModalVisible(true)}>
-          <Icon name="add-circle-outline" size={24} color={Colors.primary} />
+          <Icon
+            name="add-circle-outline"
+            size={24}
+            color={Colors.icon.orange}
+          />
         </TouchableOpacity>
       </View>
 

@@ -15,7 +15,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
         <View style={styles.utilitiesContent}>
           <TouchableOpacity
             style={styles.utility}
-            onPress={() => navigation.navigate(RouteNames.BILL, {})}>
+            onPress={() => navigation.navigate(RouteNames.BILL_STACK, {})}>
             <Text style={styles.utilityText}>Quản lý chi tiêu</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.utility}>

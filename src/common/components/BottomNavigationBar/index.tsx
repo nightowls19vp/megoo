@@ -34,6 +34,7 @@ import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScree
 import ChatScreen from '../../../screens/chat/screens/ChatScreen';
 import GroupChatsScreen from '../../../screens/chat/screens/GroupChatsScreen';
 import HomeScreen from '../../../screens/home';
+import BillListScreen from '../../../screens/home/screens/bill/BillListScreen';
 import BillScreen from '../../../screens/home/screens/bill/BillScreen';
 
 const ChatStack = createNativeStackNavigator();
@@ -42,16 +43,34 @@ const ChatScreenStack = () => {
     <ChatStack.Navigator
       initialRouteName={RouteNames.GROUP_CHATS}
       screenOptions={{headerShown: false}}>
-      <ChatStack.Screen
-        name={RouteNames.CHAT}
-        component={ChatScreen}
-        options={{}}
-      />
+      <ChatStack.Screen name={RouteNames.CHAT} component={ChatScreen} />
       <ChatStack.Screen
         name={RouteNames.GROUP_CHATS}
         component={GroupChatsScreen}
       />
     </ChatStack.Navigator>
+  );
+};
+
+const BillStack = createNativeStackNavigator();
+const BillScreenStack = () => {
+  return (
+    <BillStack.Navigator
+      initialRouteName={RouteNames.BILL_MANAGEMENT}
+      screenOptions={{headerShown: false}}>
+      <BillStack.Screen
+        name={RouteNames.CHAT_STACK}
+        component={ChatScreenStack}
+        options={{
+          title: 'Nhóm chat',
+        }}
+      />
+      <BillStack.Screen
+        name={RouteNames.BILL_MANAGEMENT}
+        component={BillListScreen}
+      />
+      <BillStack.Screen name={RouteNames.BILL} component={BillScreen} />
+    </BillStack.Navigator>
   );
 };
 
@@ -67,7 +86,13 @@ const HomeScreenStack = () => {
         }}
       />
       <HomeStack.Screen name={RouteNames.HOME} component={HomeScreen} />
-      <HomeStack.Screen name={RouteNames.BILL} component={BillScreen} />
+      <HomeStack.Screen
+        name={RouteNames.BILL_STACK}
+        component={BillScreenStack}
+        options={{
+          title: 'Quản lý chi tiêu',
+        }}
+      />
     </HomeStack.Navigator>
   );
 };
@@ -253,6 +278,7 @@ export default function BottomNavigationBar() {
       <Tab.Screen
         name={RouteNames.HOME_STACK_BOTTOM}
         component={HomeScreenStack}
+        initialParams={{screen: RouteNames.HOME}}
         options={{
           unmountOnBlur: true,
           title: 'Trang chủ',
