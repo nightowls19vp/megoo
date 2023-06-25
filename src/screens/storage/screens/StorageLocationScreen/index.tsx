@@ -1,25 +1,21 @@
-import {useState, useEffect} from 'react';
-
+import {Formik} from 'formik';
+import {observer} from 'mobx-react';
+import {useEffect, useState} from 'react';
 import {
   Image,
-  Text,
-  View,
-  TouchableOpacity,
-  ScrollView,
   Modal,
+  ScrollView,
+  Text,
   TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
 import Icon from 'react-native-vector-icons/Ionicons';
-import QRCodeScanner from 'react-native-qrcode-scanner';
-import {RNCamera} from 'react-native-camera';
 
-import styles from './styles/style';
+import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
-import appStore from '../../../../common/store/app.store';
-import {observer} from 'mobx-react';
+import styles from './styles/style';
 
 const StorageLocationScreen = ({navigation}: {navigation: any}) => {
   const [addLocModalVisible, setAddLocModalVisible] = useState(false);

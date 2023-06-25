@@ -2,8 +2,6 @@ import {Dimensions, StyleSheet} from 'react-native';
 import {Colors} from '../../../../../constants/color.const';
 
 const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
-const fontScale = Dimensions.get('window').fontScale;
 
 const styles = StyleSheet.create({
   container: {
@@ -52,12 +50,12 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   text: {
-    fontSize: fontScale * 14,
+    fontSize: 14,
     color: Colors.text.grey,
     textAlign: 'justify',
   },
   infoText: {
-    fontSize: fontScale * 14,
+    fontSize: 14,
     color: Colors.text.lightgrey,
     textAlign: 'justify',
   },

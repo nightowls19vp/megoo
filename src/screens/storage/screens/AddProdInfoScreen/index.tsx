@@ -78,7 +78,7 @@ const AddProdInfoScreen = () => {
                 },
               );
             }}>
-            <Icon name="camera" size={40} color={Colors.text} />
+            <Icon name="camera" size={40} color={Colors.icon.lightgrey} />
           </TouchableOpacity>
         </View>
 
@@ -129,9 +129,9 @@ const AddProdInfoScreen = () => {
                   }}
                   // onSubmitEditing={handleSubmit}
                   onBlur={() => setFieldTouched('prodName')}
-                  style={{flex: 1, color: Colors.text}}
+                  style={{flex: 1, color: Colors.text.grey}}
                   placeholder={'Tên sản phẩm'}
-                  placeholderTextColor={Colors.secondary}
+                  placeholderTextColor={Colors.text.lightgrey}
                   value={values.prodName}
                 />
 
@@ -151,9 +151,9 @@ const AddProdInfoScreen = () => {
                   }}
                   // onSubmitEditing={handleSubmit}
                   onBlur={() => setFieldTouched('category')}
-                  style={{flex: 1, color: Colors.text}}
+                  style={{flex: 1, color: Colors.text.grey}}
                   placeholder={'Loại sản phẩm'}
-                  placeholderTextColor={Colors.secondary}
+                  placeholderTextColor={Colors.text.lightgrey}
                   value={values.category}
                 />
 
@@ -169,9 +169,9 @@ const AddProdInfoScreen = () => {
               <View style={styles.infoInput}>
                 <TextInput
                   editable={false}
-                  style={{flex: 1, color: Colors.text}}
+                  style={{flex: 1, color: Colors.text.grey}}
                   placeholder={'Hạn sử dụng'}
-                  placeholderTextColor={Colors.secondary}
+                  placeholderTextColor={Colors.text.lightgrey}
                   value={values.exp}
                 />
 
@@ -219,9 +219,9 @@ const AddProdInfoScreen = () => {
                   }}
                   // onSubmitEditing={handleSubmit}
                   onBlur={() => setFieldTouched('description')}
-                  style={{flex: 1, color: Colors.text}}
+                  style={{flex: 1, color: Colors.text.grey}}
                   placeholder={'Ghi chú'}
-                  placeholderTextColor={Colors.secondary}
+                  placeholderTextColor={Colors.text.lightgrey}
                   value={values.description}
                 />
 

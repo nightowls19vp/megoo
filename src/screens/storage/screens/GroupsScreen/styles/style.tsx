@@ -20,17 +20,17 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'left',
     fontSize: 18,
-    color: Colors.primary,
+    color: Colors.title.orange,
     fontWeight: 'bold',
   },
   subTitle: {
     fontSize: 12,
     textAlignVertical: 'bottom',
     includeFontPadding: false,
-    color: Colors.primary,
+    color: Colors.title.orange,
   },
   text: {
-    color: Colors.text,
+    color: Colors.text.grey,
     fontSize: 14,
   },
   groupContainer: {
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: Colors.background.white,
     borderRadius: 10,
     marginBottom: 20,
     padding: 10,
