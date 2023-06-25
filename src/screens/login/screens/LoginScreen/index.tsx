@@ -143,7 +143,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
           console.log('socket token:', token);
 
           // Connect socket on port 3001, change to ngrok link if can't connect by localhost
-          const URL = 'https://eb85-14-186-154-98.ngrok-free.app';
+          const URL = 'https://localhost:3001';
           const socket1 = io(URL, {
             autoConnect: false,
             query: {token},
@@ -409,7 +409,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                   console.log('socket token:', token);
 
                   // Connect socket on port 3001, change to ngrok link if can't connect by localhost
-                  const URL = 'https://eb85-14-186-154-98.ngrok-free.app';
+                  const URL = 'https://localhost:3001';
                   const socket1 = io(URL, {
                     autoConnect: false,
                     query: {token},
