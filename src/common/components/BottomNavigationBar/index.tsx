@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Button} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FeatherIcon from 'react-native-vector-icons/Feather';
@@ -25,17 +25,18 @@ import GroupsScreen from '../../../screens/profile/screens/GroupsScreen';
 import CurrentPackage from '../../../screens/profile/screens/CurrentPackageScreen';
 import OtherPackages from '../../../screens/profile/screens/OtherPackages';
 
-import UserGroupsScreen from '../../../screens/storage/screens/GroupsScreen';
+import GroupsProductsScreen from '../../../screens/storage/screens/GroupsScreen';
 import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
 import ProductsScreen from '../../../screens/storage/screens/ProductsScreen';
 import ProductDetailScreen from '../../../screens/storage/screens/ProductDetailScreen';
 import AddProdInfoScreen from '../../../screens/storage/screens/AddProdInfoScreen';
 import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScreen';
 import ChatScreen from '../../../screens/chat/screens/ChatScreen';
-import GroupChatsScreen from '../../../screens/chat/screens/GroupChatsScreen';
+import GroupChatListScreen from '../../../screens/chat/screens/GroupChatListScreen';
 import HomeScreen from '../../../screens/home';
 import BillListScreen from '../../../screens/home/screens/bill/BillListScreen';
 import BillScreen from '../../../screens/home/screens/bill/BillScreen';
+import GroupBillListScreen from '../../../screens/home/screens/bill/GroupBillListScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -46,7 +47,7 @@ const ChatScreenStack = () => {
       <ChatStack.Screen name={RouteNames.CHAT} component={ChatScreen} />
       <ChatStack.Screen
         name={RouteNames.GROUP_CHATS}
-        component={GroupChatsScreen}
+        component={GroupChatListScreen}
       />
     </ChatStack.Navigator>
   );
@@ -55,9 +56,7 @@ const ChatScreenStack = () => {
 const BillStack = createNativeStackNavigator();
 const BillScreenStack = () => {
   return (
-    <BillStack.Navigator
-      initialRouteName={RouteNames.BILL_MANAGEMENT}
-      screenOptions={{headerShown: false}}>
+    <BillStack.Navigator initialRouteName={RouteNames.BILL}>
       <BillStack.Screen
         name={RouteNames.CHAT_STACK}
         component={ChatScreenStack}
@@ -66,11 +65,41 @@ const BillScreenStack = () => {
         }}
       />
       <BillStack.Screen
+        name={RouteNames.BILL}
+        component={BillScreen}
+        options={{headerShown: true}}
+      />
+    </BillStack.Navigator>
+  );
+};
+
+const BillListStack = createNativeStackNavigator();
+const BillListScreenStack = () => {
+  return (
+    <BillListStack.Navigator initialRouteName={RouteNames.GROUP_BILL_LIST}>
+      <BillListStack.Screen
+        name={RouteNames.CHAT_STACK}
+        component={ChatScreenStack}
+        options={{
+          title: 'Nhóm chat',
+        }}
+      />
+      <BillListStack.Screen
         name={RouteNames.BILL_MANAGEMENT}
         component={BillListScreen}
+        options={{headerShown: true}}
       />
-      <BillStack.Screen name={RouteNames.BILL} component={BillScreen} />
-    </BillStack.Navigator>
+      <BillStack.Screen
+        name={RouteNames.BILL}
+        component={BillScreen}
+        options={{headerShown: true}}
+      />
+      <BillListStack.Screen
+        name={RouteNames.GROUP_BILL_LIST}
+        component={GroupBillListScreen}
+        // options={{headerShown: false}}
+      />
+    </BillListStack.Navigator>
   );
 };
 
@@ -87,10 +116,11 @@ const HomeScreenStack = () => {
       />
       <HomeStack.Screen name={RouteNames.HOME} component={HomeScreen} />
       <HomeStack.Screen
-        name={RouteNames.BILL_STACK}
-        component={BillScreenStack}
+        name={RouteNames.BILL_LIST_STACK}
+        component={BillListScreenStack}
         options={{
           title: 'Quản lý chi tiêu',
+          headerShown: false,
         }}
       />
     </HomeStack.Navigator>
@@ -141,7 +171,7 @@ const StorageScreenStack = () => {
     <StorageStack.Navigator initialRouteName={RouteNames.STORAGE_GROUPS}>
       <StorageStack.Screen
         name={RouteNames.STORAGE_GROUPS}
-        component={UserGroupsScreen}
+        component={GroupsProductsScreen}
       />
       <StorageStack.Screen
         name={RouteNames.STORAGE}

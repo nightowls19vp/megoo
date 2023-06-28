@@ -177,7 +177,7 @@ export class SendBirdChatService {
    * @return response from server containing array of channels url
    */
   public async getChannels() {
-    const getChannelsEndpoint = `api/pkg-mgmt/gr/user_id/channel`;
+    const getChannelsEndpoint = `api/pkg-mgmt/gr/user?projection=channel`;
     const reqUrl = `${URL_HOST}${getChannelsEndpoint}`;
     console.log('Get channels group:', reqUrl);
 

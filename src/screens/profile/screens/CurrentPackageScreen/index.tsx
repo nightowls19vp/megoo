@@ -60,9 +60,10 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
       {
         role: '',
         user: {
-          user: {
-            _id: '',
-          },
+          _id: '',
+          name: '',
+          email: '',
+          avatar: '',
         },
       },
     ],
@@ -267,7 +268,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                     const channelResponse =
                       await SendBirdChatService.getInstance().createGroupChannel(
                         group.name,
-                        [`${group.members[0].user.user._id}`],
+                        [`${group.members[0].user._id}`],
                       );
 
                     console.log(

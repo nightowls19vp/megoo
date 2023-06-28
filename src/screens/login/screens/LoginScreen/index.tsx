@@ -30,7 +30,7 @@ import {io} from 'socket.io-client';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
-    .email('Email không hợp lệ')
+    // .email('Email không hợp lệ')
     .required('Vui lòng nhập email'),
   password: Yup.string().required('Vui lòng nhập mật khẩu'),
 });

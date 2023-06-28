@@ -27,12 +27,10 @@ import {
 import userStore from '../../../../common/store/user.store';
 import {getUserCart} from '../CartScreen/services/cart.service';
 import appStore from '../../../../common/store/app.store';
-import {connectSocket} from '../../../../common/auth';
 import {observer} from 'mobx-react';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const fontScale = Dimensions.get('window').fontScale;
 
 const PackageScreen = ({navigation}: {navigation: any}) => {
   const [packages, setPackages] = useState([]);
@@ -46,7 +44,6 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
 
   useEffect(() => {
     getPackages();
-    connectSocket(userStore.id);
   }, []);
 
   useFocusEffect(

@@ -3,7 +3,7 @@ import axios from 'axios';
 import {URL_HOST} from '../core/config/api/api.config';
 
 export const getUserGroup = async () => {
-  const groupEndpoint = `api/pkg-mgmt/gr/user_id?role=All`;
+  const groupEndpoint = `api/pkg-mgmt/gr/user`;
   const reqUrl = `${URL_HOST}${groupEndpoint}`;
   console.log('Get user groups:', reqUrl);
 

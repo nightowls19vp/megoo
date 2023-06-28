@@ -6,11 +6,12 @@ import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
 import styles from './styles/style';
+import userStore from '../../../../common/store/user.store';
 
 // const appId = 'ADD4546B-CF09-4980-B6AC-DB7FFD2E70EC';
 // export const sendbird = new SendBird({appId});
 
-const GroupChatsScreen = ({navigation}: {navigation: any}) => {
+const GroupChatListScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
   const [channelUrls, setChannelUrls] = useState<string[]>([]);
 
@@ -58,40 +59,40 @@ const GroupChatsScreen = ({navigation}: {navigation: any}) => {
     console.log('Get channels res:', channelsRes);
     // setChannelUrls(channelsRes.channels);
 
-    channelsRes.channels.forEach((channelUrl: string) => {
-      console.log('channelUrl:', channelUrl);
+    channelsRes.groups.forEach((channelUrl: {_id: string; channel: string}) => {
+      if (channelUrl?.channel) {
+        SendBirdChatService.getInstance()
+          .sendbird.groupChannel.getChannel(channelUrl?.channel)
+          .then((groupChannel: GroupChannel) => {
+            const channel = groupChannel;
 
-      SendBirdChatService.getInstance()
-        .sendbird.groupChannel.getChannel(channelUrl)
-        .then((groupChannel: GroupChannel) => {
-          const channel = groupChannel;
+            // Invite user to channel then accept invitation then join channel
+            // if user is not a member of channel
+            const members = channel.members;
+            console.log('members:', members);
 
-          // Invite user to channel then accept invitation then join channel
-          // if user is not a member of channel
-          const members = channel.members;
-          console.log('members:', members);
+            const isUserInMembersArray = members.some(
+              member => member.userId === userStore.id,
+            );
+            console.log('isUserInMembersArray:', isUserInMembersArray);
 
-          // const isUserInMembersArray = members.some(
-          //   member => member.userId === userStore.id,
-          // );
-          // console.log('isUserInMembersArray:', isUserInMembersArray);
+            // if (isUserInMembersArray === false) {
+            //   console.log("User isn't a member of channel");
 
-          // if (isUserInMembersArray === false) {
-          //   console.log("User isn't a member of channel");
+            //   channel.inviteWithUserIds([userStore.id]).then(() => {
+            //     console.log('Invite user to channel successfully');
 
-          //   channel.inviteWithUserIds([userStore.id]).then(() => {
-          //     console.log('Invite user to channel successfully');
+            //     channel.acceptInvitation().then(() => {
+            //       console.log('Accept invitation successfully');
 
-          //     channel.acceptInvitation().then(() => {
-          //       console.log('Accept invitation successfully');
-
-          //       channel.join().then(() => {
-          //         console.log('Join channel successfully');
-          //       });
-          //     });
-          //   });
-          // }
-        });
+            //       channel.join().then(() => {
+            //         console.log('Join channel successfully');
+            //       });
+            //     });
+            //   });
+            // }
+          });
+      }
     });
   };
 
@@ -99,15 +100,6 @@ const GroupChatsScreen = ({navigation}: {navigation: any}) => {
     getGroups();
     getGroupChannels();
   }, []);
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     getGroups();
-  //     return () => {
-  //       // Code to clean up the effect when the screen is unfocused
-  //     };
-  //   }, []),
-  // );
 
   const renderGroupItem = () => {
     return groups.map((group: any, index) => {
@@ -148,4 +140,4 @@ const GroupChatsScreen = ({navigation}: {navigation: any}) => {
   return <View style={styles.container}>{renderGroupItem()}</View>;
 };
 
-export default GroupChatsScreen;
+export default GroupChatListScreen;

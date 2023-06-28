@@ -30,32 +30,6 @@ export const checkValidToken = async (token: string) => {
 
 export let socket: Socket;
 
-export const connectSocket = (userId: string) => {
-  // Connect socket
-  const token = userId;
-  console.log('socket token:', token);
-
-  const URL = 'https://e4a7-14-186-146-44.ngrok-free.app';
-  socket = io(URL, {
-    autoConnect: false,
-    query: {token},
-  });
-
-  socket.connect();
-
-  console.log(socket.connect());
-  console.log('connect');
-
-  // Event listeners
-  socket.on('connect', () => {
-    console.log('Connected to server');
-  });
-
-  socket.on('zpCallback', data => {
-    console.log('Socket on data:', data);
-  });
-};
-
 export const checkLogin = async () => {
   // await signOutIfSignedInWithGG();
   console.log('Check login');
@@ -110,7 +84,7 @@ export const checkLogin = async () => {
 
         console.log('Access token has not expired');
         const response = await validate();
-        // console.log('Validate res:', response.data.userInfo);
+        console.log('Validate res:', response.data.userInfo);
 
         // Store user info
         let user: IUser = {

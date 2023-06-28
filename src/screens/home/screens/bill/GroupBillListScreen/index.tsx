@@ -1,12 +1,11 @@
 import {useEffect, useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
-import notifee from '@notifee/react-native';
 
 import styles from './styles/style';
-import RouteNames from '../../../../constants/route-names.const';
-import {getUserGroup} from '../../../../services/group.service';
+import RouteNames from '../../../../../constants/route-names.const';
+import {getUserGroup} from '../../../../../services/group.service';
 
-const GroupProductListScreen = ({navigation}: {navigation: any}) => {
+const GroupsProductsScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
 
   const getGroups = async () => {
@@ -22,27 +21,38 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
       console.log('groupsRes:', groupsRes.groups[0].packages[0].package.name);
       console.log('groupsRes:', groupsRes);
 
-      setGroups(
-        groupsRes.groups.map((groupItem: any) => {
-          return {
-            _id: groupItem._id ? groupItem._id : '',
-            name: groupItem.name ? groupItem.name : '',
-            avatar: groupItem.avatar,
-            // ? groupItem.avatar
-            // : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
-            duration: groupItem.packages[0].package.duration
-              ? groupItem.packages[0].package.duration
-              : 0,
-            noOfMember: groupItem.packages[0].package.noOfMember
-              ? groupItem.packages[0].package.noOfMember
-              : 0,
-            status: groupItem.packages[0].status
-              ? groupItem.packages[0].status
-              : '',
-            members: groupItem.members ? groupItem.members : [],
-          };
-        }),
+      // get all active group
+      const activeGroups = groupsRes.groups.filter(
+        (groupItem: any) => groupItem.packages[0].status === 'Active',
       );
+
+      console.log('activeGroups:', activeGroups);
+
+      if (!activeGroups || !activeGroups.length || activeGroups.length === 0) {
+        setGroups([]);
+      } else {
+        setGroups(
+          activeGroups.map((groupItem: any) => {
+            return {
+              _id: groupItem._id ? groupItem._id : '',
+              name: groupItem.name ? groupItem.name : '',
+              avatar: groupItem.avatar,
+              // ? groupItem.avatar
+              // : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
+              duration: groupItem.packages[0].package.duration
+                ? groupItem.packages[0].package.duration
+                : 0,
+              noOfMember: groupItem.packages[0].package.noOfMember
+                ? groupItem.packages[0].package.noOfMember
+                : 0,
+              status: groupItem.packages[0].status
+                ? groupItem.packages[0].status
+                : '',
+              members: groupItem.members ? groupItem.members : [],
+            };
+          }),
+        );
+      }
     }
   };
 
@@ -52,13 +62,12 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
 
   const renderGroupItem = () => {
     return groups.map((group: any, index) => {
-      return group.status === 'Active' ? (
+      return (
         <TouchableOpacity
           style={styles.groupContainer}
           key={index}
           onPress={() => {
-            console.log('Clicked');
-            navigation.navigate(RouteNames.STORAGE, {
+            navigation.navigate(RouteNames.BILL_MANAGEMENT, {
               groupId: group._id,
             });
           }}>
@@ -91,11 +100,11 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
             </View>
           </View>
         </TouchableOpacity>
-      ) : null;
+      );
     });
   };
 
   return <View style={styles.container}>{renderGroupItem()}</View>;
 };
 
-export default GroupProductListScreen;
+export default GroupsProductsScreen;
