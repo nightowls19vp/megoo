@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {
   Dimensions,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -12,10 +13,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Picker} from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 
+import RouteNames from '../../../../../constants/route-names.const';
 import {Colors} from '../../../../../constants/color.const';
 import {getUserGroup} from '../../../../../services/group.service';
-import {getMembers} from './services/bill-service';
+import {createBill, getMembers} from './services/bill-service';
 import {RouteProp, useRoute} from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -28,7 +31,7 @@ type GroupRouteParams = {
 // Specify the type for the route
 type GroupRouteProp = RouteProp<Record<string, GroupRouteParams>, string>;
 
-const BillScreen = () => {
+const BillScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupRouteProp>();
   const groupId = route.params.groupId;
 
@@ -46,18 +49,8 @@ const BillScreen = () => {
     },
   ]);
 
-  const [bill, setBill] = useState({
-    summary: '',
-    date: Date.now(),
-    borrowers: [
-      {
-        user: '',
-        amount: 0,
-      },
-    ],
-    lender: '',
-    description: '',
-  });
+  const [summary, setSummary] = useState('');
+  const [description, setDescription] = useState('');
 
   // State to open and close the dropdown picker
   const [openLender, setOpenLender] = useState(false);
@@ -69,7 +62,7 @@ const BillScreen = () => {
   const [borrower, setBorrower] = useState(null);
   const [borrowers, setBorrowers] = useState([{label: '', value: ''}]);
 
-  const [currentBorrower, setCurrentBorrower] = useState({
+  const [selectedBorrower, setCurrentBorrower] = useState({
     _id: '',
     email: '',
     name: '',
@@ -91,7 +84,6 @@ const BillScreen = () => {
       console.log('groupId', groupId);
 
       const response = await getMembers(groupId);
-      console.log('response', response);
       console.log('members', response.group.members);
       setMembers(response.group.members);
 
@@ -112,19 +104,79 @@ const BillScreen = () => {
   };
 
   useEffect(() => {
-    console.log('selectedBorrowers', selectedBorrowers);
-
     getMemberList();
   }, []);
 
+  // If user changes the lender, remove the lender from the selected borrowers
+  useEffect(() => {
+    console.log('lender', lender);
+
+    const index = selectedBorrowers.findIndex(
+      (borrower: any) => borrower.email === lender,
+    );
+
+    if (index > -1) {
+      setSelectedBorrowers(
+        selectedBorrowers.filter((borrower: any) => borrower.email !== lender),
+      );
+      setAmount(0);
+    }
+  }, [lender]);
+
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View
-        style={[
-          styles.lenderContainer,
-          // openLender && styles.expandedLenderContainer,
-        ]}>
-        <Text style={[styles.lenderText]}>Người cho mượn</Text>
+        style={{
+          width: '90%',
+          backgroundColor: Colors.background.white,
+          borderRadius: 10,
+          padding: 10,
+          // paddingBottom: 20,
+          marginTop: 20,
+        }}>
+        <Text style={styles.title}>Tên khoản chi tiêu</Text>
+        <TextInput
+          onChangeText={text => setSummary(text)}
+          style={{
+            width: '100%',
+            textAlign: 'left',
+            marginTop: 10,
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: Colors.border.lightgrey,
+            padding: 10,
+          }}
+          placeholder={'Tên khoản chi tiêu'}
+          placeholderTextColor={Colors.text.lightgrey}></TextInput>
+      </View>
+      <View
+        style={{
+          width: '90%',
+          backgroundColor: Colors.background.white,
+          borderRadius: 10,
+          padding: 10,
+          // paddingBottom: 20,
+          marginTop: 20,
+        }}>
+        <Text style={styles.title}>Mô tả</Text>
+        <TextInput
+          onChangeText={text => setDescription(text)}
+          style={{
+            width: '100%',
+            textAlign: 'left',
+            marginTop: 10,
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: Colors.border.lightgrey,
+            padding: 10,
+          }}
+          multiline={true}
+          placeholder={'Mô tả'}
+          placeholderTextColor={Colors.text.lightgrey}></TextInput>
+      </View>
+
+      <View style={styles.lenderContainer}>
+        <Text style={[styles.title]}>Người cho mượn</Text>
         <DropDownPicker
           // containerStyle={{width: '90%'}}
           dropDownContainerStyle={{
@@ -152,7 +204,10 @@ const BillScreen = () => {
               setBorrowers(
                 members
                   .map((member: any) => {
-                    return {label: member.user.email, value: member.user.email};
+                    return {
+                      label: member.user.email,
+                      value: member.user.email,
+                    };
                   })
                   .filter((borrower: any) => borrower.label !== item.label),
               );
@@ -161,7 +216,7 @@ const BillScreen = () => {
         />
       </View>
       <View style={styles.borrowersContainer}>
-        <Text style={styles.lenderText}>Người mượn</Text>
+        <Text style={[styles.title, {marginTop: 10}]}>Người mượn</Text>
         <View style={[styles.addBorrowerContainer, {zIndex: 99}]}>
           <DropDownPicker
             containerStyle={{width: '100%'}}
@@ -185,9 +240,6 @@ const BillScreen = () => {
                 (member: any) => member.user.email === item.label,
               );
 
-              console.log('index', index);
-              console.log(members[index].user._id);
-
               // Set selected item to selectedBorrower
               setCurrentBorrower({
                 _id: members[index].user._id,
@@ -197,19 +249,6 @@ const BillScreen = () => {
               });
             }}
           />
-          {/* <View style={styles.amountContainer}>
-            <TextInput
-              onChangeText={value => setAmount(parseFloat(value))}
-              style={{
-                width: '70%',
-                textAlign: 'left',
-              }}
-              placeholder={'Số tiền'}
-              placeholderTextColor={Colors.border.lightgrey}
-              keyboardType="numeric"
-            />
-            <Text>VND</Text>
-          </View> */}
         </View>
 
         <View style={[styles.addBorrowerContainer, {zIndex: 0}]}>
@@ -221,7 +260,7 @@ const BillScreen = () => {
                 textAlign: 'left',
               }}
               placeholder={'Số tiền'}
-              placeholderTextColor={Colors.border.lightgrey}
+              placeholderTextColor={Colors.text.lightgrey}
               keyboardType="numeric"
             />
             <Text>VND</Text>
@@ -231,36 +270,46 @@ const BillScreen = () => {
         <TouchableOpacity
           style={styles.addBorrowerButton}
           onPress={() => {
-            console.log('selectedBorrower', selectedBorrowers);
+            console.log('selectedBorrower', selectedBorrower);
             console.log('amount', amount);
+
+            // Check if borrower existed in selectedBorrowers
+            const index = selectedBorrowers.findIndex(
+              (borrower: any) => borrower._id === selectedBorrower._id,
+            );
+            console.log('index', index);
 
             // Add borrower to selectedBorrowers
             if (selectedBorrowers.length === 0) {
               setSelectedBorrowers([
                 {
-                  _id: currentBorrower._id,
-                  email: currentBorrower.email,
-                  name: currentBorrower.name,
-                  avatar: currentBorrower.avatar,
+                  _id: selectedBorrower._id,
+                  email: selectedBorrower.email,
+                  name: selectedBorrower.name,
+                  avatar: selectedBorrower.avatar,
                   amount: amount,
                   status: 'PENDING',
                 },
               ]);
             } else {
-              setSelectedBorrowers([
-                ...selectedBorrowers,
-                {
-                  _id: currentBorrower._id,
-                  email: currentBorrower.email,
-                  name: currentBorrower.name,
-                  avatar: currentBorrower.avatar,
-                  amount: amount,
-                  status: 'PENDING',
-                },
-              ]);
+              if (index < 0) {
+                setSelectedBorrowers([
+                  ...selectedBorrowers,
+                  {
+                    _id: selectedBorrower._id,
+                    email: selectedBorrower.email,
+                    name: selectedBorrower.name,
+                    avatar: selectedBorrower.avatar,
+                    amount: amount,
+                    status: 'PENDING',
+                  },
+                ]);
+                setBorrower(null);
+                setAmount(0);
+              }
             }
           }}>
-          <Text style={styles.buttonText}>Thêm</Text>
+          <Text style={styles.addBorrowerButtonText}>Thêm</Text>
         </TouchableOpacity>
 
         {selectedBorrowers ? (
@@ -269,36 +318,185 @@ const BillScreen = () => {
               display: 'flex',
               justifyContent: 'center',
               width: '100%',
-              // backgroundColor: 'pink',
+              // backgroundColor: 'yellow',
             }}>
             {selectedBorrowers.map((borrower: any, index) => {
               return (
                 <View
                   key={index}
                   style={{
+                    width: '100%',
+                    height: Dimensions.get('window').height * 0.1,
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
-                    gap: 20,
-                    marginVertical: 10,
+                    justifyContent: 'space-between',
+                    // gap: 10,
+                    marginBottom: 10,
                   }}>
                   <Image
                     source={{uri: borrower.avatar}}
                     style={{
-                      width: 50,
-                      height: 50,
+                      width: Dimensions.get('window').height * 0.1,
+                      height: Dimensions.get('window').height * 0.1,
                     }}
                   />
-                  <Text>{borrower.name}</Text>
-                  <Text>{borrower.amount}</Text>
-                  <Text>{borrower.status}</Text>
+                  <View
+                    style={{
+                      width: '60%',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      paddingHorizontal: 10,
+                      // backgroundColor: 'pink',
+                    }}>
+                    <View
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'flex-start',
+                        flexWrap: 'wrap',
+                        // gap: 10,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 'bold',
+                          color: Colors.text.grey,
+                          marginRight: 10,
+                        }}>
+                        Người mượn:{' '}
+                      </Text>
+                      <Text>{borrower.name}</Text>
+                    </View>
+                    <View
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'flex-start',
+                        gap: 10,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 'bold',
+                          color: Colors.text.grey,
+                        }}>
+                        Số tiền mượn:{' '}
+                      </Text>
+                      <Text>{borrower.amount} VND</Text>
+                    </View>
+                    <View
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'flex-start',
+                        gap: 10,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 'bold',
+                          color: Colors.text.grey,
+                        }}>
+                        Trạng thái:{' '}
+                      </Text>
+                      <Text>{borrower.status}</Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity>
+                    <Ionicons
+                      onPress={() => {
+                        // const borrowerIndex = borrowers.findIndex(
+                        //   (borrower: any) => borrower === object,
+                        // );
+                      }}
+                      name={'remove-circle'}
+                      style={{
+                        fontWeight: '200',
+                        color: 'red',
+                        fontSize: 24,
+                      }}
+                    />
+                  </TouchableOpacity>
                 </View>
               );
             })}
           </View>
-        ) : null}
+        ) : (
+          false
+        )}
       </View>
-    </View>
+
+      <TouchableOpacity
+        style={{
+          width: '90%',
+          height: 40,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: Colors.background.orange,
+          borderRadius: 10,
+          marginVertical: 20,
+        }}
+        onPress={async () => {
+          console.log('summary', summary);
+          console.log('desc', description);
+
+          // Get lender in members array
+          const selectedlender = members.find(
+            (member: any) => member.user.email === lender,
+          );
+
+          const bill = {
+            summary: summary,
+            date: new Date(),
+            lender: selectedlender?.user._id,
+            borrowers: selectedBorrowers.map((borrower: any) => {
+              return {
+                borrower: borrower._id,
+                amount: borrower.amount,
+              };
+            }),
+            description: description,
+          };
+
+          console.log('bill', bill);
+
+          const response = await createBill(groupId, bill);
+
+          if (response.statusCode === 201) {
+            Toast.show({
+              type: 'success',
+              text1: 'Đăng nhập thành công',
+              autoHide: true,
+              visibilityTime: 1000,
+              topOffset: 30,
+              bottomOffset: 40,
+              onHide: () => {
+                navigation.navigate(
+                  RouteNames.BILL_MANAGEMENT as never,
+                  {} as never,
+                );
+              },
+            });
+          } else {
+            Toast.show({
+              type: 'error',
+              text1: response.message,
+              autoHide: false,
+              topOffset: 30,
+              bottomOffset: 40,
+            });
+          }
+
+          console.log('Create bill response:', response);
+        }}>
+        <Text style={styles.buttonText}>Tạo</Text>
+      </TouchableOpacity>
+      <Toast position="top" />
+    </ScrollView>
   );
 };
 
@@ -320,11 +518,13 @@ const styles = StyleSheet.create({
     // backgroundColor: 'pink',
   },
   title: {
-    width: '90%',
+    width: '100%',
     textAlign: 'left',
     fontSize: 20,
     fontWeight: 'bold',
     color: Colors.title.orange,
+    lineHeight: 21,
+    paddingVertical: 0,
   },
   lenderContainer: {
     display: 'flex',
@@ -333,26 +533,19 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background.white,
     borderRadius: 10,
     padding: 10,
-    marginVertical: 10,
-    marginTop: 20,
+    marginVertical: 20,
     gap: 10,
     zIndex: 999,
-  },
-  lenderText: {
-    width: '100%',
-    textAlign: 'left',
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: Colors.title.orange,
   },
   borrowersContainer: {
     display: 'flex',
     width: '90%',
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: Colors.background.white,
+    // backgroundColor: 'pink',
     borderRadius: 10,
-    padding: 10,
-    // marginVertical: 10,
+    paddingHorizontal: 10,
     gap: 10,
   },
   addBorrowerContainer: {
@@ -360,7 +553,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    marginVertical: 5,
+    // marginVertical: 5,
     zIndex: 999,
     // gap: 10,
   },
@@ -374,7 +567,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: Colors.border.lightgrey,
-    paddingHorizontal: 10,
+    paddingLeft: 5,
+    paddingRight: 10,
   },
   addBorrowerButton: {
     width: '100%',
@@ -384,8 +578,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
-    backgroundColor: Colors.buttonBackground.orange,
+    borderWidth: 1,
+    borderColor: Colors.border.orange,
+    backgroundColor: Colors.buttonBackground.white,
     // marginVertical: 5,
+  },
+  addBorrowerButtonText: {
+    color: Colors.text.orange,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   buttonText: {
     color: Colors.text.white,
