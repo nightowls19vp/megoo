@@ -30,6 +30,7 @@ export const activate = async (groupId: string, pkg: Object) => {
   console.log('Activate group:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
+  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.post(

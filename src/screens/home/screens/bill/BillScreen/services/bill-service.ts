@@ -13,6 +13,7 @@ export const getMembers = async (groupId: string) => {
   console.log('Get members:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
+  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.get(reqUrl, {

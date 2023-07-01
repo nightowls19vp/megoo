@@ -37,6 +37,7 @@ import HomeScreen from '../../../screens/home';
 import BillListScreen from '../../../screens/home/screens/bill/BillListScreen';
 import BillScreen from '../../../screens/home/screens/bill/BillScreen';
 import GroupBillListScreen from '../../../screens/home/screens/bill/GroupBillListScreen';
+import BillInfoScreen from '../../../screens/home/screens/bill/BillInfoScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -92,6 +93,11 @@ const BillListScreenStack = () => {
       <BillStack.Screen
         name={RouteNames.BILL}
         component={BillScreen}
+        options={{headerShown: true}}
+      />
+      <BillStack.Screen
+        name={RouteNames.BILL_INFO}
+        component={BillInfoScreen}
         options={{headerShown: true}}
       />
       <BillListStack.Screen

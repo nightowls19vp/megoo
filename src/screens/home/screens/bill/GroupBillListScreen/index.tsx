@@ -5,7 +5,7 @@ import styles from './styles/style';
 import RouteNames from '../../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../../services/group.service';
 
-const GroupsProductsScreen = ({navigation}: {navigation: any}) => {
+const GroupBillListScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
 
   const getGroups = async () => {
@@ -26,7 +26,7 @@ const GroupsProductsScreen = ({navigation}: {navigation: any}) => {
         (groupItem: any) => groupItem.packages[0].status === 'Active',
       );
 
-      console.log('activeGroups:', activeGroups);
+      console.log('activeGroups:', JSON.stringify(activeGroups, null, 2));
 
       if (!activeGroups || !activeGroups.length || activeGroups.length === 0) {
         setGroups([]);
@@ -104,7 +104,12 @@ const GroupsProductsScreen = ({navigation}: {navigation: any}) => {
     });
   };
 
-  return <View style={styles.container}>{renderGroupItem()}</View>;
+  return (
+    <View style={styles.container}>
+      {renderGroupItem()}
+      <Text>abc</Text>
+    </View>
+  );
 };
 
-export default GroupsProductsScreen;
+export default GroupBillListScreen;

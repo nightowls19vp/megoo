@@ -16,6 +16,7 @@ export default {
   BILL_STACK: 'BILL_STACK',
   BILL_MANAGEMENT: 'Quản lý chi tiêu',
   BILL: 'Phân chia chi tiêu',
+  BILL_INFO: 'Thông tin chi tiết',
 
   PACKAGE_STACK_DRAWER: 'PACKAGE_STACK_DRAWER',
   PACKAGE_STACK_BOTTOM: 'PACKAGE_STACK_BOTTOM',

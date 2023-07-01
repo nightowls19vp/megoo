@@ -1,11 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {URL_HOST} from '../core/config/api/api.config';
+import {URL_HOST} from '../../../../../../core/config/api/api.config';
 
-export const getUserGroup = async () => {
-  const groupEndpoint = `api/pkg-mgmt/gr/user?limit=20`;
-  const reqUrl = `${URL_HOST}${groupEndpoint}`;
-  console.log('Get user groups:', reqUrl);
+export const getBillInfo = async (billId: string) => {
+  const billEndpoint = `api/pkg-mgmt/bill/${billId}`;
+  const reqUrl = `${URL_HOST}${billEndpoint}`;
+  console.log('Get bill info:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
   console.log('Access token:', accessToken);
@@ -17,9 +17,8 @@ export const getUserGroup = async () => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-
     return response.data;
   } catch (error) {
-    console.log("Get user's group error:", error);
+    console.log('Get bill info error: ', error);
   }
 };

@@ -8,11 +8,12 @@ import {URL_HOST} from '../../../../../../core/config/api/api.config';
  * @return response from server
  */
 export const getBillList = async (groupId: string) => {
-  const billListEndpoint = `api/pkg-mgmt/bill/${groupId}`;
+  const billListEndpoint = `api/pkg-mgmt/gr/${groupId}?projection=billing`;
   const reqUrl = `${URL_HOST}${billListEndpoint}`;
   console.log('Get bill list:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
+  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.get(reqUrl, {

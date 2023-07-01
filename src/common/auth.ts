@@ -84,7 +84,10 @@ export const checkLogin = async () => {
 
         console.log('Access token has not expired');
         const response = await validate();
-        console.log('Validate res:', response.data.userInfo);
+        console.log(
+          'Validate res:',
+          JSON.stringify(response.userInfo, null, 2),
+        );
 
         // Store user info
         let user: IUser = {
@@ -102,7 +105,7 @@ export const checkLogin = async () => {
         user.phone = response.userInfo.phone ?? '';
         user.dob = dateFormat(response.userInfo.dob) ?? '';
         user.avatar =
-          response.userInfo.avatar ??
+          response.data?.userInfo.avatar ??
           'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9';
 
         userStore.setUser(user);
@@ -122,6 +125,8 @@ export const checkLogin = async () => {
 
         userStore.setUserSettings(settings);
 
+        console.log('User id:', user._id);
+
         const userSendBird = await SendBirdChatService.getInstance().connect(
           user._id,
         );
@@ -132,32 +137,32 @@ export const checkLogin = async () => {
           await SendBirdChatService.getInstance().getChannels();
         console.log('channelsUrl:', channelsUrl);
 
-        channelsUrl.channels.forEach((channelUrl: string) => {
-          SendBirdChatService.getInstance()
-            .sendbird.groupChannel.getChannel(channelUrl)
-            .then((groupChannel: GroupChannel) => {
-              console.log('groupChannel:', groupChannel);
+        // channelsUrl.channels.forEach((channelUrl: string) => {
+        //   SendBirdChatService.getInstance()
+        //     .sendbird.groupChannel.getChannel(channelUrl)
+        //     .then((groupChannel: GroupChannel) => {
+        //       console.log('groupChannel:', groupChannel);
 
-              // Invite user to channel then accept invitation then join channel
-              // if user is not a member of channel
-              const members = groupChannel.members;
-              console.log('members:', members);
+        //       // Invite user to channel then accept invitation then join channel
+        //       // if user is not a member of channel
+        //       const members = groupChannel.members;
+        //       console.log('members:', members);
 
-              const isUserInMembersArray = members.some(
-                member => member.userId === userStore.id,
-              );
-              console.log('isUserInMembersArray:', isUserInMembersArray);
+        //       const isUserInMembersArray = members.some(
+        //         member => member.userId === userStore.id,
+        //       );
+        //       console.log('isUserInMembersArray:', isUserInMembersArray);
 
-              if (isUserInMembersArray === false) {
-                console.log("User isn't a member of channel");
-                SendBirdChatService.getInstance()
-                  .inviteUserToChannel(channelUrl, [user._id])
-                  .then(res => {
-                    console.log('Invite user to channel res:', res);
-                  });
-              }
-            });
-        });
+        //       if (isUserInMembersArray === false) {
+        //         console.log("User isn't a member of channel");
+        //         SendBirdChatService.getInstance()
+        //           .inviteUserToChannel(channelUrl, [user._id])
+        //           .then(res => {
+        //             console.log('Invite user to channel res:', res);
+        //           });
+        //       }
+        //     });
+        // });
 
         // Connect socket
         const token = user._id;
@@ -169,6 +174,8 @@ export const checkLogin = async () => {
           autoConnect: false,
           query: {token},
         });
+
+        socket1.disconnect();
 
         socket1.connect();
 

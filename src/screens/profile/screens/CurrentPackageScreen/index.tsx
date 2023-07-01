@@ -72,7 +72,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
   const [emails, setEmails] = useState<string[]>([]);
 
   const groupId = route.params?.groupId;
-  console.log('route param id:', groupId);
+  console.log('Group id from route:', groupId);
 
   const getSelectedGroup = async () => {
     // Get group info by id

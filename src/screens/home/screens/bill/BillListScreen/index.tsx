@@ -1,5 +1,6 @@
 import {
   Dimensions,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -30,8 +31,16 @@ const BillListScreen = ({navigation}: {navigation: any}) => {
   const [billList, setBillList] = useState([]);
   const getBills = async () => {
     const bills = await getBillList(groupId);
-    setBillList(bills.billing);
     console.log('bills', JSON.stringify(bills, null, 2));
+    if (
+      !bills.group.billing ||
+      !bills?.group?.billing.length ||
+      bills?.group?.billing.length === 0
+    ) {
+      setBillList([]);
+    } else {
+      setBillList(bills.group.billing);
+    }
   };
 
   useEffect(() => {
@@ -62,6 +71,11 @@ const BillListScreen = ({navigation}: {navigation: any}) => {
             padding: 10,
             backgroundColor: Colors.background.white,
             borderRadius: 10,
+          }}
+          onPress={() => {
+            navigation.navigate(RouteNames.BILL_INFO, {
+              billId: bill._id,
+            });
           }}>
           <View
             style={{
@@ -115,7 +129,7 @@ const BillListScreen = ({navigation}: {navigation: any}) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Danh sách phân chia chi tiêu</Text>
         <TouchableOpacity
@@ -140,7 +154,7 @@ const BillListScreen = ({navigation}: {navigation: any}) => {
         }}>
         {renderBillList()}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

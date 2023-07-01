@@ -147,14 +147,7 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
                   clearInterval(interValCheck);
 
                   intervalCheckActive = false;
-                  // appStore.setIsExtendedPkg(false);
-                  // appStore.setRenewPkg({
-                  //   package: '',
-                  //   noOfMember: 0,
-                  //   duration: 0,
-                  // });
-                }
-                if (!intervalCheckActive) {
+
                   Toast.show({
                     type: 'success',
                     text1: 'Thanh toán thành công',
@@ -171,6 +164,23 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
                     },
                   });
                 }
+                // if (!intervalCheckActive) {
+                //   Toast.show({
+                //     type: 'success',
+                //     text1: 'Thanh toán thành công',
+                //     autoHide: true,
+                //     visibilityTime: 3000,
+                //     topOffset: 20,
+                //     onHide: () => {
+                //       navigation.navigate('PROFILE_STACK', {
+                //         params: {
+                //           screen: 'PROFILE',
+                //           activeTab: 'group',
+                //         },
+                //       });
+                //     },
+                //   });
+                // }
               }, 10 * 1000);
 
               setTimeout(() => {

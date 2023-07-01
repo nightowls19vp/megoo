@@ -9,6 +9,7 @@ export const getUserCart = async () => {
   console.log('Get user cart:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
+  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.get(reqUrl, {
