@@ -1,7 +1,7 @@
 import {IBaseRes} from '../base-dto/base-res.interface';
-
 import {IGroupProduct} from '../base-dto/group-product.interface';
-
+import {FilterOperator, FilterSuffix} from '../common/paginated-filter-options';
+import {IPaginatedReq} from '../common/paginated-req.interface';
 import {IPaginatedRes} from '../common/paginated-res.interface';
 
 /** CREATE GROUP PRODUCT */
@@ -32,24 +32,41 @@ export interface IGetGroupProductByIdRes extends IBaseRes {
 
 /** GET GROUP PRODUCTS **PAGINATED** */
 
-export interface IGetGroupProductsPaginatedReq {
-  page?: number;
+export type TypeColumn =
+  | 'id'
+  | 'barcode'
+  | 'name'
+  | 'category'
+  | 'brand'
+  | 'description'
+  | 'price'
+  | 'region'
+  | 'timestamp.createdAt'
+  | 'timestamp.updatedAt'
+  | 'timestamp.deletedAt';
 
-  limit?: number;
+export type TypeGetGroupProductsPaginatedSearchBy = TypeColumn;
 
-  sortBy?: [string, string][];
+export type TypeGetGroupProductsPaginatedSortBy =
+  | `${TypeGetGroupProductsPaginatedSearchBy}:${'ASC' | 'DESC'}`;
 
-  searchBy?: string[];
+export type TypeGetGroupProductsPaginatedFilterKey = TypeColumn;
 
-  search?: string;
+export type TypeGetGroupProductsPaginatedFilterValue =
+  | `${FilterOperator}:${string}`
+  | `${FilterSuffix}:${FilterOperator}:${string}`;
 
-  filter?: {[column: string]: string | string[]};
+export interface IGetGroupProductsPaginatedReq extends IPaginatedReq {
+  sortBy?: TypeGetGroupProductsPaginatedSortBy[];
 
-  select?: string[];
+  searchBy?: TypeGetGroupProductsPaginatedSearchBy[];
 
-  path?: string;
-
-  groupId: string;
+  filter?: Partial<
+    Record<
+      TypeGetGroupProductsPaginatedFilterKey,
+      TypeGetGroupProductsPaginatedFilterValue
+    >
+  >;
 }
 
 export interface IGetGroupProductsPaginatedRes
@@ -86,12 +103,12 @@ export interface IUpdateGroupProductRes extends IBaseRes {
 
 /** RESTORE GROUP PRODUCT */
 
-export interface IRestoreGroupProductReq {
+export interface IRestoreGroupProductByIdReq {
   groupId: string;
 
   id: string;
 }
 
-export interface IRestoreGroupProductRes extends IBaseRes {
+export interface IRestoreGroupProductByIdRes extends IBaseRes {
   data?: IGroupProduct;
 }

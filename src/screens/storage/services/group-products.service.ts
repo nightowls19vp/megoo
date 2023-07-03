@@ -1,4 +1,4 @@
-import axios, {AxiosResponse} from 'axios';
+import axios from 'axios';
 
 import {URL_HOST} from '../../../core/config/api/api.config';
 import {
@@ -10,8 +10,8 @@ import {
   IGetGroupProductByIdRes,
   IGetGroupProductsPaginatedReq,
   IGetGroupProductsPaginatedRes,
-  IRestoreGroupProductReq,
-  IRestoreGroupProductRes,
+  IRestoreGroupProductByIdReq,
+  IRestoreGroupProductByIdRes,
   IUpdateGroupProductReq,
   IUpdateGroupProductRes,
 } from '../interfaces/group-products';
@@ -28,10 +28,7 @@ export const createGroupProduct = async (
   console.log('createGroupProduct: ', endpoint);
 
   try {
-    const res = await axios.post<
-      ICreateGroupProductReq,
-      AxiosResponse<ICreateGroupProductRes>
-    >(endpoint, reqDto, {
+    const res = await axios.post<ICreateGroupProductRes>(endpoint, reqDto, {
       validateStatus: () => true,
     });
 
@@ -50,7 +47,7 @@ export const createGroupProduct = async (
  * @param id The ID of the group product to retrieve.
  * @returns A promise that resolves to the response data for the retrieved group product.
  */
-export const getGroupProduct = async ({
+export const getGroupProductById = async ({
   groupId,
   id,
 }: IGetGroupProductByIdReq): Promise<IGetGroupProductByIdRes> => {
@@ -59,12 +56,9 @@ export const getGroupProduct = async ({
   console.log('getGroupProduct: ', endpoint);
 
   try {
-    const res = await axios.get<string, AxiosResponse<IGetGroupProductByIdRes>>(
-      endpoint,
-      {
-        validateStatus: () => true,
-      },
-    );
+    const res = await axios.get<IGetGroupProductByIdRes>(endpoint, {
+      validateStatus: () => true,
+    });
 
     return res.data;
   } catch (error) {
@@ -75,6 +69,11 @@ export const getGroupProduct = async ({
   }
 };
 
+/**
+ * Retrieves a paginated list of group products for a given group ID.
+ * @param reqDto The request data for retrieving the paginated list of group products.
+ * @returns A promise that resolves to the response data for the retrieved paginated list of group products.
+ */
 export const getGroupProductPaginated = async (
   reqDto: IGetGroupProductsPaginatedReq,
 ): Promise<IGetGroupProductsPaginatedRes> => {
@@ -82,10 +81,7 @@ export const getGroupProductPaginated = async (
   console.log('getGroupProductPaginated: ', endpoint);
 
   try {
-    const res = await axios.get<
-      string,
-      AxiosResponse<IGetGroupProductsPaginatedRes>
-    >(endpoint, {
+    const res = await axios.get<IGetGroupProductsPaginatedRes>(endpoint, {
       params: reqDto,
       validateStatus: () => true,
     });
@@ -115,10 +111,7 @@ export const deleteGroupProductById = async ({
     URL_HOST + 'api/prod-mgmt/group-products/' + groupId + '/' + id;
 
   try {
-    const res = await axios.delete<
-      string,
-      AxiosResponse<IDeleteGroupProductRes>
-    >(endpoint, {
+    const res = await axios.delete<IDeleteGroupProductRes>(endpoint, {
       validateStatus: () => true,
     });
 
@@ -139,16 +132,13 @@ export const deleteGroupProductById = async ({
 export const restoreGroupProductById = async ({
   id,
   groupId,
-}: IRestoreGroupProductReq): Promise<IRestoreGroupProductRes> => {
+}: IRestoreGroupProductByIdReq): Promise<IRestoreGroupProductByIdRes> => {
   const endpoint =
     URL_HOST + 'api/prod-mgmt/group-products/' + groupId + '/' + id;
   console.log('restoreGroupProductById: ', endpoint);
 
   try {
-    const res = await axios.patch<
-      string,
-      AxiosResponse<IRestoreGroupProductRes>
-    >(endpoint, null, {
+    const res = await axios.patch<IRestoreGroupProductByIdRes>(endpoint, null, {
       validateStatus: () => true,
     });
 
@@ -178,10 +168,7 @@ export const updateGroupProduct = async (
   console.log('updateGroupProduct: ', endpoint);
 
   try {
-    const res = await axios.put<
-      IUpdateGroupProductReq,
-      AxiosResponse<IUpdateGroupProductRes>
-    >(
+    const res = await axios.put<IUpdateGroupProductRes>(
       endpoint,
       {
         ...reqDto,

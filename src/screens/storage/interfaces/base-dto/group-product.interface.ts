@@ -1,7 +1,8 @@
+import {IProduct} from '../product.interfaces';
 import {IItem} from './item.interface';
 import {ITimestampEmbedded} from './timestamp.embedded.interface';
 
-export interface IGroupProduct {
+export interface IGroupProduct extends IProduct {
   id?: string;
 
   name?: string;

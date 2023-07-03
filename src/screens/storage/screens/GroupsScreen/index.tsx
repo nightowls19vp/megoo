@@ -69,7 +69,7 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
     //   });
 
     // // get A group product
-    gp.getGroupProduct({
+    gp.getGroupProductById({
       groupId: '1',
       id: '1',
     })

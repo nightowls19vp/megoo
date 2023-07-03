@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type Order<T> = [string, 'ASC' | 'DESC'];
 
 export type SortBy<T> = Order<T>[];
