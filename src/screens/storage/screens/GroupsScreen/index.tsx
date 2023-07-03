@@ -6,6 +6,8 @@ import styles from './styles/style';
 import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
 
+import * as gp from '../../services/group-products.service';
+
 const GroupProductListScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
 
@@ -48,6 +50,38 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
 
   useEffect(() => {
     getGroups();
+
+    // test api
+
+    // // get group products paginated
+    // gp.getGroupProductPaginated({
+    //   groupId: '1',
+    //   limit: 1,
+    // })
+    //   .then(res => {
+    //     console.log(
+    //       'GroupProductsService.getGroupProductPaginated res:',
+    //       JSON.stringify(res, null, 2),
+    //     );
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+
+    // // get A group product
+    gp.getGroupProduct({
+      groupId: '1',
+      id: '1',
+    })
+      .then(res => {
+        console.log(
+          'GroupProductsService.getGroupProductById res:',
+          JSON.stringify(res, null, 2),
+        );
+      })
+      .catch(err => {
+        console.error('GroupProductsService.getGroupProductById err:', err);
+      });
   }, []);
 
   const renderGroupItem = () => {
