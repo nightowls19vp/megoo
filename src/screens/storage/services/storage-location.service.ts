@@ -76,7 +76,8 @@ export const getStorageLocationById = async ({
 export const getStorageLocationPaginated = async (
   reqDto: IGetStorageLocationsPaginatedReq,
 ): Promise<IGetStorageLocationsPaginatedRes> => {
-  const endpoint = URL_HOST + 'api/prod-mgmt/storage-locations';
+  const endpoint =
+    URL_HOST + 'api/prod-mgmt/storage-locations/' + reqDto.groupId!;
   console.log('getStorageLocationPaginated: ', endpoint);
 
   try {
@@ -158,7 +159,12 @@ export const restoreStorageLocationById = async ({
 export const updateStorageLocation = async (
   reqDto: IUpdateStorageLocationReq,
 ): Promise<IUpdateStorageLocationRes> => {
-  const endpoint = URL_HOST + 'api/prod-mgmt/storage-locations';
+  const endpoint =
+    URL_HOST +
+    'api/prod-mgmt/storage-locations/' +
+    reqDto.groupId! +
+    '/' +
+    reqDto.id!;
   console.log('updateStorageLocation', endpoint);
 
   try {

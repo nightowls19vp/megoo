@@ -75,7 +75,7 @@ export const getItemById = async ({
 export const getItemPaginated = async (
   reqDto: IGetItemsPaginatedReq,
 ): Promise<IGetItemsPaginatedRes> => {
-  const endpoint = URL_HOST + 'api/prod-mgmt/items';
+  const endpoint = URL_HOST + 'api/prod-mgmt/items/' + reqDto.groupId;
   console.log('getItemPaginated: ', endpoint);
 
   try {
@@ -155,7 +155,8 @@ export const restoreItemById = async ({
 export const updateItem = async (
   reqDto: IUpdateItemReq,
 ): Promise<IUpdateItemRes> => {
-  const endpoint = URL_HOST + 'api/prod-mgmt/items';
+  const endpoint =
+    URL_HOST + 'api/prod-mgmt/items/' + reqDto.groupId! + '/' + reqDto.id!;
   console.log('updateItem', endpoint);
 
   try {

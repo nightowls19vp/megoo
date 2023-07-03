@@ -6,7 +6,12 @@ import styles from './styles/style';
 import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
 
+import * as d from '../../services/divisions.service';
 import * as gp from '../../services/group-products.service';
+import * as p from '../../services/product.service';
+import * as sl from '../../services/storage-location.service';
+import * as pl from '../../services/purchase-locations.service';
+import * as i from '../../services/items.service';
 
 const GroupProductListScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
@@ -51,8 +56,7 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
   useEffect(() => {
     getGroups();
 
-    // test api
-
+    //!TEST test api
     // // get group products paginated
     // gp.getGroupProductPaginated({
     //   groupId: '1',
@@ -68,20 +72,27 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
     //     console.log(err);
     //   });
 
-    // // get A group product
-    gp.getGroupProductById({
-      groupId: '1',
-      id: '1',
-    })
-      .then(res => {
-        console.log(
-          'GroupProductsService.getGroupProductById res:',
-          JSON.stringify(res, null, 2),
-        );
-      })
-      .catch(err => {
-        console.error('GroupProductsService.getGroupProductById err:', err);
-      });
+    //* storage location
+    sl.getStorageLocationPaginated({
+      groupId: undefined,
+      limit: 1,
+    } as any).then(res => {
+      console.log(
+        'StorageLocationService.getStorageLocationPaginated res:',
+        JSON.stringify(res, null, 2),
+      );
+    });
+
+    //* purchase location
+    pl.getPurchaseLocationPaginated({
+      groupId: undefined,
+      limit: 1,
+    } as any).then(res => {
+      console.log(
+        'PurchaseLocationService.getPurchaseLocationPaginated res:',
+        JSON.stringify(res, null, 2),
+      );
+    });
   }, []);
 
   const renderGroupItem = () => {

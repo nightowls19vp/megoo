@@ -76,7 +76,8 @@ export const getPurchaseLocationById = async ({
 export const getPurchaseLocationPaginated = async (
   reqDto: IGetPurchaseLocationsPaginatedReq,
 ): Promise<IGetPurchaseLocationsPaginatedRes> => {
-  const endpoint = URL_HOST + 'api/prod-mgmt/purchase-locations';
+  const endpoint =
+    URL_HOST + 'api/prod-mgmt/purchase-locations/' + reqDto.groupId!;
   console.log('getPurchaseLocationPaginated: ', endpoint);
 
   try {
@@ -158,7 +159,12 @@ export const restorePurchaseLocationById = async ({
 export const updatePurchaseLocation = async (
   reqDto: IUpdatePurchaseLocationReq,
 ): Promise<IUpdatePurchaseLocationRes> => {
-  const endpoint = URL_HOST + 'api/prod-mgmt/purchase-locations';
+  const endpoint =
+    URL_HOST +
+    'api/prod-mgmt/purchase-locations/' +
+    reqDto.groupId! +
+    '/' +
+    reqDto.id!;
   console.log('updatePurchaseLocation', endpoint);
 
   try {
