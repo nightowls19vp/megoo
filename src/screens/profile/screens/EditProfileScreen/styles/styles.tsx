@@ -7,6 +7,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     paddingTop: 10,
+    height: '100%',
     // justifyContent: 'center',
   },
   title: {

@@ -19,13 +19,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
             <Text style={styles.utilityText}>Quản lý chi tiêu</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.utility}>
-            <Text style={styles.utilityText}>Todo</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.utility}>
-            <Text style={styles.utilityText}>Todo</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.utility}>
-            <Text style={styles.utilityText}>Todo</Text>
+            <Text style={styles.utilityText}>Việc cần làm</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -53,46 +53,6 @@ export default function LoginScreen({navigation}: {navigation: any}) {
     isUserSignedIn();
   }, []);
 
-  // const [appIsReady, setAppIsReady] = useState(false);
-  //
-  // useEffect(() => {
-  //   async function prepare() {
-  //     console.log("AUTO RUNNNNNNN");
-
-  //     try {
-  //       await _cacheResourcesAsync();
-  //     } catch (e) {
-  //       console.warn(e);
-  //     } finally {
-  //       // Tell the application to render
-  //       setAppIsReady(true);
-  //     }
-  //   }
-
-  //   prepare();
-  // }, []);
-
-  // const onLayoutRootView = useCallback(async () => {
-  //   if (appIsReady) {
-  //     await SplashScreen.hideAsync();
-  //   }
-  // }, [appIsReady]);
-
-  // if (!appIsReady) {
-  //   return null;
-  // }
-
-  // const _cacheResourcesAsync = async () => {
-  //   // need fix
-  //   const images = ["assets/google.png", "assets/facebook.png"];
-
-  //   const cacheImages = images.map((image) => {
-  //     return Asset.fromModule(image).downloadAsync();
-  //   });
-
-  //   return Promise.all(cacheImages);
-  // };
-
   return (
     // <Provider>
     <Formik

@@ -444,8 +444,6 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                 </TouchableOpacity>
                 <Modal
                   visible={modalVisible}
-                  animationType="slide"
-                  transparent={true}
                   onRequestClose={() => setModalVisible(false)}>
                   <View
                     style={{
@@ -462,94 +460,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                         backgroundColor: Colors.background.white,
                         padding: 10,
                         borderRadius: 5,
-                      }}>
-                      <TouchableOpacity
-                        style={{
-                          width: '100%',
-                        }}
-                        onPress={() => {
-                          setModalVisible(false);
-                        }}>
-                        <Ionicons
-                          name="close"
-                          size={22}
-                          color={Colors.text.grey}
-                          style={{
-                            width: '100%',
-                            textAlign: 'right',
-                          }}
-                        />
-                      </TouchableOpacity>
-
-                      <Text
-                        style={{
-                          width: '80%',
-                          textAlign: 'justify',
-                          fontSize: 18,
-                          color: Colors.text.grey,
-                        }}>
-                        Vui lòng đăng nhập/đăng ký để sử dụng chức năng này.
-                      </Text>
-
-                      <View
-                        style={{
-                          width: '100%',
-                          display: 'flex',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          marginTop: 20,
-                          marginBottom: 10,
-                        }}>
-                        {/* <TouchableOpacity
-                            style={{
-                              width: '45%',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              gap: 10,
-                              padding: 10,
-                              borderRadius: 10,
-                              borderWidth: 1,
-                              borderColor: Colors.primary,
-                            }}
-                            onPress={openCamera}>
-                            <AntDesignIcon
-                              name="barcode"
-                              size={30}
-                              color={Colors.primary}
-                            />
-                            <Text style={{fontWeight: 'bold', color: Colors.primary}}>
-                              Quét barcode
-                            </Text>
-                          </TouchableOpacity>
-            
-                          <TouchableOpacity
-                            style={{
-                              width: '45%',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              gap: 10,
-                              padding: 10,
-                              borderRadius: 10,
-                              borderWidth: 1,
-                              borderColor: Colors.primary,
-                            }}
-                            onPress={() => {
-                              setModalVisible(false);
-                              navigation.navigate(
-                                RouteNames.ADD_PRODUCT_INFO as never,
-                                {} as never,
-                              );
-                            }}>
-                            <AntDesignIcon name="edit" size={30} color={Colors.primary} />
-                            <Text style={{fontWeight: 'bold', color: Colors.primary}}>
-                              Nhập thông tin
-                            </Text>
-                          </TouchableOpacity> */}
-                      </View>
-                    </View>
+                      }}></View>
                   </View>
                 </Modal>
               </>

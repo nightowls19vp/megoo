@@ -98,7 +98,23 @@ const BillListScreenStack = () => {
       <BillStack.Screen
         name={RouteNames.BILL_INFO}
         component={BillInfoScreen}
-        options={{headerShown: true}}
+        options={{
+          headerShown: true,
+          headerRight: () => {
+            return (
+              <TouchableOpacity>
+                <Text
+                  style={{
+                    color: Colors.text.orange,
+                    fontWeight: 'bold',
+                    fontSize: 18,
+                  }}>
+                  Lưu
+                </Text>
+              </TouchableOpacity>
+            );
+          },
+        }}
       />
       <BillListStack.Screen
         name={RouteNames.GROUP_BILL_LIST}

@@ -26,7 +26,7 @@ type GroupRouteProp = RouteProp<Record<string, GroupRouteParams>, string>;
 
 const BillListScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupRouteProp>();
-  const groupId = route.params.groupId;
+  const groupId = route.params?.groupId;
 
   const [billList, setBillList] = useState([]);
   const getBills = async () => {
@@ -42,7 +42,6 @@ const BillListScreen = ({navigation}: {navigation: any}) => {
       setBillList(bills.group.billing);
     }
   };
-
   useEffect(() => {
     console.log('groupId', groupId);
     getBills();

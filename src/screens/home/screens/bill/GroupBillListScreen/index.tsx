@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 
 import styles from './styles/style';
 import RouteNames from '../../../../../constants/route-names.const';
@@ -105,10 +105,9 @@ const GroupBillListScreen = ({navigation}: {navigation: any}) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       {renderGroupItem()}
-      <Text>abc</Text>
-    </View>
+    </ScrollView>
   );
 };
 

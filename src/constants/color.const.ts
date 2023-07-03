@@ -23,6 +23,7 @@ export const Colors = {
   background: {
     white: '#FFFFFF',
     orange: '#F58F00',
+    red: '#DD382F',
     lightorange: '#F4B051',
   },
 
@@ -41,11 +42,13 @@ export const Colors = {
   icon: {
     orange: '#F58F00',
     lightgrey: '#A8A8A8',
+    red: '#DD382F',
   },
 
   border: {
     orange: '#F58F00',
     lightgrey: '#A8A8A8',
+    red: '#DD382F',
   },
 
   textPrimary: '#49454F',
@@ -55,11 +58,13 @@ export const Colors = {
   buttonText: {
     white: '#FFFFFF',
     orange: '#F58F00',
+    red: '#DD382F',
   },
 
   buttonBackground: {
     white: '#FFFFFF',
     orange: '#F58F00',
+    red: '#DD382F',
     lightorange: '#F4B051',
   },
 
