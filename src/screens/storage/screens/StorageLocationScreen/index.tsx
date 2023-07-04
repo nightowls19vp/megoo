@@ -1,4 +1,5 @@
 import {Formik} from 'formik';
+import {set} from 'mobx';
 import {observer} from 'mobx-react';
 import {useEffect, useState} from 'react';
 import {
@@ -15,43 +16,46 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
+import {IStorageLocation} from '../../interfaces/base-dto/storage-location.interface';
+import * as sl from '../../services/storage-location.service';
+import {RouteParamsProductsScreen} from '../ProductsScreen/props-products-screen';
 import styles from './styles/style';
+import {IRouteParamsStorageLocationScreen} from './route-param.interface';
 
 const StorageLocationScreen = ({navigation}: {navigation: any}) => {
-  const [addLocModalVisible, setAddLocModalVisible] = useState(false);
-  const [locations, setLocations] = useState<object[]>([]);
+  const props = navigation?.route?.params as IRouteParamsStorageLocationScreen;
+  console.log('props:', props);
 
-  const locationsArr = [
-    {
-      location: 'Tủ đựng đồ ăn vặt',
-      description: 'Bên trái tủ lạnh ở tầng trệt',
-    },
-    {
-      location: 'Phòng giặt',
-      description: 'Tầng thượng',
-    },
-    {
-      location: 'Tủ gia vị',
-      description: 'Bếp',
-    },
-  ];
+  const [addLocModalVisible, setAddLocModalVisible] = useState(false);
+  const [locations, setLocations] = useState<IStorageLocation[]>([]);
 
   useEffect(() => {
-    setLocations(locationsArr);
+    sl.getStorageLocationPaginated({
+      groupId: '1',
+    }).then(res => {
+      setLocations(res.data);
+    });
   }, []);
 
   const renderLocationItem = () => {
-    return locations.map((location: any, index) => {
+    return locations.map((stoLoc: IStorageLocation) => {
+      const routeParam: RouteParamsProductsScreen = {
+        groupId: props?.groupId,
+        storageLocation: stoLoc,
+      };
+
       return (
         <TouchableOpacity
           style={styles.locationContainer}
-          key={index}
+          key={stoLoc.id}
           onPress={() => {
-            navigation.navigate(RouteNames.PRODUCTS, {});
+            navigation.navigate(RouteNames.PRODUCTS, routeParam);
           }}>
           <Image
             source={{
-              uri: 'https://wonder-day.com/wp-content/uploads/2022/03/wonder-day-cute-drawings-11.jpg',
+              uri:
+                stoLoc.image ||
+                'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
             }}
             style={styles.locationImg}
           />
@@ -67,7 +71,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                 Nơi lưu trữ:
               </Text>
               <Text style={styles.text} numberOfLines={3}>
-                {location.location}
+                {stoLoc?.name}
               </Text>
             </View>
             <View style={[styles.locationInfoRow]}>
@@ -81,7 +85,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                 Ghi chú:
               </Text>
               <Text style={styles.text} numberOfLines={3}>
-                {location.description}
+                {stoLoc.description}
               </Text>
             </View>
           </View>
@@ -91,7 +95,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
   };
 
   return appStore.isLoggedIn ? (
-    <View style={styles.container}>
+    <View style={{...styles.container, paddingBottom: 50}}>
       <View
         style={{
           width: '90%',

@@ -1,26 +1,36 @@
+import moment from 'moment';
 import {useCallback, useEffect, useState} from 'react';
-
 import {
   Image,
-  Text,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Modal,
   Linking,
+  Modal,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import FeatherIcon from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Camera, useCameraDevices} from 'react-native-vision-camera';
 
-import RouteNames from '../../../../constants/route-names.const';
+import {useRoute} from '@react-navigation/native';
+
 import {Colors} from '../../../../constants/color.const';
+import RouteNames from '../../../../constants/route-names.const';
+import {IItem} from '../../interfaces/base-dto/item.interface';
+import * as i from '../../services/items.service';
+import {
+  PropsProductsScreen,
+  RouteParamsProductsScreen,
+} from './props-products-screen';
 import styles from './styles/styles';
 
 const ProductsScreen = ({navigation}: {navigation: any}) => {
+  const route = useRoute<PropsProductsScreen>();
+  console.log('route:', JSON.stringify(route, null, 2));
+
   const [modalVisible, setModalVisible] = useState(false);
-  const [products, setProducts] = useState<object[]>([]);
+  const [items, setItems] = useState<IItem[]>([]);
   const [showCamera, setShowCamera] = useState(false);
 
   const devices = useCameraDevices();
@@ -36,6 +46,15 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
 
   useEffect(() => {
     requestCameraPermission();
+
+    // fetch the first 10 items
+    i.getItemPaginated({
+      groupId: route?.params?.groupId || '1',
+
+      // limit: 10,
+    }).then(res => {
+      setItems(res.data);
+    });
   }, []);
 
   const openCamera = useCallback(() => {
@@ -62,41 +81,65 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
     }
   };
 
-  const renderLocationItem = () => {
-    return (
-      <TouchableOpacity style={styles.productItemContainer}>
-        <Image
-          source={{
-            uri: 'https://wonder-day.com/wp-content/uploads/2022/03/wonder-day-cute-drawings-11.jpg',
-          }}
-          style={styles.prodImg}
-        />
-        <View style={styles.productInfoContainer}>
-          <View style={styles.productInfo}>
-            <Text style={[styles.text, {fontWeight: 'bold'}]}>
-              Tên sản phẩm:{' '}
-            </Text>
-            <Text style={styles.text} numberOfLines={3}>
-              Sữa abcdefghijklmnopqrstuvw
-            </Text>
+  const renderItems = () => {
+    return items.map(item => {
+      return (
+        <TouchableOpacity style={styles.productItemContainer} key={item.id}>
+          <Image
+            source={{
+              uri:
+                item?.image ||
+                'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
+            }}
+            style={styles.prodImg}
+          />
+          <View style={styles.productInfoContainer}>
+            <View style={styles.productInfo}>
+              <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                Tên sản phẩm:{' '}
+              </Text>
+              <Text style={styles.text} numberOfLines={3}>
+                {item?.groupProduct?.name || 'Chưa có tên sản phẩm'}
+              </Text>
+            </View>
+            {item?.quantity ? (
+              <View style={styles.productInfo}>
+                <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                  Số lượng:{' '}
+                </Text>
+                <Text style={styles.text}>
+                  {item?.quantity} {item?.unit || ''}
+                </Text>
+              </View>
+            ) : (
+              false
+            )}
+            {item?.bestBefore ? (
+              <View style={styles.productInfo}>
+                <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                  Hạn sử dụng:{' '}
+                </Text>
+                <Text style={styles.text}>
+                  {moment(item?.bestBefore).isValid()
+                    ? moment(item?.bestBefore).format('DD-MM-YYYY')
+                    : item?.bestBefore.toString()}
+                </Text>
+              </View>
+            ) : (
+              false
+            )}
           </View>
-          <View style={styles.productInfo}>
-            <Text style={[styles.text, {fontWeight: 'bold'}]}>Số lượng: </Text>
-            <Text style={styles.text}>3 lóc</Text>
-          </View>
-          <View style={styles.productInfo}>
-            <Text style={[styles.text, {fontWeight: 'bold'}]}>
-              Hạn sử dụng:{' '}
-            </Text>
-            <Text style={styles.text}>1 năm</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
+        </TouchableOpacity>
+      );
+    });
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        ...styles.container,
+        paddingBottom: 50,
+      }}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>Danh sách sản phẩm</Text>
         <TouchableOpacity
@@ -181,8 +224,9 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
           </View>
         </View>
       </Modal>
-
-      {renderLocationItem()}
+      <ScrollView contentContainerStyle={styles.container}>
+        {renderItems()}
+      </ScrollView>
     </View>
   );
 };

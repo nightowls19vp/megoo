@@ -20,7 +20,8 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
     // Get all user's groups
     const groupsRes = await getUserGroup();
     if (
-      !groupsRes.groups ||
+      !groupsRes ||
+      !groupsRes?.groups ||
       !groupsRes?.groups?.length ||
       groupsRes?.groups?.length === 0
     ) {
@@ -73,26 +74,26 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
     //   });
 
     //* storage location
-    sl.getStorageLocationPaginated({
-      groupId: undefined,
-      limit: 1,
-    } as any).then(res => {
-      console.log(
-        'StorageLocationService.getStorageLocationPaginated res:',
-        JSON.stringify(res, null, 2),
-      );
-    });
+    // sl.getStorageLocationPaginated({
+    //   groupId: undefined,
+    //   limit: 1,
+    // } as any).then(res => {
+    //   console.log(
+    //     'StorageLocationService.getStorageLocationPaginated res:',
+    //     JSON.stringify(res, null, 2),
+    //   );
+    // });
 
     //* purchase location
-    pl.getPurchaseLocationPaginated({
-      groupId: undefined,
-      limit: 1,
-    } as any).then(res => {
-      console.log(
-        'PurchaseLocationService.getPurchaseLocationPaginated res:',
-        JSON.stringify(res, null, 2),
-      );
-    });
+    // pl.getPurchaseLocationPaginated({
+    //   groupId: '1',
+    //   limit: 1,
+    // }).then(res => {
+    //   console.log(
+    //     'PurchaseLocationService.getPurchaseLocationPaginated res:',
+    //     JSON.stringify(res, null, 2),
+    //   );
+    // });
   }, []);
 
   const renderGroupItem = () => {
