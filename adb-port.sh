@@ -1,10 +1,8 @@
 #! /bin/bash
 
-# if $1 is empty throw error
-if [ -z "$1" ]
-then
-    echo "Please provide the device id"
-    exit 1
+# if $1 is empty, assign $1 to emulator-5554
+if [ -z $1 ]; then
+    set $1 emulator-5554
 fi
 
 # This script is used to set the adb port to 3000 and 3001
