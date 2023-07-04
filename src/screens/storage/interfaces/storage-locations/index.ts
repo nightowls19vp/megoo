@@ -1,11 +1,13 @@
 import {IBaseRes} from '../base-dto/base-res.interface';
-
 import {IGroup} from '../base-dto/group.interface';
-
 import {IStorageLocation} from '../base-dto/storage-location.interface';
+import {FilterOperator, FilterSuffix} from '../common/paginated-filter-options';
 import {IPaginatedReq} from '../common/paginated-req.interface';
-
 import {IPaginatedRes} from '../common/paginated-res.interface';
+import {
+  TypeGetGroupProductsPaginatedFilterKey,
+  TypeGetGroupProductsPaginatedFilterValue,
+} from '../group-products';
 
 export interface ICreateStorageLocationReq extends IStorageLocation {
   groupId?: string;
@@ -31,8 +33,40 @@ export interface IGetStorageLocationByIdReq {
 export interface IGetStorageLocationByIdRes extends IBaseRes {
   data?: IStorageLocation;
 }
+export type TypeColumnGetStorageLocationsPaginated =
+  | 'id'
+  | 'name'
+  | 'addedBy'
+  | 'description'
+  | 'timestamp.createdAt'
+  | 'timestamp.updatedAt'
+  | 'timestamp.deletedAt';
 
-export interface IGetStorageLocationsPaginatedReq extends IPaginatedReq {}
+export type TypeGetStorageLocationsPaginatedSearchBy =
+  | `${TypeColumnGetStorageLocationsPaginated}`;
+
+export type TypeGetStorageLocationsPaginatedSortBy =
+  | `${TypeColumnGetStorageLocationsPaginated}:${'ASC' | 'DESC'}`;
+
+export type TypeGetStorageLocationsPaginatedFilterKey =
+  TypeColumnGetStorageLocationsPaginated;
+
+export type TypeGetStorageLocationsPaginatedFilterValue =
+  | `${FilterOperator}:${string}`
+  | `${FilterSuffix}:${FilterOperator}:${string}`;
+
+export interface IGetStorageLocationsPaginatedReq extends IPaginatedReq {
+  searchBy?: TypeGetStorageLocationsPaginatedSearchBy[];
+
+  sortBy?: TypeGetStorageLocationsPaginatedSortBy[];
+
+  filter?: Partial<
+    Record<
+      TypeGetStorageLocationsPaginatedFilterKey,
+      TypeGetStorageLocationsPaginatedFilterValue
+    >
+  >;
+}
 
 export interface IGetStorageLocationsPaginatedRes
   extends IPaginatedRes<IStorageLocation> {

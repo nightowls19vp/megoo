@@ -1,6 +1,7 @@
 import {IBaseRes} from '../base-dto/base-res.interface';
 import {IGroup} from '../base-dto/group.interface';
 import {IPurchaseLocation} from '../base-dto/purchase-location.interface';
+import {FilterOperator, FilterSuffix} from '../common/paginated-filter-options';
 import {IPaginatedReq} from '../common/paginated-req.interface';
 import {IPaginatedRes} from '../common/paginated-res.interface';
 
@@ -29,7 +30,46 @@ export interface IGetPurchaseLocationByIdRes extends IBaseRes {
   data?: IPurchaseLocation;
 }
 
-export interface IGetPurchaseLocationsPaginatedReq extends IPaginatedReq {}
+//id,name,addedBy,description,address.provinceName,address.districtName,address.wardName,address.addressLine1,address.addressLine2,timestamp.createdAt,timestamp.updatedAt,timestamp.deletedAt
+export type TypeColumnGetPurchaseLocationsPaginated =
+  | 'id'
+  | 'name'
+  | 'addedBy'
+  | 'description'
+  | 'address.provinceName'
+  | 'address.districtName'
+  | 'address.wardName'
+  | 'address.addressLine1'
+  | 'address.addressLine2'
+  | 'timestamp.createdAt'
+  | 'timestamp.updatedAt'
+  | 'timestamp.deletedAt';
+
+export type TypeGetPurchaseLocationsPaginatedSearchBy =
+  | `${TypeColumnGetPurchaseLocationsPaginated}`;
+
+export type TypeGetPurchaseLocationsPaginatedSortBy =
+  | `${TypeColumnGetPurchaseLocationsPaginated}:${'ASC' | 'DESC'}`;
+
+export type TypeGetPurchaseLocationsPaginatedFilterKey =
+  | `${TypeColumnGetPurchaseLocationsPaginated}`;
+
+export type TypeGetGroupProductsPaginatedFilterValue =
+  | `${FilterOperator}:${string}`
+  | `${FilterSuffix}:${FilterOperator}:${string}`;
+
+export interface IGetPurchaseLocationsPaginatedReq extends IPaginatedReq {
+  searchBy?: TypeGetPurchaseLocationsPaginatedSearchBy[];
+
+  sortBy?: TypeGetPurchaseLocationsPaginatedSortBy[];
+
+  filter?: Partial<
+    Record<
+      TypeGetPurchaseLocationsPaginatedFilterKey,
+      TypeGetGroupProductsPaginatedFilterValue
+    >
+  >;
+}
 
 export interface IGetPurchaseLocationsPaginatedRes
   extends IPaginatedRes<IPurchaseLocation> {

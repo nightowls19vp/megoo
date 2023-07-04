@@ -19,8 +19,8 @@ import RouteNames from '../../../../constants/route-names.const';
 import {IStorageLocation} from '../../interfaces/base-dto/storage-location.interface';
 import * as sl from '../../services/storage-location.service';
 import {RouteParamsProductsScreen} from '../ProductsScreen/props-products-screen';
-import styles from './styles/style';
 import {IRouteParamsStorageLocationScreen} from './route-param.interface';
+import styles from './styles/style';
 
 const StorageLocationScreen = ({navigation}: {navigation: any}) => {
   const props = navigation?.route?.params as IRouteParamsStorageLocationScreen;
