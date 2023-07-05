@@ -24,6 +24,9 @@ import {
   RouteParamsProductsScreen,
 } from './props-products-screen';
 import styles from './styles/styles';
+import searchStore from '../../../../common/store/search.store';
+import {IGetItemsPaginatedRes} from '../../interfaces/items';
+import {observer} from 'mobx-react';
 
 const ProductsScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<PropsProductsScreen>();
@@ -53,9 +56,29 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
 
       // limit: 10,
     }).then(res => {
+      console.log('res: ', res);
+
       setItems(res.data);
     });
+
+    // set the service for search feature
+    searchStore.setSearchService(i.getItemPaginated);
+    searchStore.setSearchParams([
+      {
+        groupId: route?.params?.groupId || '1',
+      },
+    ]);
+    searchStore.doSearch();
   }, []);
+
+  useEffect(() => {
+    // search result changed
+    console.log('search result changed');
+
+    const searchResult = searchStore.searchResult as IGetItemsPaginatedRes;
+
+    setItems(searchResult?.data || []);
+  }, [searchStore.searchResult]);
 
   const openCamera = useCallback(() => {
     setModalVisible(false);
@@ -82,56 +105,64 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
   };
 
   const renderItems = () => {
-    return items.map(item => {
-      return (
-        <TouchableOpacity style={styles.productItemContainer} key={item.id}>
-          <Image
-            source={{
-              uri:
-                item?.image ||
-                'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
-            }}
-            style={styles.prodImg}
-          />
-          <View style={styles.productInfoContainer}>
-            <View style={styles.productInfo}>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Tên sản phẩm:{' '}
-              </Text>
-              <Text style={styles.text} numberOfLines={3}>
-                {item?.groupProduct?.name || 'Chưa có tên sản phẩm'}
-              </Text>
+    if (items.length > 0) {
+      return items.map(item => {
+        return (
+          <TouchableOpacity style={styles.productItemContainer} key={item.id}>
+            <Image
+              source={{
+                uri:
+                  item?.image ||
+                  'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
+              }}
+              style={styles.prodImg}
+            />
+            <View style={styles.productInfoContainer}>
+              <View style={styles.productInfo}>
+                <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                  Tên sản phẩm:{' '}
+                </Text>
+                <Text style={styles.text} numberOfLines={3}>
+                  {item?.groupProduct?.name || 'Chưa có tên sản phẩm'}
+                </Text>
+              </View>
+              {item?.quantity ? (
+                <View style={styles.productInfo}>
+                  <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                    Số lượng:{' '}
+                  </Text>
+                  <Text style={styles.text}>
+                    {item?.quantity} {item?.unit || ''}
+                  </Text>
+                </View>
+              ) : (
+                false
+              )}
+              {item?.bestBefore ? (
+                <View style={styles.productInfo}>
+                  <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                    Hạn sử dụng:{' '}
+                  </Text>
+                  <Text style={styles.text}>
+                    {moment(item?.bestBefore).isValid()
+                      ? moment(item?.bestBefore).format('DD-MM-YYYY')
+                      : item?.bestBefore.toString()}
+                  </Text>
+                </View>
+              ) : (
+                false
+              )}
             </View>
-            {item?.quantity ? (
-              <View style={styles.productInfo}>
-                <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                  Số lượng:{' '}
-                </Text>
-                <Text style={styles.text}>
-                  {item?.quantity} {item?.unit || ''}
-                </Text>
-              </View>
-            ) : (
-              false
-            )}
-            {item?.bestBefore ? (
-              <View style={styles.productInfo}>
-                <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                  Hạn sử dụng:{' '}
-                </Text>
-                <Text style={styles.text}>
-                  {moment(item?.bestBefore).isValid()
-                    ? moment(item?.bestBefore).format('DD-MM-YYYY')
-                    : item?.bestBefore.toString()}
-                </Text>
-              </View>
-            ) : (
-              false
-            )}
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        );
+      });
+    } else {
+      return (
+        <View>
+          <Text>Không có sản phẩm {searchStore.searchText} nào</Text>
+        </View>
       );
-    });
+    }
   };
 
   return (
@@ -231,4 +262,4 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
   );
 };
 
-export default ProductsScreen;
+export default observer(ProductsScreen);

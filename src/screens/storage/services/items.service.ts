@@ -75,13 +75,12 @@ export const getItemById = async ({
 export const getItemPaginated = async (
   reqDto: IGetItemsPaginatedReq,
 ): Promise<IGetItemsPaginatedRes> => {
-  const endpoint = URL_HOST + 'api/prod-mgmt/items';
+  const endpoint = URL_HOST + 'api/prod-mgmt/items/' + reqDto.groupId!;
   console.log('getItemPaginated: ', endpoint);
 
   try {
     const res = await axios.get<IGetItemsPaginatedRes>(endpoint, {
       params: reqDto,
-      validateStatus: () => true,
     });
 
     return res.data;
@@ -91,7 +90,7 @@ export const getItemPaginated = async (
     return {
       statusCode: (error as any)?.response?.status || 500,
       message: (error as any)?.response?.data.message || 'Axios error',
-      data: [],
+      data: (error as any)?.response?.data.data || [],
     };
   }
 };

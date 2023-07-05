@@ -14,6 +14,7 @@ import {Colors} from '../../../constants/color.const';
 import appStore from '../../store/app.store';
 import {useNavigation} from '@react-navigation/native';
 import {observer} from 'mobx-react-lite';
+import SearchComp from '../Search';
 
 const Drawer = createDrawerNavigator();
 
@@ -29,14 +30,14 @@ function CustomDrawerContent(props: any) {
       }}>
       <View
         style={{
-          backgroundColor: Colors.itemBackground,
+          backgroundColor: Colors.background.white,
           height: '30%',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
         }}>
         {appStore.isLoggedIn ? (
-          <>
+          <React.Fragment>
             <Image
               source={{
                 uri: userStore.avatar,
@@ -58,9 +59,9 @@ function CustomDrawerContent(props: any) {
               numberOfLines={2}>
               {userStore.name}
             </Text>
-          </>
+          </React.Fragment>
         ) : (
-          <>
+          <React.Fragment>
             <Image
               source={{
                 uri: 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
@@ -87,7 +88,7 @@ function CustomDrawerContent(props: any) {
                 Đăng nhập/Đăng ký
               </Text>
             </TouchableOpacity>
-          </>
+          </React.Fragment>
         )}
       </View>
       <View style={{flex: 1}}>
@@ -122,13 +123,10 @@ const DrawerNavigation = ({navigation}: {navigation: any}) => {
                 flexDirection: 'row',
                 gap: 15,
                 marginRight: 15,
+                justifyContent: 'center',
+                alignItems: 'center',
               }}>
-              <TouchableOpacity
-                onPress={() => {
-                  console.log('Search');
-                }}>
-                <Ionicons name="search-outline" size={24} color={'black'} />
-              </TouchableOpacity>
+              <SearchComp />
               {appStore.isLoggedIn ? (
                 <TouchableOpacity
                   onPress={() => {
