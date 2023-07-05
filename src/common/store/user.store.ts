@@ -1,19 +1,25 @@
-import { action, extendObservable, makeAutoObservable, observable, reaction } from "mobx";
-import { IUser } from '../interfaces/user.interface';
-import { IValidateRes } from '../interfaces/validate.interface';
-import { ISettings } from './../interfaces/settings.interface';
+import {
+  action,
+  extendObservable,
+  makeAutoObservable,
+  observable,
+  reaction,
+} from 'mobx';
+import {IUser} from '../interfaces/user.interface';
+import {IValidateRes} from '../interfaces/validate.interface';
+import {ISettings} from './../interfaces/settings.interface';
 import axios from 'axios';
-import { URL_HOST } from "../../core/config/api/api.config";
+import {URL_HOST} from '../../core/config/api/api.config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ICartItem, ICartList, IPackage } from "../interfaces/package.interface";
+import {ICartItem, ICartList, IPackage} from '../interfaces/package.interface';
 
 class UserStore {
-  @observable id = "";
-  @observable name = "";
-  @observable email = "";
-  @observable phone = "";
-  @observable dob = "";
-  @observable avatar = "";
+  @observable id = '';
+  @observable name = '';
+  @observable email = '';
+  @observable phone = '';
+  @observable dob = '';
+  @observable avatar = '';
   @observable msgNoti = true;
   @observable callNoti = true;
   @observable newsNoti = true;
@@ -34,40 +40,39 @@ class UserStore {
         try {
           const settingEndpoint = `api/users/${this.id}/setting`;
           const reqUrl = `${URL_HOST}${settingEndpoint}`;
-          console.log("Setting:", reqUrl);
+          console.log('Setting:', reqUrl);
 
-          const accessToken = await AsyncStorage.getItem("accessToken");
+          const accessToken = await AsyncStorage.getItem('accessToken');
 
-          const response = await axios.put(reqUrl, {
-            callNoti: this.callNoti,
-            msgNoti: this.msgNoti,
-            stockNoti: this.stockNoti,
-            newsNoti: this.newsNoti,
-          }, {
-            headers: {
-              Accept: "application/json",
-              Authorization: `Bearer ${accessToken}`,
+          const response = await axios.put(
+            reqUrl,
+            {
+              callNoti: this.callNoti,
+              msgNoti: this.msgNoti,
+              stockNoti: this.stockNoti,
+              newsNoti: this.newsNoti,
             },
-          });
+            {
+              headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+              },
+            },
+          );
 
-          // this.setCallNoti(response.data.data.setting.callNoti);
-          // this.setMsgNoti(response.data.datasetting.msgNoti);
-          // this.setStockNoti(response.data.data.setting.stockNoti);
-          // this.setNewsNoti(response.data.data.setting.newsNoti);
-
-          console.log("Setting update res:", response.data.statusCode);
+          console.log('Setting update res:', response.data.statusCode);
         } catch (error) {
           if (axios.isAxiosError(error)) {
             let response: IValidateRes = {
               statusCode: error.response?.status ?? 500,
-              message: error.response?.statusText ?? "",
+              message: error.response?.statusText ?? '',
             };
 
-            console.log("Setting update error:", error.response?.data);
+            console.log('Setting update error:', error.response?.data);
           }
         }
-      }
-    )
+      },
+    );
   }
 
   @action setUserSettings(settings: ISettings) {
@@ -135,12 +140,12 @@ class UserStore {
   }
 
   @action resetStore() {
-    this.id = "";
-    this.name = "";
-    this.email = "";
-    this.phone = "";
-    this.dob = "";
-    this.avatar = "";
+    this.id = '';
+    this.name = '';
+    this.email = '';
+    this.phone = '';
+    this.dob = '';
+    this.avatar = '';
     this.msgNoti = true;
     this.callNoti = true;
     this.newsNoti = true;

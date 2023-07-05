@@ -34,6 +34,8 @@ const styles = StyleSheet.create({
   contentContainer: {
     width: '90%',
     zIndex: 100000,
+    display: 'flex',
+    gap: 20,
     // backgroundColor: 'yellow',
     marginBottom: 20,
   },

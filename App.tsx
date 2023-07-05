@@ -32,15 +32,10 @@ const App = () => {
   const checkLoggedIn = async () => {
     if (appStore.isLoggedIn === false) {
       const response = await checkLogin();
-      if (response == true) {
+      if (response === true) {
         appStore.setIsLoggedIn(true);
       }
     }
-    // await AsyncStorage.setItem(
-    //   'accessToken',
-    //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoidXNlcjAiLCJ1c2VybmFtZSI6InVzZXIwIiwiZW1haWwiOiJ1c2VyMEBnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInVzZXJJbmZvSWQiOiI2NDk2NTFlNmQ0OTFlZmMxNWJiMmEyMDQiLCJzb2NpYWxBY2NvdW50cyI6W119LCJpYXQiOjE2ODc2Nzk0NDQsImV4cCI6MTY4Nzc2NTg0NH0.JCJfehOag5CrR1EXGSPN-tltc2pr0Ec26mLnMRRQqR8',
-    // );
-    // appStore.setIsLoggedIn(true);
   };
 
   useEffect(() => {
@@ -50,6 +45,11 @@ const App = () => {
       setLoading(false);
     }, 1000);
   }, [appStore.isLoggedIn]);
+
+  useEffect(() => {
+    // Request permissions (required for iOS)
+    notifee.requestPermission();
+  }, []);
 
   return (
     <View style={{flex: 1, justifyContent: 'center'}}>

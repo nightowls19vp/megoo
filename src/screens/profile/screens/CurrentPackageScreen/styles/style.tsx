@@ -41,6 +41,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.text.lightgrey,
   },
+  superUserText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: Colors.text.lightgrey,
+  },
+  userAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 40 / 2,
+  },
+  userNameContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 10,
+  },
   activateGroupContainer: {
     display: 'flex',
     maxHeight: 30,
@@ -112,6 +128,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
   },
+  inviteContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   inviteButton: {
     width: '100%',
     display: 'flex',
@@ -143,6 +165,11 @@ const styles = StyleSheet.create({
     color: Colors.buttonText.white,
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  removeIcon: {
+    fontWeight: '200',
+    color: 'red',
+    fontSize: 24,
   },
 });
 

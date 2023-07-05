@@ -13,8 +13,8 @@ import {Colors} from '../../../../../constants/color.const';
 import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
 import {useCallback, useEffect, useState} from 'react';
 import {getBillList} from './services/bill-list.service';
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+import styles from './styles/style';
+import {dateFormat} from '../../../../../common/handle.string';
 
 // Define the type for the route params
 type GroupRouteParams = {
@@ -61,66 +61,29 @@ const BillListScreen = ({navigation}: {navigation: any}) => {
       return (
         <TouchableOpacity
           key={index}
-          style={{
-            width: '90%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 10,
-            padding: 10,
-            backgroundColor: Colors.background.white,
-            borderRadius: 10,
-          }}
+          style={styles.billItemContainer}
           onPress={() => {
             navigation.navigate(RouteNames.BILL_INFO, {
               billId: bill._id,
             });
           }}>
-          <View
-            style={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'row',
-            }}>
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: 'bold',
-                color: Colors.text.grey,
-              }}>
-              Tên khoản chi tiêu:{' '}
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: Colors.text.lightgrey,
-              }}>
-              {bill.summary}
-            </Text>
+          <View style={styles.infoRow}>
+            <Text style={styles.headingText}>Tên khoản chi tiêu: </Text>
+            <Text style={styles.infoText}>{bill.summary}</Text>
           </View>
-          <View
-            style={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'row',
-            }}>
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: 'bold',
-                color: Colors.text.grey,
-              }}>
-              Mô tả:{' '}
-            </Text>
-            <Text
-              numberOfLines={3}
-              style={{
-                width: '100%',
-                fontSize: 14,
-                color: Colors.text.lightgrey,
-              }}>
+          <View style={styles.infoRow}>
+            <Text style={styles.headingText}>Ngày: </Text>
+            <Text style={styles.infoText}>{dateFormat(bill.date)}</Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.headingText}>Mô tả: </Text>
+            <Text numberOfLines={3} style={styles.infoText}>
               {bill.description}
             </Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.headingText}>Trạng thái: </Text>
+            <Text style={styles.infoText}>{bill.status}</Text>
           </View>
         </TouchableOpacity>
       );
@@ -144,43 +107,9 @@ const BillListScreen = ({navigation}: {navigation: any}) => {
           />
         </TouchableOpacity>
       </View>
-      <View
-        style={{
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-        }}>
-        {renderBillList()}
-      </View>
+      <View style={styles.billListContainer}>{renderBillList()}</View>
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    alignItems: 'center',
-    // justifyContent: 'center',
-    width: width,
-    minHeight: height,
-  },
-  titleContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '90%',
-    alignItems: 'center',
-    marginVertical: 10,
-    // backgroundColor: 'pink',
-  },
-  title: {
-    width: '90%',
-    textAlign: 'left',
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: Colors.title.orange,
-  },
-});
 
 export default BillListScreen;

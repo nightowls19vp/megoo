@@ -12,7 +12,8 @@ import {
   View,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Foundation from 'react-native-vector-icons/Foundation';
 import * as Yup from 'yup';
 import {RouteProp, useRoute} from '@react-navigation/native';
 
@@ -78,6 +79,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
     // Get group info by id
     const groupRes = await getGroupInfo(groupId);
     console.log('groupsRes group:', groupRes.group);
+    console.log('groupsRes group members:', groupRes?.group?.members);
     console.log('route param:', route);
 
     const activePackage = groupRes.group.packages.find(
@@ -86,35 +88,56 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
 
     console.log('activePackage:', activePackage);
 
-    setGroup({
-      _id: groupRes?.group._id ? groupRes?.group._id : '',
-      name: groupRes?.group.name ? groupRes?.group.name : '',
-      channelUrl: groupRes?.group.channel ? groupRes?.group.channel : '',
-      avatar: groupRes?.group.avatar
-        ? groupRes?.group.avatar
-        : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
-      duration: groupRes?.group.packages[0].package.duration
-        ? groupRes?.group.packages[0].package.duration
-        : 0,
-      noOfMember: groupRes?.group.packages[0].package.noOfMember
-        ? groupRes?.group.packages[0].package.noOfMember
-        : 0,
-      // duration: activePackage?.package.duration
-      //   ? activePackage?.package.duration
-      //   : 0,
-      // noOfMember: activePackage?.package.noOfMember
-      //   ? activePackage?.package.noOfMember
-      //   : 0,
-      // status: activePackage?.status ? activePackage?.status : '',
-      status: groupRes?.group.packages[0].status
-        ? groupRes?.group.packages[0].status
-        : '',
-      startDate: activePackage?.startDate
-        ? dateFormat(activePackage?.startDate)
-        : '',
-      endDate: activePackage?.endDate ? dateFormat(activePackage?.endDate) : '',
-      members: groupRes?.group.members ? groupRes?.group.members : [],
-    });
+    if (!activePackage) {
+      setGroup({
+        _id: groupRes?.group._id ? groupRes?.group._id : '',
+        name: groupRes?.group.name ? groupRes?.group.name : '',
+        channelUrl: groupRes?.group.channel ? groupRes?.group.channel : '',
+        avatar: groupRes?.group.avatar
+          ? groupRes?.group.avatar
+          : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
+        duration: groupRes?.group.packages[0].package.duration
+          ? groupRes?.group.packages[0].package.duration
+          : 0,
+        noOfMember: groupRes?.group.packages[0].package.noOfMember
+          ? groupRes?.group.packages[0].package.noOfMember
+          : 0,
+        status: groupRes?.group.packages[0].status
+          ? groupRes?.group.packages[0].status
+          : '',
+        startDate: activePackage?.startDate
+          ? dateFormat(activePackage?.startDate)
+          : '',
+        endDate: activePackage?.endDate
+          ? dateFormat(activePackage?.endDate)
+          : '',
+        members: groupRes?.group?.members ? groupRes?.group?.members : [],
+      });
+    } else {
+      setGroup({
+        _id: groupRes?.group._id ? groupRes?.group._id : '',
+        name: groupRes?.group.name ? groupRes?.group.name : '',
+        channelUrl: groupRes?.group.channel ? groupRes?.group.channel : '',
+        avatar: groupRes?.group.avatar
+          ? groupRes?.group.avatar
+          : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
+        duration: activePackage?.package?.duration
+          ? activePackage?.package?.duration
+          : 0,
+        noOfMember: activePackage?.package?.noOfMember
+          ? activePackage?.package?.noOfMember
+          : 0,
+        status: activePackage?.status ? activePackage?.status : '',
+
+        startDate: activePackage?.startDate
+          ? dateFormat(activePackage?.startDate)
+          : '',
+        endDate: activePackage?.endDate
+          ? dateFormat(activePackage?.endDate)
+          : '',
+        members: groupRes?.group.members ? groupRes?.group.members : [],
+      });
+    }
   };
 
   // Extend package when package in group is expired
@@ -161,10 +184,6 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
     }
   }, []);
 
-  // useEffect(() => {
-
-  // }, [group.status]);
-
   return (
     <>
       <View style={styles.container}>
@@ -176,13 +195,13 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
         />
         <Text style={styles.title}>Thông tin nhóm</Text>
         <View style={styles.groupInfoContainer}>
-          <View style={styles.infoRow}>
+          <View style={[styles.infoRow, {flexWrap: 'wrap'}]}>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>Tên nhóm: </Text>
             <Text
               style={[
                 styles.infoText,
                 {
-                  width: '80%',
+                  width: '100%',
                   paddingRight: 20,
                 },
               ]}
@@ -218,31 +237,6 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
             </>
           ) : null}
 
-          {/* <>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                gap: 10,
-              }}>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Ngày kích hoạt:{' '}
-              </Text>
-              <Text style={styles.infoText}>{group.startDate}</Text>
-            </View>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                gap: 10,
-              }}>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Ngày hết hạn:{' '}
-              </Text>
-              <Text style={styles.infoText}>{group.endDate}</Text>
-            </View>
-          </> */}
-
           <View style={styles.activateGroupContainer}>
             <View style={styles.infoRow}>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
@@ -250,7 +244,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
               </Text>
               <Text style={styles.infoText}>{group.status}</Text>
             </View>
-            {group.status === 'Not activated' ? (
+            {group.status === 'Not Activated' ? (
               <TouchableOpacity
                 style={styles.activateGroupButton}
                 onPress={async () => {
@@ -312,7 +306,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
               </TouchableOpacity>
             ) : null}
           </View>
-          {/* <View
+          <View
             style={{
               display: 'flex',
               flexDirection: 'column',
@@ -323,13 +317,43 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
             </Text>
             {group.members.map((member, index) => {
               return (
-                <View key={index}>
-                  <Text style={styles.infoText}>{member.user}</Text>
+                <View
+                  key={index}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 10,
+                  }}>
+                  <Image
+                    source={{uri: member.user.avatar}}
+                    style={styles.userAvatar}
+                  />
+                  <View style={styles.userNameContainer}>
+                    <Text
+                      style={
+                        member.role !== 'Super User'
+                          ? styles.infoText
+                          : styles.superUserText
+                      }>
+                      {member.user.name}
+                    </Text>
+                    {member.role === 'Super User' ? (
+                      <Foundation
+                        name="crown"
+                        size={20}
+                        color={Colors.icon.lightgrey}
+                      />
+                    ) : (
+                      false
+                    )}
+                  </View>
                 </View>
               );
             })}
-          </View> */}
+          </View>
         </View>
+
         {group.status === 'Active' ? (
           <>
             <Text style={styles.title}>Mời thành viên</Text>
@@ -368,13 +392,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                   //   Platform.OS === 'android' ? -200 : 200
                   // }
                 >
-                  <View
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}>
+                  <View style={styles.inviteContainer}>
                     <View style={styles.inputContainer}>
                       <TextInput
                         onChangeText={value => {
@@ -390,7 +408,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                       />
 
                       {values.email && (
-                        <Icon
+                        <Ionicons
                           onPress={() => setFieldValue('email', '')}
                           name={'close'}
                           style={styles.inputIcon}
@@ -422,7 +440,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                               <Text style={{fontSize: 16}}>{object}</Text>
                             </View>
                             <TouchableOpacity>
-                              <Icon
+                              <Ionicons
                                 onPress={() => {
                                   const emailIndex = emails.findIndex(
                                     (email: any) => email === object,
@@ -437,11 +455,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                                   console.log('emailIndex:', emailIndex);
                                 }}
                                 name={'remove-circle'}
-                                style={{
-                                  fontWeight: '200',
-                                  color: 'red',
-                                  fontSize: 24,
-                                }}
+                                style={styles.removeIcon}
                               />
                             </TouchableOpacity>
                           </View>

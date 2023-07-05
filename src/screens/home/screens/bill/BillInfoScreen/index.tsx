@@ -12,6 +12,7 @@ import {
 import DropDownPicker from 'react-native-dropdown-picker';
 import Modal from 'react-native-modal';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {ProgressView} from '@react-native-community/progress-view';
 
 import {dateFormat} from '../../../../../common/handle.string';
 import RouteNames from '../../../../../constants/route-names.const';
@@ -44,7 +45,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
   const [borrowerStatus, setBorrowerStatus] = useState(null);
   const [status, setStatus] = useState([
     {label: 'PENDING', value: 'PENDING'},
-    {label: 'APPROVED', value: 'APPROVED'},
+    {label: 'DONE', value: 'DONE'},
     {label: 'CANCELED', value: 'CANCELED'},
   ]);
 
@@ -161,6 +162,16 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
         </View>
       </View>
 
+      <Text style={styles.title}>Tiến độ</Text>
+      <View style={styles.contentContainer}>
+        <ProgressView
+          progressTintColor="pink"
+          trackTintColor="blue"
+          progress={0.7}
+          style={{width: '100%', alignSelf: 'center'}}
+        />
+      </View>
+
       <Text style={styles.title}>Danh sách người mượn</Text>
       <View style={styles.contentContainer}>
         {bill.borrowers.map((borrower, index) => (
@@ -187,31 +198,35 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                 </View>
                 <View style={[styles.infoRow, {alignItems: 'center'}]}>
                   <Text style={styles.headingText}>Trạng thái:</Text>
-                  <DropDownPicker
-                    containerStyle={{
-                      width: '50%',
-                    }}
-                    dropDownContainerStyle={{
-                      borderColor: Colors.border.lightgrey,
-                    }}
-                    style={{
-                      borderColor: Colors.border.lightgrey,
-                      minHeight: 30,
-                    }}
-                    selectedItemLabelStyle={{color: Colors.title.orange}}
-                    zIndex={100000}
-                    open={openBorrowers}
-                    value={borrowerStatus}
-                    items={status}
-                    placeholder="Chọn người mượn"
-                    placeholderStyle={{color: Colors.text.lightgrey}}
-                    setOpen={setOpenBorrowers}
-                    setValue={setBorrowerStatus}
-                    setItems={setStatus}
-                    onSelectItem={(item: any) => {
-                      console.log('item', item);
-                    }}
-                  />
+                  {borrower.borrower._id === bill.lender._id ? (
+                    <DropDownPicker
+                      containerStyle={{
+                        width: '50%',
+                      }}
+                      dropDownContainerStyle={{
+                        borderColor: Colors.border.lightgrey,
+                      }}
+                      style={{
+                        borderColor: Colors.border.lightgrey,
+                        minHeight: 30,
+                      }}
+                      selectedItemLabelStyle={{color: Colors.title.orange}}
+                      zIndex={100000}
+                      open={openBorrowers}
+                      value={borrowerStatus}
+                      items={status}
+                      placeholder="Chọn người mượn"
+                      placeholderStyle={{color: Colors.text.lightgrey}}
+                      setOpen={setOpenBorrowers}
+                      setValue={setBorrowerStatus}
+                      setItems={setStatus}
+                      onSelectItem={(item: any) => {
+                        console.log('item', item);
+                      }}
+                    />
+                  ) : (
+                    <Text style={styles.text}>{borrower.status}</Text>
+                  )}
                   {/* <Text style={styles.text}>{borrower.status}</Text> */}
                 </View>
               </View>

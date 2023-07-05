@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
   title: {
     width: '90%',
     textAlign: 'left',
+    textAlignVertical: 'center',
     fontSize: 20,
     fontWeight: 'bold',
     color: Colors.title.orange,
@@ -128,13 +129,15 @@ const styles = StyleSheet.create({
   },
   borrowersContainer: {
     width: '100%',
-    height: Dimensions.get('window').height * 0.1,
+    height: Dimensions.get('window').height * 0.15,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // gap: 10,
-    marginBottom: 10,
+    marginVertical: 10,
+    padding: 10,
+    backgroundColor: '#fff6e8',
+    borderRadius: 10,
   },
   borrowerAvatar: {
     width: Dimensions.get('window').height * 0.1,
@@ -142,20 +145,18 @@ const styles = StyleSheet.create({
     borderRadius: (Dimensions.get('window').height * 0.1) / 2,
   },
   borrowerInfo: {
-    width: '60%',
+    width: '65%',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
-    // backgroundColor: 'pink',
   },
   borrowerInfoRow: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     flexWrap: 'wrap',
-    // gap: 10,
   },
   headingText: {
     fontSize: 14,

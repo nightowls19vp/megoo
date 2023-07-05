@@ -22,6 +22,9 @@ import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import {createBill, getMembers} from './services/bill-service';
 import styles from './styles/style';
+import DatePicker from 'react-native-date-picker';
+import moment from 'moment';
+import {dateISOFormat} from '../../../../../common/handle.string';
 
 // Define the type for the route params
 type GroupRouteParams = {
@@ -33,10 +36,11 @@ type GroupRouteProp = RouteProp<Record<string, GroupRouteParams>, string>;
 
 const BillSchema = Yup.object().shape({
   summary: Yup.string().required('Vui lòng nhập tên khoản chi tiêu'),
+  date: Yup.string().required('Vui lòng chọn ngày'),
   description: Yup.string().required('Vui lòng nhập mô tả'),
-  amount: Yup.string().required('Vui lòng nhập số tiền'),
+  amount: Yup.string(),
   lender: Yup.string().required('Vui lòng chọn người cho mượn'),
-  borrower: Yup.string().required('Vui lòng chọn người mượn'),
+  borrower: Yup.string(),
 });
 
 const BillScreen = ({navigation}: {navigation: any}) => {
@@ -57,8 +61,10 @@ const BillScreen = ({navigation}: {navigation: any}) => {
     },
   ]);
 
-  const [summary, setSummary] = useState('');
-  const [description, setDescription] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [open, setOpen] = useState(false);
+
+  const [totalAmount, setTotalAmount] = useState(0);
 
   // State to open and close the dropdown picker
   const [openLender, setOpenLender] = useState(false);
@@ -103,26 +109,18 @@ const BillScreen = ({navigation}: {navigation: any}) => {
     }
   };
 
-  const renderError = (message: string) => {
-    return (
-      <View
-        style={{
-          marginTop: 5,
-        }}>
-        <Text
-          style={{
-            color: Colors.text.red,
-            fontSize: 14,
-          }}>
-          {message}
-        </Text>
-      </View>
-    );
-  };
-
   useEffect(() => {
     getMemberList();
   }, []);
+
+  useEffect(() => {
+    setTotalAmount(
+      selectedBorrowers.reduce(
+        (total: number, borrower: any) => total + parseFloat(borrower.amount),
+        0,
+      ),
+    );
+  }, [selectedBorrowers]);
 
   // If user changes the lender, remove the lender from the selected borrowers
   useEffect(() => {
@@ -144,6 +142,7 @@ const BillScreen = ({navigation}: {navigation: any}) => {
     <Formik
       initialValues={{
         summary: '',
+        date: '',
         description: '',
         lender: '',
         borrower: '',
@@ -152,8 +151,11 @@ const BillScreen = ({navigation}: {navigation: any}) => {
       validationSchema={BillSchema}
       onSubmit={async values => {
         console.log('summary:', values.summary);
+        console.log('date:', values.date);
         console.log('desc:', values.description);
         console.log('lender:', values.lender);
+
+        const dateSOString = dateISOFormat(values.date);
 
         // Get lender in members array
         const selectedlender = members.find(
@@ -162,7 +164,7 @@ const BillScreen = ({navigation}: {navigation: any}) => {
 
         const bill = {
           summary: values.summary,
-          date: new Date(),
+          date: dateSOString,
           lender: selectedlender?.user._id,
           borrowers: selectedBorrowers.map((borrower: any) => {
             return {
@@ -175,33 +177,43 @@ const BillScreen = ({navigation}: {navigation: any}) => {
 
         console.log('bill', bill);
 
-        const response = await createBill(groupId, bill);
-        console.log('Create bill response:', response);
+        // const response = await createBill(groupId, bill);
+        // console.log('Create bill response:', response);
 
-        if (response.statusCode === 201) {
-          Toast.show({
-            type: 'success',
-            text1: 'Tạo khoản chi tiêu thành công',
-            autoHide: true,
-            visibilityTime: 1000,
-            topOffset: 30,
-            bottomOffset: 40,
-            onHide: () => {
-              navigation.navigate(
-                RouteNames.BILL_MANAGEMENT as never,
-                {} as never,
-              );
-            },
-          });
-        } else {
-          Toast.show({
-            type: 'error',
-            text1: response.message,
-            autoHide: false,
-            topOffset: 30,
-            bottomOffset: 40,
-          });
-        }
+        // if (response.statusCode === 201) {
+        //   Toast.show({
+        //     type: 'success',
+        //     text1: 'Tạo khoản chi tiêu thành công',
+        //     autoHide: true,
+        //     visibilityTime: 1000,
+        //     topOffset: 30,
+        //     bottomOffset: 40,
+        //     onHide: () => {
+        //       navigation.navigate(
+        //         RouteNames.BILL_MANAGEMENT as never,
+        //         {} as never,
+        //       );
+        //     },
+        //   });
+        // } else {
+        //   Toast.show({
+        //     type: 'error',
+        //     text1: response.message,
+        //     autoHide: false,
+        //     topOffset: 30,
+        //     bottomOffset: 40,
+        //   });
+        // }
+      }}
+      onReset={(values, actions) => {
+        console.log('reset');
+
+        // Reset values.borrower, values.amount
+        actions.setFieldValue('borrower', '');
+        actions.setFieldValue('amount', '');
+        actions.setTouched({borrower: false, amount: false});
+
+        console.log('values', values);
       }}>
       {({
         values,
@@ -211,6 +223,7 @@ const BillScreen = ({navigation}: {navigation: any}) => {
         setFieldValue,
         isValid,
         handleSubmit,
+        handleReset,
       }) => (
         <ScrollView contentContainerStyle={styles.container}>
           <Text style={[styles.title, {marginTop: 20}]}>
@@ -222,8 +235,9 @@ const BillScreen = ({navigation}: {navigation: any}) => {
               onBlur={() => setFieldTouched('summary')}
               // onChangeText={text => setSummary(text)}
               style={styles.inputText}
-              placeholder={'Tên khoản chi tiêu'}
+              placeholder={'Nhập tên khoản chi tiêu'}
               placeholderTextColor={Colors.text.lightgrey}
+              value={values.summary}
             />
             {values.summary && (
               <Ionicons
@@ -237,6 +251,60 @@ const BillScreen = ({navigation}: {navigation: any}) => {
             <Text style={styles.error}>{errors.summary}</Text>
           )}
 
+          <Text style={styles.title}>Ngày</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              editable={false}
+              // onChangeText={value => setFieldValue('date', value)}
+              onBlur={() => setFieldTouched('date')}
+              placeholder={'Chọn ngày'}
+              style={styles.inputText}
+              placeholderTextColor={Colors.text.lightgrey}
+              value={values.date}
+            />
+
+            <DatePicker
+              modal
+              open={open}
+              date={date}
+              mode={'date'}
+              locale={'vi'}
+              title={'Chọn ngày'}
+              confirmText={'Chọn'}
+              cancelText={'Huỷ'}
+              onConfirm={value => {
+                console.log('Selected date:', value);
+
+                setOpen(false);
+                setDate(value);
+                setFieldValue('date', moment(value).format('DD/MM/YYYY'));
+
+                console.log('Values date', values.date);
+              }}
+              onCancel={() => {
+                setOpen(false);
+              }}
+            />
+
+            {values.date && (
+              <Ionicons
+                onPress={() => setFieldValue('date', '')}
+                name={'close'}
+                style={[styles.inputIcon, {marginRight: 5}]}
+              />
+            )}
+            <Ionicons
+              onPress={() => {
+                setOpen(true);
+              }}
+              name={'calendar'}
+              style={styles.inputIcon}
+            />
+          </View>
+          {touched.date && errors.date && (
+            <Text style={styles.error}>{errors.date}</Text>
+          )}
+
           <Text style={styles.title}>Mô tả</Text>
           <View style={styles.inputContainer}>
             <TextInput
@@ -244,8 +312,9 @@ const BillScreen = ({navigation}: {navigation: any}) => {
               onBlur={() => setFieldTouched('description')}
               // onChangeText={text => setSummary(text)}
               style={styles.inputText}
-              placeholder={'Tên khoản chi tiêu'}
+              placeholder={'Nhập mô tả'}
               placeholderTextColor={Colors.text.lightgrey}
+              value={values.description}
             />
             {values.description && (
               <Ionicons
@@ -259,6 +328,33 @@ const BillScreen = ({navigation}: {navigation: any}) => {
             <Text style={styles.error}>{errors.description}</Text>
           )}
 
+          <View
+            style={{
+              width: '90%',
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'baseline',
+              // backgroundColor: 'pink',
+              marginBottom: 5,
+            }}>
+            <Text style={[styles.title, {width: '50%'}]}>Tổng tiền</Text>
+            <View
+              style={{
+                width: '50%',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                alignItems: 'baseline',
+                flexDirection: 'row',
+                gap: 10,
+                // backgroundColor: 'yellow',
+              }}>
+              <Text style={{fontSize: 20, fontWeight: 'bold'}}>
+                {totalAmount}
+              </Text>
+              <Text style={{fontSize: 20}}>VND</Text>
+            </View>
+          </View>
+
           <Text style={styles.title}>Người cho mượn</Text>
           <View style={styles.lenderContainer}>
             <DropDownPicker
@@ -266,7 +362,7 @@ const BillScreen = ({navigation}: {navigation: any}) => {
               dropDownContainerStyle={{
                 borderColor: Colors.border.lightgrey,
               }}
-              style={{borderColor: Colors.border.lightgrey}}
+              style={{borderColor: Colors.border.lightgrey, borderRadius: 10}}
               selectedItemLabelStyle={{color: Colors.title.orange}}
               open={openLender}
               value={lender}
@@ -311,7 +407,7 @@ const BillScreen = ({navigation}: {navigation: any}) => {
               <DropDownPicker
                 containerStyle={{width: '100%'}}
                 dropDownContainerStyle={{borderColor: Colors.border.lightgrey}}
-                style={{borderColor: Colors.border.lightgrey}}
+                style={{borderColor: Colors.border.lightgrey, borderRadius: 10}}
                 selectedItemLabelStyle={{color: Colors.title.orange}}
                 zIndex={100000}
                 open={openBorrowers}
@@ -340,8 +436,8 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                 }}
               />
             </View>
-            {touched.borrower && errors.borrower && (
-              <Text style={styles.error}>{errors.borrower}</Text>
+            {touched.borrower && selectedBorrowers.length === 0 && (
+              <Text style={styles.error}>Vui lòng chọn người mượn</Text>
             )}
 
             <View style={[styles.addBorrowerContainer, {zIndex: 0}]}>
@@ -351,30 +447,32 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                     setFieldValue('amount', value);
                     setAmount(parseFloat(value));
                   }}
-                  onBlur={() => setFieldTouched('amount')}
+                  // onBlur={() => setFieldTouched('amount')}
                   // onChangeText={value => setAmount(parseFloat(value))}
                   style={{
                     width: '70%',
                     textAlign: 'left',
                   }}
-                  placeholder={'Số tiền'}
+                  placeholder={'Nhập số tiền cần trả'}
                   placeholderTextColor={Colors.text.lightgrey}
                   keyboardType="numeric"
+                  value={values.amount}
                 />
                 <Text>VND</Text>
               </View>
             </View>
-            {touched.amount && errors.amount && (
-              <Text style={styles.error}>{errors.amount}</Text>
+            {touched.amount && selectedBorrowers.length === 0 && (
+              <Text style={styles.error}>Vui lòng nhập số tiền cần trả</Text>
             )}
 
             <TouchableOpacity
               style={styles.addBorrowerButton}
               onPress={() => {
+                // handleReset();
                 console.log('selectedBorrower', selectedBorrower);
                 console.log('amount', values.amount);
 
-                if (values.borrower !== '' || values.amount !== '') {
+                if (selectedBorrower._id && values.amount) {
                   // Check if borrower existed in selectedBorrowers
                   const index = selectedBorrowers.findIndex(
                     (borrower: any) => borrower._id === selectedBorrower._id,
@@ -402,12 +500,10 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                           email: selectedBorrower.email,
                           name: selectedBorrower.name,
                           avatar: selectedBorrower.avatar,
-                          amount: amount,
+                          amount: values.amount,
                           status: 'PENDING',
                         },
                       ]);
-                      setBorrower(null);
-                      setAmount(0);
                     }
                   }
                 }
@@ -421,7 +517,6 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                   display: 'flex',
                   justifyContent: 'center',
                   width: '100%',
-                  // backgroundColor: 'yellow',
                 }}>
                 {selectedBorrowers.map((borrower: any, index) => {
                   return (
