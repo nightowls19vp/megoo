@@ -34,13 +34,14 @@ const CartScreen = ({navigation}: {navigation: any}) => {
     cartList.map(() => false),
   );
 
+  const [selectedAll, setSelectedAll] = useState(false);
+
   const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
   const getCartList = async () => {
     const cartListRes = await getUserCart();
 
-    console.log('cartListRes:', cartListRes);
+    // console.log('cartListRes:', cartListRes);
 
     if (
       !cartListRes.cart ||
@@ -83,6 +84,46 @@ const CartScreen = ({navigation}: {navigation: any}) => {
 
     setTotalPrice(totalPrice);
   }, [cartList, toggleCheckBoxArray]);
+
+  useEffect(() => {
+    console.log('selectedAll:', selectedAll);
+
+    if (selectedAll === true) {
+      setToggleCheckBoxArray(() => cartList.map(() => true));
+
+      // Assign all items to selectedItemsList
+      setSelectedItemList(() => ({
+        cart: cartList.map((item: any) => {
+          return {
+            package: item.package,
+            name: item.name,
+            duration: item.duration,
+            noOfMember: item.noOfMember,
+            quantity: item.quantity,
+            price: item.price,
+          };
+        }),
+      }));
+    } else {
+      setToggleCheckBoxArray(() => cartList.map(() => false));
+    }
+  }, [selectedAll]);
+
+  // Check if toggleCheckBoxArray is all true then set selectedAll to true
+  useEffect(() => {
+    const isAllTrue =
+      toggleCheckBoxArray.length > 0 &&
+      toggleCheckBoxArray.every(item => item === true);
+    console.log('toggleCheckBoxArray:', toggleCheckBoxArray);
+
+    console.log('isAllTrue:', isAllTrue);
+
+    if (isAllTrue === true) {
+      setSelectedAll(true);
+    } else {
+      setSelectedAll(false);
+    }
+  }, [toggleCheckBoxArray]);
 
   const renderCartItem = () => {
     const handleToggleCheckBox = (
@@ -303,21 +344,24 @@ const CartScreen = ({navigation}: {navigation: any}) => {
   };
 
   return (
-    <View>
-      {/* <View style={styles.cartListContainer}>
+    <View
+      style={{
+        flex: 1,
+      }}>
+      <View style={styles.cartListContainer}>
         <CheckBox
           style={{
             marginLeft: 5,
           }}
           tintColors={{true: Colors.primary}}
           disabled={false}
-          // value={toggleCheckBoxArray[index]}
-          // onValueChange={newValue =>
-          //   handleToggleCheckBox(index, newValue, object)
-          // }
+          value={selectedAll}
+          onValueChange={newValue => {
+            setSelectedAll(newValue);
+          }}
         />
-        <Text>Chọn tất cả</Text>
-      </View> */}
+        <Text style={{fontSize: 16}}>Chọn tất cả</Text>
+      </View>
 
       <ScrollView contentContainerStyle={styles.container}>
         {renderCartItem()}

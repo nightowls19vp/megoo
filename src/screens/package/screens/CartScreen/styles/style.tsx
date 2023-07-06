@@ -10,8 +10,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     paddingBottom: 60,
-    paddingTop: 10,
-    // marginVertical: 10,
   },
   cartListContainer: {
     width: '100%',
@@ -20,7 +18,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 5,
     paddingRight: 20,
-    marginVertical: 10,
+    marginTop: 10,
   },
   cartItemContainer: {
     width: '90%',
