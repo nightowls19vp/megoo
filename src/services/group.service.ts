@@ -23,3 +23,25 @@ export const getUserGroup = async () => {
     console.log("Get user's group error:", error);
   }
 };
+
+export const getGroupById = async (groupId: string) => {
+  const groupEndpoint = `api/pkg-mgmt/gr/${groupId}`;
+  const reqUrl = `${URL_HOST}${groupEndpoint}`;
+  console.log('Get group by id:', reqUrl);
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+  console.log('Access token:', accessToken);
+
+  try {
+    const response = await axios.get(reqUrl, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log('Get group by id error:', error);
+  }
+};

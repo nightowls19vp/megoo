@@ -12,12 +12,17 @@ const styles = StyleSheet.create({
   },
   avatar: {width: 200, height: 200, borderRadius: 200 / 2},
   title: {
-    width: '90%',
     marginVertical: 10,
     textAlign: 'left',
     fontSize: 18,
     color: Colors.title.orange,
     fontWeight: 'bold',
+  },
+  subTitle: {
+    fontSize: 14,
+    color: Colors.text.orange,
+    textAlignVertical: 'bottom',
+    includeFontPadding: false,
   },
   groupInfoContainer: {
     display: 'flex',

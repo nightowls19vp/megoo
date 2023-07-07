@@ -45,6 +45,7 @@ export default {
   PROFILE_STACK: 'PROFILE_STACK',
   PROFILE: 'Trang cá nhân',
   EDIT_PROFILE: 'Chỉnh sửa thông tin cá nhân',
+  EDIT_GROUP_INFO: 'Chỉnh sửa thông tin nhóm',
   CHANGE_AVATAR: 'Chỉnh sửa ảnh đại diện',
 
   SETTINGS_STACK_DRAWER: 'SETTINGS_STACK_DRAWER',

@@ -38,6 +38,7 @@ import BillListScreen from '../../../screens/home/screens/bill/BillListScreen';
 import BillScreen from '../../../screens/home/screens/bill/BillScreen';
 import GroupBillListScreen from '../../../screens/home/screens/bill/GroupBillListScreen';
 import BillInfoScreen from '../../../screens/home/screens/bill/BillInfoScreen';
+import EditGroupinfoScreen from '../../../screens/profile/screens/EditGroupInfoScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -245,6 +246,10 @@ function ProfileScreenStack() {
       <ProfileStack.Screen
         name={RouteNames.CURRENT_PACKAGE}
         component={CurrentPackage}
+      />
+      <ProfileStack.Screen
+        name={RouteNames.EDIT_GROUP_INFO}
+        component={EditGroupinfoScreen}
       />
       <ProfileStack.Screen
         name={RouteNames.CHAT_STACK}

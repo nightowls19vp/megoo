@@ -85,17 +85,10 @@ export default function LoginScreen({navigation}: {navigation: any}) {
           user.email = response?.data?.userInfo['email'] ?? '';
           user.phone = response?.data?.userInfo['phone'] ?? '';
           user.avatar = response?.data?.userInfo['avatar'] ?? '';
-
-          let dob = response.data?.userInfo['dob'] ?? '';
-
-          if (dob.length > 0) {
-            user.dob = dateFormat(dob);
-            // user.dob = moment(dob).format('DD/MM/YYYY').toString();
-          } else {
-            user.dob = '';
-          }
-          // user.dob = dateFormat(response.userInfo.dob) ?? '';
-          console.log('user.dob:', user.dob);
+          user.dob = dateFormat(
+            response?.data?.userInfo['dob'] ??
+              new Date('1990-01-01T00:00:00').toString(),
+          );
 
           userStore.setUser(user);
 
@@ -283,13 +276,16 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                   };
 
                   // Store user info
-                  user._id = res.userInfo._id ?? '';
-                  user.name = res.userInfo.name ?? '';
-                  user.email = res.userInfo.email ?? '';
-                  user.phone = res.userInfo.phone ?? '';
-                  user.dob = dateFormat(res.userInfo.dob) ?? '';
+                  user._id = res?.userInfo?._id ?? '';
+                  user.name = res?.userInfo?.name ?? '';
+                  user.email = res?.userInfo?.email ?? '';
+                  user.phone = res?.userInfo?.phone ?? '';
+                  user.dob = dateFormat(
+                    res?.userInfo?.dob ??
+                      new Date('1990-01-01T00:00:00').toString(),
+                  );
                   user.avatar =
-                    res.userInfo.avatar ??
+                    res?.userInfo?.avatar ??
                     'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9';
 
                   userStore.setUser(user);
@@ -302,10 +298,11 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                     newsNoti: true,
                   };
 
-                  settings.callNoti = res.userInfo.setting.callNoti ?? true;
-                  settings.msgNoti = res.userInfo.setting.msgNoti ?? true;
-                  settings.stockNoti = res.userInfo.setting.stockNoti ?? true;
-                  settings.newsNoti = res.userInfo.setting.newsNoti ?? true;
+                  settings.callNoti = res?.userInfo?.setting?.callNoti ?? true;
+                  settings.msgNoti = res?.userInfo?.setting?.msgNoti ?? true;
+                  settings.stockNoti =
+                    res?.userInfo?.setting?.stockNoti ?? true;
+                  settings.newsNoti = res?.userInfo?.setting?.newsNoti ?? true;
 
                   userStore.setUserSettings(settings);
                   console.log('Call noti:', settings.callNoti);

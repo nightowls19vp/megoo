@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 import {Colors} from '../../../../../constants/color.const';
 
 const styles = StyleSheet.create({
@@ -7,8 +7,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     paddingTop: 10,
-    height: '100%',
-    // justifyContent: 'center',
+    width: Dimensions.get('window').width,
+    minHeight: Dimensions.get('window').height,
   },
   title: {
     fontSize: 30,
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   inputText: {flex: 1, color: Colors.text.grey},
   error: {
-    width: '80%',
+    width: '90%',
     color: Colors.error,
     textAlign: 'left',
   },
@@ -69,9 +69,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   avatar: {
-    width: 200,
-    height: 200,
-    borderRadius: 200 / 2,
+    width: Dimensions.get('window').width * 0.5,
+    height: Dimensions.get('window').width * 0.5,
+    borderRadius: (Dimensions.get('window').width * 0.5) / 2,
   },
 });
 

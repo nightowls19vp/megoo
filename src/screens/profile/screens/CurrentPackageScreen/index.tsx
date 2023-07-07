@@ -1,5 +1,5 @@
 import {Formik} from 'formik';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -15,15 +15,16 @@ import Toast from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Foundation from 'react-native-vector-icons/Foundation';
 import * as Yup from 'yup';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
 
 import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
-import {activate, getGroupInfo, invite} from './services/group.info.service';
+import {activate, invite} from './services/group.info.service';
 import styles from './styles/style';
 import {dateFormat} from '../../../../common/handle.string';
+import {getGroupById} from '../../../../services/group.service';
 
 const height = Dimensions.get('window').height;
 
@@ -77,7 +78,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
 
   const getSelectedGroup = async () => {
     // Get group info by id
-    const groupRes = await getGroupInfo(groupId);
+    const groupRes = await getGroupById(groupId);
     console.log('groupsRes group:', groupRes.group);
     console.log('groupsRes group members:', groupRes?.group?.members);
     console.log('route param:', route);
@@ -142,7 +143,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
 
   // Extend package when package in group is expired
   const extendPackage = async () => {
-    const extendPkgRes = await getGroupInfo(groupId);
+    const extendPkgRes = await getGroupById(groupId);
     console.log('Extend pkg res:', extendPkgRes);
 
     // Set new package to user's group
@@ -184,6 +185,15 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
     }
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      getSelectedGroup();
+      return () => {
+        // Code to clean up the effect when the screen is unfocused
+      };
+    }, []),
+  );
+
   return (
     <>
       <View style={styles.container}>
@@ -193,7 +203,26 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
           }}
           style={styles.avatar}
         />
-        <Text style={styles.title}>Thông tin nhóm</Text>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'baseline',
+            width: '90%',
+            // backgroundColor: 'pink',
+          }}>
+          <Text style={styles.title}>Thông tin nhóm</Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate(RouteNames.EDIT_GROUP_INFO, {
+                groupId: group._id,
+                avatarUrl: group.avatar,
+              });
+            }}>
+            <Text style={styles.subTitle}>Chỉnh sửa</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.groupInfoContainer}>
           <View style={[styles.infoRow, {flexWrap: 'wrap'}]}>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>Tên nhóm: </Text>
@@ -356,7 +385,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
 
         {group.status === 'Active' ? (
           <>
-            <Text style={styles.title}>Mời thành viên</Text>
+            <Text style={[styles.title, {width: '90%'}]}>Mời thành viên</Text>
 
             <Formik
               initialValues={{

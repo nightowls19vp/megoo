@@ -68,7 +68,12 @@ const CartScreen = ({navigation}: {navigation: any}) => {
   useEffect(() => {
     getCartList().then(cartList => {
       setCartList(cartList);
+      setToggleCheckBoxArray(() => cartList.map(() => false));
     });
+
+    setTimeout(() => {
+      console.log('toggleCheckBoxArray:', toggleCheckBoxArray);
+    }, 1000);
   }, []);
 
   useEffect(() => {
@@ -139,9 +144,12 @@ const CartScreen = ({navigation}: {navigation: any}) => {
       },
     ) => {
       const updatedArray = [...toggleCheckBoxArray];
+      console.log('updatedArray:', updatedArray);
       updatedArray[index] = newValue;
+      console.log('updatedArray:', updatedArray);
+
       setToggleCheckBoxArray(updatedArray);
-      console.log('object price:', object.price);
+
       setItemPrice(object.price * object.quantity);
 
       let cartItem: any = {

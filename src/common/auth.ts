@@ -100,13 +100,16 @@ export const checkLogin = async () => {
           avatar: '',
         };
 
-        user._id = response.userInfo._id ?? '';
-        user.name = response.userInfo.name ?? '';
-        user.email = response.userInfo.email ?? '';
-        user.phone = response.userInfo.phone ?? '';
-        user.dob = dateFormat(response.userInfo.dob) ?? '';
+        user._id = response?.userInfo?._id ?? '';
+        user.name = response?.userInfo?.name ?? '';
+        user.email = response?.userInfo?.email ?? '';
+        user.phone = response?.userInfo.phone ?? '';
+        user.dob = dateFormat(
+          response?.userInfo?.dob ?? new Date('1990-01-01T00:00:00'),
+        );
+
         user.avatar =
-          response.data?.userInfo.avatar ??
+          response.userInfo?.avatar ??
           'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9';
 
         userStore.setUser(user);
@@ -119,10 +122,10 @@ export const checkLogin = async () => {
           newsNoti: true,
         };
 
-        settings.callNoti = response.userInfo.setting.callNoti;
-        settings.msgNoti = response.userInfo.setting.msgNoti;
-        settings.stockNoti = response.userInfo.setting.stockNoti;
-        settings.newsNoti = response.userInfo.setting.newsNoti;
+        settings.callNoti = response?.userInfo?.setting?.callNoti;
+        settings.msgNoti = response?.userInfo?.setting?.msgNoti;
+        settings.stockNoti = response?.userInfo?.setting?.stockNoti;
+        settings.newsNoti = response?.userInfo?.setting?.newsNoti;
 
         userStore.setUserSettings(settings);
 
