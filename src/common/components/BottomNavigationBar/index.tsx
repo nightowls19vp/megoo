@@ -39,6 +39,8 @@ import BillScreen from '../../../screens/home/screens/bill/BillScreen';
 import GroupBillListScreen from '../../../screens/home/screens/bill/GroupBillListScreen';
 import BillInfoScreen from '../../../screens/home/screens/bill/BillInfoScreen';
 import EditGroupinfoScreen from '../../../screens/profile/screens/EditGroupInfoScreen';
+import TodosListScreen from '../../../screens/home/screens/todos/TodosListScreen';
+import CreateTodosScreen from '../../../screens/home/screens/todos/CreateTodosScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -126,6 +128,31 @@ const BillListScreenStack = () => {
   );
 };
 
+const TodosListStack = createNativeStackNavigator();
+const TodosListScreenStack = () => {
+  return (
+    <TodosListStack.Navigator initialRouteName={RouteNames.TODOS_LIST}>
+      <TodosListStack.Screen
+        name={RouteNames.CHAT_STACK}
+        component={ChatScreenStack}
+        options={{
+          title: 'Nhóm chat',
+        }}
+      />
+      <TodosListStack.Screen
+        name={RouteNames.TODOS_LIST}
+        component={TodosListScreen}
+        // options={{headerShown: false}}
+      />
+      <TodosListStack.Screen
+        name={RouteNames.CREATE_TODOS}
+        component={CreateTodosScreen}
+        // options={{headerShown: false}}
+      />
+    </TodosListStack.Navigator>
+  );
+};
+
 const HomeStack = createNativeStackNavigator();
 const HomeScreenStack = () => {
   return (
@@ -143,6 +170,14 @@ const HomeScreenStack = () => {
         component={BillListScreenStack}
         options={{
           title: 'Quản lý chi tiêu',
+          headerShown: false,
+        }}
+      />
+      <HomeStack.Screen
+        name={RouteNames.TODOS_LIST_STACK}
+        component={TodosListScreenStack}
+        options={{
+          title: 'Quản lý việc cần làm',
           headerShown: false,
         }}
       />

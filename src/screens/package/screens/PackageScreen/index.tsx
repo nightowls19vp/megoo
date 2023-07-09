@@ -113,9 +113,9 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                 minimumValue={0}
                 maximumValue={12}
                 lowerLimit={1}
-                thumbTintColor={Colors.primary}
-                minimumTrackTintColor={Colors.primary}
-                maximumTrackTintColor={Colors.secondary}
+                thumbTintColor={Colors.text.orange}
+                minimumTrackTintColor={Colors.text.orange}
+                maximumTrackTintColor={Colors.text.lightgrey}
                 onValueChange={value => {
                   setDuration(value);
                 }}
@@ -147,9 +147,9 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                 }
                 minimumValue={0}
                 maximumValue={10}
-                thumbTintColor={Colors.primary}
-                minimumTrackTintColor={Colors.primary}
-                maximumTrackTintColor={Colors.secondary}
+                thumbTintColor={Colors.text.orange}
+                minimumTrackTintColor={Colors.text.orange}
+                maximumTrackTintColor={Colors.text.lightgrey}
                 lowerLimit={2}
                 onValueChange={value => {
                   console.log('slider noofmemb value', value);

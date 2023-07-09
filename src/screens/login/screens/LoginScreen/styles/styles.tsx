@@ -46,7 +46,6 @@ const styles = StyleSheet.create({
     gap: 20,
     margin: 10,
     padding: 8,
-    // backgroundColor: Colors.primary,
     borderRadius: 10,
   },
   buttonText: {

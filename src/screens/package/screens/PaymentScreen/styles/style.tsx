@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     textAlign: 'left',
     fontSize: 18,
-    color: Colors.primary,
+    color: Colors.text.orange,
     fontWeight: 'bold',
   },
   paymentContainer: {
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '40%',
     height: '100%',
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.buttonBackground.orange,
   },
   buttonText: {
     color: 'white',

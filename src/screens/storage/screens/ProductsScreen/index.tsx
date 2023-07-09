@@ -108,7 +108,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
           <Ionicons
             name="add-circle-outline"
             size={24}
-            color={Colors.primary}
+            color={Colors.text.orange}
           />
         </TouchableOpacity>
       </View>
@@ -137,7 +137,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
                 <Ionicons
                   name="close"
                   size={22}
-                  color={Colors.primary}
+                  color={Colors.text.orange}
                   style={{
                     width: '100%',
                     textAlign: 'right',
@@ -156,9 +156,9 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
                 <AntDesignIcon
                   name="barcode"
                   size={30}
-                  color={Colors.primary}
+                  color={Colors.icon.orange}
                 />
-                <Text style={{fontWeight: 'bold', color: Colors.primary}}>
+                <Text style={{fontWeight: 'bold', color: Colors.text.orange}}>
                   Quét barcode
                 </Text>
               </TouchableOpacity>
@@ -172,8 +172,12 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
                     {} as never,
                   );
                 }}>
-                <AntDesignIcon name="edit" size={30} color={Colors.primary} />
-                <Text style={{fontWeight: 'bold', color: Colors.primary}}>
+                <AntDesignIcon
+                  name="edit"
+                  size={30}
+                  color={Colors.icon.orange}
+                />
+                <Text style={{fontWeight: 'bold', color: Colors.text.orange}}>
                   Nhập thông tin
                 </Text>
               </TouchableOpacity>

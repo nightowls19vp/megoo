@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     width: '90%',
     textAlign: 'left',
     fontSize: 18,
-    color: Colors.primary,
+    color: Colors.text.orange,
     fontWeight: 'bold',
     paddingVertical: 10,
   },

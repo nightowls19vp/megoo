@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     gap: 20,
     margin: 10,
     padding: 8,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.buttonBackground.orange,
     borderRadius: 10,
   },
   buttonText: {

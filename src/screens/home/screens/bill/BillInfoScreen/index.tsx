@@ -256,9 +256,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
               style={{
                 alignItems: 'center',
               }}>
-              <Text style={{fontSize: 16, color: Colors.textSecondary}}>
-                Huỷ
-              </Text>
+              <Text style={{fontSize: 16, color: Colors.text.orange}}>Huỷ</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={async () => {

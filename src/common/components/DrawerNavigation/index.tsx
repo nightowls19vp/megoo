@@ -29,7 +29,7 @@ function CustomDrawerContent(props: any) {
       }}>
       <View
         style={{
-          backgroundColor: Colors.itemBackground,
+          backgroundColor: Colors.background.white,
           height: '30%',
           display: 'flex',
           justifyContent: 'center',
@@ -51,7 +51,7 @@ function CustomDrawerContent(props: any) {
             <Text
               style={{
                 textAlign: 'center',
-                color: Colors.textSecondary,
+                color: Colors.text.orange,
                 fontSize: 18,
                 fontWeight: 'bold',
               }}
@@ -79,7 +79,7 @@ function CustomDrawerContent(props: any) {
               <Text
                 style={{
                   textAlign: 'center',
-                  color: Colors.textSecondary,
+                  color: Colors.text.orange,
                   fontSize: 18,
                   fontWeight: 'bold',
                 }}
