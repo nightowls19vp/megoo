@@ -26,7 +26,6 @@ const styles = StyleSheet.create({
     gap: 20,
     margin: 10,
     padding: 8,
-    // backgroundColor: Colors.primary,
     borderRadius: 10,
   },
   buttonText: {
@@ -58,7 +57,7 @@ const styles = StyleSheet.create({
   inputText: {flex: 1, color: Colors.text.grey},
   error: {
     width: '90%',
-    color: Colors.error,
+    color: Colors.text.red,
     textAlign: 'left',
   },
   avatarContainer: {

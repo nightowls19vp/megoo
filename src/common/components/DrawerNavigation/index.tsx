@@ -52,7 +52,7 @@ function CustomDrawerContent(props: any) {
             <Text
               style={{
                 textAlign: 'center',
-                color: Colors.textSecondary,
+                color: Colors.text.orange,
                 fontSize: 18,
                 fontWeight: 'bold',
               }}
@@ -80,7 +80,7 @@ function CustomDrawerContent(props: any) {
               <Text
                 style={{
                   textAlign: 'center',
-                  color: Colors.textSecondary,
+                  color: Colors.text.orange,
                   fontSize: 18,
                   fontWeight: 'bold',
                 }}

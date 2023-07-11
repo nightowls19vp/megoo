@@ -110,14 +110,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.buttonBackground.white,
   },
   addButtonText: {
-    color: Colors.primary,
+    color: Colors.text.orange,
     fontWeight: 'bold',
     fontSize: 14,
   },
   errorText: {
     marginTop: 10,
     width: '90%',
-    color: Colors.error,
+    color: Colors.text.red,
     textAlign: 'left',
   },
   emailsContainer: {

@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   pkgTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: Colors.primary,
+    color: Colors.text.orange,
     marginTop: 10,
     textAlign: 'center',
   },

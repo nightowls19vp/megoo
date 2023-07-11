@@ -10,7 +10,6 @@ import {
 import NumericInput from 'react-native-numeric-input';
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/AntDesign';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckBox from '@react-native-community/checkbox';
 
@@ -232,7 +231,7 @@ const CartScreen = ({navigation}: {navigation: any}) => {
             style={{
               marginLeft: 5,
             }}
-            tintColors={{true: Colors.primary}}
+            tintColors={{true: Colors.text.orange}}
             disabled={false}
             value={toggleCheckBoxArray[index]}
             onValueChange={newValue =>
@@ -340,7 +339,7 @@ const CartScreen = ({navigation}: {navigation: any}) => {
               <Text style={styles.text}>Giá tiền:</Text>
               <Text
                 style={[
-                  {color: Colors.primary, fontSize: 18, fontWeight: 'bold'},
+                  {color: Colors.text.orange, fontSize: 18, fontWeight: 'bold'},
                 ]}>
                 {Math.round(object.price * object.quantity)} VND
               </Text>
@@ -361,7 +360,7 @@ const CartScreen = ({navigation}: {navigation: any}) => {
           style={{
             marginLeft: 5,
           }}
-          tintColors={{true: Colors.primary}}
+          tintColors={{true: Colors.text.orange}}
           disabled={false}
           value={selectedAll}
           onValueChange={newValue => {
@@ -377,7 +376,7 @@ const CartScreen = ({navigation}: {navigation: any}) => {
 
       <View style={styles.paymentButtonContainer}>
         <View style={styles.icon}>
-          <Icon name="shoppingcart" size={30} color={Colors.primary} />
+          <Icon name="shoppingcart" size={30} color={Colors.text.orange} />
         </View>
         <Text style={styles.price} numberOfLines={2}>
           {Math.round(totalPrice)} VND

@@ -155,7 +155,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
                 style={{
                   fontSize: 18,
                   textAlign: 'justify',
-                  color: Colors.textPrimary,
+                  color: Colors.text.orange,
                 }}>
                 Đăng xuất khỏi tài khoản của bạn?
               </Text>
@@ -176,7 +176,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
                   style={{
                     alignItems: 'center',
                   }}>
-                  <Text style={{fontSize: 16, color: Colors.textSecondary}}>
+                  <Text style={{fontSize: 16, color: Colors.text.orange}}>
                     Huỷ
                   </Text>
                 </TouchableOpacity>

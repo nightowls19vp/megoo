@@ -51,10 +51,6 @@ export const Colors = {
     red: '#DD382F',
   },
 
-  textPrimary: '#49454F',
-  textSecondary: '#F58F00',
-  textTeritary: '#BCB0A1',
-
   buttonText: {
     white: '#FFFFFF',
     orange: '#F58F00',
@@ -75,8 +71,13 @@ export const Colors = {
   // drawerItem: '#9B3B73',
   drawerItem: '#F58F00',
 
-  primary: '#F58F00',
+  checkBox: {
+    orange: '#F58F00',
+  },
+
+  itemBackground: {
+    lightorange: '#fff6e8',
+  },
+
   secondary: '#A8A8A8',
-  error: '#DD382F',
-  disabled: '#F4B051',
 };

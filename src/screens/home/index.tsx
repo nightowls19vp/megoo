@@ -18,7 +18,11 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
             onPress={() => navigation.navigate(RouteNames.BILL_LIST_STACK, {})}>
             <Text style={styles.utilityText}>Quản lý chi tiêu</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.utility}>
+          <TouchableOpacity
+            style={styles.utility}
+            onPress={() =>
+              navigation.navigate(RouteNames.TODOS_LIST_STACK, {})
+            }>
             <Text style={styles.utilityText}>Việc cần làm</Text>
           </TouchableOpacity>
         </View>

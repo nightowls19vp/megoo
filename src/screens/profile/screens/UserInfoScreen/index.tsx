@@ -123,7 +123,7 @@ const UserInfoScreen = ({navigation}: {navigation: any}) => {
           onPress={() => {
             navigation.navigate(RouteNames.LOGIN, {});
           }}>
-          <Text style={[styles.loginText, {color: Colors.primary}]}>
+          <Text style={[styles.loginText, {color: Colors.text.orange}]}>
             đăng nhập/đăng ký
           </Text>
         </TouchableOpacity>
