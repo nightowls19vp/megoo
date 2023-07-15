@@ -1,39 +1,56 @@
-import React from 'react';
-import {TextInput, TouchableOpacity} from 'react-native';
-import {View, Text, Image} from 'react-native';
+import {Formik} from 'formik';
+import moment from 'moment';
+import React, {useState} from 'react';
+import {Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import DatePicker from 'react-native-date-picker';
+import {ScrollView} from 'react-native-gesture-handler';
+import Toast from 'react-native-toast-message';
 // import DatePicker from "react-native-modern-datepicker";
 // import Modal from "react-native-modal";
 import Icon from 'react-native-vector-icons/Ionicons';
-import {Formik} from 'formik';
 import * as Yup from 'yup';
-import moment from 'moment';
-import DatePicker from 'react-native-date-picker';
 
-import styles from './styles/styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {dateFormat} from '../../../common/handle.string';
+import {ISettings} from '../../../common/interfaces/settings.interface';
+import {IUser} from '../../../common/interfaces/user.interface';
+import userStore from '../../../common/store/user.store';
 import {Colors} from '../../../constants/color.const';
 import RouteNames from '../../../constants/route-names.const';
-import {register} from './services/register.service';
-import {IRegisterReq, IRegisterRes} from './interfaces/register.interface';
-import {ScrollView} from 'react-native-gesture-handler';
-import Toast from 'react-native-toast-message';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {IUser} from '../../../common/interfaces/user.interface';
-import {dateFormat} from '../../../common/handle.string';
-import userStore from '../../../common/store/user.store';
-import {ISettings} from '../../../common/interfaces/settings.interface';
+import {IGoogleLoginRes} from '../../login/screens/LoginScreen/interfaces/login.interface';
 import {
   googleSignIn,
   validate,
 } from '../../login/screens/LoginScreen/services/login.service';
-import {IGoogleLoginRes} from '../../login/screens/LoginScreen/interfaces/login.interface';
+import {IRegisterReq, IRegisterRes} from './interfaces/register.interface';
+import {register} from './services/register.service';
+import styles from './styles/styles';
 
 const RegisterSchema = Yup.object().shape({
   name: Yup.string().required('Vui lòng nhập họ và tên'),
-  email: Yup.string()
-    .email('Email không hợp lệ')
-    .required('Vui lòng nhập email'),
+  // username: Yup.string()
+  //   .test('username', 'Username không hợp lệ', function (value) {
+  //     if (value && value.includes('@')) {
+  //       return Yup.string().email('Email không hợp lệ').isValidSync(value);
+  //     }
+  //     return Yup.string().notRequired().isValidSync(value);
+  //   })
+  //   .required('Vui lòng nhập email/tên đăng nhập'),
+  username: Yup.string()
+    .test('username', 'Username không hợp lệ', function (value) {
+      if (value && value.includes('@')) {
+        return Yup.string().email('Email không hợp lệ').isValidSync(value)
+          ? true
+          : this.createError({message: 'Email không hợp lệ'});
+      }
+      return Yup.string().notRequired().isValidSync(value)
+        ? true
+        : this.createError({message: 'Vui lòng nhập email/tên đăng nhập'});
+    })
+    .required('Vui lòng nhập email/tên đăng nhập'),
   password: Yup.string()
-    .min(6, 'Mật khẩu chứa ít nhất 8 kí tự')
+    .min(6, 'Mật khẩu chứa ít nhất 6 kí tự')
     .required('Vui lòng nhập mật khẩu'),
   phone: Yup.string()
     .max(10, 'Số điện thoại không hợp lệ')
@@ -43,9 +60,10 @@ const RegisterSchema = Yup.object().shape({
 });
 
 export default function RegisterScreen({navigation}: {navigation: any}) {
-  const [hidePassword, setHidePassword] = React.useState(true);
-  const [date, setDate] = React.useState(new Date());
-  const [open, setOpen] = React.useState(false);
+  const [hidePassword, setHidePassword] = useState(true);
+  const [date, setDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(date);
+  const [open, setOpen] = useState(false);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -53,50 +71,49 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
         <Formik
           initialValues={{
             name: '',
-            email: '',
+            username: '',
             password: '',
             phone: '',
             dob: '',
           }}
           validationSchema={RegisterSchema}
           // onSubmit={values => {}}
-          onSubmit={values => {
+          onSubmit={async values => {
             const dobISOString = moment(values.dob, 'DD/MM/YYYY').toISOString();
 
-            console.log(dobISOString);
-            // same shape as initial values
             console.log(values);
-            register({
+            console.log(dobISOString);
+
+            const response = await register({
               name: values.name,
-              email: values.email,
+              email: values.username,
               password: values.password,
               phone: values.phone,
               dob: dobISOString,
-            }).then((response: IRegisterRes) => {
-              console.log(response.statusCode);
-
-              if (response.statusCode === 201) {
-                Toast.show({
-                  type: 'success',
-                  text1: 'Đăng ký thành công',
-                  autoHide: true,
-                  visibilityTime: 1000,
-                  topOffset: 30,
-                  bottomOffset: 40,
-                  onHide: () => {
-                    navigation.navigate(RouteNames.LOGIN, {});
-                  },
-                });
-              } else {
-                Toast.show({
-                  type: 'error',
-                  text1: response.message,
-                  autoHide: false,
-                  topOffset: 30,
-                  bottomOffset: 40,
-                });
-              }
             });
+            console.log(response.statusCode);
+
+            if (response.statusCode === 201) {
+              Toast.show({
+                type: 'success',
+                text1: 'Đăng ký thành công',
+                autoHide: true,
+                visibilityTime: 1000,
+                topOffset: 30,
+                bottomOffset: 40,
+                onHide: () => {
+                  navigation.navigate(RouteNames.LOGIN, {});
+                },
+              });
+            } else {
+              Toast.show({
+                type: 'error',
+                text1: response.message,
+                autoHide: false,
+                topOffset: 30,
+                bottomOffset: 40,
+              });
+            }
           }}>
           {({
             values,
@@ -108,7 +125,7 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
             handleChange,
             handleSubmit,
           }) => (
-            <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.container}>
               <Text style={styles.title}>Đăng ký</Text>
               <View style={[styles.inputContainer]}>
                 <TextInput
@@ -133,24 +150,24 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
 
               <View style={[styles.inputContainer]}>
                 <TextInput
-                  onChangeText={value => setFieldValue('email', value)}
-                  onBlur={() => setFieldTouched('email')}
-                  placeholder={'Email'}
+                  onChangeText={value => setFieldValue('username', value)}
+                  onBlur={() => setFieldTouched('username')}
+                  placeholder={'Email/Tên đăng nhập'}
                   style={styles.inputText}
                   placeholderTextColor={Colors.text.grey}
-                  value={values.email}
+                  value={values.username}
                   keyboardType="email-address"
                 />
 
-                {values.email && (
+                {values.username && (
                   <Icon
-                    onPress={() => setFieldValue('email', '')}
+                    onPress={() => setFieldValue('username', '')}
                     name={'close'}
                     style={styles.inputIcon}></Icon>
                 )}
               </View>
-              {touched.email && errors.email && (
-                <Text style={styles.error}>{errors.email}</Text>
+              {touched.username && errors.username && (
+                <Text style={styles.error}>{errors.username}</Text>
               )}
 
               <View style={styles.inputContainer}>
@@ -215,12 +232,18 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                 <DatePicker
                   modal
                   open={open}
-                  date={date}
+                  date={selectedDate}
+                  maximumDate={new Date()}
                   mode={'date'}
                   locale={'vi'}
                   title={'Chọn ngày'}
                   confirmText={'Chọn'}
                   cancelText={'Huỷ'}
+                  onDateChange={value => {
+                    console.log('Date change value:', value);
+
+                    setSelectedDate(value);
+                  }}
                   onConfirm={value => {
                     console.log('Selected dob:', value);
 
@@ -406,7 +429,7 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                   </Text>
                 </TouchableOpacity>
               </View>
-            </View>
+            </ScrollView>
           )}
         </Formik>
       </View>

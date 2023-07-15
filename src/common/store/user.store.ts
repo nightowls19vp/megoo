@@ -24,6 +24,9 @@ class UserStore {
   @observable callNoti = true;
   @observable newsNoti = true;
   @observable stockNoti = true;
+  @observable billNoti = true;
+  @observable todosNoti = true;
+  @observable calendarNoti = true;
   @observable cartList: ICartList = {
     cart: [] as ICartItem[],
   };
@@ -92,6 +95,18 @@ class UserStore {
 
   @action setStockNoti(state: boolean) {
     this.stockNoti = state;
+  }
+
+  @action setBillNoti(state: boolean) {
+    this.billNoti = state;
+  }
+
+  @action setTodosNoti(state: boolean) {
+    this.todosNoti = state;
+  }
+
+  @action setCalendarNoti(state: boolean) {
+    this.calendarNoti = state;
   }
 
   @action setNewsNoti(state: boolean) {

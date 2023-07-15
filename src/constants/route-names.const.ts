@@ -18,9 +18,14 @@ export default {
   BILL: 'Phân chia chi tiêu',
   BILL_INFO: 'Thông tin chi tiết',
 
+  GROUP_TODOS_LIST: 'Danh sách nhóm',
   TODOS_LIST_STACK: 'TODOS_LIST_STACK',
   TODOS_LIST: 'Quản lý công việc',
   CREATE_TODOS: 'Tạo công việc',
+
+  GROUP_TASK_LIST: 'Danh sách nhóm',
+  TASK_LIST_STACK: 'TASK_LIST_STACK',
+  TASK_LIST: 'Quản lý thời gian',
 
   PACKAGE_STACK_DRAWER: 'PACKAGE_STACK_DRAWER',
   PACKAGE_STACK_BOTTOM: 'PACKAGE_STACK_BOTTOM',

@@ -24,7 +24,7 @@ export const Colors = {
     white: '#FFFFFF',
     orange: '#F58F00',
     red: '#DD382F',
-    lightorange: '#F4B051',
+    lightorange: '#FFBB5B',
   },
 
   title: {
@@ -61,7 +61,7 @@ export const Colors = {
     white: '#FFFFFF',
     orange: '#F58F00',
     red: '#DD382F',
-    lightorange: '#F4B051',
+    lightorange: '#FFBB5B',
   },
 
   bottomTabBackground: '#FFFFFF',

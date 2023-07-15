@@ -1,14 +1,25 @@
-import {View, Text} from 'react-native';
+import {View, Text, Image, Dimensions} from 'react-native';
+import {Colors} from '../../../constants/color.const';
 
 const SplashScreen = () => {
   return (
     <View
       style={{
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: Colors.background.white,
       }}>
-      <Text>Splash screen</Text>
+      <Image
+        source={require('../../../../assets/logo.png')}
+        style={{
+          width: '100%',
+          height: 100,
+          resizeMode: 'center',
+        }}
+      />
     </View>
   );
 };

@@ -169,7 +169,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
               onChangeText={value => setFieldValue('email', value)}
               onBlur={() => setFieldTouched('email')}
               style={styles.inputText}
-              placeholder={'Email'}
+              placeholder={'Email/Tên đăng nhập'}
               placeholderTextColor={Colors.border.lightgrey}
               value={values.email}
             />

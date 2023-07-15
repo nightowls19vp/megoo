@@ -34,13 +34,19 @@ import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScree
 import ChatScreen from '../../../screens/chat/screens/ChatScreen';
 import GroupChatListScreen from '../../../screens/chat/screens/GroupChatListScreen';
 import HomeScreen from '../../../screens/home';
+
+import GroupBillListScreen from '../../../screens/home/screens/bill/GroupBillListScreen';
 import BillListScreen from '../../../screens/home/screens/bill/BillListScreen';
 import BillScreen from '../../../screens/home/screens/bill/BillScreen';
-import GroupBillListScreen from '../../../screens/home/screens/bill/GroupBillListScreen';
 import BillInfoScreen from '../../../screens/home/screens/bill/BillInfoScreen';
-import EditGroupinfoScreen from '../../../screens/profile/screens/EditGroupInfoScreen';
+import EditGroupInfoScreen from '../../../screens/profile/screens/EditGroupInfoScreen';
+
+import GroupTodosListScreen from '../../../screens/home/screens/todos/GroupTodosListScreen';
 import TodosListScreen from '../../../screens/home/screens/todos/TodosListScreen';
 import CreateTodosScreen from '../../../screens/home/screens/todos/CreateTodosScreen';
+
+import GroupTaskListScreen from '../../../screens/home/screens/task/GroupTaskListScreen';
+import TaskListScreen from '../../../screens/home/screens/task/TaskListScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -131,7 +137,7 @@ const BillListScreenStack = () => {
 const TodosListStack = createNativeStackNavigator();
 const TodosListScreenStack = () => {
   return (
-    <TodosListStack.Navigator initialRouteName={RouteNames.TODOS_LIST}>
+    <TodosListStack.Navigator initialRouteName={RouteNames.GROUP_TODOS_LIST}>
       <TodosListStack.Screen
         name={RouteNames.CHAT_STACK}
         component={ChatScreenStack}
@@ -149,7 +155,37 @@ const TodosListScreenStack = () => {
         component={CreateTodosScreen}
         // options={{headerShown: false}}
       />
+      <TodosListStack.Screen
+        name={RouteNames.GROUP_TODOS_LIST}
+        component={GroupTodosListScreen}
+        // options={{headerShown: false}}
+      />
     </TodosListStack.Navigator>
+  );
+};
+
+const TaskListStack = createNativeStackNavigator();
+const TaskListScreenStack = () => {
+  return (
+    <TaskListStack.Navigator initialRouteName={RouteNames.GROUP_TASK_LIST}>
+      <TaskListStack.Screen
+        name={RouteNames.CHAT_STACK}
+        component={ChatScreenStack}
+        options={{
+          title: 'Nhóm chat',
+        }}
+      />
+      <TaskListStack.Screen
+        name={RouteNames.GROUP_TASK_LIST}
+        component={GroupTaskListScreen}
+        // options={{headerShown: false}}
+      />
+      <TaskListStack.Screen
+        name={RouteNames.TASK_LIST}
+        component={TaskListScreen}
+        // options={{headerShown: false}}
+      />
+    </TaskListStack.Navigator>
   );
 };
 
@@ -178,6 +214,14 @@ const HomeScreenStack = () => {
         component={TodosListScreenStack}
         options={{
           title: 'Quản lý việc cần làm',
+          headerShown: false,
+        }}
+      />
+      <HomeStack.Screen
+        name={RouteNames.TASK_LIST_STACK}
+        component={TaskListScreenStack}
+        options={{
+          title: 'Quản lý thời gian',
           headerShown: false,
         }}
       />
@@ -284,7 +328,7 @@ function ProfileScreenStack() {
       />
       <ProfileStack.Screen
         name={RouteNames.EDIT_GROUP_INFO}
-        component={EditGroupinfoScreen}
+        component={EditGroupInfoScreen}
       />
       <ProfileStack.Screen
         name={RouteNames.CHAT_STACK}
@@ -383,6 +427,15 @@ export default function BottomNavigationBar() {
         name={RouteNames.PROFILE_STACK}
         component={ProfileScreenStack}
         initialParams={{screen: RouteNames.PROFILE}}
+        // listeners={({navigation}) => ({
+        //   tabPress: () => {
+        //     if (appStore.isLoggedIn === false) {
+        //       console.log(appStore.isLoggedIn);
+
+        //       navigation.navigate(RouteNames.LOGIN);
+        //     }
+        //   },
+        // })}
         options={{
           unmountOnBlur: true,
           title: 'Tôi',

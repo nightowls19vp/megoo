@@ -61,17 +61,24 @@ function CustomDrawerContent(props: any) {
           </>
         ) : (
           <>
-            <Image
-              source={{
-                uri: 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
-              }}
+            <View
               style={{
                 width: 150,
                 height: 150,
-                borderRadius: 150 / 2,
                 marginBottom: 20,
-              }}
-            />
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Image
+                source={require('../../../../assets/logo.png')}
+                style={{
+                  width: '100%',
+                  height: 50,
+                  resizeMode: 'center',
+                }}
+              />
+            </View>
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate(RouteNames.LOGIN as never);
@@ -123,26 +130,28 @@ const DrawerNavigation = ({navigation}: {navigation: any}) => {
                 gap: 15,
                 marginRight: 15,
               }}>
-              <TouchableOpacity
-                onPress={() => {
-                  console.log('Search');
-                }}>
-                <Ionicons name="search-outline" size={24} color={'black'} />
-              </TouchableOpacity>
               {appStore.isLoggedIn ? (
-                <TouchableOpacity
-                  onPress={() => {
-                    console.log('Chat');
-                    navigation.navigate(RouteNames.CHAT_STACK);
-                    // navigation.goBack();
-                  }}>
-                  <Ionicons
-                    // name="chatbubble-ellipses-outline"
-                    name="md-chatbubble-ellipses-outline"
-                    size={24}
-                    color={'black'}
-                  />
-                </TouchableOpacity>
+                <>
+                  <TouchableOpacity
+                    onPress={() => {
+                      console.log('Search');
+                    }}>
+                    <Ionicons name="search-outline" size={24} color={'black'} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      console.log('Chat');
+                      navigation.navigate(RouteNames.CHAT_STACK);
+                      // navigation.goBack();
+                    }}>
+                    <Ionicons
+                      // name="chatbubble-ellipses-outline"
+                      name="md-chatbubble-ellipses-outline"
+                      size={24}
+                      color={'black'}
+                    />
+                  </TouchableOpacity>
+                </>
               ) : null}
             </View>
           );

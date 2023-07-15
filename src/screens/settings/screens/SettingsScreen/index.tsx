@@ -25,15 +25,18 @@ import {Colors} from '../../../../constants/color.const';
 const SettingsScreen = ({navigation}: {navigation: any}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [callNoti, setCallNoti] = useState(false);
-  const [msgNoti, setMsgNoti] = useState(false);
-  const [newsNoti, setNewsNoti] = useState(false);
-  const [stockNoti, setStockNoti] = useState(false);
+  const [msgNoti, setMsgNoti] = useState(userStore.msgNoti);
+  const [stockNoti, setStockNoti] = useState(userStore.stockNoti);
+  const [billNoti, setBillNoti] = useState(userStore.billNoti);
+  const [todosNoti, setTodosNoti] = useState(userStore.todosNoti);
+  const [calendarNoti, setCalendarNoti] = useState(userStore.calendarNoti);
 
   return (
     <View style={styles.container}>
       {appStore.isLoggedIn ? (
         <View style={styles.settingsContainer}>
           <Text style={styles.title}>Thông báo</Text>
+          <Text style={[styles.subtitle, {marginBottom: 5}]}>Ứng dụng</Text>
 
           <View style={styles.contentContainer}>
             <View style={styles.settingItem}>
@@ -41,7 +44,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
               <FontAwesomeIcon
                 onPress={() => {
                   setMsgNoti(!msgNoti);
-                  userStore.setMsgNoti(msgNoti);
+                  // userStore.setMsgNoti(msgNoti);
                   console.log('Msg noti:', userStore.msgNoti);
                 }}
                 name={userStore.msgNoti ? 'toggle-on' : 'toggle-off'}
@@ -50,6 +53,19 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
             </View>
 
             <View style={styles.settingItem}>
+              <Text style={styles.text}>Số lượng nhu yếu phẩm tồn kho</Text>
+              <FontAwesomeIcon
+                onPress={() => {
+                  setMsgNoti(!msgNoti);
+                  // userStore.setMsgNoti(msgNoti);
+                  console.log('Msg noti:', userStore.msgNoti);
+                }}
+                name={userStore.msgNoti ? 'toggle-on' : 'toggle-off'}
+                style={styles.notiIcon}
+              />
+            </View>
+
+            {/* <View style={styles.settingItem}>
               <Text style={styles.text}>Cuộc gọi</Text>
               <FontAwesomeIcon
                 onPress={() => {
@@ -60,15 +76,20 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
                 name={userStore.callNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}
               />
-            </View>
+            </View> */}
+          </View>
 
+          <Text style={[styles.subtitle, {marginTop: 10, marginBottom: 5}]}>
+            Tiện ích
+          </Text>
+          <View style={styles.contentContainer}>
             <View style={styles.settingItem}>
-              <Text style={styles.text}>Số lượng hàng hoá tồn kho</Text>
+              <Text style={styles.text}>Quản lý chi tiêu</Text>
               <FontAwesomeIcon
                 onPress={() => {
-                  setStockNoti(!stockNoti);
-                  userStore.setStockNoti(stockNoti);
-                  console.log('Stock noti:', userStore.stockNoti);
+                  setBillNoti(!billNoti);
+                  userStore.setBillNoti(billNoti);
+                  console.log('Bill noti:', userStore.billNoti);
                 }}
                 name={userStore.stockNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}
@@ -76,12 +97,25 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
             </View>
 
             <View style={styles.settingItem}>
-              <Text style={styles.text}>Khuyến mãi/Tin tức</Text>
+              <Text style={styles.text}>Việc cần làm</Text>
               <FontAwesomeIcon
                 onPress={() => {
-                  setNewsNoti(!newsNoti);
-                  userStore.setNewsNoti(newsNoti);
-                  console.log('News noti:', userStore.newsNoti);
+                  setTodosNoti(!todosNoti);
+                  userStore.setTodosNoti(todosNoti);
+                  console.log('Todos noti:', userStore.todosNoti);
+                }}
+                name={userStore.newsNoti ? 'toggle-on' : 'toggle-off'}
+                style={styles.notiIcon}
+              />
+            </View>
+
+            <View style={styles.settingItem}>
+              <Text style={styles.text}>Sự kiện</Text>
+              <FontAwesomeIcon
+                onPress={() => {
+                  setCalendarNoti(!calendarNoti);
+                  userStore.setCalendarNoti(calendarNoti);
+                  console.log('Calendar noti:', userStore.calendarNoti);
                 }}
                 name={userStore.newsNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}
@@ -155,7 +189,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
                 style={{
                   fontSize: 18,
                   textAlign: 'justify',
-                  color: Colors.text.orange,
+                  color: Colors.text.grey,
                 }}>
                 Đăng xuất khỏi tài khoản của bạn?
               </Text>
@@ -228,7 +262,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
         </TouchableOpacity>
       )}
 
-      <Toast position="top"></Toast>
+      <Toast position="top" />
     </View>
   );
 };

@@ -87,7 +87,9 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
             />
             <Text style={styles.text}>Tài khoản Google</Text>
           </View>
-          <Text style={styles.connectText}>Liên kết</Text>
+          <TouchableOpacity>
+            <Text style={styles.connectText}>Liên kết</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.infoRow}>
           <View style={styles.socialContainer}>
@@ -97,7 +99,9 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
             />
             <Text style={styles.text}>Tài khoản Facebook</Text>
           </View>
-          <Text style={styles.connectText}>Liên kết</Text>
+          <TouchableOpacity>
+            <Text style={styles.connectText}>Liên kết</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
