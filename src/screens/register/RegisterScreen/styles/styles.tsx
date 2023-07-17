@@ -7,10 +7,11 @@ const height = Dimensions.get('window').height;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.background.white,
-    flex: 1,
+    display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: height,
+    justifyContent: 'flex-start',
+    minHeight: '100%',
+    paddingTop: 10,
   },
   title: {
     fontSize: 30,
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textPrimary: {
-    fontSize: 16,
+    fontSize: 14,
     color: Colors.text.orange,
     marginVertical: 10,
   },

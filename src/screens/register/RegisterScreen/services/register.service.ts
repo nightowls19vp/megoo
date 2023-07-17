@@ -19,12 +19,14 @@ export const register = async (registerInfo: IRegisterReq) => {
       phone: registerInfo.phone,
       dob: registerInfo.dob,
       avatar:
-        'https://res.cloudinary.com/nightowls19vp/image/upload/v1683454262/cld-sample.jpg',
+        'https://res.cloudinary.com/nightowls19vp/image/upload/v1686492903/avatars/default/cpqy11mhxqlwlgvcpcyz.png',
     });
     console.log(`Data: ${res.data}`);
 
     return res.data;
   } catch (error) {
+    console.log('Register error:', JSON.stringify(error, null, 2));
+
     if (axios.isAxiosError(error)) {
       let response: IRegisterRes = {
         statusCode: error.response?.status ?? 500,

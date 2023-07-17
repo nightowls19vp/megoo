@@ -1,3 +1,5 @@
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {useEffect} from 'react';
 import {
   Dimensions,
   ScrollView,
@@ -11,14 +13,31 @@ import {Colors} from '../../../../../constants/color.const';
 
 import RouteNames from '../../../../../constants/route-names.const';
 
+// Define the type for the route params
+type GroupRouteParams = {
+  groupId: string;
+};
+
+// Specify the type for the route
+type GroupRouteProp = RouteProp<Record<string, GroupRouteParams>, string>;
+
 const TodosListScreen = ({navigation}: {navigation: any}) => {
+  const route = useRoute<GroupRouteProp>();
+  const groupId = route?.params?.groupId;
+
+  useEffect(() => {
+    console.log('groupId:', groupId);
+  }, []);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Danh sách việc cần làm</Text>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate(RouteNames.CREATE_TODOS, {});
+            navigation.navigate(RouteNames.CREATE_TODOS, {
+              groupId: groupId,
+            });
           }}>
           <Ionicons
             name="add-circle-outline"

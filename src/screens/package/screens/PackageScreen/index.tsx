@@ -6,10 +6,11 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  Modal,
+  // Modal,
 } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import Slider from '@react-native-community/slider';
+import Modal from 'react-native-modal';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {RouteProp, useRoute, useFocusEffect} from '@react-navigation/native';
@@ -442,27 +443,6 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                     Thêm vào giỏ hàng
                   </Text>
                 </TouchableOpacity>
-                <Modal
-                  visible={modalVisible}
-                  onRequestClose={() => setModalVisible(false)}>
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                    }}>
-                    <View
-                      style={{
-                        width: '90%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        backgroundColor: Colors.background.white,
-                        padding: 10,
-                        borderRadius: 5,
-                      }}></View>
-                  </View>
-                </Modal>
               </>
             )}
           </View>
@@ -505,7 +485,77 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
         renderItem={renderItem}
       />
 
-      <Toast position="top"></Toast>
+      <Modal isVisible={modalVisible}>
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            backgroundColor: Colors.background.white,
+            borderRadius: 10,
+            padding: 10,
+          }}>
+          <TouchableOpacity
+            style={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+            }}
+            onPress={() => {
+              setModalVisible(false);
+            }}>
+            <Ionicons name="close" size={24} />
+          </TouchableOpacity>
+          <View
+            style={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: 10,
+            }}>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+              }}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  textAlign: 'center',
+                  color: Colors.text.grey,
+                }}>
+                Vui lòng{' '}
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(false);
+                  navigation.navigate(RouteNames.LOGIN, {});
+                }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    textAlign: 'center',
+                    color: Colors.text.orange,
+                  }}>
+                  đăng nhập/đăng ký
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <Text
+              style={{
+                fontSize: 18,
+                textAlign: 'center',
+                color: Colors.text.grey,
+              }}>
+              để sử dụng chức năng này
+            </Text>
+          </View>
+        </View>
+      </Modal>
+
+      <Toast position="top" />
     </ScrollView>
   );
 };

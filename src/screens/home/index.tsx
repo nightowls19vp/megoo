@@ -25,6 +25,11 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
             }>
             <Text style={styles.utilityText}>Việc cần làm</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.utility}
+            onPress={() => navigation.navigate(RouteNames.TASK_LIST_STACK, {})}>
+            <Text style={styles.utilityText}>Quản lý thời gian</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -63,18 +68,19 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 20,
+    // gap: 10,
     // marginBottom: 10,
     flexWrap: 'wrap',
   },
   utility: {
-    minWidth: '45%',
+    minWidth: '47.5%',
     padding: 20,
     display: 'flex',
     backgroundColor: Colors.background.white,
     borderRadius: 10,
     borderColor: Colors.border.orange,
     borderWidth: 1,
+    marginBottom: 20,
   },
   utilityText: {
     fontSize: 16,

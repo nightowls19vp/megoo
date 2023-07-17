@@ -20,15 +20,27 @@ import * as Yup from 'yup';
 
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {createTodos} from './services/create.todos.service';
+import Toast from 'react-native-toast-message';
 
 const CreateTodoSchema = Yup.object().shape({
   summary: Yup.string().required('Vui lòng nhập tiêu đề'),
   todo: Yup.string().required('Vui lòng nhập tên việc cần làm'),
-  description: Yup.string().required('Vui lòng nhập mô tả việc cần làm'),
-  state: Yup.string().required('Vui lòng chọn trạng thái'),
 });
 
+// Define the type for the route params
+type GroupRouteParams = {
+  groupId: string;
+};
+
+// Specify the type for the route
+type GroupRouteProp = RouteProp<Record<string, GroupRouteParams>, string>;
+
 const CreateTodosScreen = ({navigation}: {navigation: any}) => {
+  const route = useRoute<GroupRouteProp>();
+  const groupId = route?.params?.groupId;
+
   const radioButtons: RadioButtonProps[] = useMemo(
     () => [
       {
@@ -78,17 +90,51 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
         summary: '',
         todo: '',
         description: '',
-        state: '',
+        state: selectedOption,
       }}
       validationSchema={CreateTodoSchema}
-      onSubmit={values => {
+      enableReinitialize={true}
+      onSubmit={async values => {
         console.log('values', values);
+        console.log('todos', todos);
+        const checkList = {
+          summary: values.summary,
+          state: values.state,
+          todos: todos,
+        };
+        console.log('checkList', JSON.stringify(checkList, null, 2));
+
+        const response = await createTodos(groupId, checkList);
+        console.log('Create todos response:', response);
+
+        if (response.statusCode === 201) {
+          Toast.show({
+            type: 'success',
+            text1: 'Xóa khoản chỉ tiêu thành công',
+            autoHide: true,
+            visibilityTime: 1000,
+            topOffset: 30,
+            onHide: () => {
+              navigation.navigate(RouteNames.TODOS_LIST, {
+                groupId: groupId,
+              });
+            },
+          });
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: response.message,
+            autoHide: false,
+            topOffset: 30,
+          });
+        }
       }}>
       {({
         setFieldValue,
         setFieldTouched,
         setFieldError,
         handleSubmit,
+        isValid,
         values,
         errors,
         touched,
@@ -118,7 +164,6 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
           )}
 
           <Text style={styles.title}>Chế độ</Text>
-
           <RadioGroup
             containerStyle={{
               width: '90%',
@@ -208,34 +253,91 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
             <Text style={styles.addButtonText}>Thêm</Text>
           </TouchableOpacity>
 
-          {todos.length > 0 &&
-            todos.map((todo: any, index) => (
-              <View
-                key={index}
-                style={{
-                  width: '90%',
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 10,
-                  marginVertical: 10,
-                  // backgroundColor: '#fff6e8',
-                  backgroundColor: Colors.itemBackground.lightorange,
-                  padding: 10,
-                  borderRadius: 10,
-                }}>
-                <CheckBox
-                  tintColors={{true: Colors.checkBox.orange}}
-                  disabled={false}
-                  value={true}
-                  onValueChange={newValue => {
-                    console.log('newValue', newValue);
-                  }}
-                />
-                <Text>{todo.todo}</Text>
-                <Text>{todo.description}</Text>
-              </View>
-            ))}
+          <View
+            style={{
+              width: '90%',
+              display: 'flex',
+              gap: 10,
+            }}>
+            {todos.length > 0 &&
+              todos.map((todo: any, index) => (
+                <View
+                  key={index}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 5,
+                    // marginVertical: 5,
+                    // backgroundColor: '#fff6e8',
+                    backgroundColor: Colors.itemBackground.lightorange,
+                    padding: 10,
+                    borderRadius: 10,
+                  }}>
+                  <CheckBox
+                    tintColors={{true: Colors.checkBox.orange}}
+                    disabled={false}
+                    value={true}
+                    onValueChange={newValue => {
+                      console.log('newValue', newValue);
+                    }}
+                  />
+                  <View
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'baseline',
+                      gap: 10,
+                    }}>
+                    <Text
+                      style={{
+                        color: Colors.text.grey,
+                        fontWeight: 'bold',
+                        fontSize: 16,
+                      }}>
+                      {todo.todo}
+                    </Text>
+                    <Text
+                      style={{
+                        color: Colors.text.lightgrey,
+                        fontSize: 12,
+                      }}>
+                      {todo.description}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+          </View>
+
+          <TouchableOpacity
+            disabled={!isValid}
+            onPress={handleSubmit}
+            style={[
+              {
+                backgroundColor: isValid
+                  ? Colors.buttonBackground.orange
+                  : Colors.buttonBackground.lightorange,
+                borderRadius: 10,
+                width: '90%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginVertical: 20,
+              },
+            ]}>
+            <Text
+              style={{
+                color: Colors.buttonText.white,
+                fontSize: 16,
+                fontWeight: 'bold',
+                padding: 10,
+              }}>
+              Tạo
+            </Text>
+          </TouchableOpacity>
+
+          <Toast position="top" />
         </ScrollView>
       )}
     </Formik>
@@ -294,6 +396,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
+    marginBottom: 20,
     padding: 10,
   },
   addButtonText: {

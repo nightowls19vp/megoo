@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: Colors.background.orange,
     borderRadius: 10,
-    marginVertical: 20,
+    marginBottom: 20,
   },
 });
 

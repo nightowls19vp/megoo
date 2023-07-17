@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Text, View} from 'react-native';
+import {Image, Text, View, Dimensions} from 'react-native';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 import {RouteProp, useRoute} from '@react-navigation/native';
 
@@ -117,6 +117,16 @@ const UserInfoScreen = ({navigation}: {navigation: any}) => {
     </View>
   ) : (
     <View style={styles.loginContainer}>
+      <Image
+        source={require('../../../../../assets/food.png')}
+        style={{
+          width: '100%',
+          height: 100,
+          // backgroundColor: Colors.border.lightgrey,
+          resizeMode: 'center',
+          marginBottom: 50,
+        }}
+      />
       <View style={styles.loginTextContainer}>
         <Text style={styles.loginText}>Vui lòng </Text>
         <TouchableOpacity

@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 200 / 2,
+    backgroundColor: Colors.background.white,
     // marginBottom: 10,
   },
   titleContainer: {
