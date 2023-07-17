@@ -16,6 +16,7 @@ import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
 
+import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import {dateFormat, dateISOFormat} from '../../../../common/handle.string';
 import userStore from '../../../../common/store/user.store';
 import {Colors} from '../../../../constants/color.const';
@@ -300,7 +301,10 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
             }}>
             <Image
               source={{
-                uri: selectedImage != '' ? selectedImage : userStore.avatar,
+                uri:
+                  selectedImage != ''
+                    ? selectedImage
+                    : userStore?.avatar || IMAGE_URI_DEFAULT,
               }}
               style={styles.avatar}
             />

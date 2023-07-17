@@ -1,10 +1,12 @@
-import {useEffect, useState, useCallback} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 
+import {useFocusEffect} from '@react-navigation/native';
+
+import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
 import styles from './styles/style';
-import {useFocusEffect} from '@react-navigation/native';
 
 const GroupsScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
@@ -73,7 +75,7 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
           }}>
           <Image
             source={{
-              uri: group.avatar,
+              uri: group?.avatar || IMAGE_URI_DEFAULT,
             }}
             style={styles.groupAvatar}
           />

@@ -1,6 +1,8 @@
 import {useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
+
+import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import userStore from '../../../../common/store/user.store';
 import styles from './styles/style';
 
@@ -11,7 +13,10 @@ const ChangeAvatarScreen = () => {
     <View style={{flex: 1, alignItems: 'center'}}>
       <Image
         source={{
-          uri: selectedImages != '' ? selectedImages : userStore.avatar,
+          uri:
+            selectedImages != ''
+              ? selectedImages
+              : userStore?.avatar || IMAGE_URI_DEFAULT,
         }}
         style={{
           width: 200,

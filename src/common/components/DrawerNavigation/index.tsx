@@ -40,7 +40,9 @@ function CustomDrawerContent(props: any) {
           <React.Fragment>
             <Image
               source={{
-                uri: userStore.avatar,
+                uri:
+                  userStore?.avatar ||
+                  'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
               }}
               style={{
                 width: 150,

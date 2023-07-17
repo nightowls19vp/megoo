@@ -1,12 +1,14 @@
 import {useCallback, useEffect, useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
+
 import {GroupChannel} from '@sendbird/chat/groupChannel';
 
+import {IMAGE_URI_DEFAULT} from '../../../../common/default';
+import userStore from '../../../../common/store/user.store';
 import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
 import styles from './styles/style';
-import userStore from '../../../../common/store/user.store';
 
 // const appId = 'ADD4546B-CF09-4980-B6AC-DB7FFD2E70EC';
 // export const sendbird = new SendBird({appId});
@@ -117,7 +119,7 @@ const GroupChatListScreen = ({navigation}: {navigation: any}) => {
           }}>
           <Image
             source={{
-              uri: group.avatar,
+              uri: group?.avatar || IMAGE_URI_DEFAULT,
             }}
             style={styles.groupAvatar}
           />

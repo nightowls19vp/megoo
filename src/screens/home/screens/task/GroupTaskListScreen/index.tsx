@@ -1,9 +1,10 @@
 import {useEffect, useState} from 'react';
 import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 
-import styles from './styles/style';
+import {IMAGE_URI_DEFAULT} from '../../../../../common/default';
 import RouteNames from '../../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../../services/group.service';
+import styles from './styles/style';
 
 const GroupTaskListScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
@@ -73,7 +74,7 @@ const GroupTaskListScreen = ({navigation}: {navigation: any}) => {
           }}>
           <Image
             source={{
-              uri: group.avatar,
+              uri: group?.avatar || IMAGE_URI_DEFAULT,
             }}
             style={styles.groupAvatar}
           />

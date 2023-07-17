@@ -21,6 +21,7 @@ import {
   uploadGroupAvatarWithBase64,
 } from './services/group.info.service';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
+import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 
 // Define the type for the route params
 type GroupAvatarRouteParams = {
@@ -138,8 +139,9 @@ const EditGroupinfoScreen = () => {
             }}>
             <Image
               source={{
-                // uri: 'https://taimienphi.vn/tmp/cf/aut/hinh-anh-cute-dep-de-thuong-nhat-1.jpg',
-                uri: selectedImage ? selectedImage : group.avatar,
+                uri: selectedImage
+                  ? selectedImage
+                  : group?.avatar || IMAGE_URI_DEFAULT,
               }}
               style={styles.avatar}
             />

@@ -1,17 +1,18 @@
 import {useEffect, useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
+
 import notifee from '@notifee/react-native';
 
-import styles from './styles/style';
+import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
-
 import * as d from '../../services/divisions.service';
 import * as gp from '../../services/group-products.service';
-import * as p from '../../services/product.service';
-import * as sl from '../../services/storage-location.service';
-import * as pl from '../../services/purchase-locations.service';
 import * as i from '../../services/items.service';
+import * as p from '../../services/product.service';
+import * as pl from '../../services/purchase-locations.service';
+import * as sl from '../../services/storage-location.service';
+import styles from './styles/style';
 
 const GroupProductListScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
@@ -110,7 +111,7 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
           }}>
           <Image
             source={{
-              uri: group.avatar,
+              uri: group?.avatar || IMAGE_URI_DEFAULT,
             }}
             style={styles.groupAvatar}
           />

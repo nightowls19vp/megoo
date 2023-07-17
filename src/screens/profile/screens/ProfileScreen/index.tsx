@@ -1,11 +1,12 @@
+import {observer} from 'mobx-react';
 import React, {useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
-import {observer} from 'mobx-react';
+import {ScrollView} from 'react-native-gesture-handler';
 
+import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import userStore from '../../../../common/store/user.store';
 import RouteNames from '../../../../constants/route-names.const';
 import styles from './styles/styles';
-import {ScrollView} from 'react-native-gesture-handler';
 
 const ProfileScreen = ({navigation}: {navigation: any}) => {
   const [selectedImages, setSelectedImages] = useState('');
@@ -22,7 +23,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
 
       <Image
         // source={{uri: `data:image/jpeg;base64,${userStore.avatar}`}}
-        source={{uri: userStore.avatar}}
+        source={{uri: userStore?.avatar || IMAGE_URI_DEFAULT}}
         style={styles.avatar}
       />
 

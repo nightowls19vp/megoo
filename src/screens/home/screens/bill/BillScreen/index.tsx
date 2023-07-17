@@ -1,4 +1,5 @@
 import {Formik} from 'formik';
+import moment from 'moment';
 import {useEffect, useState} from 'react';
 import {
   Dimensions,
@@ -10,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import DatePicker from 'react-native-date-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Modal from 'react-native-modal';
 import Toast from 'react-native-toast-message';
@@ -18,13 +20,12 @@ import * as Yup from 'yup';
 
 import {RouteProp, useRoute} from '@react-navigation/native';
 
+import {IMAGE_URI_DEFAULT} from '../../../../../common/default';
+import {dateISOFormat} from '../../../../../common/handle.string';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import {createBill, getMembers} from './services/bill-service';
 import styles from './styles/style';
-import DatePicker from 'react-native-date-picker';
-import moment from 'moment';
-import {dateISOFormat} from '../../../../../common/handle.string';
 
 // Define the type for the route params
 type GroupRouteParams = {
@@ -372,6 +373,7 @@ const BillScreen = ({navigation}: {navigation: any}) => {
               setOpen={setOpenLender}
               setValue={setLender}
               setItems={setLenders}
+              searchable={true}
               onSelectItem={(item: any) => {
                 setLender(item);
                 setFieldValue('lender', item.value);
@@ -522,7 +524,7 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                   return (
                     <View key={index} style={styles.borrowersContainer}>
                       <Image
-                        source={{uri: borrower.avatar}}
+                        source={{uri: borrower?.avatar || IMAGE_URI_DEFAULT}}
                         style={styles.borrowerAvatar}
                       />
                       <View style={styles.borrowerInfo}>

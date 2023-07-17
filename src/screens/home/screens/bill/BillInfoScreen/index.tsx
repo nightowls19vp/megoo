@@ -1,25 +1,27 @@
-import {RouteProp, useRoute} from '@react-navigation/native';
 import {useEffect, useState} from 'react';
 import {
   Dimensions,
-  Text,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
   Image,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Modal from 'react-native-modal';
+import Toast from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {ProgressView} from '@react-native-community/progress-view';
 
+import {ProgressView} from '@react-native-community/progress-view';
+import {RouteProp, useRoute} from '@react-navigation/native';
+
+import {IMAGE_URI_DEFAULT} from '../../../../../common/default';
 import {dateFormat} from '../../../../../common/handle.string';
-import RouteNames from '../../../../../constants/route-names.const';
 import {Colors} from '../../../../../constants/color.const';
+import RouteNames from '../../../../../constants/route-names.const';
 import {deleteBill, getBillInfo} from './services/bill-info-service';
 import styles from './styles/style';
-import Toast from 'react-native-toast-message';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -152,7 +154,10 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
       <Text style={styles.title}>Người cho mượn</Text>
       <View style={styles.contentContainer}>
         <View style={styles.lenderContainer}>
-          <Image source={{uri: bill.lender.avatar}} style={styles.avatar} />
+          <Image
+            source={{uri: bill?.lender?.avatar || IMAGE_URI_DEFAULT}}
+            style={styles.avatar}
+          />
           <View style={styles.infoContainer}>
             <View style={styles.infoRow}>
               <Text style={styles.headingText}>Họ và tên:</Text>
@@ -184,7 +189,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                 gap: 10,
               }}>
               <Image
-                source={{uri: borrower.borrower.avatar}}
+                source={{uri: borrower?.borrower?.avatar || IMAGE_URI_DEFAULT}}
                 style={styles.avatar}
               />
               <View style={styles.infoContainer}>
