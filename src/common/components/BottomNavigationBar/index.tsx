@@ -294,6 +294,10 @@ const StorageScreenStack = () => {
         component={AddProdInfoScreen}
       />
       <StorageStack.Screen
+        name={RouteNames.ADD_GROUP_PRODUCT}
+        component={AddProdInfoScreen}
+      />
+      <StorageStack.Screen
         name={RouteNames.ADD_STORAGE_LOCATION}
         component={AddStorageLocationScreen}
       />

@@ -82,10 +82,7 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
         zIndex: zIndex,
       }}>
       <TouchableOpacity
-        onPress={() => {
-          //todo: navigate to the add group product screen
-          console.log('navigate to the add group product screen');
-        }}>
+        onPress={() => navigation.navigate(RouteNames.ADD_GROUP_PRODUCT, {})}>
         <Ionicons
           name="add-circle-outline"
           size={24}
