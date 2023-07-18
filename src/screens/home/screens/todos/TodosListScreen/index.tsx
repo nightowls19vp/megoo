@@ -9,8 +9,8 @@ import {
   View,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Colors} from '../../../../../constants/color.const';
 
+import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 
 // Define the type for the route params

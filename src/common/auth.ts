@@ -29,12 +29,7 @@ export const checkValidToken = async (token: string) => {
   return isTokenExpired;
 };
 
-export let socket: Socket;
-
 export const checkLogin = async () => {
-  // await signOutIfSignedInWithGG();
-  console.log('Check login');
-
   const accessToken = await AsyncStorage.getItem('accessToken');
   const refreshToken = await AsyncStorage.getItem('refreshToken');
 

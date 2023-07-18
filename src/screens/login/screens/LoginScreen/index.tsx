@@ -349,13 +349,13 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             />
             <Text style={styles.text}>Tiếp tục với Google</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.socialButton}>
+          {/* <TouchableOpacity style={styles.socialButton}>
             <Image
               source={require('../../../../../assets/facebook.png')}
               style={{...styles.socialButton.image}}
             />
             <Text style={styles.text}>Tiếp tục với Facebook</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <View style={styles.flexRow}>
             <Text style={styles.textPrimary}>Chưa có tài khoản?</Text>
             <TouchableOpacity

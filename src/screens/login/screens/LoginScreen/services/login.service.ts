@@ -25,6 +25,8 @@ export const login = async (loginInfo: ILoginReq) => {
 
     return response.data;
   } catch (error) {
+    console.log('Login error:', error);
+
     if (axios.isAxiosError(error)) {
       let response: ILoginRes = {
         statusCode: error.response?.status ?? 500,

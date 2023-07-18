@@ -13,45 +13,48 @@ import * as p from '../../services/product.service';
 import * as pl from '../../services/purchase-locations.service';
 import * as sl from '../../services/storage-location.service';
 import styles from './styles/style';
+import appStore from '../../../../common/store/app.store';
+import {Colors} from '../../../../constants/color.const';
 
 const GroupProductListScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
 
   const getGroups = async () => {
-    // Get all user's groups
-    const groupsRes = await getUserGroup();
-    if (
-      !groupsRes ||
-      !groupsRes?.groups ||
-      !groupsRes?.groups?.length ||
-      groupsRes?.groups?.length === 0
-    ) {
-      return [];
-    } else {
-      console.log('groupsRes:', groupsRes.groups[0].packages[0].package.name);
-      console.log('groupsRes:', groupsRes);
+    if (appStore.isLoggedIn === true) {
+      // Get all user's groups
+      const groupsRes = await getUserGroup();
+      if (
+        !groupsRes.groups ||
+        !groupsRes?.groups?.length ||
+        groupsRes?.groups?.length === 0
+      ) {
+        return [];
+      } else {
+        console.log('groupsRes:', groupsRes.groups[0].packages[0].package.name);
+        console.log('groupsRes:', groupsRes);
 
-      setGroups(
-        groupsRes.groups.map((groupItem: any) => {
-          return {
-            _id: groupItem._id ? groupItem._id : '',
-            name: groupItem.name ? groupItem.name : '',
-            avatar: groupItem.avatar,
-            // ? groupItem.avatar
-            // : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
-            duration: groupItem.packages[0].package.duration
-              ? groupItem.packages[0].package.duration
-              : 0,
-            noOfMember: groupItem.packages[0].package.noOfMember
-              ? groupItem.packages[0].package.noOfMember
-              : 0,
-            status: groupItem.packages[0].status
-              ? groupItem.packages[0].status
-              : '',
-            members: groupItem.members ? groupItem.members : [],
-          };
-        }),
-      );
+        setGroups(
+          groupsRes.groups.map((groupItem: any) => {
+            return {
+              _id: groupItem._id ? groupItem._id : '',
+              name: groupItem.name ? groupItem.name : '',
+              avatar: groupItem.avatar,
+              // ? groupItem.avatar
+              // : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
+              duration: groupItem.packages[0].package.duration
+                ? groupItem.packages[0].package.duration
+                : 0,
+              noOfMember: groupItem.packages[0].package.noOfMember
+                ? groupItem.packages[0].package.noOfMember
+                : 0,
+              status: groupItem.packages[0].status
+                ? groupItem.packages[0].status
+                : '',
+              members: groupItem.members ? groupItem.members : [],
+            };
+          }),
+        );
+      }
     }
   };
 
@@ -142,7 +145,34 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
     });
   };
 
-  return <View style={styles.container}>{renderGroupItem()}</View>;
+  return appStore.isLoggedIn ? (
+    <View style={styles.container}>{renderGroupItem()}</View>
+  ) : (
+    <View style={styles.loginContainer}>
+      <Image
+        source={require('../../../../../assets/food.png')}
+        style={{
+          width: '100%',
+          height: 100,
+          // backgroundColor: Colors.border.lightgrey,
+          resizeMode: 'center',
+          marginBottom: 50,
+        }}
+      />
+      <View style={styles.loginTextContainer}>
+        <Text style={styles.loginText}>Vui lòng </Text>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate(RouteNames.LOGIN, {});
+          }}>
+          <Text style={[styles.loginText, {color: Colors.text.orange}]}>
+            đăng nhập/đăng ký
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.loginText}>để sử dụng chức năng này.</Text>
+    </View>
+  );
 };
 
 export default GroupProductListScreen;

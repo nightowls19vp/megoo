@@ -22,7 +22,11 @@ import userStore from '../../../../common/store/user.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {IEditInfoRes} from './interfaces/edit.info.interface';
-import {changeAvatar, editInfo} from './services/edit.info.service';
+import {
+  uploadAvatarWithBase64,
+  editInfo,
+  updateAvatar,
+} from './services/edit.info.service';
 import styles from './styles/styles';
 
 const ProfileSchema = Yup.object().shape({
@@ -58,7 +62,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
     <Formik
       initialValues={initialValues}
       validationSchema={ProfileSchema}
-      onSubmit={values => {
+      onSubmit={async values => {
         // If user change info then call API and update user store
         if (values.name !== userStore.name) {
           console.log('edit name');
@@ -230,39 +234,39 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
           const fileExtension = selectedImage.split('.').pop();
           const base64String = `data:image/${fileExtension};base64,${imageFile}`;
 
-          changeAvatar(base64String)
-            .then(response => {
-              console.log('Change avatar res:', response);
+          const uploadResponse = await uploadAvatarWithBase64(base64String);
 
-              if (response.statusCode === 200) {
-                Toast.show({
-                  type: 'success',
-                  text1: 'Sửa thông tin thành công',
-                  autoHide: true,
-                  visibilityTime: 1000,
-                  topOffset: 20,
-                  bottomOffset: 40,
-                  onHide: () => {
-                    navigation.navigate(
-                      RouteNames.PROFILE as never,
-                      {} as never,
-                    );
-                  },
-                });
-                userStore.setAvatar(response.data);
-              } else if (response.statusCode === 401) {
-                Toast.show({
-                  type: 'error',
-                  text1: response.message,
-                  autoHide: false,
-                  topOffset: 30,
-                  bottomOffset: 40,
-                });
-              }
-            })
-            .catch(error => {
-              console.log('error:', error);
+          console.log('uploadResponse:', uploadResponse);
+
+          const updateResponse = await updateAvatar(
+            userStore.id,
+            uploadResponse.data,
+          );
+
+          console.log('updateResponse:', updateResponse);
+
+          if (updateResponse.statusCode === 200) {
+            Toast.show({
+              type: 'success',
+              text1: 'Sửa thông tin thành công',
+              autoHide: true,
+              visibilityTime: 1000,
+              topOffset: 20,
+              bottomOffset: 40,
+              onHide: () => {
+                navigation.navigate(RouteNames.PROFILE as never, {} as never);
+              },
             });
+            userStore.setAvatar(updateResponse.data.avatar);
+          } else {
+            Toast.show({
+              type: 'error',
+              text1: updateResponse.message,
+              autoHide: false,
+              topOffset: 30,
+              bottomOffset: 40,
+            });
+          }
         }
       }}>
       {({

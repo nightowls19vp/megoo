@@ -110,7 +110,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
             </View>
 
             <View style={styles.settingItem}>
-              <Text style={styles.text}>Sự kiện</Text>
+              <Text style={styles.text}>Lịch biểu</Text>
               <FontAwesomeIcon
                 onPress={() => {
                   setCalendarNoti(!calendarNoti);

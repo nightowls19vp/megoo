@@ -25,7 +25,7 @@ import GroupsScreen from '../../../screens/profile/screens/GroupsScreen';
 import CurrentPackage from '../../../screens/profile/screens/CurrentPackageScreen';
 import OtherPackages from '../../../screens/profile/screens/OtherPackages';
 
-import GroupsProductsScreen from '../../../screens/storage/screens/GroupsScreen';
+import GroupsProductsListScreen from '../../../screens/storage/screens/GroupsScreen';
 import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
 import ProductsScreen from '../../../screens/storage/screens/ProductsScreen';
 import ProductDetailScreen from '../../../screens/storage/screens/ProductDetailScreen';
@@ -272,8 +272,8 @@ const StorageScreenStack = () => {
   return (
     <StorageStack.Navigator initialRouteName={RouteNames.STORAGE_GROUPS}>
       <StorageStack.Screen
-        name={RouteNames.STORAGE_GROUPS}
-        component={GroupsProductsScreen}
+        name={appStore.isLoggedIn ? RouteNames.STORAGE_GROUPS : 'Quản lý gói'}
+        component={GroupsProductsListScreen}
       />
       <StorageStack.Screen
         name={RouteNames.STORAGE}
