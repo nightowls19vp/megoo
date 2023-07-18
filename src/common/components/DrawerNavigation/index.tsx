@@ -135,15 +135,9 @@ const DrawerNavigation = ({navigation}: {navigation: any}) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <SearchComp />
               {appStore.isLoggedIn ? (
                 <>
-                  <TouchableOpacity
-                    onPress={() => {
-                      console.log('Search');
-                    }}>
-                    <Ionicons name="search-outline" size={24} color={'black'} />
-                  </TouchableOpacity>
+                  <SearchComp />
                   <TouchableOpacity
                     onPress={() => {
                       console.log('Chat');

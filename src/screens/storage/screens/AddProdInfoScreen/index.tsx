@@ -1,21 +1,25 @@
 import {Formik} from 'formik';
-import Icon from 'react-native-vector-icons/Ionicons';
-import DatePicker from 'react-native-date-picker';
+import moment from 'moment';
+import React, {useEffect, useState} from 'react';
 import {
-  Dimensions,
   Image,
+  KeyboardAvoidingView,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import DatePicker from 'react-native-date-picker';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
+import Icon from 'react-native-vector-icons/Ionicons';
 
+import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import {Colors} from '../../../../constants/color.const';
+import GroupProductDropdownPicker from '../../components/GroupProductDropdownPicker';
+import PurchaseLocationDropdownPicker from '../../components/PurchaseLocationDropdownPicker';
+import StorageLocationDropdownPicker from '../../components/StorageLocationDropdownPicker';
 import styles from './styles/style';
-import {useEffect, useState} from 'react';
-import moment from 'moment';
 
 const AddProdInfoScreen = () => {
   const initialValues = {
@@ -30,7 +34,7 @@ const AddProdInfoScreen = () => {
 
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedImage, setSelectedImage] = useState(IMAGE_URI_DEFAULT);
   const [imageFile, setImageFile] = useState<any>();
 
   useEffect(() => {
@@ -40,12 +44,14 @@ const AddProdInfoScreen = () => {
   }, [open]);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.contentContainer}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      nestedScrollEnabled={true}>
+      <KeyboardAvoidingView style={styles.contentContainer}>
         <View style={styles.imageContainer}>
           <Image
             source={{
-              uri: 'https://wonder-day.com/wp-content/uploads/2022/03/wonder-day-cute-drawings-11.jpg',
+              uri: selectedImage,
             }}
             style={styles.image}
           />
@@ -122,27 +128,12 @@ const AddProdInfoScreen = () => {
             setFieldValue,
           }) => (
             <View style={styles.infoContainer}>
-              <View style={styles.infoInput}>
-                <TextInput
-                  onChangeText={value => {
-                    setFieldValue('prodName', value);
-                  }}
-                  // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('prodName')}
-                  style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Tên sản phẩm'}
-                  placeholderTextColor={Colors.text.lightgrey}
-                  value={values.prodName}
-                />
-
-                {values.prodName && (
-                  <Icon
-                    onPress={() => setFieldValue('prodName', '')}
-                    name={'close'}
-                    style={styles.icon}
-                  />
-                )}
-              </View>
+              <GroupProductDropdownPicker
+                groupId="1"
+                zIndex={3000}
+                zIndexInverse={1000}
+                fnUpdateGpImage={setSelectedImage}
+              />
 
               <View style={styles.infoInput}>
                 <TextInput
@@ -220,7 +211,7 @@ const AddProdInfoScreen = () => {
                   // onSubmitEditing={handleSubmit}
                   onBlur={() => setFieldTouched('description')}
                   style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Ghi chú'}
+                  placeholder={'Số lượng'}
                   placeholderTextColor={Colors.text.lightgrey}
                   value={values.description}
                 />
@@ -234,13 +225,47 @@ const AddProdInfoScreen = () => {
                 )}
               </View>
 
+              <View style={styles.infoInput}>
+                <TextInput
+                  onChangeText={value => {
+                    setFieldValue('description', value);
+                  }}
+                  // onSubmitEditing={handleSubmit}
+                  onBlur={() => setFieldTouched('description')}
+                  style={{flex: 1, color: Colors.text.grey}}
+                  placeholder={'Đơn vị tính'}
+                  placeholderTextColor={Colors.text.lightgrey}
+                  value={values.description}
+                />
+
+                {values.description && (
+                  <Icon
+                    onPress={() => setFieldValue('description', '')}
+                    name={'close'}
+                    style={styles.icon}
+                  />
+                )}
+              </View>
+
+              <StorageLocationDropdownPicker
+                groupId="1"
+                zIndex={2000}
+                zIndexInverse={2000}
+              />
+
+              <PurchaseLocationDropdownPicker
+                groupId="1"
+                zIndex={1000}
+                zIndexInverse={3000}
+              />
+
               <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Lưu</Text>
               </TouchableOpacity>
             </View>
           )}
         </Formik>
-      </View>
+      </KeyboardAvoidingView>
     </ScrollView>
   );
 };

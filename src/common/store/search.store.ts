@@ -23,6 +23,11 @@ class SearchStore {
   };
 
   @action
+  public setSearchResult = (searchResult: unknown) => {
+    this.searchResult = searchResult;
+  };
+
+  @action
   public setSearchService = (searchService: Function) => {
     this.searchService = searchService;
   };
@@ -47,13 +52,15 @@ class SearchStore {
     console.log('\n\n\ndoSearch', this.searchText + '\n\n\n');
 
     if (this.searchService) {
-      this.searchResult = await this.searchService(
+      const searchResult = await this.searchService(
         {
           ...(this.searchParams?.[0] as object),
           search: this.searchText,
         },
         ...(this.searchParams.slice(1) as object[]),
       );
+
+      this.setSearchResult(searchResult);
 
       console.log('searchResult', JSON.stringify(this.searchResult, null, 2));
     }

@@ -71,6 +71,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+
+  // View > dropdown
+  dropdownContainer: {
+    display: 'flex',
+    backgroundColor: Colors.background.white,
+    borderRadius: 10,
+    marginVertical: 10,
+    gap: 10,
+    zIndex: 999,
+  },
 });
 
 export default styles;

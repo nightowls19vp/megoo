@@ -183,7 +183,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                 setLocations(prevLocations => [
                   ...prevLocations,
                   {
-                    location: values.location,
+                    name: values.location,
                     description: values.description,
                   },
                 ]);

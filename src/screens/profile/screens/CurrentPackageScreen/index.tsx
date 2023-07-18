@@ -195,11 +195,13 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
   );
 
   return (
-    <>
-      <View style={styles.container}>
+    <KeyboardAvoidingView behavior={'position'} keyboardVerticalOffset={20}>
+      <View style={{...styles.container}}>
         <Image
           source={{
-            uri: group.avatar,
+            uri:
+              group?.avatar ||
+              'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
           }}
           style={styles.avatar}
         />
@@ -405,7 +407,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                 setFieldTouched,
                 setFieldValue,
               }) => (
-                <KeyboardAvoidingView
+                <View
                   style={{
                     width: '90%',
                     display: 'flex',
@@ -530,7 +532,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                       </TouchableOpacity>
                     ) : null}
                   </View>
-                </KeyboardAvoidingView>
+                </View>
               )}
             </Formik>
 
@@ -558,7 +560,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
         ) : null}
       </View>
       <Toast position="top" />
-    </>
+    </KeyboardAvoidingView>
   );
 };
 

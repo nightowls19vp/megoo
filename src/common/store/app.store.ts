@@ -11,6 +11,8 @@ class AppStore {
     duration: 0,
   };
 
+  @observable searchActive = false;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -35,6 +37,10 @@ class AppStore {
     this.renewPkg.package = pkg['package'];
     this.renewPkg.noOfMember = pkg['noOfMember'];
     this.renewPkg.duration = pkg['duration'];
+  }
+
+  @action setSearchActive(state: boolean) {
+    this.searchActive = state;
   }
 
   @action getIsExtendedPkg() {

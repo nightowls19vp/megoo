@@ -3,6 +3,7 @@ import React, {Fragment, useState} from 'react';
 import {Button, TextInput, TouchableOpacity, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import appStore from '../../store/app.store';
 import searchStore from '../../store/search.store';
 import {styles} from './styles';
 
@@ -24,7 +25,7 @@ const SearchComp = () => {
     }
   };
 
-  return (
+  return appStore.searchActive ? (
     <Fragment>
       <TextInput
         value={inputValue}
@@ -36,7 +37,7 @@ const SearchComp = () => {
         <Ionicons name="search-outline" size={24} color={'black'} />
       </TouchableOpacity>
     </Fragment>
-  );
+  ) : null;
 };
 
 export default SearchComp;
