@@ -17,7 +17,6 @@ const styles = StyleSheet.create({
     width: '90%',
     display: 'flex',
     alignItems: 'center',
-    marginVertical: 20,
   },
   imageContainer: {
     display: 'flex',
@@ -37,7 +36,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 20,
     marginTop: 20,
   },
   infoInput: {

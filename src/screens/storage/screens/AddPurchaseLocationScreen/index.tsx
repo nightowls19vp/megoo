@@ -19,29 +19,78 @@ import {Colors} from '../../../../constants/color.const';
 import GroupProductDropdownPicker from '../../components/GroupProductDropdownPicker';
 import PurchaseLocationDropdownPicker from '../../components/PurchaseLocationDropdownPicker';
 import StorageLocationDropdownPicker from '../../components/StorageLocationDropdownPicker';
+import {IDistrict} from '../../interfaces/base-dto/district.interfaces';
+import {IProvince} from '../../interfaces/base-dto/province.interface';
+import {IWard} from '../../interfaces/base-dto/ward.interface';
+import DistrictsDropdownPicker from './components/districts-dropdown-picker';
+import ProvincesDropdownPicker from './components/provinces-dropdown-picker';
+import WardsDropdownPicker from './components/wards-dropdown-picker';
 import styles from './styles/style';
 
 const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
   const initialValues = {
-    prodName: '',
-    brand: '',
-    category: '',
-    description: '',
-    price: '',
-    region: '',
-    exp: '',
+    name: '',
+    addressLine1: '',
   };
 
-  const [open, setOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [p, setP] = useState<IProvince>();
+  const [d, setD] = useState<IDistrict>();
+  const [w, setW] = useState<IWard>();
+
+  useEffect(() => {
+    setD(undefined);
+    setW(undefined);
+  }, [p]);
+
+  useEffect(() => {
+    setW(undefined);
+  }, [d]);
+
   const [selectedImage, setSelectedImage] = useState(IMAGE_URI_DEFAULT);
   const [imageFile, setImageFile] = useState<any>();
 
-  useEffect(() => {
-    if (open) {
-      setSelectedDate(new Date());
-    }
-  }, [open]);
+  const renderProvinceDropdownPicker = (p?: IProvince) => {
+    return (
+      <ProvincesDropdownPicker
+        zIndex={1000}
+        zIndexInverse={3000}
+        fnUpdateProvince={setP}
+        key={'province-dropdown-picker'}
+      />
+    );
+  };
+
+  const renderDistrictDropdownPicker = (d?: IDistrict, p?: number) => {
+    return (
+      <DistrictsDropdownPicker
+        zIndex={2000}
+        zIndexInverse={2000}
+        disabled={!p}
+        pCode={p}
+        fnUpdateDistrict={setD}
+        key={
+          'district-dropdown-picker-for-province-' + p ||
+          'district-dropdown-picker-for-province-'
+        }
+      />
+    );
+  };
+
+  const renderWardDropdownPicker = (w?: IWard, d?: number) => {
+    return (
+      <WardsDropdownPicker
+        zIndex={3000}
+        zIndexInverse={1000}
+        dCode={d}
+        disabled={!d}
+        fnUpdateWard={setW}
+        key={
+          'ward-dropdown-picker-for-district-' + d ||
+          'ward-dropdown-picker-for-district-'
+        }
+      />
+    );
+  };
 
   return (
     <ScrollView
@@ -51,7 +100,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
         <View style={styles.imageContainer}>
           <Image
             source={{
-              uri: selectedImage,
+              uri: selectedImage ?? imageFile ?? IMAGE_URI_DEFAULT,
             }}
             style={styles.image}
           />
@@ -88,32 +137,6 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
           </TouchableOpacity>
         </View>
 
-        {/* <TouchableOpacity
-          style={{marginVertical: 10}}
-          onPress={async () => {
-            await launchImageLibrary(
-              // If need base64String, include this option:
-              // includeBase64: true
-              {mediaType: 'mixed', includeBase64: true},
-              response => {
-                // console.log('Response = ', response);
-
-                if (response.didCancel) {
-                  console.log('User cancelled image picker');
-                } else if (response.errorMessage) {
-                  console.log('ImagePicker Error: ', response.errorMessage);
-                } else {
-                  let source: Asset[] = response.assets as Asset[];
-                  setSelectedImage(`${source[0].uri}`);
-                  setImageFile(source[0].base64);
-                  // console.log('File:', source[0].base64);
-                }
-              },
-            );
-          }}>
-          <Text style={{color: Colors.text}}>Chỉnh sửa ảnh sản phẩm</Text>
-        </TouchableOpacity> */}
-
         <Formik
           initialValues={initialValues}
           onSubmit={values => {
@@ -128,139 +151,73 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
             setFieldValue,
           }) => (
             <View style={styles.infoContainer}>
-              <GroupProductDropdownPicker
-                navigation={navigation}
-                groupId="1"
-                zIndex={3000}
-                zIndexInverse={1000}
-                fnUpdateGpImage={setSelectedImage}
-              />
-
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  alignSelf: 'flex-start',
+                  color: Colors.text.orange,
+                  marginBottom: 10,
+                }}>
+                Tên địa điểm
+              </Text>
               <View style={styles.infoInput}>
                 <TextInput
                   onChangeText={value => {
-                    setFieldValue('category', value);
+                    setFieldValue('name', value);
                   }}
                   // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('category')}
+                  onBlur={() => setFieldTouched('name')}
                   style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Loại sản phẩm'}
+                  placeholder={'Nhập tên địa điểm ...'}
                   placeholderTextColor={Colors.text.lightgrey}
-                  value={values.category}
+                  value={values.name}
                 />
 
-                {values.prodName && (
+                {values.name && (
                   <Icon
-                    onPress={() => setFieldValue('type', '')}
+                    onPress={() => setFieldValue('name', '')}
                     name={'close'}
                     style={styles.icon}
                   />
                 )}
               </View>
 
-              <View style={styles.infoInput}>
-                <TextInput
-                  editable={false}
-                  style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Hạn sử dụng'}
-                  placeholderTextColor={Colors.text.lightgrey}
-                  value={values.exp}
-                />
+              {renderProvinceDropdownPicker(p)}
 
-                <DatePicker
-                  modal
-                  open={open}
-                  date={selectedDate}
-                  mode={'date'}
-                  locale={'vi'}
-                  title={'Chọn ngày'}
-                  confirmText={'Chọn'}
-                  cancelText={'Huỷ'}
-                  onConfirm={value => {
-                    console.log('Selected exp date:', value);
+              {renderDistrictDropdownPicker(d, p?.code)}
 
-                    setOpen(false);
-                    // setDate(value);
-                    setFieldValue('exp', moment(value).format('DD/MM/YYYY'));
-                  }}
-                  onCancel={() => {
-                    setOpen(false);
-                  }}
-                />
+              {renderWardDropdownPicker(w, d?.code)}
 
-                {values.exp && (
-                  <Icon
-                    onPress={() => setFieldValue('exp', '')}
-                    name={'close'}
-                    style={[styles.icon, {marginRight: 5}]}
-                  />
-                )}
-                <Icon
-                  onPress={() => {
-                    setOpen(true);
-                  }}
-                  name={'calendar'}
-                  style={styles.icon}
-                />
-              </View>
-
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  alignSelf: 'flex-start',
+                  color: Colors.text.orange,
+                  marginVertical: 10,
+                }}>
+                Địa chỉ chi tiết
+              </Text>
               <View style={styles.infoInput}>
                 <TextInput
                   onChangeText={value => {
-                    setFieldValue('description', value);
+                    setFieldValue('addressLine1', value);
                   }}
                   // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('description')}
+                  onBlur={() => setFieldTouched('addressLine1')}
                   style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Số lượng'}
+                  placeholder={'Nhập địa chỉ chi tiết ...'}
                   placeholderTextColor={Colors.text.lightgrey}
-                  value={values.description}
+                  value={values.addressLine1}
                 />
 
-                {values.description && (
+                {values.addressLine1 && (
                   <Icon
-                    onPress={() => setFieldValue('description', '')}
+                    onPress={() => setFieldValue('addressLine1', '')}
                     name={'close'}
                     style={styles.icon}
                   />
                 )}
               </View>
-
-              <View style={styles.infoInput}>
-                <TextInput
-                  onChangeText={value => {
-                    setFieldValue('description', value);
-                  }}
-                  // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('description')}
-                  style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Đơn vị tính'}
-                  placeholderTextColor={Colors.text.lightgrey}
-                  value={values.description}
-                />
-
-                {values.description && (
-                  <Icon
-                    onPress={() => setFieldValue('description', '')}
-                    name={'close'}
-                    style={styles.icon}
-                  />
-                )}
-              </View>
-
-              <StorageLocationDropdownPicker
-                navigation={navigation}
-                groupId="1"
-                zIndex={2000}
-                zIndexInverse={2000}
-              />
-
-              <PurchaseLocationDropdownPicker
-                navigation={navigation}
-                groupId="1"
-                zIndex={1000}
-                zIndexInverse={3000}
-              />
 
               <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Lưu</Text>

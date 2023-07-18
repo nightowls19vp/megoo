@@ -1,25 +1,21 @@
 import {observer} from 'mobx-react';
-import {useEffect, useState} from 'react';
-import {TouchableOpacity, View} from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import React, {useEffect, useState} from 'react';
+import {Text, View} from 'react-native';
+import DropDownPicker, {
+  DropDownPickerProps,
+} from 'react-native-dropdown-picker';
 
-import {Colors} from '../../../../constants/color.const';
-import * as pl from '../../services/purchase-locations.service';
+import {Colors} from '../../../../../constants/color.const';
+import {IDistrict} from '../../../interfaces/base-dto/district.interfaces';
+import * as ds from '../../../services/divisions.service';
 
 interface IProps {
-  groupId: string;
-  zIndex: number;
-  zIndexInverse: number;
-  navigation: any;
+  pCode?: number;
+  fnUpdateDistrict: Function;
 }
-import RouteNames from '../../../../constants/route-names.const';
-const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
-  groupId,
-  zIndex,
-  zIndexInverse,
-  navigation,
-}) => {
+const GroupProductDropdownPicker: React.FC<
+  IProps & Partial<DropDownPickerProps<any>>
+> = ({zIndex, zIndexInverse, disabled, pCode, fnUpdateDistrict}) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
@@ -29,7 +25,7 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
       value: string;
     }[]
   >([]);
-
+  const [itemsFullData, setItemsFullData] = useState<IDistrict[]>([]);
   useEffect(() => {
     search('');
   }, []);
@@ -38,27 +34,31 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
     // Show the loading animation
     setLoading(true);
 
+    if (!pCode) {
+      setItems([]);
+      setItemsFullData([]);
+      setLoading(false);
+      return;
+    }
+
     // Get items from API
-    const resp = await pl.getPurchaseLocationPaginated({
-      groupId: '1',
-      searchBy: ['name'],
-      search: text,
-      limit: 100,
-      filter: {
-        'timestamp.deletedAt': '$eq:$null',
-      },
-      sortBy: ['name:ASC', 'timestamp.createdAt:ASC'],
+    const resp: IDistrict[] = await ds.searchDistricts({
+      q: text,
+      p: pCode,
     });
 
     // Set items for the dropdown
-    const items = resp.data
+    const items = resp
       .map(item => ({
         label: item.name || '',
-        value: item.id || '',
+        value: item.code.toString() || '',
       }))
       .filter(item => item.label !== '');
 
     setItems(items);
+
+    setItemsFullData(resp);
+    setLoading(false);
   };
 
   return (
@@ -66,29 +66,29 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-end',
+        alignItems: 'flex-start',
         backgroundColor: Colors.background.white,
         borderRadius: 10,
         marginVertical: 10,
         gap: 10,
         zIndex: zIndex,
       }}>
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate(RouteNames.ADD_PURCHASE_LOCATION, {})
-        }>
-        <Ionicons
-          name="add-circle-outline"
-          size={24}
-          color={Colors.text.orange}
-        />
-      </TouchableOpacity>
+      <Text
+        style={{
+          fontWeight: 'bold',
+          color: Colors.text.orange,
+        }}>
+        Quận/huyện
+      </Text>
       <DropDownPicker
+        style={{
+          borderColor: Colors.border.lightgrey,
+        }}
         listMode="MODAL"
+        placeholder="Chọn quận/huyện"
         scrollViewProps={{
           nestedScrollEnabled: true,
         }}
-        placeholder="Chọn địa điểm mua hàng"
         loading={loading}
         open={open}
         value={value}
@@ -106,9 +106,18 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
         disableLocalSearch={true} // required for remote search
         onChangeSearchText={text => search(text)} // required for remote search
         autoScroll={true}
+        onSelectItem={item => {
+          fnUpdateDistrict(
+            itemsFullData.find(i => item?.value && i.code === +item?.value),
+          );
+        }}
+        disabled={disabled}
+        disabledStyle={{
+          opacity: 0.25,
+        }}
       />
     </View>
   );
 };
 
-export default observer(PurchaseLocationDropdownPicker);
+export default observer(GroupProductDropdownPicker);
