@@ -5,18 +5,20 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {Colors} from '../../../../constants/color.const';
+import RouteNames from '../../../../constants/route-names.const';
 import * as sl from '../../services/storage-location.service';
 
 interface IProps {
   groupId: string;
   zIndex: number;
   zIndexInverse: number;
+  navigation: any;
 }
-
 const StorageLocationDropdownPicker: React.FC<IProps> = ({
   groupId,
   zIndex,
   zIndexInverse,
+  navigation,
 }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -72,10 +74,9 @@ const StorageLocationDropdownPicker: React.FC<IProps> = ({
         zIndex: zIndex,
       }}>
       <TouchableOpacity
-        onPress={() => {
-          //todo: navigate to the add storage location screen
-          console.log('navigate to the add storage location screen');
-        }}>
+        onPress={() =>
+          navigation.navigate(RouteNames.ADD_STORAGE_LOCATION, {})
+        }>
         <Ionicons
           name="add-circle-outline"
           size={24}

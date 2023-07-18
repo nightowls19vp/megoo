@@ -88,6 +88,26 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   }
                 },
               );
+
+              // await launchCamera(
+              //   // If need base64String, include this option:
+              //   // includeBase64: true
+              //   {mediaType: 'mixed', includeBase64: true},
+              //   response => {
+              //     // console.log('Response = ', response);
+
+              //     if (response.didCancel) {
+              //       console.log('User cancelled image picker');
+              //     } else if (response.errorMessage) {
+              //       console.log('ImagePicker Error: ', response.errorMessage);
+              //     } else {
+              //       let source: Asset[] = response.assets as Asset[];
+              //       setSelectedImage(`${source[0].uri}`);
+              //       setImageFile(source[0].base64);
+              //       // console.log('File:', source[0].base64);
+              //     }
+              //   },
+              // );
             }}>
             <Icon name="camera" size={40} color={Colors.icon.lightgrey} />
           </TouchableOpacity>

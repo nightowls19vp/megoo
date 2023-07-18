@@ -11,11 +11,7 @@ import {
   View,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import {
-  Asset,
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
+import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
@@ -68,13 +64,12 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
               bottom: 0,
             }}
             onPress={async () => {
-              launchCamera(
-                {
-                  mediaType: 'photo',
-                  cameraType: 'back',
-                },
+              await launchImageLibrary(
+                // If need base64String, include this option:
+                // includeBase64: true
+                {mediaType: 'mixed', includeBase64: true},
                 response => {
-                  console.log('Response = ', response);
+                  // console.log('Response = ', response);
 
                   if (response.didCancel) {
                     console.log('User cancelled image picker');

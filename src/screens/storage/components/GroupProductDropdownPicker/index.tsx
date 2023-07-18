@@ -11,13 +11,15 @@ import * as gp from '../../services/group-products.service';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface IProps {
+  navigation: any;
   groupId: string;
   zIndex: number;
   zIndexInverse: number;
   fnUpdateGpImage: Function;
 }
-
+import RouteNames from '../../../../constants/route-names.const';
 const GroupProductDropdownPicker: React.FC<IProps> = ({
+  navigation,
   groupId,
   zIndex,
   zIndexInverse,

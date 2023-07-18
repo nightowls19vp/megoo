@@ -11,12 +11,14 @@ interface IProps {
   groupId: string;
   zIndex: number;
   zIndexInverse: number;
+  navigation: any;
 }
-
+import RouteNames from '../../../../constants/route-names.const';
 const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
   groupId,
   zIndex,
   zIndexInverse,
+  navigation,
 }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -72,10 +74,9 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
         zIndex: zIndex,
       }}>
       <TouchableOpacity
-        onPress={() => {
-          //todo: navigate to the add purchase location screen
-          console.log('navigate to the add purchase location screen');
-        }}>
+        onPress={() =>
+          navigation.navigate(RouteNames.ADD_STORAGE_LOCATION, {})
+        }>
         <Ionicons
           name="add-circle-outline"
           size={24}

@@ -47,6 +47,8 @@ import CreateTodosScreen from '../../../screens/home/screens/todos/CreateTodosSc
 
 import GroupTaskListScreen from '../../../screens/home/screens/task/GroupTaskListScreen';
 import TaskListScreen from '../../../screens/home/screens/task/TaskListScreen';
+import AddStorageLocationScreen from '../../../screens/storage/screens/AddStorageLocationScreen';
+import AddPurchaseLocationScreen from '../../../screens/storage/screens/AddPurchaseLocationScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -290,6 +292,14 @@ const StorageScreenStack = () => {
       <StorageStack.Screen
         name={RouteNames.ADD_PRODUCT_INFO}
         component={AddProdInfoScreen}
+      />
+      <StorageStack.Screen
+        name={RouteNames.ADD_STORAGE_LOCATION}
+        component={AddStorageLocationScreen}
+      />
+      <StorageStack.Screen
+        name={RouteNames.ADD_PURCHASE_LOCATION}
+        component={AddPurchaseLocationScreen}
       />
       <StorageStack.Screen
         name={RouteNames.SCAN_BARCODE}
