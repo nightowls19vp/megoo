@@ -192,7 +192,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.utilitiesContainer}>
+      {/* <View style={styles.utilitiesContainer}>
         <Text style={styles.title}>Gói người dùng</Text>
         <Carousel
           loop={false}
@@ -209,7 +209,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
           onSnapToItem={index => console.log('current index:', index)}
           renderItem={renderItem}
         />
-      </View>
+      </View> */}
       <View style={styles.utilitiesContainer}>
         <Text style={styles.title}>Tiện ích</Text>
         <View style={styles.utilitiesContent}>

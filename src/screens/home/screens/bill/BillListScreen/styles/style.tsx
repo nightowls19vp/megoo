@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
-    gap: 10,
+    gap: 20,
   },
   billItemContainer: {
     width: '90%',

@@ -178,33 +178,31 @@ const BillScreen = ({navigation}: {navigation: any}) => {
 
         console.log('bill', bill);
 
-        // const response = await createBill(groupId, bill);
-        // console.log('Create bill response:', response);
+        const response = await createBill(groupId, bill);
+        console.log('Create bill response:', response);
 
-        // if (response.statusCode === 201) {
-        //   Toast.show({
-        //     type: 'success',
-        //     text1: 'Tạo khoản chi tiêu thành công',
-        //     autoHide: true,
-        //     visibilityTime: 1000,
-        //     topOffset: 30,
-        //     bottomOffset: 40,
-        //     onHide: () => {
-        //       navigation.navigate(
-        //         RouteNames.BILL_MANAGEMENT as never,
-        //         {} as never,
-        //       );
-        //     },
-        //   });
-        // } else {
-        //   Toast.show({
-        //     type: 'error',
-        //     text1: response.message,
-        //     autoHide: false,
-        //     topOffset: 30,
-        //     bottomOffset: 40,
-        //   });
-        // }
+        if (response.statusCode === 201) {
+          Toast.show({
+            type: 'success',
+            text1: 'Tạo khoản chi tiêu thành công',
+            autoHide: true,
+            visibilityTime: 1000,
+            topOffset: 30,
+            onHide: () => {
+              navigation.navigate(
+                RouteNames.BILL_MANAGEMENT as never,
+                {} as never,
+              );
+            },
+          });
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: response.message,
+            autoHide: false,
+            topOffset: 30,
+          });
+        }
       }}
       onReset={(values, actions) => {
         console.log('reset');
