@@ -329,7 +329,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
               textAlign: 'left',
               color: Colors.title.orange,
               fontWeight: 'bold',
-              fontSize: 18,
+              fontSize: 14,
               marginTop: 10,
             }}>
             Họ và tên
@@ -361,7 +361,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
               textAlign: 'left',
               color: Colors.title.orange,
               fontWeight: 'bold',
-              fontSize: 18,
+              fontSize: 14,
               marginTop: 10,
             }}>
             Số điện thoại
@@ -394,7 +394,7 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
               textAlign: 'left',
               color: Colors.title.orange,
               fontWeight: 'bold',
-              fontSize: 18,
+              fontSize: 14,
               marginTop: 10,
             }}>
             Ngày sinh

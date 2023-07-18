@@ -229,6 +229,7 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
           )) ||
             (errors.todo && <Text style={styles.error}>{errors.todo}</Text>)}
 
+          <Text style={styles.title}>Mô tả</Text>
           <View style={styles.inputContainer}>
             <TextInput
               onChangeText={value => setFieldValue('description', value)}
@@ -406,21 +407,18 @@ const styles = StyleSheet.create({
     width: '90%',
     textAlign: 'left',
     textAlignVertical: 'center',
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
     color: Colors.title.orange,
-    lineHeight: 21,
-    paddingVertical: 0,
-    marginTop: 20,
+    marginTop: 10,
   },
   inputContainer: {
     width: '90%',
-    // height: 50,
+    height: 40,
     flexDirection: 'row',
     alignItems: 'center',
     // paddingHorizontal: 15,
-    // marginVertical: 10,
-    marginBottom: 10,
+    marginBottom: 5,
     borderColor: Colors.border.lightgrey,
     borderBottomWidth: 1,
     // borderRadius: 10,

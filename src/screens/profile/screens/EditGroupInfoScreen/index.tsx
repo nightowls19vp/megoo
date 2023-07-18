@@ -162,7 +162,7 @@ const EditGroupinfoScreen = () => {
               textAlign: 'left',
               color: Colors.title.orange,
               fontWeight: 'bold',
-              fontSize: 18,
+              fontSize: 14,
               marginTop: 10,
             }}>
             Tên nhóm
@@ -174,7 +174,7 @@ const EditGroupinfoScreen = () => {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              marginVertical: 10,
+              // marginVertical: 10,
               borderColor: Colors.border.lightgrey,
               borderBottomWidth: 1,
               // borderRadius: 10,

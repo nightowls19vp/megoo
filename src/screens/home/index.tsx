@@ -228,7 +228,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
           <TouchableOpacity
             style={styles.utility}
             onPress={() => navigation.navigate(RouteNames.TASK_LIST_STACK, {})}>
-            <Text style={styles.utilityText}>Quản lý thời gian</Text>
+            <Text style={styles.utilityText}>Lịch biểu</Text>
           </TouchableOpacity>
         </View>
       </View>

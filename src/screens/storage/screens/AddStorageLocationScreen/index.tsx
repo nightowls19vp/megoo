@@ -23,13 +23,8 @@ import styles from './styles/style';
 
 const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
   const initialValues = {
-    prodName: '',
-    brand: '',
-    category: '',
+    storageName: '',
     description: '',
-    price: '',
-    region: '',
-    exp: '',
   };
 
   const [open, setOpen] = useState(false);
@@ -128,91 +123,67 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
             setFieldValue,
           }) => (
             <View style={styles.infoContainer}>
-              <GroupProductDropdownPicker
-                navigation={navigation}
-                groupId="1"
-                zIndex={3000}
-                zIndexInverse={1000}
-                fnUpdateGpImage={setSelectedImage}
-              />
-
+              <Text
+                style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  color: Colors.title.orange,
+                  fontWeight: 'bold',
+                  fontSize: 18,
+                  marginTop: 10,
+                }}>
+                Vị trí lưu trữ
+              </Text>
               <View style={styles.infoInput}>
                 <TextInput
                   onChangeText={value => {
-                    setFieldValue('category', value);
+                    setFieldValue('storageName', value);
                   }}
-                  // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('category')}
+                  onBlur={() => setFieldTouched('storageName')}
                   style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Loại sản phẩm'}
+                  placeholder={'Vị trí lưu trữ'}
                   placeholderTextColor={Colors.text.lightgrey}
-                  value={values.category}
+                  value={values.storageName}
                 />
 
-                {values.prodName && (
+                {values.storageName && (
                   <Icon
-                    onPress={() => setFieldValue('type', '')}
+                    onPress={() => setFieldValue('storageName', '')}
                     name={'close'}
                     style={styles.icon}
                   />
                 )}
               </View>
+              {errors.storageName && touched.storageName && (
+                <Text
+                  style={{
+                    width: '90%',
+                    color: Colors.text.red,
+                    textAlign: 'left',
+                  }}>
+                  {errors.storageName}
+                </Text>
+              )}
 
-              <View style={styles.infoInput}>
-                <TextInput
-                  editable={false}
-                  style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Hạn sử dụng'}
-                  placeholderTextColor={Colors.text.lightgrey}
-                  value={values.exp}
-                />
-
-                <DatePicker
-                  modal
-                  open={open}
-                  date={selectedDate}
-                  mode={'date'}
-                  locale={'vi'}
-                  title={'Chọn ngày'}
-                  confirmText={'Chọn'}
-                  cancelText={'Huỷ'}
-                  onConfirm={value => {
-                    console.log('Selected exp date:', value);
-
-                    setOpen(false);
-                    // setDate(value);
-                    setFieldValue('exp', moment(value).format('DD/MM/YYYY'));
-                  }}
-                  onCancel={() => {
-                    setOpen(false);
-                  }}
-                />
-
-                {values.exp && (
-                  <Icon
-                    onPress={() => setFieldValue('exp', '')}
-                    name={'close'}
-                    style={[styles.icon, {marginRight: 5}]}
-                  />
-                )}
-                <Icon
-                  onPress={() => {
-                    setOpen(true);
-                  }}
-                  name={'calendar'}
-                  style={styles.icon}
-                />
-              </View>
-
+              <Text
+                style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  color: Colors.title.orange,
+                  fontWeight: 'bold',
+                  fontSize: 18,
+                  marginTop: 10,
+                }}>
+                Mô tả
+              </Text>
               <View style={styles.infoInput}>
                 <TextInput
                   onChangeText={value => {
                     setFieldValue('description', value);
                   }}
-                  // onSubmitEditing={handleSubmit}
                   onBlur={() => setFieldTouched('description')}
                   style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Số lượng'}
+                  placeholder={'Mô tả'}
                   placeholderTextColor={Colors.text.lightgrey}
                   value={values.description}
                 />
@@ -225,42 +196,16 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   />
                 )}
               </View>
-
-              <View style={styles.infoInput}>
-                <TextInput
-                  onChangeText={value => {
-                    setFieldValue('description', value);
-                  }}
-                  // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('description')}
-                  style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Đơn vị tính'}
-                  placeholderTextColor={Colors.text.lightgrey}
-                  value={values.description}
-                />
-
-                {values.description && (
-                  <Icon
-                    onPress={() => setFieldValue('description', '')}
-                    name={'close'}
-                    style={styles.icon}
-                  />
-                )}
-              </View>
-
-              <StorageLocationDropdownPicker
-                navigation={navigation}
-                groupId="1"
-                zIndex={2000}
-                zIndexInverse={2000}
-              />
-
-              <PurchaseLocationDropdownPicker
-                navigation={navigation}
-                groupId="1"
-                zIndex={1000}
-                zIndexInverse={3000}
-              />
+              {errors.description && touched.description && (
+                <Text
+                  style={{
+                    width: '90%',
+                    color: Colors.text.red,
+                    textAlign: 'left',
+                  }}>
+                  {errors.description}
+                </Text>
+              )}
 
               <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Lưu</Text>

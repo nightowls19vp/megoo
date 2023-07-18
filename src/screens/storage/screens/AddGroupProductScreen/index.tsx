@@ -1,4 +1,5 @@
 import {Formik} from 'formik';
+import {observer} from 'mobx-react';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {
@@ -25,15 +26,15 @@ import PurchaseLocationDropdownPicker from '../../components/PurchaseLocationDro
 import StorageLocationDropdownPicker from '../../components/StorageLocationDropdownPicker';
 import styles from './styles/style';
 
-const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
+const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
   const initialValues = {
+    barcode: '',
     prodName: '',
+    price: '',
+    region: '',
     brand: '',
     category: '',
     description: '',
-    price: '',
-    region: '',
-    exp: '',
   };
 
   const [open, setOpen] = useState(false);
@@ -153,82 +154,143 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
             setFieldValue,
           }) => (
             <View style={styles.infoContainer}>
-              <GroupProductDropdownPicker
-                navigation={navigation}
-                groupId="1"
-                zIndex={3000}
-                zIndexInverse={1000}
-                fnUpdateGpImage={setSelectedImage}
-              />
-
+              <Text style={styles.inputLabel}>Barcode</Text>
               <View style={styles.infoInput}>
                 <TextInput
                   onChangeText={value => {
-                    setFieldValue('category', value);
+                    setFieldValue('barcode', value);
                   }}
-                  // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('category')}
+                  onBlur={() => setFieldTouched('barcode')}
                   style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Loại sản phẩm'}
+                  placeholder={'Nhập barcode'}
                   placeholderTextColor={Colors.text.lightgrey}
-                  value={values.category}
+                  value={values.barcode}
                 />
 
-                {values.prodName && (
+                {values.barcode && (
                   <Icon
-                    onPress={() => setFieldValue('type', '')}
-                    name={'close'}
-                    style={styles.icon}
-                  />
-                )}
-              </View>
-
-              <View style={styles.infoInput}>
-                <TextInput
-                  editable={false}
-                  style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Hạn sử dụng'}
-                  placeholderTextColor={Colors.text.lightgrey}
-                  value={values.exp}
-                />
-
-                <DatePicker
-                  modal
-                  open={open}
-                  date={selectedDate}
-                  mode={'date'}
-                  locale={'vi'}
-                  title={'Chọn ngày'}
-                  confirmText={'Chọn'}
-                  cancelText={'Huỷ'}
-                  onConfirm={value => {
-                    console.log('Selected exp date:', value);
-
-                    setOpen(false);
-                    // setDate(value);
-                    setFieldValue('exp', moment(value).format('DD/MM/YYYY'));
-                  }}
-                  onCancel={() => {
-                    setOpen(false);
-                  }}
-                />
-
-                {values.exp && (
-                  <Icon
-                    onPress={() => setFieldValue('exp', '')}
+                    onPress={() => setFieldValue('barcode', '')}
                     name={'close'}
                     style={[styles.icon, {marginRight: 5}]}
                   />
                 )}
-                <Icon
-                  onPress={() => {
-                    setOpen(true);
-                  }}
-                  name={'calendar'}
-                  style={styles.icon}
-                />
               </View>
 
+              <Text style={styles.inputLabel}>Nhu yếu phẩm</Text>
+              <View style={styles.infoInput}>
+                <TextInput
+                  onChangeText={value => {
+                    setFieldValue('prodName', value);
+                  }}
+                  onBlur={() => setFieldTouched('prodName')}
+                  style={{flex: 1, color: Colors.text.grey}}
+                  placeholder={'Nhập tên nhu yếu phẩm'}
+                  placeholderTextColor={Colors.text.lightgrey}
+                  value={values.prodName}
+                />
+
+                {values.prodName && (
+                  <Icon
+                    onPress={() => setFieldValue('prodName', '')}
+                    name={'close'}
+                    style={styles.icon}
+                  />
+                )}
+              </View>
+
+              <Text style={styles.inputLabel}>Giá tiền</Text>
+              <View style={styles.infoInput}>
+                <TextInput
+                  onChangeText={value => {
+                    setFieldValue('price', value);
+                  }}
+                  // onSubmitEditing={handleSubmit}
+                  onBlur={() => setFieldTouched('price')}
+                  style={{flex: 1, color: Colors.text.grey}}
+                  placeholder={'Nhập giá tiền'}
+                  placeholderTextColor={Colors.text.lightgrey}
+                  value={values.price}
+                />
+
+                {values.price && (
+                  <Icon
+                    onPress={() => setFieldValue('price', '')}
+                    name={'close'}
+                    style={styles.icon}
+                  />
+                )}
+              </View>
+
+              <Text style={styles.inputLabel}>Nơi sản xuất</Text>
+              <View style={styles.infoInput}>
+                <TextInput
+                  onChangeText={value => {
+                    setFieldValue('region', value);
+                  }}
+                  // onSubmitEditing={handleSubmit}
+                  onBlur={() => setFieldTouched('region')}
+                  style={{flex: 1, color: Colors.text.grey}}
+                  placeholder={'Nhập nơi sản xuất'}
+                  placeholderTextColor={Colors.text.lightgrey}
+                  value={values.region}
+                />
+
+                {values.region && (
+                  <Icon
+                    onPress={() => setFieldValue('region', '')}
+                    name={'close'}
+                    style={styles.icon}
+                  />
+                )}
+              </View>
+
+              <Text style={styles.inputLabel}>Nhãn hiệu</Text>
+              <View style={styles.infoInput}>
+                <TextInput
+                  onChangeText={value => {
+                    setFieldValue('brand', value);
+                  }}
+                  // onSubmitEditing={handleSubmit}
+                  onBlur={() => setFieldTouched('brand')}
+                  style={{flex: 1, color: Colors.text.grey}}
+                  placeholder={'Nhập tên nhãn hiệu'}
+                  placeholderTextColor={Colors.text.lightgrey}
+                  value={values.brand}
+                />
+
+                {values.brand && (
+                  <Icon
+                    onPress={() => setFieldValue('brand', '')}
+                    name={'close'}
+                    style={styles.icon}
+                  />
+                )}
+              </View>
+
+              <Text style={styles.inputLabel}>Phân loại</Text>
+              <View style={styles.infoInput}>
+                <TextInput
+                  onChangeText={value => {
+                    setFieldValue('brand', value);
+                  }}
+                  // onSubmitEditing={handleSubmit}
+                  onBlur={() => setFieldTouched('brand')}
+                  style={{flex: 1, color: Colors.text.grey}}
+                  placeholder={'Phân loại nhu yếu phẩm'}
+                  placeholderTextColor={Colors.text.lightgrey}
+                  value={values.brand}
+                />
+
+                {values.brand && (
+                  <Icon
+                    onPress={() => setFieldValue('brand', '')}
+                    name={'close'}
+                    style={styles.icon}
+                  />
+                )}
+              </View>
+
+              <Text style={styles.inputLabel}>Mô tả</Text>
               <View style={styles.infoInput}>
                 <TextInput
                   onChangeText={value => {
@@ -237,7 +299,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   // onSubmitEditing={handleSubmit}
                   onBlur={() => setFieldTouched('description')}
                   style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Số lượng'}
+                  placeholder={'Nhập mô tả'}
                   placeholderTextColor={Colors.text.lightgrey}
                   value={values.description}
                 />
@@ -250,42 +312,6 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   />
                 )}
               </View>
-
-              <View style={styles.infoInput}>
-                <TextInput
-                  onChangeText={value => {
-                    setFieldValue('description', value);
-                  }}
-                  // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('description')}
-                  style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Đơn vị tính'}
-                  placeholderTextColor={Colors.text.lightgrey}
-                  value={values.description}
-                />
-
-                {values.description && (
-                  <Icon
-                    onPress={() => setFieldValue('description', '')}
-                    name={'close'}
-                    style={styles.icon}
-                  />
-                )}
-              </View>
-
-              <StorageLocationDropdownPicker
-                navigation={navigation}
-                groupId="1"
-                zIndex={2000}
-                zIndexInverse={2000}
-              />
-
-              <PurchaseLocationDropdownPicker
-                navigation={navigation}
-                groupId="1"
-                zIndex={1000}
-                zIndexInverse={3000}
-              />
 
               <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Lưu</Text>
@@ -298,4 +324,4 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
   );
 };
 
-export default AddProdInfoScreen;
+export default observer(AddGroupProductScreen);

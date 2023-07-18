@@ -1,6 +1,6 @@
 import {observer} from 'mobx-react';
 import React, {useEffect, useState} from 'react';
-import {Touchable, View} from 'react-native';
+import {Text, Touchable, View} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -74,24 +74,44 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-end',
+        // alignItems: 'flex-end',
         backgroundColor: Colors.background.white,
         borderRadius: 10,
-        marginVertical: 10,
-        gap: 10,
+        marginTop: 10,
         zIndex: zIndex,
       }}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate(RouteNames.ADD_GROUP_PRODUCT, {})}>
-        <Ionicons
-          name="add-circle-outline"
-          size={24}
-          color={Colors.text.orange}
-        />
-      </TouchableOpacity>
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'baseline',
+        }}>
+        <Text
+          style={{
+            width: '90%',
+            textAlign: 'left',
+            color: Colors.title.orange,
+            fontWeight: 'bold',
+            fontSize: 14,
+            marginBottom: 5,
+          }}>
+          Nhu yếu phẩm
+        </Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate(RouteNames.ADD_GROUP_PRODUCT, {})}>
+          <Ionicons
+            name="add-circle-outline"
+            size={24}
+            color={Colors.text.orange}
+          />
+        </TouchableOpacity>
+      </View>
+
       <DropDownPicker
         listMode="MODAL"
         placeholder="Chọn nhu yếu phẩm"
+        placeholderStyle={{color: Colors.text.lightgrey}}
         scrollViewProps={{
           nestedScrollEnabled: true,
         }}
@@ -103,6 +123,9 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
         setValue={setValue}
         setItems={setItems}
         zIndex={zIndex}
+        style={{
+          borderColor: Colors.border.lightgrey,
+        }}
         zIndexInverse={zIndexInverse}
         dropDownContainerStyle={{
           borderColor: Colors.border.lightgrey,

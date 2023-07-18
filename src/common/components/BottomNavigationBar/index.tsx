@@ -49,6 +49,7 @@ import GroupTaskListScreen from '../../../screens/home/screens/task/GroupTaskLis
 import TaskListScreen from '../../../screens/home/screens/task/TaskListScreen';
 import AddStorageLocationScreen from '../../../screens/storage/screens/AddStorageLocationScreen';
 import AddPurchaseLocationScreen from '../../../screens/storage/screens/AddPurchaseLocationScreen';
+import AddGroupProductScreen from '../../../screens/storage/screens/AddGroupProductScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -269,6 +270,37 @@ const PackageScreenStack = ({navigation}: {navigation: any}) => {
   );
 };
 
+const AddProductStack = createNativeStackNavigator();
+const AddProductScreenStack = () => {
+  return (
+    <AddProductStack.Navigator initialRouteName={RouteNames.STORAGE_GROUPS}>
+      <AddProductStack.Screen
+        name={appStore.isLoggedIn ? RouteNames.STORAGE_GROUPS : 'Quản lý gói'}
+        component={GroupsProductsListScreen}
+      />
+      <AddProductStack.Screen
+        name={RouteNames.ADD_GROUP_PRODUCT}
+        component={AddProdInfoScreen}
+      />
+      <AddProductStack.Screen
+        name={RouteNames.ADD_STORAGE_LOCATION}
+        component={AddStorageLocationScreen}
+      />
+      <AddProductStack.Screen
+        name={RouteNames.ADD_PURCHASE_LOCATION}
+        component={AddPurchaseLocationScreen}
+      />
+      <AddProductStack.Screen
+        name={RouteNames.CHAT_STACK}
+        component={ChatScreenStack}
+        options={{
+          title: 'Nhóm chat',
+        }}
+      />
+    </AddProductStack.Navigator>
+  );
+};
+
 const StorageStack = createNativeStackNavigator();
 const StorageScreenStack = () => {
   return (
@@ -295,7 +327,7 @@ const StorageScreenStack = () => {
       />
       <StorageStack.Screen
         name={RouteNames.ADD_GROUP_PRODUCT}
-        component={AddProdInfoScreen}
+        component={AddGroupProductScreen}
       />
       <StorageStack.Screen
         name={RouteNames.ADD_STORAGE_LOCATION}
