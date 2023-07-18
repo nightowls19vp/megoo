@@ -1,6 +1,6 @@
 import {observer} from 'mobx-react';
 import {useEffect, useState} from 'react';
-import {TouchableOpacity, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -66,29 +66,49 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-end',
+        // alignItems: 'flex-end',
         backgroundColor: Colors.background.white,
         borderRadius: 10,
-        marginVertical: 10,
-        gap: 10,
+        // marginVertical: 10,
         zIndex: zIndex,
       }}>
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate(RouteNames.ADD_STORAGE_LOCATION, {})
-        }>
-        <Ionicons
-          name="add-circle-outline"
-          size={24}
-          color={Colors.text.orange}
-        />
-      </TouchableOpacity>
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          marginTop: 10,
+        }}>
+        <Text
+          style={{
+            width: '90%',
+            textAlign: 'left',
+            color: Colors.title.orange,
+            fontWeight: 'bold',
+            fontSize: 14,
+            marginBottom: 5,
+          }}>
+          Địa điểm mua hàng
+        </Text>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate(RouteNames.ADD_STORAGE_LOCATION, {})
+          }>
+          <Ionicons
+            name="add-circle-outline"
+            size={24}
+            color={Colors.text.orange}
+          />
+        </TouchableOpacity>
+      </View>
       <DropDownPicker
         listMode="MODAL"
         scrollViewProps={{
           nestedScrollEnabled: true,
         }}
         placeholder="Chọn địa điểm mua hàng"
+        placeholderStyle={{color: Colors.text.lightgrey}}
         loading={loading}
         open={open}
         value={value}
@@ -98,6 +118,9 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
         setItems={setItems}
         zIndex={zIndex}
         zIndexInverse={zIndexInverse}
+        style={{
+          borderColor: Colors.border.lightgrey,
+        }}
         dropDownContainerStyle={{
           borderColor: Colors.border.lightgrey,
         }}

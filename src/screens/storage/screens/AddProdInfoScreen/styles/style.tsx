@@ -30,6 +30,8 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 200 / 2,
+    borderColor: Colors.border.lightgrey,
+    borderWidth: 1,
   },
   infoContainer: {
     width: '100%',
@@ -37,8 +39,16 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 20,
-    marginTop: 20,
+    // gap: 10,
+  },
+  inputLabel: {
+    width: '100%',
+    textAlign: 'left',
+    color: Colors.title.orange,
+    fontWeight: 'bold',
+    marginTop: 10,
+    marginBottom: 5,
+    fontSize: 14,
   },
   infoInput: {
     width: '100%',
@@ -47,6 +57,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
+    // marginTop: 5,
     borderColor: Colors.border.lightgrey,
     borderWidth: 1,
     borderRadius: 10,
@@ -58,7 +69,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '100%',
-    height: 50,
+    height: 40,
     marginVertical: 20,
     display: 'flex',
     alignItems: 'center',
@@ -68,7 +79,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.buttonText.white,
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
   },
 

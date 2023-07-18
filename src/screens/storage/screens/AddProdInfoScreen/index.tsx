@@ -140,7 +140,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                 zIndexInverse={1000}
                 fnUpdateGpImage={setSelectedImage}
               />
-
+              <Text style={styles.inputLabel}>Loại nhu yếu phẩm</Text>
               <View style={styles.infoInput}>
                 <TextInput
                   onChangeText={value => {
@@ -149,7 +149,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   // onSubmitEditing={handleSubmit}
                   onBlur={() => setFieldTouched('category')}
                   style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Loại sản phẩm'}
+                  placeholder={'Loại nhu yếu phẩm'}
                   placeholderTextColor={Colors.text.lightgrey}
                   value={values.category}
                 />
@@ -163,6 +163,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                 )}
               </View>
 
+              <Text style={styles.inputLabel}>Hạn sử dụng</Text>
               <View style={styles.infoInput}>
                 <TextInput
                   editable={false}
@@ -209,6 +210,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                 />
               </View>
 
+              <Text style={styles.inputLabel}>Số lượng</Text>
               <View style={styles.infoInput}>
                 <TextInput
                   onChangeText={value => {
@@ -230,6 +232,8 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   />
                 )}
               </View>
+
+              <Text style={styles.inputLabel}>Đơn vị tính</Text>
 
               <View style={styles.infoInput}>
                 <TextInput

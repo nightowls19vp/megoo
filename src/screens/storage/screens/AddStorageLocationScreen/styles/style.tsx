@@ -24,12 +24,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     alignSelf: 'center',
-    // backgroundColor: 'pink',
   },
   image: {
     width: 200,
     height: 200,
     borderRadius: 200 / 2,
+    borderColor: Colors.border.lightgrey,
+    borderWidth: 1,
   },
   infoContainer: {
     width: '100%',
@@ -37,8 +38,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 20,
-    marginTop: 20,
   },
   infoInput: {
     width: '100%',
@@ -50,6 +49,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border.lightgrey,
     borderWidth: 1,
     borderRadius: 10,
+    marginTop: 5,
   },
   icon: {
     fontWeight: '200',
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '100%',
-    height: 50,
+    height: 40,
     marginVertical: 20,
     display: 'flex',
     alignItems: 'center',
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.buttonText.white,
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
   },
 
