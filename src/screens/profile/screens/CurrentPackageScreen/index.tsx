@@ -373,7 +373,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                       <Foundation
                         name="crown"
                         size={20}
-                        color={Colors.icon.lightgrey}
+                        color={Colors.icon.orange}
                       />
                     ) : (
                       false

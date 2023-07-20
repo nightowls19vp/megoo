@@ -22,6 +22,7 @@ import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import {deleteBill, getBillInfo} from './services/bill-info-service';
 import styles from './styles/style';
+import userStore from '../../../../../common/store/user.store';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -142,7 +143,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
               textAlignVertical: 'top',
               borderRadius: 10,
               borderWidth: 1,
-              marginTop: 10,
+              // marginTop: 10,
             },
           ]}
           multiline={true}
@@ -167,7 +168,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
         </View>
       </View>
 
-      <Text style={styles.title}>Tiến độ</Text>
+      {/* <Text style={styles.title}>Tiến độ</Text>
       <View style={styles.contentContainer}>
         <ProgressView
           progressTintColor="pink"
@@ -175,7 +176,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
           progress={0.7}
           style={{width: '100%', alignSelf: 'center'}}
         />
-      </View>
+      </View> */}
 
       <Text style={styles.title}>Danh sách người mượn</Text>
       <View style={styles.contentContainer}>
@@ -203,7 +204,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                 </View>
                 <View style={[styles.infoRow, {alignItems: 'center'}]}>
                   <Text style={styles.headingText}>Trạng thái:</Text>
-                  {borrower.borrower._id === bill.lender._id ? (
+                  {userStore.id === bill.lender._id ? (
                     <DropDownPicker
                       containerStyle={{
                         width: '50%',

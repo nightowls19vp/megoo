@@ -105,7 +105,12 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
           alignItems: 'center',
         }}>
         <Text style={styles.title}>Nơi lưu trữ</Text>
-        <TouchableOpacity onPress={() => setAddLocModalVisible(true)}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate(RouteNames.ADD_STORAGE_LOCATION, {
+              groupId: props?.groupId,
+            })
+          }>
           <Icon
             name="add-circle-outline"
             size={24}

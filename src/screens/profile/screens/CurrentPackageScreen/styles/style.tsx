@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   superUserText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: Colors.text.lightgrey,
+    color: Colors.text.orange,
   },
   userAvatar: {
     width: 40,
@@ -88,10 +88,10 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 15,
+    // paddingHorizontal: 15,
     borderColor: Colors.secondary,
-    borderWidth: 1,
-    borderRadius: 10,
+    borderBottomWidth: 1,
+    // borderRadius: 10,
   },
   inputIcon: {
     fontWeight: '200',

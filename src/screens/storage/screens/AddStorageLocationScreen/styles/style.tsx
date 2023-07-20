@@ -24,7 +24,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     alignSelf: 'center',
-    // backgroundColor: 'pink',
   },
   image: {
     width: 200,
@@ -39,16 +38,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // gap: 10,
-  },
-  inputLabel: {
-    width: '100%',
-    textAlign: 'left',
-    color: Colors.title.orange,
-    fontWeight: 'bold',
-    marginTop: 10,
-    marginBottom: 5,
-    fontSize: 14,
   },
   infoInput: {
     width: '100%',
@@ -57,10 +46,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
-    // marginTop: 5,
     borderColor: Colors.border.lightgrey,
     borderWidth: 1,
     borderRadius: 10,
+    marginTop: 5,
   },
   icon: {
     fontWeight: '200',

@@ -1,6 +1,6 @@
 import {observer} from 'mobx-react';
 import React, {useEffect, useState} from 'react';
-import {Touchable, View} from 'react-native';
+import {Text, Touchable, View} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -11,13 +11,15 @@ import * as gp from '../../services/group-products.service';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface IProps {
+  navigation: any;
   groupId: string;
   zIndex: number;
   zIndexInverse: number;
   fnUpdateGpImage: Function;
 }
-
+import RouteNames from '../../../../constants/route-names.const';
 const GroupProductDropdownPicker: React.FC<IProps> = ({
+  navigation,
   groupId,
   zIndex,
   zIndexInverse,
@@ -72,27 +74,44 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-end',
+        // alignItems: 'flex-end',
         backgroundColor: Colors.background.white,
         borderRadius: 10,
-        marginVertical: 10,
-        gap: 10,
+        marginTop: 10,
         zIndex: zIndex,
       }}>
-      <TouchableOpacity
-        onPress={() => {
-          //todo: navigate to the add group product screen
-          console.log('navigate to the add group product screen');
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'baseline',
         }}>
-        <Ionicons
-          name="add-circle-outline"
-          size={24}
-          color={Colors.text.orange}
-        />
-      </TouchableOpacity>
+        <Text
+          style={{
+            width: '90%',
+            textAlign: 'left',
+            color: Colors.title.orange,
+            fontWeight: 'bold',
+            fontSize: 14,
+            marginBottom: 5,
+          }}>
+          Nhu yếu phẩm
+        </Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate(RouteNames.ADD_GROUP_PRODUCT, {})}>
+          <Ionicons
+            name="add-circle-outline"
+            size={24}
+            color={Colors.text.orange}
+          />
+        </TouchableOpacity>
+      </View>
+
       <DropDownPicker
         listMode="MODAL"
         placeholder="Chọn nhu yếu phẩm"
+        placeholderStyle={{color: Colors.text.lightgrey}}
         scrollViewProps={{
           nestedScrollEnabled: true,
         }}
@@ -104,6 +123,9 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
         setValue={setValue}
         setItems={setItems}
         zIndex={zIndex}
+        style={{
+          borderColor: Colors.border.lightgrey,
+        }}
         zIndexInverse={zIndexInverse}
         dropDownContainerStyle={{
           borderColor: Colors.border.lightgrey,

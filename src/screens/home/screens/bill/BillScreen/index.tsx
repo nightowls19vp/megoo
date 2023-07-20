@@ -178,33 +178,31 @@ const BillScreen = ({navigation}: {navigation: any}) => {
 
         console.log('bill', bill);
 
-        // const response = await createBill(groupId, bill);
-        // console.log('Create bill response:', response);
+        const response = await createBill(groupId, bill);
+        console.log('Create bill response:', response);
 
-        // if (response.statusCode === 201) {
-        //   Toast.show({
-        //     type: 'success',
-        //     text1: 'Tạo khoản chi tiêu thành công',
-        //     autoHide: true,
-        //     visibilityTime: 1000,
-        //     topOffset: 30,
-        //     bottomOffset: 40,
-        //     onHide: () => {
-        //       navigation.navigate(
-        //         RouteNames.BILL_MANAGEMENT as never,
-        //         {} as never,
-        //       );
-        //     },
-        //   });
-        // } else {
-        //   Toast.show({
-        //     type: 'error',
-        //     text1: response.message,
-        //     autoHide: false,
-        //     topOffset: 30,
-        //     bottomOffset: 40,
-        //   });
-        // }
+        if (response.statusCode === 201) {
+          Toast.show({
+            type: 'success',
+            text1: 'Tạo khoản chi tiêu thành công',
+            autoHide: true,
+            visibilityTime: 1000,
+            topOffset: 30,
+            onHide: () => {
+              navigation.navigate(
+                RouteNames.BILL_MANAGEMENT as never,
+                {} as never,
+              );
+            },
+          });
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: response.message,
+            autoHide: false,
+            topOffset: 30,
+          });
+        }
       }}
       onReset={(values, actions) => {
         console.log('reset');
@@ -336,9 +334,11 @@ const BillScreen = ({navigation}: {navigation: any}) => {
               flexDirection: 'row',
               alignItems: 'baseline',
               // backgroundColor: 'pink',
-              marginBottom: 5,
+              marginVertical: 10,
             }}>
-            <Text style={[styles.title, {width: '50%'}]}>Tổng tiền</Text>
+            <Text style={[styles.title, {fontSize: 18, width: '50%'}]}>
+              Tổng tiền
+            </Text>
             <View
               style={{
                 width: '50%',
@@ -403,7 +403,7 @@ const BillScreen = ({navigation}: {navigation: any}) => {
             <Text style={styles.error}>{errors.lender}</Text>
           )}
 
-          <Text style={[styles.title, {marginTop: 10}]}>Người mượn</Text>
+          <Text style={[styles.title, {marginTop: 5}]}>Người mượn</Text>
           <View style={styles.borrowerContainer}>
             <View style={[styles.addBorrowerContainer]}>
               <DropDownPicker
@@ -442,26 +442,25 @@ const BillScreen = ({navigation}: {navigation: any}) => {
               <Text style={styles.error}>Vui lòng chọn người mượn</Text>
             )}
 
-            <View style={[styles.addBorrowerContainer, {zIndex: 0}]}>
-              <View style={styles.amountContainer}>
-                <TextInput
-                  onChangeText={value => {
-                    setFieldValue('amount', value);
-                    setAmount(parseFloat(value));
-                  }}
-                  // onBlur={() => setFieldTouched('amount')}
-                  // onChangeText={value => setAmount(parseFloat(value))}
-                  style={{
-                    width: '70%',
-                    textAlign: 'left',
-                  }}
-                  placeholder={'Nhập số tiền cần trả'}
-                  placeholderTextColor={Colors.text.lightgrey}
-                  keyboardType="numeric"
-                  value={values.amount}
-                />
-                <Text>VND</Text>
-              </View>
+            <Text style={styles.title}>Số tiền cần trả</Text>
+            <View style={styles.amountContainer}>
+              <TextInput
+                onChangeText={value => {
+                  setFieldValue('amount', value);
+                  setAmount(parseFloat(value));
+                }}
+                // onBlur={() => setFieldTouched('amount')}
+                // onChangeText={value => setAmount(parseFloat(value))}
+                style={{
+                  width: '70%',
+                  textAlign: 'left',
+                }}
+                placeholder={'Nhập số tiền cần trả'}
+                placeholderTextColor={Colors.text.lightgrey}
+                keyboardType="numeric"
+                value={values.amount}
+              />
+              <Text>VND</Text>
             </View>
             {touched.amount && selectedBorrowers.length === 0 && (
               <Text style={styles.error}>Vui lòng nhập số tiền cần trả</Text>

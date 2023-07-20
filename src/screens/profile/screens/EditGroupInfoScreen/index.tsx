@@ -156,16 +156,28 @@ const EditGroupinfoScreen = () => {
             </View>
           </TouchableOpacity>
 
+          <Text
+            style={{
+              width: '90%',
+              textAlign: 'left',
+              color: Colors.title.orange,
+              fontWeight: 'bold',
+              fontSize: 14,
+              marginTop: 10,
+            }}>
+            Tên nhóm
+          </Text>
           <View
             style={{
               width: '90%',
-              height: 50,
+              height: 40,
               flexDirection: 'row',
               alignItems: 'center',
-              marginVertical: 10,
+              justifyContent: 'space-between',
+              // marginVertical: 10,
               borderColor: Colors.border.lightgrey,
-              borderWidth: 1,
-              borderRadius: 10,
+              borderBottomWidth: 1,
+              // borderRadius: 10,
             }}>
             <TextInput
               value={values.name}
@@ -177,7 +189,7 @@ const EditGroupinfoScreen = () => {
                 height: 50,
                 flexDirection: 'row',
                 alignItems: 'center',
-                paddingHorizontal: 15,
+                // paddingHorizontal: 15,
                 borderRadius: 10,
               }}
             />

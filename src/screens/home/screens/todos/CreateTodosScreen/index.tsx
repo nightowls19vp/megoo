@@ -70,6 +70,32 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
 
   const [todos, setTodos] = useState<Object[]>([]);
 
+  const [toggleCheckBoxArray, setToggleCheckBoxArray] = useState(
+    todos.map(() => false),
+  );
+
+  const handleToggleCheckBox = (index: number, newValue: boolean) => {
+    const updatedArray = [...toggleCheckBoxArray];
+    console.log('updatedArray:', updatedArray);
+    updatedArray[index] = newValue;
+    console.log('updatedArray:', updatedArray);
+
+    setToggleCheckBoxArray(updatedArray);
+
+    // set "isCompleted" from todos at index to new value
+    const updatedTodos = todos.map((todo, i) => {
+      if (i === index) {
+        return {
+          ...todo,
+          isCompleted: newValue,
+        };
+      }
+      return todo;
+    });
+
+    setTodos(updatedTodos);
+  };
+
   useEffect(() => {
     // get value from radio button when selectedId changed
     console.log('selectedId', selectedId);
@@ -110,7 +136,7 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
         if (response.statusCode === 201) {
           Toast.show({
             type: 'success',
-            text1: 'Xóa khoản chỉ tiêu thành công',
+            text1: 'Thêm việc cần làm thành công',
             autoHide: true,
             visibilityTime: 1000,
             topOffset: 30,
@@ -203,6 +229,7 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
           )) ||
             (errors.todo && <Text style={styles.error}>{errors.todo}</Text>)}
 
+          <Text style={styles.title}>Mô tả</Text>
           <View style={styles.inputContainer}>
             <TextInput
               onChangeText={value => setFieldValue('description', value)}
@@ -268,44 +295,68 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
-                    gap: 5,
+                    justifyContent: 'space-between',
+                    // gap: 5,
                     // marginVertical: 5,
                     // backgroundColor: '#fff6e8',
                     backgroundColor: Colors.itemBackground.lightorange,
                     padding: 10,
                     borderRadius: 10,
                   }}>
-                  <CheckBox
-                    tintColors={{true: Colors.checkBox.orange}}
-                    disabled={false}
-                    value={true}
-                    onValueChange={newValue => {
-                      console.log('newValue', newValue);
-                    }}
-                  />
                   <View
                     style={{
+                      width: '90%',
                       display: 'flex',
                       flexDirection: 'row',
-                      alignItems: 'baseline',
-                      gap: 10,
+                      alignItems: 'center',
+                      gap: 5,
                     }}>
-                    <Text
+                    <CheckBox
+                      tintColors={{true: Colors.checkBox.orange}}
+                      disabled={false}
+                      value={toggleCheckBoxArray[index]}
+                      onValueChange={newValue => {
+                        handleToggleCheckBox(index, newValue);
+                        console.log('newValue', newValue);
+                      }}
+                    />
+                    <View
                       style={{
-                        color: Colors.text.grey,
-                        fontWeight: 'bold',
-                        fontSize: 16,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'baseline',
+                        gap: 10,
                       }}>
-                      {todo.todo}
-                    </Text>
-                    <Text
-                      style={{
-                        color: Colors.text.lightgrey,
-                        fontSize: 12,
-                      }}>
-                      {todo.description}
-                    </Text>
+                      <Text
+                        style={[
+                          {
+                            color: Colors.text.grey,
+                            fontWeight: 'bold',
+                            fontSize: 16,
+                          },
+                          todo.isCompleted
+                            ? {
+                                textDecorationLine: 'line-through',
+                              }
+                            : {},
+                        ]}>
+                        {todo.todo}
+                      </Text>
+                      <Text
+                        style={{
+                          color: Colors.text.lightgrey,
+                          fontSize: 12,
+                        }}>
+                        {todo.description}
+                      </Text>
+                    </View>
                   </View>
+                  <TouchableOpacity>
+                    <Ionicons
+                      name={'remove-circle'}
+                      style={styles.removeIcon}
+                    />
+                  </TouchableOpacity>
                 </View>
               ))}
           </View>
@@ -356,21 +407,18 @@ const styles = StyleSheet.create({
     width: '90%',
     textAlign: 'left',
     textAlignVertical: 'center',
-    fontSize: 20,
+    fontSize: 14,
     fontWeight: 'bold',
     color: Colors.title.orange,
-    lineHeight: 21,
-    paddingVertical: 0,
-    marginTop: 20,
+    marginTop: 10,
   },
   inputContainer: {
     width: '90%',
-    // height: 50,
+    height: 40,
     flexDirection: 'row',
     alignItems: 'center',
     // paddingHorizontal: 15,
-    // marginVertical: 10,
-    marginBottom: 10,
+    marginBottom: 5,
     borderColor: Colors.border.lightgrey,
     borderBottomWidth: 1,
     // borderRadius: 10,
@@ -403,6 +451,11 @@ const styles = StyleSheet.create({
     color: Colors.buttonText.orange,
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  removeIcon: {
+    fontWeight: '200',
+    color: 'red',
+    fontSize: 24,
   },
 });
 

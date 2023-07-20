@@ -323,6 +323,17 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
             </View>
           </TouchableOpacity>
 
+          <Text
+            style={{
+              width: '90%',
+              textAlign: 'left',
+              color: Colors.title.orange,
+              fontWeight: 'bold',
+              fontSize: 14,
+              marginTop: 10,
+            }}>
+            Họ và tên
+          </Text>
           <View style={styles.inputContainer}>
             <TextInput
               onChangeText={value => setFieldValue('name', value)}
@@ -344,6 +355,17 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
             <Text style={styles.error}>{errors.name}</Text>
           )}
 
+          <Text
+            style={{
+              width: '90%',
+              textAlign: 'left',
+              color: Colors.title.orange,
+              fontWeight: 'bold',
+              fontSize: 14,
+              marginTop: 10,
+            }}>
+            Số điện thoại
+          </Text>
           <View style={styles.inputContainer}>
             <TextInput
               onChangeText={value => setFieldValue('phone', value)}
@@ -366,6 +388,17 @@ const EditProfileScreen = ({navigation}: {navigation: any}) => {
             <Text style={styles.error}>{errors.phone}</Text>
           )}
 
+          <Text
+            style={{
+              width: '90%',
+              textAlign: 'left',
+              color: Colors.title.orange,
+              fontWeight: 'bold',
+              fontSize: 14,
+              marginTop: 10,
+            }}>
+            Ngày sinh
+          </Text>
           <View style={[styles.inputContainer]}>
             <TextInput
               editable={false}
