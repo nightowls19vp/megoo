@@ -21,3 +21,19 @@ export const dateISOFormat = (date: string) => {
 
   return dateISO;
 };
+
+/**
+ *
+ * @param string
+ * @returns the new string joined by a dot
+ */
+export const splitString = (string: string): string => {
+  string = string.toString();
+  const stringList: string[] = [];
+  while (string.length > 3) {
+    stringList.unshift(string.slice(-3));
+    string = string.slice(0, -3);
+  }
+  stringList.unshift(string);
+  return stringList.join('.');
+};

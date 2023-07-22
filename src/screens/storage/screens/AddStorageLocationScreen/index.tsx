@@ -10,15 +10,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import DatePicker from 'react-native-date-picker';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
+import AddImageModal from '../../../../common/components/AddImageModal';
 import {Colors} from '../../../../constants/color.const';
-import GroupProductDropdownPicker from '../../components/GroupProductDropdownPicker';
-import PurchaseLocationDropdownPicker from '../../components/PurchaseLocationDropdownPicker';
-import StorageLocationDropdownPicker from '../../components/StorageLocationDropdownPicker';
 import styles from './styles/style';
 
 const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
@@ -27,23 +24,53 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
     description: '',
   };
 
-  const [open, setOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedImage, setSelectedImage] = useState(IMAGE_URI_DEFAULT);
   const [imageFile, setImageFile] = useState<any>();
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [modalState, setModalState] = useState(false);
+
+  const renderAddImageModal = (title: string, modalState: boolean) => {
+    return (
+      <AddImageModal
+        title={title}
+        isOpen={modalState}
+        fnOpenModal={setModalState}
+      />
+    );
+  };
 
   useEffect(() => {
-    if (open) {
-      setSelectedDate(new Date());
-    }
-  }, [open]);
+    console.log('isImageModalOpen:', isImageModalOpen);
+  }, [isImageModalOpen]);
 
   return (
     <ScrollView
       contentContainerStyle={styles.container}
       nestedScrollEnabled={true}>
       <KeyboardAvoidingView style={styles.contentContainer}>
-        <View style={styles.imageContainer}>
+        <TouchableOpacity
+          style={styles.imageContainer}
+          onPress={async () => {
+            setIsImageModalOpen(!isImageModalOpen);
+            // await launchImageLibrary(
+            //   // If need base64String, include this option:
+            //   // includeBase64: true
+            //   {mediaType: 'mixed', includeBase64: true},
+            //   response => {
+            //     // console.log('Response = ', response);
+            //     if (response.didCancel) {
+            //       console.log('User cancelled image picker');
+            //     } else if (response.errorMessage) {
+            //       console.log('ImagePicker Error: ', response.errorMessage);
+            //     } else {
+            //       let source: Asset[] = response.assets as Asset[];
+            //       setSelectedImage(`${source[0].uri}`);
+            //       setImageFile(source[0].base64);
+            //       // console.log('File:', source[0].base64);
+            //     }
+            //   },
+            // );
+          }}>
           <Image
             source={{
               uri: selectedImage,
@@ -51,64 +78,16 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
             style={styles.image}
           />
 
-          <TouchableOpacity
+          <View
             style={{
               display: 'flex',
               position: 'absolute',
               right: 20,
               bottom: 0,
-            }}
-            onPress={async () => {
-              await launchImageLibrary(
-                // If need base64String, include this option:
-                // includeBase64: true
-                {mediaType: 'mixed', includeBase64: true},
-                response => {
-                  // console.log('Response = ', response);
-
-                  if (response.didCancel) {
-                    console.log('User cancelled image picker');
-                  } else if (response.errorMessage) {
-                    console.log('ImagePicker Error: ', response.errorMessage);
-                  } else {
-                    let source: Asset[] = response.assets as Asset[];
-                    setSelectedImage(`${source[0].uri}`);
-                    setImageFile(source[0].base64);
-                    // console.log('File:', source[0].base64);
-                  }
-                },
-              );
             }}>
             <Icon name="camera" size={40} color={Colors.icon.lightgrey} />
-          </TouchableOpacity>
-        </View>
-
-        {/* <TouchableOpacity
-          style={{marginVertical: 10}}
-          onPress={async () => {
-            await launchImageLibrary(
-              // If need base64String, include this option:
-              // includeBase64: true
-              {mediaType: 'mixed', includeBase64: true},
-              response => {
-                // console.log('Response = ', response);
-
-                if (response.didCancel) {
-                  console.log('User cancelled image picker');
-                } else if (response.errorMessage) {
-                  console.log('ImagePicker Error: ', response.errorMessage);
-                } else {
-                  let source: Asset[] = response.assets as Asset[];
-                  setSelectedImage(`${source[0].uri}`);
-                  setImageFile(source[0].base64);
-                  // console.log('File:', source[0].base64);
-                }
-              },
-            );
-          }}>
-          <Text style={{color: Colors.text}}>Chỉnh sửa ảnh sản phẩm</Text>
-        </TouchableOpacity> */}
-
+          </View>
+        </TouchableOpacity>
         <Formik
           initialValues={initialValues}
           onSubmit={values => {
@@ -213,6 +192,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
             </View>
           )}
         </Formik>
+        {renderAddImageModal('Thêm hình ảnh', isImageModalOpen)}
       </KeyboardAvoidingView>
     </ScrollView>
   );

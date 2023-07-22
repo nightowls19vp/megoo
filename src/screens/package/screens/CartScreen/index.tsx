@@ -20,6 +20,7 @@ import RouteNames from '../../../../constants/route-names.const';
 import {updateCart} from '../PackageScreen/services/package.service';
 import {getUserCart} from './services/cart.service';
 import styles from './styles/style';
+import {splitString} from '../../../../common/handle.string';
 
 const CartScreen = ({navigation}: {navigation: any}) => {
   const [cartList, setCartList] = useState<any[]>([]);
@@ -341,7 +342,10 @@ const CartScreen = ({navigation}: {navigation: any}) => {
                 style={[
                   {color: Colors.text.orange, fontSize: 18, fontWeight: 'bold'},
                 ]}>
-                {Math.round(object.price * object.quantity)} VND
+                {splitString(
+                  Math.round(object.price * object.quantity).toString(),
+                )}{' '}
+                VND
               </Text>
             </View>
           </View>
@@ -379,7 +383,7 @@ const CartScreen = ({navigation}: {navigation: any}) => {
           <Icon name="shoppingcart" size={30} color={Colors.text.orange} />
         </View>
         <Text style={styles.price} numberOfLines={2}>
-          {Math.round(totalPrice)} VND
+          {splitString(Math.round(totalPrice).toString())} VND
         </Text>
 
         <TouchableOpacity

@@ -15,6 +15,7 @@ import {ICartList} from '../../../../common/interfaces/package.interface';
 import appStore from '../../../../common/store/app.store';
 import {checkout, getUserById, renew} from './services/payment.service';
 import styles from './styles/style';
+import {splitString} from '../../../../common/handle.string';
 
 // Define the type for the route params
 type SelectedItemsRouteParams = {
@@ -36,7 +37,7 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
   const [itemsInfo, setItemsInfo] = useState<any>({
     cart: [],
   });
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalPrice, setTotalPrice] = useState('');
 
   const selectedItems = route.params.selectedItems;
 
@@ -67,7 +68,7 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
       }),
     }));
 
-    setTotalPrice(route.params.totalPrice);
+    setTotalPrice(splitString(route.params.totalPrice.toString()));
   }, []);
 
   const renderItem = () => {
@@ -99,7 +100,7 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
           <View style={styles.infoRow}>
             <Text style={styles.text}>Thành tiền:</Text>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>
-              {Math.round(item.price)} VND
+              {splitString(Math.round(item.price).toString())} VND
             </Text>
           </View>
         </View>

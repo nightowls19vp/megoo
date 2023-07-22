@@ -170,11 +170,11 @@ export const checkLogin = async () => {
       isLoggedIn = true;
     } else {
       console.log('Refresh token expired');
-      // await signOutIfSignedInWithGG();
+      await signOutIfSignedInWithGG();
       isLoggedIn = false;
     }
   } else {
-    // await signOutIfSignedInWithGG();
+    await signOutIfSignedInWithGG();
     isLoggedIn = false;
   }
 

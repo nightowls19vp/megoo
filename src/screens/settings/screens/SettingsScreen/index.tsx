@@ -21,6 +21,8 @@ import {logout} from './services/settings.service';
 import {signOutIfSignedInWithGG} from '../../../login/screens/LoginScreen/services/login.service';
 import {observer} from 'mobx-react';
 import {Colors} from '../../../../constants/color.const';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {socket} from '../../../../core/socket.io/socket.io';
 
 const SettingsScreen = ({navigation}: {navigation: any}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -225,7 +227,23 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
 
                     const response = await logout(`${refreshToken}`);
 
-                    // await signOutIfSignedInWithGG();
+                    // GoogleSignin.configure({
+                    //   scopes: [
+                    //     'https://www.googleapis.com/auth/userinfo.profile',
+                    //     'https://www.googleapis.com/auth/user.phonenumbers.read',
+                    //     'https://www.googleapis.com/auth/user.birthday.read',
+                    //   ],
+                    //   webClientId:
+                    //     '768201973051-b9supnlu237m58th9c3du0qpp3m13cgl.apps.googleusercontent.com',
+                    //   offlineAccess: true,
+                    //   forceCodeForRefreshToken: true,
+                    // });
+
+                    await signOutIfSignedInWithGG();
+
+                    socket.disconnect();
+
+                    console.log('socket disconnected', socket.disconnected);
 
                     console.log('Logout msg:', response.message);
 

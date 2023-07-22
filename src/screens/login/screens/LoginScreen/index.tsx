@@ -40,17 +40,17 @@ export default function LoginScreen({navigation}: {navigation: any}) {
   const [hidePassword, setHidePassword] = React.useState(true);
 
   useEffect(() => {
-    GoogleSignin.configure({
-      scopes: [
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/user.phonenumbers.read',
-        'https://www.googleapis.com/auth/user.birthday.read',
-      ],
-      webClientId:
-        '768201973051-b9supnlu237m58th9c3du0qpp3m13cgl.apps.googleusercontent.com',
-      offlineAccess: true,
-      forceCodeForRefreshToken: true,
-    });
+    // GoogleSignin.configure({
+    //   scopes: [
+    //     'https://www.googleapis.com/auth/userinfo.profile',
+    //     'https://www.googleapis.com/auth/user.phonenumbers.read',
+    //     'https://www.googleapis.com/auth/user.birthday.read',
+    //   ],
+    //   webClientId:
+    //     '768201973051-b9supnlu237m58th9c3du0qpp3m13cgl.apps.googleusercontent.com',
+    //   offlineAccess: true,
+    //   forceCodeForRefreshToken: true,
+    // });
     isUserSignedIn();
   }, []);
 

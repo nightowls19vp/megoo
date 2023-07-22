@@ -23,6 +23,7 @@ import LoginScreen from './src/screens/login/screens/LoginScreen';
 import RegisterScreen from './src/screens/register/RegisterScreen';
 import SplashScreen from './src/screens/splash/SplashScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,6 +40,18 @@ const App = () => {
   };
 
   useEffect(() => {
+    GoogleSignin.configure({
+      scopes: [
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/user.phonenumbers.read',
+        'https://www.googleapis.com/auth/user.birthday.read',
+      ],
+      webClientId:
+        '768201973051-b9supnlu237m58th9c3du0qpp3m13cgl.apps.googleusercontent.com',
+      offlineAccess: true,
+      forceCodeForRefreshToken: true,
+    });
+
     checkLoggedIn();
 
     setTimeout(() => {

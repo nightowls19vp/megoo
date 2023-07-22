@@ -29,6 +29,7 @@ import userStore from '../../../../common/store/user.store';
 import {getUserCart} from '../CartScreen/services/cart.service';
 import appStore from '../../../../common/store/app.store';
 import {observer} from 'mobx-react';
+import {splitString} from './../../../../common/handle.string';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -45,6 +46,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
 
   useEffect(() => {
     getPackages();
+    console.log('split string:', splitString('7000000'));
   }, []);
 
   useFocusEffect(
@@ -172,7 +174,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
               }>
               <Text style={styles.text}>Giá tiền: </Text>
               <Text style={[styles.text, {fontSize: 24, fontWeight: 'bold'}]}>
-                {totalPrice} VND
+                {splitString(totalPrice)} VND
               </Text>
             </View>
 
