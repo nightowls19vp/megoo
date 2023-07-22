@@ -17,6 +17,7 @@ import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import AddImageModal from '../../../../common/components/AddImageModal';
 import {Colors} from '../../../../constants/color.const';
 import styles from './styles/style';
+import Modal from 'react-native-modal/dist/modal';
 
 const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
   const initialValues = {
@@ -26,22 +27,25 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
 
   const [selectedImage, setSelectedImage] = useState(IMAGE_URI_DEFAULT);
   const [imageFile, setImageFile] = useState<any>();
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [modalState, setModalState] = useState(false);
 
   const renderAddImageModal = (title: string, modalState: boolean) => {
+    // trace render
+    console.log('renderAddImageModal');
+
     return (
       <AddImageModal
+        key="addImageModal"
         title={title}
-        isOpen={modalState}
-        fnOpenModal={setModalState}
+        modalState={modalState}
+        setModalState={setModalState}
       />
     );
   };
 
   useEffect(() => {
-    console.log('isImageModalOpen:', isImageModalOpen);
-  }, [isImageModalOpen]);
+    console.log('modalState:', modalState);
+  }, [modalState]);
 
   return (
     <ScrollView
@@ -51,7 +55,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
         <TouchableOpacity
           style={styles.imageContainer}
           onPress={async () => {
-            setIsImageModalOpen(!isImageModalOpen);
+            setModalState(!modalState);
             // await launchImageLibrary(
             //   // If need base64String, include this option:
             //   // includeBase64: true
@@ -192,7 +196,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
             </View>
           )}
         </Formik>
-        {renderAddImageModal('Thêm hình ảnh', isImageModalOpen)}
+        {renderAddImageModal('Chọn ảnh', modalState)}
       </KeyboardAvoidingView>
     </ScrollView>
   );

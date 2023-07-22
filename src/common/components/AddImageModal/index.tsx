@@ -1,26 +1,29 @@
 import Modal from 'react-native-modal';
 import {Text, View} from 'react-native';
 import {Colors} from '../../../constants/color.const';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {TouchableOpacity} from 'react-native';
+
 import {FC, useState} from 'react';
 import {observer} from 'mobx-react';
 
 interface IImageSelectionOptionModalProps {
   title: string;
-  isOpen: boolean;
-  fnOpenModal: (isOpen: boolean) => void;
+  modalState: boolean;
+  setModalState: (state: boolean) => void;
   // optional
   fnUpdateSelectedImage?: (image: string) => void; //set selected image from parent component
 }
 
 const AddImageModal: FC<IImageSelectionOptionModalProps> = ({
   title,
-  isOpen,
-  fnOpenModal,
+  modalState,
+  setModalState,
   fnUpdateSelectedImage,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <Modal isVisible={isOpen}>
+    <Modal isVisible={modalState}>
       <View
         style={{
           width: '100%',
@@ -37,7 +40,7 @@ const AddImageModal: FC<IImageSelectionOptionModalProps> = ({
             color: Colors.title.orange,
             fontWeight: 'bold',
           }}>
-          {title}
+          {'title'}
         </Text>
 
         <View
@@ -73,8 +76,7 @@ const AddImageModal: FC<IImageSelectionOptionModalProps> = ({
         <TouchableOpacity
           onPress={() => {
             console.log('Clicked');
-
-            fnOpenModal(!isOpen);
+            setModalState(!modalState);
           }}>
           <Text
             style={{
