@@ -5,25 +5,32 @@ import {TouchableOpacity} from 'react-native';
 
 import {FC, useState} from 'react';
 import {observer} from 'mobx-react';
+import {
+  Asset,
+  launchCamera,
+  launchImageLibrary,
+} from 'react-native-image-picker';
+import {IMAGE_URI_DEFAULT} from '../../../common/default';
 
 interface IImageSelectionOptionModalProps {
   title: string;
-  modalState: boolean;
-  setModalState: (state: boolean) => void;
+  isModalOpen: boolean;
+  setIsModalOpen: (state: boolean) => void;
   // optional
   fnUpdateSelectedImage?: (image: string) => void; //set selected image from parent component
 }
 
 const AddImageModal: FC<IImageSelectionOptionModalProps> = ({
   title,
-  modalState,
-  setModalState,
+  isModalOpen,
+  setIsModalOpen,
   fnUpdateSelectedImage,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [imageFile, setImageFile] = useState<any>();
+  const [selectedImage, setSelectedImage] = useState(IMAGE_URI_DEFAULT);
 
   return (
-    <Modal isVisible={modalState}>
+    <Modal isVisible={isModalOpen}>
       <View
         style={{
           width: '100%',
@@ -49,7 +56,29 @@ const AddImageModal: FC<IImageSelectionOptionModalProps> = ({
             display: 'flex',
             gap: 15,
           }}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              launchCamera(
+                {
+                  mediaType: 'photo',
+                  cameraType: 'back',
+                },
+                response => {
+                  console.log('Response = ', response);
+
+                  if (response.didCancel) {
+                    console.log('User cancelled image picker');
+                  } else if (response.errorMessage) {
+                    console.log('ImagePicker Error: ', response.errorMessage);
+                  } else {
+                    let source: Asset[] = response.assets as Asset[];
+                    setSelectedImage(`${source[0].uri}`);
+                    setImageFile(source[0].base64);
+                    // console.log('File:', source[0].base64);
+                  }
+                },
+              );
+            }}>
             <Text
               style={{
                 fontSize: 16,
@@ -60,7 +89,27 @@ const AddImageModal: FC<IImageSelectionOptionModalProps> = ({
               Chụp hình
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={async () => {
+              await launchImageLibrary(
+                // If need base64String, include this option:
+                // includeBase64: true
+                {mediaType: 'mixed', includeBase64: true},
+                response => {
+                  // console.log('Response = ', response);
+                  if (response.didCancel) {
+                    console.log('User cancelled image picker');
+                  } else if (response.errorMessage) {
+                    console.log('ImagePicker Error: ', response.errorMessage);
+                  } else {
+                    let source: Asset[] = response.assets as Asset[];
+                    setSelectedImage(`${source[0].uri}`);
+                    setImageFile(source[0].base64);
+                    // console.log('File:', source[0].base64);
+                  }
+                },
+              );
+            }}>
             <Text
               style={{
                 fontSize: 16,
@@ -76,7 +125,7 @@ const AddImageModal: FC<IImageSelectionOptionModalProps> = ({
         <TouchableOpacity
           onPress={() => {
             console.log('Clicked');
-            setModalState(!modalState);
+            setIsModalOpen(!isModalOpen);
           }}>
           <Text
             style={{

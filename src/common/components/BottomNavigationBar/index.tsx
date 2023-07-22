@@ -50,6 +50,7 @@ import TaskListScreen from '../../../screens/home/screens/task/TaskListScreen';
 import AddStorageLocationScreen from '../../../screens/storage/screens/AddStorageLocationScreen';
 import AddPurchaseLocationScreen from '../../../screens/storage/screens/AddPurchaseLocationScreen';
 import AddGroupProductScreen from '../../../screens/storage/screens/AddGroupProductScreen';
+import TodosScreen from '../../../screens/home/screens/todos/TodosScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -161,6 +162,11 @@ const TodosListScreenStack = () => {
       <TodosListStack.Screen
         name={RouteNames.GROUP_TODOS_LIST}
         component={GroupTodosListScreen}
+        // options={{headerShown: false}}
+      />
+      <TodosListStack.Screen
+        name={RouteNames.TODOS}
+        component={TodosScreen}
         // options={{headerShown: false}}
       />
     </TodosListStack.Navigator>

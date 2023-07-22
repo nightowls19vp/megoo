@@ -37,8 +37,8 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
       <AddImageModal
         key="addImageModal"
         title={title}
-        modalState={modalState}
-        setModalState={setModalState}
+        isModalOpen={modalState}
+        setIsModalOpen={setModalState}
       />
     );
   };

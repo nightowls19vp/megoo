@@ -1,6 +1,6 @@
 import {observer} from 'mobx-react';
 import React, {useEffect, useState} from 'react';
-import {Text, Touchable, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -8,7 +8,6 @@ import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import {Colors} from '../../../../constants/color.const';
 import {IItem} from '../../interfaces/base-dto/item.interface';
 import * as gp from '../../services/group-products.service';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface IProps {
   navigation: any;

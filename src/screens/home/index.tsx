@@ -21,7 +21,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
   };
 
   useEffect(() => {
-    getPackages();
+    // getPackages();
   }, []);
 
   const renderItem = ({item}: {item: any}) => {

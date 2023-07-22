@@ -22,6 +22,7 @@ export default {
   TODOS_LIST_STACK: 'TODOS_LIST_STACK',
   TODOS_LIST: 'Quản lý công việc',
   CREATE_TODOS: 'Tạo công việc',
+  TODOS: 'Việc cần làm',
 
   GROUP_TASK_LIST: 'Danh sách nhóm',
   TASK_LIST_STACK: 'TASK_LIST_STACK',
