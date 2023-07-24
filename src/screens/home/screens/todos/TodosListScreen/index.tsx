@@ -1,5 +1,5 @@
-import {RouteProp, useRoute} from '@react-navigation/native';
-import {useEffect, useState} from 'react';
+import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
+import {useCallback, useEffect, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -62,6 +62,15 @@ const TodosListScreen = ({navigation}: {navigation: any}) => {
     console.log('groupId:', groupId);
     getAllTodos();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      getAllTodos();
+      return () => {
+        // Code to clean up the effect when the screen is unfocused
+      };
+    }, []),
+  );
 
   const renderTodos = () => {
     return todos.map((todosItem: any) => {

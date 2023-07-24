@@ -1,10 +1,7 @@
 import {Formik} from 'formik';
 import React, {useEffect, useMemo, useState} from 'react';
 import {
-  Dimensions,
-  Image,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -14,15 +11,17 @@ import RadioGroup, {
   RadioButton,
   RadioButtonProps,
 } from 'react-native-radio-buttons-group';
-import CheckBox from '@react-native-community/checkbox';
+import Toast from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
 
+import CheckBox from '@react-native-community/checkbox';
+import {RouteProp, useRoute} from '@react-navigation/native';
+
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
-import {RouteProp, useRoute} from '@react-navigation/native';
 import {createTodos} from './services/create.todos.service';
-import Toast from 'react-native-toast-message';
+import styles from './styles/style';
 
 const CreateTodoSchema = Yup.object().shape({
   summary: Yup.string().required('Vui lòng nhập tiêu đề'),
@@ -191,14 +190,7 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
 
           <Text style={styles.title}>Chế độ</Text>
           <RadioGroup
-            containerStyle={{
-              width: '90%',
-              display: 'flex',
-              alignItems: 'flex-start',
-              // backgroundColor: 'yellow',
-              gap: 10,
-              marginVertical: 10,
-            }}
+            containerStyle={styles.radioButtonContainer}
             layout="column"
             radioButtons={radioButtons}
             onPress={setSelectedId}
@@ -288,29 +280,8 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
             }}>
             {todos.length > 0 &&
               todos.map((todo: any, index) => (
-                <View
-                  key={index}
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    // gap: 5,
-                    // marginVertical: 5,
-                    // backgroundColor: '#fff6e8',
-                    backgroundColor: Colors.itemBackground.lightorange,
-                    padding: 10,
-                    borderRadius: 10,
-                  }}>
-                  <View
-                    style={{
-                      width: '90%',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 5,
-                    }}>
+                <View key={index} style={styles.todosContainer}>
+                  <View style={styles.todoContainer}>
                     <CheckBox
                       tintColors={{true: Colors.checkBox.orange}}
                       disabled={false}
@@ -365,27 +336,14 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
             disabled={!isValid}
             onPress={handleSubmit}
             style={[
+              styles.createButton,
               {
                 backgroundColor: isValid
                   ? Colors.buttonBackground.orange
                   : Colors.buttonBackground.lightorange,
-                borderRadius: 10,
-                width: '90%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginVertical: 20,
               },
             ]}>
-            <Text
-              style={{
-                color: Colors.buttonText.white,
-                fontSize: 16,
-                fontWeight: 'bold',
-                padding: 10,
-              }}>
-              Tạo
-            </Text>
+            <Text style={styles.createButtonText}>Tạo</Text>
           </TouchableOpacity>
 
           <Toast position="top" />
@@ -394,69 +352,5 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
     </Formik>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: Colors.background.white,
-    width: Dimensions.get('window').width,
-    minHeight: Dimensions.get('window').height,
-  },
-  title: {
-    width: '90%',
-    textAlign: 'left',
-    textAlignVertical: 'center',
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: Colors.title.orange,
-    marginTop: 10,
-  },
-  inputContainer: {
-    width: '90%',
-    height: 40,
-    flexDirection: 'row',
-    alignItems: 'center',
-    // paddingHorizontal: 15,
-    marginBottom: 5,
-    borderColor: Colors.border.lightgrey,
-    borderBottomWidth: 1,
-    // borderRadius: 10,
-  },
-  inputIcon: {
-    fontWeight: '200',
-    color: Colors.icon.lightgrey,
-    fontSize: 20,
-  },
-  inputText: {flex: 1, color: Colors.text.grey},
-  error: {
-    width: '90%',
-    color: Colors.text.red,
-    textAlign: 'left',
-    marginBottom: 10,
-  },
-  addButton: {
-    width: '90%',
-    backgroundColor: Colors.buttonBackground.white,
-    borderWidth: 1,
-    borderColor: Colors.border.orange,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-    padding: 10,
-  },
-  addButtonText: {
-    color: Colors.buttonText.orange,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  removeIcon: {
-    fontWeight: '200',
-    color: 'red',
-    fontSize: 24,
-  },
-});
 
 export default CreateTodosScreen;

@@ -24,7 +24,64 @@ export const getTodosById = async (todosId: string) => {
   }
 };
 
-export const updateTodo = async (
+export const addTodos = async (
+  todosId: string,
+  newTodos: {
+    todos: [{todo: string; description: string; isCompleted: boolean}];
+    state: string;
+  },
+) => {
+  const todoEndpoint = `api/pkg-mgmt/todos/${todosId}/todo`;
+  const reqUrl = `${URL_HOST}${todoEndpoint}`;
+  console.log('Add new todos to checklist:', reqUrl);
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+  console.log('Access token:', accessToken);
+
+  try {
+    const response = await axios.post(
+      reqUrl,
+      {
+        todos: newTodos.todos,
+        state: newTodos.state,
+      },
+      {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log('Add new todos error: ', error);
+  }
+};
+
+export const deleteTodos = async (todosId: string) => {
+  const todosEndpoint = `api/pkg-mgmt/todos/${todosId}`;
+  const reqUrl = `${URL_HOST}${todosEndpoint}`;
+  console.log('Delete todos:', reqUrl);
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+  console.log('Access token:', accessToken);
+
+  try {
+    const response = await axios.delete(reqUrl, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log('Delete todos error: ', error);
+  }
+};
+
+export const updateTodoInList = async (
   todosId: string,
   todoId: string,
   todo: {todo: string; description: string; isCompleted: boolean},
@@ -58,7 +115,7 @@ export const updateTodo = async (
   }
 };
 
-export const deleteTodo = async (todosId: string, todoId: string) => {
+export const deleteTodoInList = async (todosId: string, todoId: string) => {
   const todoEndpoint = `api/pkg-mgmt/todos/${todosId}/todo`;
   const reqUrl = `${URL_HOST}${todoEndpoint}`;
   console.log('Delete todo by id:', reqUrl);
@@ -84,5 +141,32 @@ export const deleteTodo = async (todosId: string, todoId: string) => {
     return response.data;
   } catch (error) {
     console.log('Delete todo error: ', error);
+  }
+};
+
+export const editSummary = async (todosId: string, summary: string) => {
+  const todoEndpoint = `api/pkg-mgmt/todos/${todosId}`;
+  const reqUrl = `${URL_HOST}${todoEndpoint}`;
+  console.log('Edit summary:', reqUrl);
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+  console.log('Access token:', accessToken);
+
+  try {
+    const response = await axios.put(
+      reqUrl,
+      {
+        summary: summary,
+      },
+      {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.log('Edit summary error: ', error);
   }
 };
