@@ -140,8 +140,9 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
             visibilityTime: 1000,
             topOffset: 30,
             onHide: () => {
-              navigation.navigate(RouteNames.TODOS_LIST, {
+              navigation.navigate(RouteNames.TODOS_TAB, {
                 groupId: groupId,
+                active: values.state,
               });
             },
           });

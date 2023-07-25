@@ -34,7 +34,19 @@ export const getBillInfo = async (billId: string) => {
  * @param bill
  * @return response from server
  */
-export const updateBillInfo = async (billId: string, bill: any) => {
+export const updateBillInfo = async (
+  billId: string,
+  bill: {
+    summary: string;
+    date: string;
+    borrowers: {
+      borrower: string;
+      amount: number;
+    }[];
+    lender: string;
+    description: string;
+  },
+) => {
   const billEndpoint = `api/pkg-mgmt/bill/${billId}`;
   const reqUrl = `${URL_HOST}${billEndpoint}`;
   console.log('Update bill:', reqUrl);

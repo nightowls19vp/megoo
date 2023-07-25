@@ -24,33 +24,37 @@ import GroupInfoScreen from '../../../screens/profile/screens/GroupInfoScren';
 import GroupsScreen from '../../../screens/profile/screens/GroupsScreen';
 import CurrentPackage from '../../../screens/profile/screens/CurrentPackageScreen';
 import OtherPackages from '../../../screens/profile/screens/OtherPackages';
+import EditGroupInfoScreen from '../../../screens/profile/screens/EditGroupInfoScreen';
 
 import GroupsProductsListScreen from '../../../screens/storage/screens/GroupsScreen';
 import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
+import AddStorageLocationScreen from '../../../screens/storage/screens/AddStorageLocationScreen';
+import AddPurchaseLocationScreen from '../../../screens/storage/screens/AddPurchaseLocationScreen';
+import AddGroupProductScreen from '../../../screens/storage/screens/AddGroupProductScreen';
 import ProductsScreen from '../../../screens/storage/screens/ProductsScreen';
 import ProductDetailScreen from '../../../screens/storage/screens/ProductDetailScreen';
 import AddProdInfoScreen from '../../../screens/storage/screens/AddProdInfoScreen';
 import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScreen';
+
 import ChatScreen from '../../../screens/chat/screens/ChatScreen';
 import GroupChatListScreen from '../../../screens/chat/screens/GroupChatListScreen';
+
 import HomeScreen from '../../../screens/home';
 
 import GroupBillListScreen from '../../../screens/home/screens/bill/GroupBillListScreen';
 import BillListScreen from '../../../screens/home/screens/bill/BillListScreen';
 import BillScreen from '../../../screens/home/screens/bill/BillScreen';
 import BillInfoScreen from '../../../screens/home/screens/bill/BillInfoScreen';
-import EditGroupInfoScreen from '../../../screens/profile/screens/EditGroupInfoScreen';
 
 import GroupTodosListScreen from '../../../screens/home/screens/todos/GroupTodosListScreen';
 import TodosListScreen from '../../../screens/home/screens/todos/TodosListScreen';
+import TodosScreen from '../../../screens/home/screens/todos/TodosScreen';
+import TodosTabScreen from '../../../screens/home/screens/todos/TodosTabScreen';
 import CreateTodosScreen from '../../../screens/home/screens/todos/CreateTodosScreen';
 
 import GroupTaskListScreen from '../../../screens/home/screens/task/GroupTaskListScreen';
 import TaskListScreen from '../../../screens/home/screens/task/TaskListScreen';
-import AddStorageLocationScreen from '../../../screens/storage/screens/AddStorageLocationScreen';
-import AddPurchaseLocationScreen from '../../../screens/storage/screens/AddPurchaseLocationScreen';
-import AddGroupProductScreen from '../../../screens/storage/screens/AddGroupProductScreen';
-import TodosScreen from '../../../screens/home/screens/todos/TodosScreen';
+import CreateTaskScreen from '../../../screens/home/screens/task/CreateTaskScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -113,20 +117,20 @@ const BillListScreenStack = () => {
         component={BillInfoScreen}
         options={{
           headerShown: true,
-          headerRight: () => {
-            return (
-              <TouchableOpacity>
-                <Text
-                  style={{
-                    color: Colors.text.orange,
-                    fontWeight: 'bold',
-                    fontSize: 18,
-                  }}>
-                  Lưu
-                </Text>
-              </TouchableOpacity>
-            );
-          },
+          // headerRight: () => {
+          //   return (
+          //     <TouchableOpacity>
+          //       <Text
+          //         style={{
+          //           color: Colors.text.orange,
+          //           fontWeight: 'bold',
+          //           fontSize: 18,
+          //         }}>
+          //         Lưu
+          //       </Text>
+          //     </TouchableOpacity>
+          //   );
+          // },
         }}
       />
       <BillListStack.Screen
@@ -149,11 +153,11 @@ const TodosListScreenStack = () => {
           title: 'Nhóm chat',
         }}
       />
-      <TodosListStack.Screen
+      {/* <TodosListStack.Screen
         name={RouteNames.TODOS_LIST}
         component={TodosListScreen}
         // options={{headerShown: false}}
-      />
+      /> */}
       <TodosListStack.Screen
         name={RouteNames.CREATE_TODOS}
         component={CreateTodosScreen}
@@ -162,6 +166,11 @@ const TodosListScreenStack = () => {
       <TodosListStack.Screen
         name={RouteNames.GROUP_TODOS_LIST}
         component={GroupTodosListScreen}
+        // options={{headerShown: false}}
+      />
+      <TodosListStack.Screen
+        name={RouteNames.TODOS_TAB}
+        component={TodosTabScreen}
         // options={{headerShown: false}}
       />
       <TodosListStack.Screen
@@ -192,6 +201,11 @@ const TaskListScreenStack = () => {
       <TaskListStack.Screen
         name={RouteNames.TASK_LIST}
         component={TaskListScreen}
+        // options={{headerShown: false}}
+      />
+      <TaskListStack.Screen
+        name={RouteNames.CREATE_TASK}
+        component={CreateTaskScreen}
         // options={{headerShown: false}}
       />
     </TaskListStack.Navigator>

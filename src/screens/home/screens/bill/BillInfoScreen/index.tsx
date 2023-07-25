@@ -20,7 +20,11 @@ import {IMAGE_URI_DEFAULT} from '../../../../../common/default';
 import {dateFormat} from '../../../../../common/handle.string';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
-import {deleteBill, getBillInfo} from './services/bill-info-service';
+import {
+  deleteBill,
+  getBillInfo,
+  updateBillInfo,
+} from './services/bill-info-service';
 import styles from './styles/style';
 import userStore from '../../../../../common/store/user.store';
 
@@ -28,15 +32,15 @@ const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 // Define the type for the route params
-type GroupRouteParams = {
+type BillRouteParams = {
   billId: string;
 };
 
 // Specify the type for the route
-type GroupRouteProp = RouteProp<Record<string, GroupRouteParams>, string>;
+type BillRouteProp = RouteProp<Record<string, BillRouteParams>, string>;
 
 const BillInfoScreen = ({navigation}: {navigation: any}) => {
-  const route = useRoute<GroupRouteProp>();
+  const route = useRoute<BillRouteProp>();
   const billId = route.params.billId;
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -51,6 +55,8 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
     {label: 'DONE', value: 'DONE'},
     {label: 'CANCELED', value: 'CANCELED'},
   ]);
+
+  const [dropdownStates, setDropdownStates] = useState<boolean[]>([]);
 
   const [bill, setBill] = useState({
     _id: '',
@@ -109,6 +115,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
     setSummary(bill?.billing?.summary ?? '');
     setDescription(bill?.billing?.description ?? '');
     setBorrowerStatus(bill?.billing?.borrowers[0]?.status ?? null);
+    setDropdownStates(bill?.billing?.borrowers.map((borrower: any) => false));
   };
 
   useEffect(() => {
@@ -116,15 +123,55 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
     getBill();
   }, []);
 
+  useEffect(() => {
+    // console.log('bill:', JSON.stringify(bill, null, 2));
+    console.log(
+      bill.borrowers.map((borrower: any) => {
+        return {
+          borrower: borrower.borrower._id,
+          amount: borrower.amount,
+        };
+      }),
+    );
+  }, [summary]);
+
+  useEffect(() => {
+    console.log('dropdownStates:', dropdownStates);
+  }, [dropdownStates]);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.contentContainer}>
         <TextInput
           onChangeText={text => setSummary(text)}
+          onEndEditing={async () => {
+            const borrowers = bill.borrowers.map((borrower: any) => {
+              return {
+                borrower: borrower.borrower._id,
+                amount: borrower.amount,
+              };
+            });
+            const response = await updateBillInfo(billId, {
+              summary: summary,
+              date: bill.date,
+              lender: bill.lender._id,
+              description: bill.description,
+              borrowers: borrowers,
+            });
+
+            console.log('Update summary:', response);
+          }}
           value={summary}
           style={[
             styles.textInput,
-            {fontWeight: 'bold', fontSize: 20, color: Colors.text.grey},
+            {
+              padding: 0,
+              paddingBottom: 5,
+              marginTop: 10,
+              fontWeight: 'bold',
+              fontSize: 20,
+              color: Colors.text.grey,
+            },
           ]}
           placeholder={'Tên khoản chi tiêu'}
           placeholderTextColor={Colors.text.lightgrey}
@@ -134,10 +181,28 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
       <View style={styles.contentContainer}>
         <TextInput
           onChangeText={text => setDescription(text)}
+          onEndEditing={async () => {
+            const borrowers = bill.borrowers.map((borrower: any) => {
+              return {
+                borrower: borrower.borrower._id,
+                amount: borrower.amount,
+              };
+            });
+            const response = await updateBillInfo(billId, {
+              summary: bill.summary,
+              date: bill.date,
+              lender: bill.lender._id,
+              description: description,
+              borrowers: borrowers,
+            });
+
+            console.log('Update summary:', response);
+          }}
           value={description}
           style={[
             styles.textInput,
             {
+              width: '100%',
               height: 70,
               display: 'flex',
               textAlignVertical: 'top',
@@ -147,6 +212,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
             },
           ]}
           multiline={true}
+          maxLength={100}
           placeholder={'Mô tả'}
           placeholderTextColor={Colors.text.lightgrey}
         />
@@ -181,7 +247,9 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
       <Text style={styles.title}>Danh sách người mượn</Text>
       <View style={styles.contentContainer}>
         {bill.borrowers.map((borrower, index) => (
-          <View key={index} style={styles.borrowerContainer}>
+          <View
+            key={index}
+            style={[styles.borrowerContainer, {zIndex: 10000 - index}]}>
             <View
               style={{
                 display: 'flex',
@@ -216,14 +284,18 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                         borderColor: Colors.border.lightgrey,
                         minHeight: 30,
                       }}
+                      dropDownDirection="BOTTOM"
                       selectedItemLabelStyle={{color: Colors.title.orange}}
-                      zIndex={100000}
-                      open={openBorrowers}
+                      open={dropdownStates[index]}
                       value={borrowerStatus}
                       items={status}
                       placeholder="Chọn người mượn"
                       placeholderStyle={{color: Colors.text.lightgrey}}
-                      setOpen={setOpenBorrowers}
+                      setOpen={(isOpen: any) => {
+                        const newState = [...dropdownStates];
+                        newState[index] = isOpen;
+                        setDropdownStates(newState);
+                      }}
                       setValue={setBorrowerStatus}
                       setItems={setStatus}
                       onSelectItem={(item: any) => {

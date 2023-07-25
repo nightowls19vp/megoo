@@ -27,7 +27,7 @@ const GroupTaskListScreen = ({navigation}: {navigation: any}) => {
         (groupItem: any) => groupItem.packages[0].status === 'Active',
       );
 
-      console.log('activeGroups:', JSON.stringify(activeGroups, null, 2));
+      console.log('activeGroups:', activeGroups);
 
       if (!activeGroups || !activeGroups.length || activeGroups.length === 0) {
         setGroups([]);

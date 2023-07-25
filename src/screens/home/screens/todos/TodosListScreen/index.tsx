@@ -14,6 +14,7 @@ import {getTodosList} from './services/todos.list.service';
 
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
+import userStore from './../../../../../common/store/user.store';
 
 // Define the type for the route params
 type GroupRouteParams = {
@@ -23,7 +24,13 @@ type GroupRouteParams = {
 // Specify the type for the route
 type GroupRouteProp = RouteProp<Record<string, GroupRouteParams>, string>;
 
-const TodosListScreen = ({navigation}: {navigation: any}) => {
+const TodosListScreen = ({
+  navigation,
+  state,
+}: {
+  navigation: any;
+  state: string;
+}) => {
   const route = useRoute<GroupRouteProp>();
   const groupId = route?.params?.groupId;
 
@@ -31,37 +38,83 @@ const TodosListScreen = ({navigation}: {navigation: any}) => {
 
   const getAllTodos = async () => {
     const todosRes = await getTodosList(groupId);
-    console.log('todos', JSON.stringify(todosRes, null, 2));
+    console.log('userStore.id:', userStore.id);
 
-    setTodos(
-      todosRes.group.todos.map((todosItem: any) => {
-        return {
-          _id: todosItem._id,
-          summary: todosItem.summary,
-          todos: [
-            {
-              _id: todosItem.todos._id,
-              todo: todosItem.todos.todo,
-              description: todosItem.todos.description,
-              isCompleted: todosItem.todos.isCompleted,
+    // console.log('todos', JSON.stringify(todosRes, null, 2));
+
+    if (state === 'Private') {
+      // Find all todos with the status 'Private'
+      // and created by the currently logged-in user
+      const privateTodos = todosRes.group.todos.filter(
+        (todos: any) =>
+          todos.state === 'Private' && todos.createdBy._id === userStore.id,
+      );
+
+      console.log('privateTodos', JSON.stringify(privateTodos, null, 2));
+
+      setTodos(
+        privateTodos.map((todosItem: any) => {
+          return {
+            _id: todosItem._id,
+            summary: todosItem.summary,
+            todos: [
+              {
+                _id: todosItem.todos._id,
+                todo: todosItem.todos.todo,
+                description: todosItem.todos.description,
+                isCompleted: todosItem.todos.isCompleted,
+              },
+            ],
+            state: todosItem.state,
+            createdBy: {
+              _id: todosItem.createdBy._id,
+              name: todosItem.createdBy.name,
+              email: todosItem.createdBy.email,
+              avatar: todosItem.createdBy.avatar,
             },
-          ],
-          state: todosItem.state,
-          createdBy: {
-            _id: todosItem.createdBy._id,
-            name: todosItem.createdBy.name,
-            email: todosItem.createdBy.email,
-            avatar: todosItem.createdBy.avatar,
-          },
-        };
-      }),
-    );
+          };
+        }),
+      );
+    } else if (state === 'Public') {
+      // find all todos with "private" state from todosRes
+      const publicTodos = todosRes.group.todos.filter(
+        (todos: any) => todos.state === 'Public',
+      );
+
+      console.log('privateTodos', JSON.stringify(publicTodos, null, 2));
+
+      setTodos(
+        publicTodos.map((todosItem: any) => {
+          return {
+            _id: todosItem._id,
+            summary: todosItem.summary,
+            todos: [
+              {
+                _id: todosItem.todos._id,
+                todo: todosItem.todos.todo,
+                description: todosItem.todos.description,
+                isCompleted: todosItem.todos.isCompleted,
+              },
+            ],
+            state: todosItem.state,
+            createdBy: {
+              _id: todosItem.createdBy._id,
+              name: todosItem.createdBy.name,
+              email: todosItem.createdBy.email,
+              avatar: todosItem.createdBy.avatar,
+            },
+          };
+        }),
+      );
+    }
   };
 
   useEffect(() => {
     console.log('groupId:', groupId);
+    console.log('state:', state);
+
     getAllTodos();
-  }, []);
+  }, [state]);
 
   useFocusEffect(
     useCallback(() => {
@@ -176,7 +229,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '90%',
     alignItems: 'center',
-    marginVertical: 10,
+    // marginBottom: 10,
     // backgroundColor: 'pink',
   },
   title: {

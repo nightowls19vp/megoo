@@ -19,15 +19,12 @@ const GroupTodosListScreen = ({navigation}: {navigation: any}) => {
     ) {
       return [];
     } else {
-      console.log('groupsRes:', groupsRes.groups[0].packages[0].package.name);
       console.log('groupsRes:', groupsRes);
 
       // get all active group
       const activeGroups = groupsRes.groups.filter(
         (groupItem: any) => groupItem.packages[0].status === 'Active',
       );
-
-      console.log('activeGroups:', JSON.stringify(activeGroups, null, 2));
 
       if (!activeGroups || !activeGroups.length || activeGroups.length === 0) {
         setGroups([]);
@@ -68,8 +65,9 @@ const GroupTodosListScreen = ({navigation}: {navigation: any}) => {
           style={styles.groupContainer}
           key={index}
           onPress={() => {
-            navigation.navigate(RouteNames.TODOS_LIST, {
+            navigation.navigate(RouteNames.TODOS_TAB, {
               groupId: group._id,
+              activeTab: 'Private',
             });
           }}>
           <Image

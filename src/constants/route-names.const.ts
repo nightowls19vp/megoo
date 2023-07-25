@@ -20,7 +20,8 @@ export default {
 
   GROUP_TODOS_LIST: 'Danh sách nhóm',
   TODOS_LIST_STACK: 'TODOS_LIST_STACK',
-  TODOS_LIST: 'Quản lý công việc',
+  TODOS_TAB: 'Quản lý công việc',
+  TODOS_LIST: 'Danh sách công việc',
   CREATE_TODOS: 'Tạo công việc',
   TODOS: 'Việc cần làm',
 
@@ -28,6 +29,7 @@ export default {
   TASK_LIST_STACK: 'TASK_LIST_STACK',
   TASK_LIST: 'Quản lý thời gian',
   TASK: 'Lịch biểu',
+  CREATE_TASK: 'Tạo sự kiện',
 
   PACKAGE_STACK_DRAWER: 'PACKAGE_STACK_DRAWER',
   PACKAGE_STACK_BOTTOM: 'PACKAGE_STACK_BOTTOM',

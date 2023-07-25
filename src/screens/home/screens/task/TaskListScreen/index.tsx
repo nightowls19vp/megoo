@@ -20,6 +20,7 @@ import {
 } from 'react-native-calendars';
 import Modal from 'react-native-modal';
 
+import RouteNames from '../../../../../constants/route-names.const';
 import {Colors} from '../../../../../constants/color.const';
 import {getTaskList} from './services/task.service';
 import {MarkedDates} from 'react-native-calendars/src/types';
@@ -264,6 +265,11 @@ const TaskListScreen = ({navigation}: {navigation: any}) => {
             paddingHorizontal: 20,
             marginTop: 20,
             gap: 5,
+          }}
+          onPress={() => {
+            navigation.navigate(RouteNames.CREATE_TASK, {
+              groupId: groupId,
+            });
           }}>
           <Ionicons
             name="add-circle-outline"
