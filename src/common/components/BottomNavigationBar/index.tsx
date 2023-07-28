@@ -59,9 +59,7 @@ import CreateTaskScreen from '../../../screens/home/screens/task/CreateTaskScree
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
   return (
-    <ChatStack.Navigator
-      initialRouteName={RouteNames.GROUP_CHATS}
-      screenOptions={{headerShown: false}}>
+    <ChatStack.Navigator initialRouteName={RouteNames.GROUP_CHATS}>
       <ChatStack.Screen name={RouteNames.CHAT} component={ChatScreen} />
       <ChatStack.Screen
         name={RouteNames.GROUP_CHATS}
@@ -100,6 +98,7 @@ const BillListScreenStack = () => {
         component={ChatScreenStack}
         options={{
           title: 'Nhóm chat',
+          headerShown: true,
         }}
       />
       <BillListStack.Screen
@@ -221,6 +220,7 @@ const HomeScreenStack = () => {
         component={ChatScreenStack}
         options={{
           title: 'Nhóm chat',
+          headerShown: false,
         }}
       />
       <HomeStack.Screen name={RouteNames.HOME} component={HomeScreen} />

@@ -52,7 +52,7 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
       },
       {
         id: '2',
-        label: 'Công khai',
+        label: 'Nhóm',
         value: 'Public',
         size: 20,
         color: Colors.icon.orange,
