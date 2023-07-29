@@ -16,15 +16,6 @@ module.exports = {
         globals: ['__scanCodes'],
       },
     ],
-    [
-      'module-resolver',
-      {
-        root: ['./src'],
-        alias: {
-          '~/assets': './assets',
-        },
-      },
-    ],
   ],
   assumptions: {
     setPublicClassFields: true,
