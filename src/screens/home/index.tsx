@@ -230,6 +230,15 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
             onPress={() => navigation.navigate(RouteNames.TASK_LIST_STACK, {})}>
             <Text style={styles.utilityText}>Lịch biểu</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.utility}
+            onPress={() =>
+              navigation.navigate(RouteNames.BANK_INTEREST_RATE, {})
+            }>
+            <Text numberOfLines={2} style={styles.utilityText}>
+              Tính lãi suất {'\n'} ngân hàng
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -251,7 +260,7 @@ const styles = StyleSheet.create({
   title: {
     width: '100%',
     textAlign: 'left',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: Colors.title.orange,
   },
@@ -270,11 +279,15 @@ const styles = StyleSheet.create({
     // gap: 10,
     // marginBottom: 10,
     flexWrap: 'wrap',
+    // backgroundColor: 'green',
   },
   utility: {
     minWidth: '47.5%',
-    padding: 20,
+    height: 60,
+    // padding: 20,
     display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: Colors.background.white,
     borderRadius: 10,
     borderColor: Colors.border.orange,
@@ -282,7 +295,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   utilityText: {
-    fontSize: 16,
+    fontSize: 14,
     color: Colors.text.orange,
     fontWeight: 'bold',
     textAlign: 'center',

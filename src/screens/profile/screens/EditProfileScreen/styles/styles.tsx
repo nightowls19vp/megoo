@@ -11,11 +11,13 @@ const styles = StyleSheet.create({
     minHeight: Dimensions.get('window').height,
   },
   title: {
-    fontSize: 30,
-    fontWeight: 'bold',
+    width: '90%',
+    textAlign: 'left',
     color: Colors.title.orange,
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginTop: 10,
   },
-
   button: {
     width: '90%',
     content: 'fill',
@@ -30,12 +32,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.buttonText.white,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-  },
-  text: {
-    fontSize: 16,
-    color: Colors.text.grey,
   },
   inputContainer: {
     width: '90%',

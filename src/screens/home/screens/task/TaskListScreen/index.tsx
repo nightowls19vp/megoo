@@ -1,4 +1,4 @@
-import {RouteProp, useRoute} from '@react-navigation/native';
+import moment from 'moment';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 // import {Calendar} from 'react-native-big-calendar';
 import {
   AgendaList,
@@ -18,12 +17,15 @@ import {
   LocaleConfig,
   WeekCalendar,
 } from 'react-native-calendars';
-import Modal from 'react-native-modal';
-
-import RouteNames from '../../../../../constants/route-names.const';
-import {Colors} from '../../../../../constants/color.const';
-import {getTaskList} from './services/task.service';
 import {MarkedDates} from 'react-native-calendars/src/types';
+import Modal from 'react-native-modal';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import {RouteProp, useRoute} from '@react-navigation/native';
+
+import {Colors} from '../../../../../constants/color.const';
+import RouteNames from '../../../../../constants/route-names.const';
+import {getTaskList} from './services/task.service';
 
 // Define the type for the route params
 type GroupRouteParams = {
@@ -102,25 +104,12 @@ LocaleConfig.locales['vi'] = {
 
 LocaleConfig.defaultLocale = 'vi';
 
-const ITEMS: any[] = [
-  {
-    title: '2023-07-14',
-    data: [{startTime: '9:00', endTime: '11:00', title: 'Dọn nhà'}],
-  },
-  {
-    title: '2023-07-18',
-    data: [
-      {startTime: '8:00', endTime: '9:00', title: 'Đi chợ'},
-      {startTime: '17:00', endTime: '20:00', title: 'Họp gia đình'},
-    ],
-  },
-];
-
 const TaskListScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupRouteProp>();
   const groupId = route?.params?.groupId;
 
   const [selectedEvent, setSelectedEvent] = useState({
+    _id: '',
     title: '',
     start: '',
     end: '',
@@ -129,9 +118,64 @@ const TaskListScreen = ({navigation}: {navigation: any}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [markedDates, setMarkedDates] = useState({});
 
+  const [tasks, setTasks] = useState<
+    {
+      _id: string;
+      summary: string;
+      description: string;
+      isRepeated: boolean;
+      recurrence?: {};
+      startDate: string;
+      state: string;
+      members?: {
+        _id: string;
+        name: string;
+        email: string;
+        avatar: string;
+      }[];
+    }[]
+  >([]);
+
+  const [taskItems, setTaskItems] = useState<
+    {
+      title: string;
+      data: {
+        _id: string;
+
+        startTime: string;
+        title: string;
+        description: string;
+      }[];
+    }[]
+  >([]);
+
   const getTasks = async () => {
     const response = await getTaskList(groupId);
-    console.log('Task list:', JSON.stringify(response, null, 2));
+    console.log('Task list:', JSON.stringify(response.group.task, null, 2));
+
+    if (!response.group) {
+      setTasks([]);
+    } else {
+      setTasks(
+        response?.group?.task?.map((task: any) => {
+          return {
+            _id: task._id,
+            summary: task.summary,
+            description: task.description,
+            isRepeated: task.isRepeated,
+            state: task.state,
+            recurrence: task?.recurrence,
+            startDate: task.startDate,
+            members: task?.members?.map((member: any) => ({
+              _id: member._id,
+              name: member.name,
+              email: member.email,
+              avatar: member.avatar,
+            })),
+          };
+        }),
+      );
+    }
   };
 
   const handleEventPress = (event: any) => {
@@ -153,10 +197,66 @@ const TaskListScreen = ({navigation}: {navigation: any}) => {
     };
     setMarkedDates(updatedMarkedDates);
   };
+
+  useEffect(() => {
+    console.log('groupId:', groupId);
+    getTasks();
+  }, []);
+
+  useEffect(() => {
+    setTaskItems(
+      tasks.map((task: any) => {
+        return {
+          title: moment(task.startDate).format('YYYY-MM-DD').toString(),
+          data: [
+            {
+              _id: task._id,
+
+              startTime: moment(task.startDate).format('HH:mm'),
+              title: task.summary,
+              description: task.description,
+            },
+          ],
+        };
+      }),
+    );
+  }, [tasks]);
+
+  useEffect(() => {
+    console.log('taskItems:', JSON.stringify(taskItems, null, 2));
+  }, [taskItems]);
+
+  const combinedTaskItems = taskItems.reduce((acc: any, taskItem) => {
+    const existingItemIndex = acc.findIndex(
+      (item: any) => item.title === taskItem.title,
+    );
+
+    if (existingItemIndex !== -1) {
+      // If the date already exists in the accumulator, combine the data
+      acc[existingItemIndex].data.push(...taskItem.data);
+    } else {
+      // If the date does not exist in the accumulator, add a new entry
+      acc.push({title: taskItem.title, data: taskItem.data});
+    }
+
+    return acc;
+  }, []);
+
+  // Sort combinedTaskItems by startTime within each entry
+  const sortedCombinedTaskItems = combinedTaskItems.map((item: any) => {
+    const sortedData = item.data.sort((a: any, b: any) => {
+      const startTimeA = moment(a.startTime, 'HH:mm:ss');
+      const startTimeB = moment(b.startTime, 'HH:mm:ss');
+      return startTimeA.diff(startTimeB);
+    });
+
+    return {...item, data: sortedData};
+  });
+
   function getMarkedDates() {
     const marked: MarkedDates = {};
 
-    ITEMS.forEach(item => {
+    sortedCombinedTaskItems.forEach((item: any) => {
       // NOTE: only mark dates with data
       if (item.data && item.data.length > 0) {
         marked[item.title] = {marked: true};
@@ -169,19 +269,38 @@ const TaskListScreen = ({navigation}: {navigation: any}) => {
 
   const marked = getMarkedDates();
 
-  useEffect(() => {
-    console.log('groupId:', groupId);
-    console.log('marked:', marked);
+  const sortedTasks = sortedCombinedTaskItems.sort((a: any, b: any) => {
+    const dateA = new Date(a.title); // Convert the title to a Date object
+    const dateB = new Date(b.title); // Convert the title to a Date object
 
-    getTasks();
-  }, []);
+    // Compare the dates
+    if (dateA < dateB) {
+      return -1;
+    } else if (dateA > dateB) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+
+  useEffect(() => {
+    console.log(
+      'sortedCombinedTaskItems:',
+      JSON.stringify(sortedCombinedTaskItems, null, 2),
+    );
+  }, [sortedCombinedTaskItems]);
 
   const renderItem = useCallback(({item}: any) => {
     return (
-      <TouchableOpacity style={styles.itemContainer}>
-        <Text style={styles.itemTime}>
-          {item.startTime} - {item.endTime}
-        </Text>
+      <TouchableOpacity
+        style={styles.itemContainer}
+        onPress={() => {
+          console.log('task id:', item._id);
+          navigation.navigate(RouteNames.TASK, {
+            taskId: item._id,
+          });
+        }}>
+        <Text style={styles.itemTime}>{item.startTime}</Text>
         <Text style={styles.itemTitle}>{item.title}</Text>
       </TouchableOpacity>
     );
@@ -242,7 +361,7 @@ const TaskListScreen = ({navigation}: {navigation: any}) => {
 
       <CalendarProvider
         date={new Date().toDateString()}
-        style={{width: '100%'}}>
+        style={{width: '100%', marginBottom: 20}}>
         <ExpandableCalendar
           // markingType="multi-period"
           markedDates={marked}
@@ -256,6 +375,7 @@ const TaskListScreen = ({navigation}: {navigation: any}) => {
             monthTextColor: Colors.text.grey,
           }}
         />
+
         <TouchableOpacity
           style={{
             width: '100%',
@@ -285,16 +405,20 @@ const TaskListScreen = ({navigation}: {navigation: any}) => {
             Thêm sự kiện
           </Text>
         </TouchableOpacity>
+
         <AgendaList
-          sections={ITEMS}
+          sections={sortedTasks}
           renderItem={renderItem}
           // scrollToNextEvent
           sectionStyle={{
             color: Colors.text.orange,
             fontSize: 18,
+            paddingTop: 20,
+            paddingBottom: 0,
           }}
           style={{
             height: '100%',
+            marginVertical: 0,
           }}
           // dayFormat={'yyyy-MM-d'}
         />
@@ -350,7 +474,7 @@ const styles = StyleSheet.create({
   },
   modalText: {
     width: '100%',
-    fontSize: 18,
+    fontSize: 14,
     color: Colors.text.grey,
     textAlign: 'left',
   },
@@ -370,10 +494,10 @@ const styles = StyleSheet.create({
   },
   itemTime: {
     color: Colors.text.lightgrey,
-    fontSize: 16,
+    fontSize: 14,
   },
   itemTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: Colors.text.grey,
   },

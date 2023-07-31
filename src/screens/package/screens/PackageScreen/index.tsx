@@ -465,7 +465,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                 //   {} as never,
                 // );
               }}
-              style={styles.detailText}>
+              style={styles.subTitle}>
               Xem tất cả
             </Text>
           </TouchableOpacity> */}

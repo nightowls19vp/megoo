@@ -87,7 +87,6 @@ const StorageLocationDropdownPicker: React.FC<IProps> = ({
             color: Colors.title.orange,
             fontWeight: 'bold',
             fontSize: 14,
-            marginBottom: 5,
           }}>
           Vị trí lưu trữ
         </Text>
@@ -121,10 +120,23 @@ const StorageLocationDropdownPicker: React.FC<IProps> = ({
         setItems={setItems}
         zIndex={zIndex}
         zIndexInverse={zIndexInverse}
+        containerStyle={{
+          width: '100%',
+          zIndex: 1000,
+          padding: 0,
+          marginBottom: 5,
+        }}
         dropDownContainerStyle={{
           borderColor: Colors.border.lightgrey,
+          borderRadius: 0,
         }}
         style={{
+          borderWidth: 0,
+          borderBottomWidth: 1,
+          borderRadius: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+          minHeight: 40,
           borderColor: Colors.border.lightgrey,
         }}
         searchable={true}

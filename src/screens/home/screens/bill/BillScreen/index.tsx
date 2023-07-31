@@ -24,7 +24,8 @@ import {IMAGE_URI_DEFAULT} from '../../../../../common/default';
 import {dateISOFormat} from '../../../../../common/handle.string';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
-import {createBill, getMembers} from './services/bill-service';
+import {createBill} from './services/bill-service';
+import {getMembers} from '../../../../../services/group.service';
 import styles from './styles/style';
 
 // Define the type for the route params

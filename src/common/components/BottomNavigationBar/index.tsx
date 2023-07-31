@@ -55,6 +55,8 @@ import CreateTodosScreen from '../../../screens/home/screens/todos/CreateTodosSc
 import GroupTaskListScreen from '../../../screens/home/screens/task/GroupTaskListScreen';
 import TaskListScreen from '../../../screens/home/screens/task/TaskListScreen';
 import CreateTaskScreen from '../../../screens/home/screens/task/CreateTaskScreen';
+import InterestRateScreen from './../../../screens/home/screens/interest-rate/InterestRateScreen/index';
+import TaskDetailScreen from './../../../screens/home/screens/task/TaskInfoScreen/index';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -207,6 +209,11 @@ const TaskListScreenStack = () => {
         component={CreateTaskScreen}
         // options={{headerShown: false}}
       />
+      <TaskListStack.Screen
+        name={RouteNames.TASK}
+        component={TaskDetailScreen}
+        // options={{headerShown: false}}
+      />
     </TaskListStack.Navigator>
   );
 };
@@ -246,6 +253,13 @@ const HomeScreenStack = () => {
         options={{
           title: 'Quản lý thời gian',
           headerShown: false,
+        }}
+      />
+      <HomeStack.Screen
+        name={RouteNames.BANK_INTEREST_RATE}
+        component={InterestRateScreen}
+        options={{
+          headerShown: true,
         }}
       />
     </HomeStack.Navigator>

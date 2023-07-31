@@ -92,7 +92,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
             <Text style={styles.connectText}>Liên kết</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.infoRow}>
+        {/* <View style={styles.infoRow}>
           <View style={styles.socialContainer}>
             <Image
               source={require('../../../../../assets/facebook.png')}
@@ -103,7 +103,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
           <TouchableOpacity>
             <Text style={styles.connectText}>Liên kết</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
     </ScrollView>
   );

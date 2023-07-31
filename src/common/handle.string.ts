@@ -30,10 +30,14 @@ export const dateISOFormat = (date: string) => {
 export const splitString = (string: string): string => {
   string = string.toString();
   const stringList: string[] = [];
-  while (string.length > 3) {
-    stringList.unshift(string.slice(-3));
-    string = string.slice(0, -3);
+  let remainingLength = string.length;
+  while (remainingLength > 3) {
+    const part = string.slice(remainingLength - 3, remainingLength);
+    stringList.unshift(part);
+    remainingLength -= 3;
   }
-  stringList.unshift(string);
+  if (remainingLength > 0) {
+    stringList.unshift(string.slice(0, remainingLength));
+  }
   return stringList.join('.');
 };
