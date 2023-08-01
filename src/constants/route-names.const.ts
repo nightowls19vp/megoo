@@ -62,9 +62,11 @@ export default {
 
   TOP_TAB: 'TOP_TAB',
   PROFILE_TOP_TAB: 'PROFILE_TOP_TAB',
+  PROFILE_TABS: 'PROFILE_TABS',
+  GROUP_TABS: 'GROUP_TABS',
   GROUP_STACK: 'GROUP_TOP_TAB',
   PROFILE_STACK: 'PROFILE_STACK',
-  PROFILE: 'Trang cá nhân',
+  PROFILE: 'Thông tin cá nhân',
   EDIT_PROFILE: 'Chỉnh sửa thông tin cá nhân',
   EDIT_GROUP_INFO: 'Chỉnh sửa thông tin nhóm',
   CHANGE_AVATAR: 'Chỉnh sửa ảnh đại diện',

@@ -10,6 +10,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: width,
     minHeight: height,
+    marginTop: 20,
     // justifyContent: 'center',
   },
   titleContainer: {

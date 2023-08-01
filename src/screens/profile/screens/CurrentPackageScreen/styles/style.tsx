@@ -9,9 +9,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: width,
     minHeight: '100%',
-    marginTop: 10,
+    marginTop: 20,
   },
-  avatar: {width: 200, height: 200, borderRadius: 200 / 2},
+  avatar: {
+    width: 200,
+    height: 200,
+    borderRadius: 200 / 2,
+    borderWidth: 1,
+    borderColor: Colors.border.lightgrey,
+  },
   title: {
     marginVertical: 10,
     textAlign: 'left',

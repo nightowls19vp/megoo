@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     minHeight: height,
+    marginTop: 20,
   },
   titleContainer: {
     width: '90%',

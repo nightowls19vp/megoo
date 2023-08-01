@@ -1,15 +1,22 @@
+import {RouteProp, useRoute} from '@react-navigation/native';
 import {useState, useEffect} from 'react';
 import {Text, View, TouchableOpacity} from 'react-native';
 import {dateFormat} from '../../../../common/handle.string';
+import groupStore from '../../../../common/store/group.store';
 import {getPkgsByGroupId} from './services/packages.service';
 import styles from './styles/style';
 
-type OtherPackagesProps = {
-  groupId: string;
-  // ...other parameters
-};
+// type GroupDetailRouteParams = {
+//   groupId: string;
+// };
 
-const OtherPackages = (props: {navigation: any} & OtherPackagesProps) => {
+// // Specify the type for the route
+// type GroupDetailRouteProp = RouteProp<
+//   Record<string, GroupDetailRouteParams>,
+//   string
+// >;
+
+const OtherPackages = ({navigation}: {navigation: any}) => {
   const [packages, setPackages] = useState([
     {
       pkgId: '',
@@ -24,22 +31,19 @@ const OtherPackages = (props: {navigation: any} & OtherPackagesProps) => {
     },
   ]);
 
-  const {groupId} = props;
+  // const {groupId} = props;
+  // const route = useRoute<GroupDetailRouteProp>();
+  // const groupId = route.params?.groupId;
 
   const getPkgs = async () => {
-    console.log('prop:', props.groupId);
-
     // Get all user's groups
-    const groupsRes = await getPkgsByGroupId(groupId);
+    const groupsRes = await getPkgsByGroupId(groupStore.id);
     console.log('getPkgsRes:', groupsRes.group.packages);
-
     // Filter out active package
     const otherPkgs = groupsRes.group.packages.filter(
       (pkgItem: any) => pkgItem.status !== 'Active',
     );
-
     console.log('otherPkgs:', otherPkgs);
-
     if (otherPkgs.length !== 0) {
       // Set packages list
       setPackages(
@@ -71,6 +75,8 @@ const OtherPackages = (props: {navigation: any} & OtherPackagesProps) => {
   };
 
   useEffect(() => {
+    console.log('groupId:', groupStore.id);
+
     getPkgs();
   }, []);
 

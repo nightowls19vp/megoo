@@ -9,6 +9,7 @@ import {getUserGroup} from '../../../../services/group.service';
 import styles from './styles/style';
 import {Colors} from '../../../../constants/color.const';
 import {changeStatusPkgToVietnamese} from '../../../../common/handle.string';
+import groupStore from '../../../../common/store/group.store';
 
 const GroupsScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
@@ -73,8 +74,9 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
           key={index}
           onPress={() => {
             console.log('Clicked');
-            navigation.navigate(RouteNames.GROUP_INFO as never, {
-              groupId: group._id,
+            groupStore.setGroupId(group._id);
+            navigation.navigate(RouteNames.GROUP_TABS as never, {
+              // groupId: group._id,
             });
           }}>
           <Image

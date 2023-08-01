@@ -12,42 +12,44 @@ import {
   View,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import Foundation from 'react-native-vector-icons/Foundation';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
+
 import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
 
-import appStore from '../../../../common/store/app.store';
-import {Colors} from '../../../../constants/color.const';
-import RouteNames from '../../../../constants/route-names.const';
-import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
-import {activate, invite} from './services/group.info.service';
-import styles from './styles/style';
 import {
   changeStatusPkgToVietnamese,
   dateFormat,
 } from '../../../../common/handle.string';
+import appStore from '../../../../common/store/app.store';
+import groupStore from '../../../../common/store/group.store';
+import {Colors} from '../../../../constants/color.const';
+import RouteNames from '../../../../constants/route-names.const';
 import {getGroupById} from '../../../../services/group.service';
+import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
+import {activate, invite} from './services/group.info.service';
+import styles from './styles/style';
 
 const height = Dimensions.get('window').height;
 
-// Define the type for the route params
-type GroupDetailRouteParams = {
-  groupId: string;
-};
+// // Define the type for the route params
+// type GroupDetailRouteParams = {
+//   groupId: string;
+// };
 
-// Specify the type for the route
-type GroupDetailRouteProp = RouteProp<
-  Record<string, GroupDetailRouteParams>,
-  string
->;
+// // Specify the type for the route
+// type GroupDetailRouteProp = RouteProp<
+//   Record<string, GroupDetailRouteParams>,
+//   string
+// >;
 
 const InviteSchema = Yup.object().shape({
   email: Yup.string().email('Email không hợp lệ'),
 });
 
 const CurrentPackage = ({navigation}: {navigation: any}) => {
-  const route = useRoute<GroupDetailRouteProp>();
+  // const route = useRoute<GroupDetailRouteProp>();
 
   const [packages, setPackages] = useState([]);
 
@@ -76,15 +78,16 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
 
   const [emails, setEmails] = useState<string[]>([]);
 
-  const groupId = route.params?.groupId;
-  console.log('Group id from route:', groupId);
+  // const groupId = route.params?.groupId;
+  // console.log('Group id from route:', groupId);
+  console.log('Group id from route:', groupStore.id);
 
   const getSelectedGroup = async () => {
     // Get group info by id
-    const groupRes = await getGroupById(groupId);
+    const groupRes = await getGroupById(groupStore.id);
     console.log('groupsRes group:', groupRes.group);
     console.log('groupsRes group members:', groupRes?.group?.members);
-    console.log('route param:', route);
+    // console.log('route param:', route);
 
     const activePackage = groupRes.group.packages.find(
       (pkg: any) => pkg.status === 'Active',
@@ -146,7 +149,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
 
   // Extend package when package in group is expired
   const extendPackage = async () => {
-    const extendPkgRes = await getGroupById(groupId);
+    const extendPkgRes = await getGroupById(groupStore.id);
     console.log('Extend pkg res:', extendPkgRes);
 
     // Set new package to user's group
@@ -201,7 +204,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
 
   return (
     <KeyboardAvoidingView behavior={'position'} keyboardVerticalOffset={20}>
-      <View style={{...styles.container}}>
+      <ScrollView contentContainerStyle={{...styles.container}}>
         <Image
           source={{
             uri:
@@ -563,7 +566,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
             </TouchableOpacity>
           </>
         ) : null}
-      </View>
+      </ScrollView>
       <Toast position="top" />
     </KeyboardAvoidingView>
   );

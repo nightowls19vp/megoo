@@ -52,6 +52,7 @@ import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScree
 import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
 import appStore from '../../store/app.store';
 import PurchaseLocationScreen from '../../../screens/storage/screens/PurchaseLocationScreen';
+import groupStore from '../../store/group.store';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -334,9 +335,14 @@ const AddProductScreenStack = () => {
 
 const StorageTopTabNavigator = createMaterialTopTabNavigator();
 
-const StorageMyTabs = () => {
+const StorageTabs = () => {
   return (
-    <StorageTopTabNavigator.Navigator>
+    <StorageTopTabNavigator.Navigator
+      screenOptions={{
+        tabBarIndicatorStyle: {
+          backgroundColor: Colors.text.orange,
+        },
+      }}>
       <StorageTopTabNavigator.Screen
         name={RouteNames.PRODUCTS}
         component={ProductsScreen}
@@ -365,7 +371,7 @@ const StorageScreenStack = () => {
       />
       <StorageStack.Screen
         name={RouteNames.STORAGE_TABS}
-        component={StorageMyTabs}
+        component={StorageTabs}
         options={{
           title: 'Quản lý nhu yếu phẩm',
         }}
@@ -410,10 +416,72 @@ const StorageScreenStack = () => {
   );
 };
 
+const GroupsTopTabNavigator = createMaterialTopTabNavigator();
+
+const GroupTabs = () => {
+  return (
+    <GroupsTopTabNavigator.Navigator
+      screenOptions={{
+        tabBarIndicatorStyle: {
+          backgroundColor: Colors.text.orange,
+        },
+      }}>
+      <GroupsTopTabNavigator.Screen
+        name={RouteNames.CURRENT_PACKAGE}
+        component={CurrentPackage}
+      />
+      <GroupsTopTabNavigator.Screen
+        name={RouteNames.OTHER_PACKAGES}
+        component={OtherPackages}
+      />
+      {/* <Tab.Screen  */}
+    </GroupsTopTabNavigator.Navigator>
+  );
+};
+
+const ProfileTopTabNavigator = createMaterialTopTabNavigator();
+
+const UserInfoTabs = () => {
+  return (
+    <ProfileTopTabNavigator.Navigator
+      screenOptions={{
+        tabBarIndicatorStyle: {
+          backgroundColor: Colors.text.orange,
+        },
+      }}>
+      <ProfileTopTabNavigator.Screen
+        name={RouteNames.PROFILE}
+        component={ProfileScreen}
+      />
+      <ProfileTopTabNavigator.Screen
+        name={RouteNames.GROUPS}
+        component={GroupsScreen}
+      />
+      {/* <Tab.Screen  */}
+    </ProfileTopTabNavigator.Navigator>
+  );
+};
+
 const ProfileStack = createNativeStackNavigator();
 function ProfileScreenStack() {
   return (
-    <ProfileStack.Navigator initialRouteName={RouteNames.PROFILE}>
+    <ProfileStack.Navigator initialRouteName={RouteNames.PROFILE_TABS}>
+      <ProfileStack.Screen
+        name={RouteNames.PROFILE_TABS}
+        component={UserInfoTabs}
+        initialParams={{screen: RouteNames.PROFILE}}
+        options={{
+          title: 'Trang cá nhân',
+        }}
+      />
+      <ProfileStack.Screen
+        name={RouteNames.GROUP_TABS}
+        component={GroupTabs}
+        initialParams={{screen: RouteNames.CURRENT_PACKAGE}}
+        options={{
+          title: 'Thông tin chi tiết nhóm',
+        }}
+      />
       <ProfileStack.Screen
         name={RouteNames.PROFILE}
         component={UserInfoScreen}
@@ -531,7 +599,7 @@ export default function BottomNavigationBar() {
       <Tab.Screen
         name={RouteNames.PROFILE_STACK}
         component={ProfileScreenStack}
-        initialParams={{screen: RouteNames.PROFILE}}
+        initialParams={{screen: RouteNames.PROFILE_TABS}}
         // listeners={({navigation}) => ({
         //   tabPress: () => {
         //     if (appStore.isLoggedIn === false) {
