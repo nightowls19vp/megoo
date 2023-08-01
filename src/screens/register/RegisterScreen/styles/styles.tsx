@@ -52,9 +52,9 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 10,
   },
-  textButton: {
+  buttonText: {
     color: Colors.buttonText.white,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   socialButton: {

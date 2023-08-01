@@ -287,7 +287,7 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                       : Colors.buttonBackground.lightorange,
                   },
                 ]}>
-                <Text style={styles.textButton}>Đăng ký</Text>
+                <Text style={styles.buttonText}>Đăng ký</Text>
               </TouchableOpacity>
 
               <Toast position="top" />

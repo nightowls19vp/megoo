@@ -52,15 +52,16 @@ const styles = StyleSheet.create({
   },
   infoInput: {
     width: '100%',
-    height: 50,
+    height: 40,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 15,
-    // marginTop: 5,
+    // paddingHorizontal: 15,
+    marginTop: -5,
+    marginBottom: 5,
     borderColor: Colors.border.lightgrey,
-    borderWidth: 1,
-    borderRadius: 10,
+    borderBottomWidth: 1,
+    // borderRadius: 10,
   },
   icon: {
     fontWeight: '200',
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.buttonText.white,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
 

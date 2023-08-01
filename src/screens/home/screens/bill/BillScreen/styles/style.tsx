@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     width: '90%',
     textAlign: 'left',
     textAlignVertical: 'center',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
     color: Colors.title.orange,
     lineHeight: 21,
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.text.white,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   createButton: {

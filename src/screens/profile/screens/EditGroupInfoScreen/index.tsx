@@ -156,29 +156,8 @@ const EditGroupinfoScreen = () => {
             </View>
           </TouchableOpacity>
 
-          <Text
-            style={{
-              width: '90%',
-              textAlign: 'left',
-              color: Colors.title.orange,
-              fontWeight: 'bold',
-              fontSize: 14,
-              marginTop: 10,
-            }}>
-            Tên nhóm
-          </Text>
-          <View
-            style={{
-              width: '90%',
-              height: 40,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              // marginVertical: 10,
-              borderColor: Colors.border.lightgrey,
-              borderBottomWidth: 1,
-              // borderRadius: 10,
-            }}>
+          <Text style={styles.title}>Tên nhóm</Text>
+          <View style={styles.inputContainer}>
             <TextInput
               value={values.name}
               onChangeText={value => setFieldValue('name', value)}
@@ -247,15 +226,29 @@ const styles = StyleSheet.create({
     minHeight: Dimensions.get('window').height,
   },
   title: {
-    fontSize: 24,
+    width: '90%',
+    textAlign: 'left',
+    color: Colors.title.orange,
     fontWeight: 'bold',
-    color: Colors.text.orange,
+    fontSize: 16,
+    marginTop: 10,
   },
   avatar: {
     width: Dimensions.get('window').width * 0.5,
     height: Dimensions.get('window').width * 0.5,
     borderRadius: (Dimensions.get('window').width * 0.5) / 2,
     marginVertical: 10,
+  },
+  inputContainer: {
+    width: '90%',
+    height: 40,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    // marginVertical: 10,
+    borderColor: Colors.border.lightgrey,
+    borderBottomWidth: 1,
+    // borderRadius: 10,
   },
   button: {
     width: '90%',
@@ -271,7 +264,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.buttonText.white,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
 });

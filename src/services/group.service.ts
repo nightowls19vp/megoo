@@ -45,3 +45,25 @@ export const getGroupById = async (groupId: string) => {
     console.log('Get group by id error:', error);
   }
 };
+
+export const getMembers = async (groupId: string) => {
+  const membersEndpoint = `api/pkg-mgmt/gr/${groupId}?projection=members`;
+  const reqUrl = `${URL_HOST}${membersEndpoint}`;
+  console.log('Get members:', reqUrl);
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+  console.log('Access token:', accessToken);
+
+  try {
+    const response = await axios.get(reqUrl, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log('Get members error: ', error);
+  }
+};

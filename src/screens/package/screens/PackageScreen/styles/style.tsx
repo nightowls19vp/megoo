@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.text.orange,
   },
-  detailText: {
-    fontSize: 12,
+  subTitle: {
+    fontSize: 14,
     textAlignVertical: 'bottom',
     includeFontPadding: false,
     color: Colors.text.orange,

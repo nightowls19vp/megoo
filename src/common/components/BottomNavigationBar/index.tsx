@@ -16,8 +16,10 @@ import BillInfoScreen from '../../../screens/home/screens/bill/BillInfoScreen';
 import BillListScreen from '../../../screens/home/screens/bill/BillListScreen';
 import BillScreen from '../../../screens/home/screens/bill/BillScreen';
 import GroupBillListScreen from '../../../screens/home/screens/bill/GroupBillListScreen';
+import InterestRateScreen from '../../../screens/home/screens/interest-rate/InterestRateScreen';
 import CreateTaskScreen from '../../../screens/home/screens/task/CreateTaskScreen';
 import GroupTaskListScreen from '../../../screens/home/screens/task/GroupTaskListScreen';
+import TaskDetailScreen from '../../../screens/home/screens/task/TaskInfoScreen';
 import TaskListScreen from '../../../screens/home/screens/task/TaskListScreen';
 import CreateTodosScreen from '../../../screens/home/screens/todos/CreateTodosScreen';
 import GroupTodosListScreen from '../../../screens/home/screens/todos/GroupTodosListScreen';
@@ -201,6 +203,11 @@ const TaskListScreenStack = () => {
         component={CreateTaskScreen}
         // options={{headerShown: false}}
       />
+      <TaskListStack.Screen
+        name={RouteNames.TASK}
+        component={TaskDetailScreen}
+        // options={{headerShown: false}}
+      />
     </TaskListStack.Navigator>
   );
 };
@@ -240,6 +247,13 @@ const HomeScreenStack = () => {
         options={{
           title: 'Quản lý thời gian',
           headerShown: false,
+        }}
+      />
+      <HomeStack.Screen
+        name={RouteNames.BANK_INTEREST_RATE}
+        component={InterestRateScreen}
+        options={{
+          headerShown: true,
         }}
       />
     </HomeStack.Navigator>

@@ -467,8 +467,8 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                           }}>
                           <View style={styles.emailsContainer} key={index}>
                             <View style={styles.email}>
-                              <Text style={{fontSize: 20}}>•</Text>
-                              <Text style={{fontSize: 16}}>{object}</Text>
+                              <Text style={{fontSize: 18}}>•</Text>
+                              <Text style={{fontSize: 14}}>{object}</Text>
                             </View>
                             <TouchableOpacity>
                               <Ionicons

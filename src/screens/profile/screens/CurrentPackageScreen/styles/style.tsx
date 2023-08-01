@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     color: Colors.text.lightgrey,
   },
   superUserText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     color: Colors.text.orange,
   },

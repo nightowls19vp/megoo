@@ -93,7 +93,6 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
             color: Colors.title.orange,
             fontWeight: 'bold',
             fontSize: 14,
-            marginBottom: 5,
           }}>
           Nhu yếu phẩm
         </Text>
@@ -122,13 +121,26 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
         setValue={setValue}
         setItems={setItems}
         zIndex={zIndex}
+        containerStyle={{
+          width: '100%',
+          zIndex: 1000,
+          padding: 0,
+          marginBottom: 5,
+        }}
+        dropDownContainerStyle={{
+          borderColor: Colors.border.lightgrey,
+          borderRadius: 0,
+        }}
         style={{
+          borderWidth: 0,
+          borderBottomWidth: 1,
+          borderRadius: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+          minHeight: 40,
           borderColor: Colors.border.lightgrey,
         }}
         zIndexInverse={zIndexInverse}
-        dropDownContainerStyle={{
-          borderColor: Colors.border.lightgrey,
-        }}
         searchable={true}
         searchPlaceholder="Tìm kiếm ..."
         disableLocalSearch={true} // required for remote search

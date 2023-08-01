@@ -28,8 +28,10 @@ export default {
   GROUP_TASK_LIST: 'Danh sách nhóm',
   TASK_LIST_STACK: 'TASK_LIST_STACK',
   TASK_LIST: 'Quản lý thời gian',
-  TASK: 'Lịch biểu',
+  TASK: 'Chi tiết sự kiện',
   CREATE_TASK: 'Tạo sự kiện',
+
+  BANK_INTEREST_RATE: 'Tính lãi suất ngân hàng',
 
   PACKAGE_STACK_DRAWER: 'PACKAGE_STACK_DRAWER',
   PACKAGE_STACK_BOTTOM: 'PACKAGE_STACK_BOTTOM',

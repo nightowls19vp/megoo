@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   title: {
     width: '90%',
     textAlign: 'left',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: Colors.title.orange,
     lineHeight: 21,
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     color: Colors.text.lightgrey,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     color: Colors.buttonText.white,
   },
