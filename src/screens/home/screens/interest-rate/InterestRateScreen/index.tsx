@@ -335,7 +335,7 @@ const InterestRateScreen = () => {
 
       <View style={styles.titleContainer}>
         <Text style={[styles.title, {width: '50%'}]}>Ngày đáo hạn</Text>
-        <Text>{maturityDateString}</Text>
+        <Text style={{color: Colors.text.lightgrey}}>{maturityDateString}</Text>
       </View>
 
       <View style={styles.titleContainer}>
@@ -345,8 +345,8 @@ const InterestRateScreen = () => {
         </Text>
       </View>
 
-      <View style={styles.titleContainer}>
-        <Text style={[styles.title, {width: '50%'}]}>Số tiền khi đến hạn</Text>
+      <View style={[styles.titleContainer, {flexDirection: 'column'}]}>
+        <Text style={[styles.title]}>Số tiền khi đến hạn</Text>
         <Text style={styles.amountText}>
           {splitString(totalAmount.toString())} VND
         </Text>

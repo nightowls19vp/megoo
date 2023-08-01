@@ -58,6 +58,11 @@ const styles = StyleSheet.create({
     color: Colors.text.grey,
     textAlign: 'justify',
   },
+  infoText: {
+    fontSize: 14,
+    color: Colors.text.lightgrey,
+    textAlign: 'justify',
+  },
   modal: {
     flex: 1,
     justifyContent: 'center',

@@ -21,7 +21,11 @@ import * as Yup from 'yup';
 import {RouteProp, useRoute} from '@react-navigation/native';
 
 import {IMAGE_URI_DEFAULT} from '../../../../../common/default';
-import {dateISOFormat} from '../../../../../common/handle.string';
+import {
+  changeStatusBillToVietnamese,
+  dateISOFormat,
+  splitString,
+} from '../../../../../common/handle.string';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import {createBill} from './services/bill-service';
@@ -350,21 +354,42 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                 gap: 10,
                 // backgroundColor: 'yellow',
               }}>
-              <Text style={{fontSize: 20, fontWeight: 'bold'}}>
-                {totalAmount}
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: Colors.text.grey,
+                }}>
+                {splitString(totalAmount.toString())}
               </Text>
-              <Text style={{fontSize: 20}}>VND</Text>
+              <Text style={{fontSize: 20, color: Colors.text.lightgrey}}>
+                VND
+              </Text>
             </View>
           </View>
 
           <Text style={styles.title}>Người cho mượn</Text>
           <View style={styles.lenderContainer}>
             <DropDownPicker
-              // containerStyle={{width: '90%'}}
+              containerStyle={{
+                width: '100%',
+                zIndex: 1000,
+                padding: 0,
+                marginBottom: 5,
+              }}
               dropDownContainerStyle={{
                 borderColor: Colors.border.lightgrey,
+                borderRadius: 0,
               }}
-              style={{borderColor: Colors.border.lightgrey, borderRadius: 10}}
+              style={{
+                borderWidth: 0,
+                borderBottomWidth: 1,
+                borderRadius: 0,
+                paddingLeft: 0,
+                paddingRight: 0,
+                minHeight: 40,
+                borderColor: Colors.border.lightgrey,
+              }}
               selectedItemLabelStyle={{color: Colors.title.orange}}
               open={openLender}
               value={lender}
@@ -408,9 +433,25 @@ const BillScreen = ({navigation}: {navigation: any}) => {
           <View style={styles.borrowerContainer}>
             <View style={[styles.addBorrowerContainer]}>
               <DropDownPicker
-                containerStyle={{width: '100%'}}
-                dropDownContainerStyle={{borderColor: Colors.border.lightgrey}}
-                style={{borderColor: Colors.border.lightgrey, borderRadius: 10}}
+                containerStyle={{
+                  width: '100%',
+                  zIndex: 1000,
+                  padding: 0,
+                  marginBottom: 5,
+                }}
+                dropDownContainerStyle={{
+                  borderColor: Colors.border.lightgrey,
+                  borderRadius: 0,
+                }}
+                style={{
+                  borderWidth: 0,
+                  borderBottomWidth: 1,
+                  borderRadius: 0,
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                  minHeight: 40,
+                  borderColor: Colors.border.lightgrey,
+                }}
                 selectedItemLabelStyle={{color: Colors.title.orange}}
                 zIndex={100000}
                 open={openBorrowers}
@@ -461,7 +502,7 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                 keyboardType="numeric"
                 value={values.amount}
               />
-              <Text>VND</Text>
+              <Text style={{color: Colors.text.lightgrey}}>VND</Text>
             </View>
             {touched.amount && selectedBorrowers.length === 0 && (
               <Text style={styles.error}>Vui lòng nhập số tiền cần trả</Text>
@@ -521,6 +562,9 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                   width: '100%',
                 }}>
                 {selectedBorrowers.map((borrower: any, index) => {
+                  const viStatus = changeStatusBillToVietnamese(
+                    borrower.status,
+                  );
                   return (
                     <View key={index} style={styles.borrowersContainer}>
                       <Image
@@ -534,11 +578,13 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                         </View>
                         <View style={styles.borrowerInfoRow}>
                           <Text style={styles.headingText}>Số tiền mượn: </Text>
-                          <Text style={styles.text}>{borrower.amount} VND</Text>
+                          <Text style={styles.text}>
+                            {splitString(borrower.amount)} VND
+                          </Text>
                         </View>
                         <View style={styles.borrowerInfoRow}>
                           <Text style={styles.headingText}>Trạng thái: </Text>
-                          <Text style={styles.text}>{borrower.status}</Text>
+                          <Text style={styles.text}>{viStatus}</Text>
                         </View>
                       </View>
                       <TouchableOpacity>

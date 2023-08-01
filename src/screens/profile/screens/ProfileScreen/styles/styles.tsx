@@ -10,6 +10,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     width: width,
+    marginTop: 10,
   },
   avatar: {
     width: 200,

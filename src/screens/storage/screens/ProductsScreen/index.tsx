@@ -122,7 +122,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
                 <Text style={[styles.text, {fontWeight: 'bold'}]}>
                   Tên sản phẩm:{' '}
                 </Text>
-                <Text style={styles.text} numberOfLines={3}>
+                <Text style={styles.infoText} numberOfLines={3}>
                   {item?.groupProduct?.name || 'Chưa có tên sản phẩm'}
                 </Text>
               </View>
@@ -131,7 +131,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
                   <Text style={[styles.text, {fontWeight: 'bold'}]}>
                     Số lượng:{' '}
                   </Text>
-                  <Text style={styles.text}>
+                  <Text style={styles.infoText}>
                     {item?.quantity} {item?.unit || ''}
                   </Text>
                 </View>
@@ -143,7 +143,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
                   <Text style={[styles.text, {fontWeight: 'bold'}]}>
                     Hạn sử dụng:{' '}
                   </Text>
-                  <Text style={styles.text}>
+                  <Text style={styles.infoText}>
                     {moment(item?.bestBefore).isValid()
                       ? moment(item?.bestBefore).format('DD-MM-YYYY')
                       : item?.bestBefore.toString()}

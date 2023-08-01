@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '90%',
-    height: 40,
+    height: 50,
     flexDirection: 'row',
     alignItems: 'center',
     // paddingHorizontal: 15,
@@ -106,12 +106,10 @@ const styles = StyleSheet.create({
     // borderRadius: 10,
     borderBottomWidth: 1,
     borderColor: Colors.border.lightgrey,
-    paddingLeft: 5,
-    paddingRight: 10,
   },
   addBorrowerButton: {
     width: '100%',
-    height: 40,
+    height: 50,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
@@ -180,7 +178,7 @@ const styles = StyleSheet.create({
   },
   createButton: {
     width: '90%',
-    height: 40,
+    height: 50,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

@@ -292,6 +292,7 @@ const PackageScreenStack = ({navigation}: {navigation: any}) => {
         name={RouteNames.CHAT_STACK}
         component={ChatScreenStack}
         options={{
+          headerShown: false,
           title: 'Nhóm chat',
         }}
       />
@@ -323,6 +324,7 @@ const AddProductScreenStack = () => {
         name={RouteNames.CHAT_STACK}
         component={ChatScreenStack}
         options={{
+          headerShown: false,
           title: 'Nhóm chat',
         }}
       />
@@ -361,7 +363,13 @@ const StorageScreenStack = () => {
         name={appStore.isLoggedIn ? RouteNames.STORAGE_GROUPS : 'Quản lý gói'}
         component={GroupsProductsListScreen}
       />
-      <StorageStack.Screen name={'StorageMyTabs'} component={StorageMyTabs} />
+      <StorageStack.Screen
+        name={RouteNames.STORAGE_TABS}
+        component={StorageMyTabs}
+        options={{
+          title: 'Quản lý nhu yếu phẩm',
+        }}
+      />
       <StorageStack.Screen
         name={RouteNames.PRODUCTS}
         component={ProductsScreen}
@@ -394,6 +402,7 @@ const StorageScreenStack = () => {
         name={RouteNames.CHAT_STACK}
         component={ChatScreenStack}
         options={{
+          headerShown: false,
           title: 'Nhóm chat',
         }}
       />
@@ -429,6 +438,7 @@ function ProfileScreenStack() {
         name={RouteNames.CHAT_STACK}
         component={ChatScreenStack}
         options={{
+          headerShown: false,
           title: 'Nhóm chat',
         }}
       />
@@ -456,6 +466,7 @@ function SettingsScreenStack() {
         name={RouteNames.CHAT_STACK}
         component={ChatScreenStack}
         options={{
+          headerShown: false,
           title: 'Nhóm chat',
         }}
       />
@@ -473,12 +484,11 @@ export default function BottomNavigationBar() {
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
-        tabBarLabelStyle: {paddingBottom: 5},
+        tabBarLabelStyle: {paddingBottom: 10},
         tabBarActiveTintColor: Colors.bottomTabActiveIcon,
         tabBarInactiveTintColor: Colors.bottomTabInactiveIcon,
         tabBarStyle: {
-          // height: 60,
-          // paddingBottom: 0,
+          height: 60,
           backgroundColor: Colors.bottomTabBackground,
         },
       }}>

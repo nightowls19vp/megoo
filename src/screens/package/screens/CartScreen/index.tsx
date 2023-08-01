@@ -370,7 +370,7 @@ const CartScreen = ({navigation}: {navigation: any}) => {
             setSelectedAll(newValue);
           }}
         />
-        <Text style={{fontSize: 16}}>Chọn tất cả</Text>
+        <Text style={{fontSize: 16, color: Colors.text.grey}}>Chọn tất cả</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>

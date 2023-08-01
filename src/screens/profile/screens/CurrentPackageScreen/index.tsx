@@ -23,7 +23,10 @@ import RouteNames from '../../../../constants/route-names.const';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
 import {activate, invite} from './services/group.info.service';
 import styles from './styles/style';
-import {dateFormat} from '../../../../common/handle.string';
+import {
+  changeStatusPkgToVietnamese,
+  dateFormat,
+} from '../../../../common/handle.string';
 import {getGroupById} from '../../../../services/group.service';
 
 const height = Dimensions.get('window').height;
@@ -175,6 +178,8 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
     });
   };
 
+  const viStatus = changeStatusPkgToVietnamese(group.status);
+
   useEffect(() => {
     getSelectedGroup();
     if (group.status === 'Expired') {
@@ -273,7 +278,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
                 Trạng thái:{' '}
               </Text>
-              <Text style={styles.infoText}>{group.status}</Text>
+              <Text style={styles.infoText}>{viStatus}</Text>
             </View>
             {group.status === 'Not Activated' ? (
               <TouchableOpacity

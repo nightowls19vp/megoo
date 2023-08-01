@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 40,
+    height: 50,
     width: width / 2,
   },
   tabText: {

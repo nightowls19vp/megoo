@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 14,
-    color: Colors.secondary,
+    color: Colors.text.lightgrey,
     textAlign: 'justify',
   },
 });

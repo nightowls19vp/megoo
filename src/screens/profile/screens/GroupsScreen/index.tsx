@@ -7,6 +7,8 @@ import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
 import styles from './styles/style';
+import {Colors} from '../../../../constants/color.const';
+import {changeStatusPkgToVietnamese} from '../../../../common/handle.string';
 
 const GroupsScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
@@ -63,6 +65,8 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
 
   const renderGroupItem = () => {
     return groups.map((group: any, index) => {
+      const viStatus = changeStatusPkgToVietnamese(group.status);
+
       return (
         <TouchableOpacity
           style={styles.groupContainer}
@@ -85,6 +89,7 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
               <Text
                 style={{
                   width: '50%',
+                  color: Colors.text.lightgrey,
                 }}
                 ellipsizeMode={'tail'}
                 numberOfLines={1}>
@@ -94,21 +99,25 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
 
             <View style={styles.infoRow}>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>Thời hạn:</Text>
-              <Text>{group.duration} tháng</Text>
+              <Text style={{color: Colors.text.lightgrey}}>
+                {group.duration} tháng
+              </Text>
             </View>
 
             <View style={styles.infoRow}>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
                 Số lượng thành viên:
               </Text>
-              <Text>{group.noOfMember}</Text>
+              <Text style={{color: Colors.text.lightgrey}}>
+                {group.noOfMember}
+              </Text>
             </View>
 
             <View style={styles.infoRow}>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
                 Trạng thái:
               </Text>
-              <Text>{group.status}</Text>
+              <Text style={{color: Colors.text.lightgrey}}>{viStatus}</Text>
             </View>
           </View>
         </TouchableOpacity>

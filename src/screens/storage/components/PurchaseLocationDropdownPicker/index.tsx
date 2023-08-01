@@ -120,7 +120,7 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
         containerStyle={{
           width: '100%',
           zIndex: 1000,
-          padding: 0,
+          padding: 5,
           marginBottom: 5,
         }}
         dropDownContainerStyle={{
@@ -134,6 +134,7 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
           paddingLeft: 0,
           paddingRight: 0,
           minHeight: 40,
+
           borderColor: Colors.border.lightgrey,
         }}
         // searchTextInputStyle={{

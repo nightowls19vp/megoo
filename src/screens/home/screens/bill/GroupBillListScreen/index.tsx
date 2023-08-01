@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 
 import {IMAGE_URI_DEFAULT} from '../../../../../common/default';
+import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../../services/group.service';
 import styles from './styles/style';
@@ -86,6 +87,7 @@ const GroupBillListScreen = ({navigation}: {navigation: any}) => {
               <Text
                 style={{
                   width: '50%',
+                  color: Colors.text.lightgrey,
                 }}
                 ellipsizeMode={'tail'}
                 numberOfLines={1}>
@@ -97,7 +99,9 @@ const GroupBillListScreen = ({navigation}: {navigation: any}) => {
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
                 Số lượng thành viên:{' '}
               </Text>
-              <Text>{group.noOfMember}</Text>
+              <Text style={{color: Colors.text.lightgrey}}>
+                {group.noOfMember}
+              </Text>
             </View>
           </View>
         </TouchableOpacity>

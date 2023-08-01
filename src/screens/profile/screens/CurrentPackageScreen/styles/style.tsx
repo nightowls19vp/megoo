@@ -9,6 +9,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: width,
     minHeight: '100%',
+    marginTop: 10,
   },
   avatar: {width: 200, height: 200, borderRadius: 200 / 2},
   title: {
@@ -162,6 +163,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     margin: 10,
+    marginBottom: 30,
     padding: 8,
     backgroundColor: Colors.buttonBackground.orange,
     borderRadius: 10,

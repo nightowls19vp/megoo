@@ -69,8 +69,8 @@ const WardsDropdownPicker: React.FC<
         alignItems: 'flex-start',
         backgroundColor: Colors.background.white,
         borderRadius: 10,
-        marginVertical: 10,
-        gap: 10,
+        marginTop: 10,
+        // gap: 10,
         zIndex: zIndex,
       }}>
       <Text
@@ -81,13 +81,29 @@ const WardsDropdownPicker: React.FC<
         Xã/phường
       </Text>
       <DropDownPicker
-        style={{
-          borderColor: Colors.border.lightgrey,
-        }}
         listMode="MODAL"
         placeholder="Chọn xã/phường"
         scrollViewProps={{
           nestedScrollEnabled: true,
+        }}
+        containerStyle={{
+          width: '100%',
+          zIndex: 1000,
+          padding: 0,
+          marginBottom: 5,
+        }}
+        dropDownContainerStyle={{
+          borderColor: Colors.border.lightgrey,
+          borderRadius: 0,
+        }}
+        style={{
+          borderWidth: 0,
+          borderBottomWidth: 1,
+          borderRadius: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+          minHeight: 40,
+          borderColor: Colors.border.lightgrey,
         }}
         loading={loading}
         open={open}
@@ -98,9 +114,6 @@ const WardsDropdownPicker: React.FC<
         setItems={setItems}
         zIndex={zIndex}
         zIndexInverse={zIndexInverse}
-        dropDownContainerStyle={{
-          borderColor: Colors.border.lightgrey,
-        }}
         searchable={true}
         searchPlaceholder="Tìm kiếm ..."
         disableLocalSearch={true} // required for remote search

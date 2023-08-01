@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '90%',
     alignItems: 'center',
-    // marginBottom: 10,
+    marginTop: 10,
     // backgroundColor: 'pink',
   },
   title: {

@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '90%',
-    height: 40,
+    height: 50,
     flexDirection: 'row',
     alignItems: 'center',
     // paddingHorizontal: 15,
@@ -479,7 +479,7 @@ const styles = StyleSheet.create({
   },
   createButton: {
     width: '90%',
-    height: 40,
+    height: 50,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,

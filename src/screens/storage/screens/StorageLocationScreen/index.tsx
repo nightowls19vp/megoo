@@ -70,7 +70,9 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                 ]}>
                 Nơi lưu trữ:
               </Text>
-              <Text style={styles.text} numberOfLines={3}>
+              <Text
+                style={[styles.text, {color: Colors.text.lightgrey}]}
+                numberOfLines={3}>
                 {stoLoc?.name}
               </Text>
             </View>
@@ -84,7 +86,9 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
                 ]}>
                 Ghi chú:
               </Text>
-              <Text style={styles.text} numberOfLines={3}>
+              <Text
+                style={[styles.text, {color: Colors.text.lightgrey}]}
+                numberOfLines={3}>
                 {stoLoc.description}
               </Text>
             </View>

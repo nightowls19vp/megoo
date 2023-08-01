@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     width: width,
-    // marginBottom: 20,
+    marginBottom: 20,
     position: 'absolute',
     top: 0,
   },
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 40,
+    height: 50,
     width: width / 2,
   },
   tabText: {

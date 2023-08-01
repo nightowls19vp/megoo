@@ -41,3 +41,23 @@ export const splitString = (string: string): string => {
   }
   return stringList.join('.');
 };
+
+export const changeStatusPkgToVietnamese = (status: string) => {
+  if (status === 'Active') {
+    return 'Đang kích hoạt';
+  } else if (status === 'Not Activated') {
+    return 'Chưa kích hoạt';
+  } else if (status === 'Expired') {
+    return 'Hết hạn';
+  }
+};
+
+export const changeStatusBillToVietnamese = (status: string) => {
+  if (status === 'PENDING') {
+    return 'Chờ thanh toán';
+  } else if (status === 'APPROVED') {
+    return 'Đã xác nhận';
+  } else if (status === 'CANCELED') {
+    return 'Từ chối';
+  }
+};

@@ -479,7 +479,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
           parallaxScrollingOffset: 50,
         }}
         width={width * 0.9}
-        height={height * 0.6}
+        height={height * 0.67}
         // autoPlay={true}
         data={packages}
         scrollAnimationDuration={1000}
@@ -507,7 +507,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
             onPress={() => {
               setModalVisible(false);
             }}>
-            <Ionicons name="close" size={24} />
+            <Ionicons name="close" color={Colors.text.grey} size={24} />
           </TouchableOpacity>
           <View
             style={{

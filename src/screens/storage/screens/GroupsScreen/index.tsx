@@ -108,7 +108,7 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
           key={index}
           onPress={() => {
             console.log('Clicked');
-            navigation.navigate('StorageMyTabs', {
+            navigation.navigate(RouteNames.STORAGE_TABS, {
               groupId: group._id,
             });
           }}>
@@ -126,6 +126,7 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
               <Text
                 style={{
                   width: '50%',
+                  color: Colors.text.lightgrey,
                 }}
                 ellipsizeMode={'tail'}
                 numberOfLines={1}>
@@ -137,7 +138,9 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
                 Số lượng thành viên:{' '}
               </Text>
-              <Text>{group.noOfMember}</Text>
+              <Text style={{color: Colors.text.lightgrey}}>
+                {group.noOfMember}
+              </Text>
             </View>
           </View>
         </TouchableOpacity>

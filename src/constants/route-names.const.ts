@@ -49,6 +49,7 @@ export default {
   STORAGE_STACK_BOTTOM: 'STORAGE_STACK_BOTTOM',
   STORAGE_GROUPS: 'Danh sách nhóm',
   MANAGEMENT_SCREEN: 'Quản lý nhu yếu phẩm',
+  STORAGE_TABS: 'STORY_TABS',
   STORAGE: 'Nơi lưu trữ',
   PRODUCTS: 'Nhu yếu phẩm',
   PURCHASE_LOCATIONS: 'Nơi mua sắm',

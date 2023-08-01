@@ -93,11 +93,11 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
   };
 
   return (
-    <View
+    <ScrollView
     // contentContainerStyle={styles.container}
     // nestedScrollEnabled={true}
     >
-      <KeyboardAvoidingView style={styles.contentContainer}>
+      <KeyboardAvoidingView style={styles.container}>
         <View style={styles.imageContainer}>
           <Image
             source={{
@@ -157,7 +157,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   fontWeight: 'bold',
                   alignSelf: 'flex-start',
                   color: Colors.text.orange,
-                  marginBottom: 10,
+                  // marginBottom: 10,
                 }}>
                 Tên địa điểm
               </Text>
@@ -194,7 +194,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   fontWeight: 'bold',
                   alignSelf: 'flex-start',
                   color: Colors.text.orange,
-                  marginVertical: 10,
+                  marginTop: 10,
                 }}>
                 Địa chỉ chi tiết
               </Text>
@@ -227,7 +227,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
           )}
         </Formik>
       </KeyboardAvoidingView>
-    </View>
+    </ScrollView>
   );
 };
 

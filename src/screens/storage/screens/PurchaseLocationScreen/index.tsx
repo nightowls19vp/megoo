@@ -69,7 +69,7 @@ const PurchaseLocationScreen = ({navigation}: {navigation: any}) => {
                 ]}>
                 Nơi mua sắm:
               </Text>
-              <Text style={styles.text} numberOfLines={3}>
+              <Text style={styles.infoText} numberOfLines={3}>
                 {stoLoc?.name}
               </Text>
             </View>
@@ -84,7 +84,7 @@ const PurchaseLocationScreen = ({navigation}: {navigation: any}) => {
                 Địa chỉ:
               </Text>
               <Text
-                style={{...styles.text, flexWrap: 'wrap'}}
+                style={{...styles.infoText, flexWrap: 'wrap', marginTop: -5}}
                 numberOfLines={3}>
                 {Object.values(stoLoc?.address || {}).join(', ')}
               </Text>
@@ -105,10 +105,10 @@ const PurchaseLocationScreen = ({navigation}: {navigation: any}) => {
           justifyContent: 'space-between',
           alignItems: 'center',
         }}>
-        <Text style={styles.title}>Nơi lưu trữ</Text>
+        <Text style={styles.title}>Nơi mua sắm</Text>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate(RouteNames.ADD_STORAGE_LOCATION, {
+            navigation.navigate(RouteNames.ADD_PURCHASE_LOCATION, {
               groupId: props?.groupId,
             })
           }>
@@ -160,7 +160,7 @@ const PurchaseLocationScreen = ({navigation}: {navigation: any}) => {
                   fontWeight: 'bold',
                   color: Colors.icon.orange,
                 }}>
-                Thêm nơi lưu trữ
+                Thêm nơi mua sắm
               </Text>
               <TouchableOpacity
                 style={{

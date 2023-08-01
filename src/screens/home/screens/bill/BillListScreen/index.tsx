@@ -83,8 +83,8 @@ const BillListScreen = ({navigation}: {navigation: any}) => {
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.headingText}>Trạng thái: </Text>
-            {/* <Text style={styles.infoText}>{bill.status}</Text> */}
-            <Text style={styles.infoText}>Đang chờ thanh toán</Text>
+            <Text style={styles.infoText}>{bill.status}</Text>
+            {/* <Text style={styles.infoText}>Đang chờ thanh toán</Text> */}
           </View>
         </TouchableOpacity>
       );
