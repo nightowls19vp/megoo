@@ -51,6 +51,7 @@ import ProductsScreen from '../../../screens/storage/screens/ProductsScreen';
 import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScreen';
 import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
 import appStore from '../../store/app.store';
+import PurchaseLocationScreen from '../../../screens/storage/screens/PurchaseLocationScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -344,7 +345,7 @@ const StorageMyTabs = () => {
       />
       <StorageTopTabNavigator.Screen
         name={RouteNames.PURCHASE_LOCATIONS}
-        component={StorageLocationScreen}
+        component={PurchaseLocationScreen}
       />
       {/* <Tab.Screen  */}
     </StorageTopTabNavigator.Navigator>

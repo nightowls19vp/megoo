@@ -16,7 +16,7 @@ import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {IPurchaseLocation} from '../../interfaces/base-dto/purchase-location.interface';
-import * as sl from '../../services/storage-location.service';
+import * as ps from '../../services/purchase-locations.service';
 import {RouteParamsProductsScreen} from '../ProductsScreen/props-products-screen';
 import {IRouteParamsStorageLocationScreen} from './route-param.interface';
 import styles from './styles/style';
@@ -29,7 +29,7 @@ const PurchaseLocationScreen = ({navigation}: {navigation: any}) => {
   const [locations, setLocations] = useState<IPurchaseLocation[]>([]);
 
   useEffect(() => {
-    sl.getStorageLocationPaginated({
+    ps.getPurchaseLocationPaginated({
       groupId: '1',
     }).then(res => {
       setLocations(res.data);
@@ -67,7 +67,7 @@ const PurchaseLocationScreen = ({navigation}: {navigation: any}) => {
                     fontWeight: 'bold',
                   },
                 ]}>
-                Nơi lưu trữ:
+                Nơi mua sắm:
               </Text>
               <Text style={styles.text} numberOfLines={3}>
                 {stoLoc?.name}
@@ -81,10 +81,12 @@ const PurchaseLocationScreen = ({navigation}: {navigation: any}) => {
                     fontWeight: 'bold',
                   },
                 ]}>
-                Ghi chú:
+                Địa chỉ:
               </Text>
-              <Text style={styles.text} numberOfLines={3}>
-                {stoLoc.description}
+              <Text
+                style={{...styles.text, flexWrap: 'wrap'}}
+                numberOfLines={3}>
+                {Object.values(stoLoc?.address || {}).join(', ')}
               </Text>
             </View>
           </View>
