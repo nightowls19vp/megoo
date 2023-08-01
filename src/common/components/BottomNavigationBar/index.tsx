@@ -53,6 +53,7 @@ import StorageLocationScreen from '../../../screens/storage/screens/StorageLocat
 import appStore from '../../store/app.store';
 import PurchaseLocationScreen from '../../../screens/storage/screens/PurchaseLocationScreen';
 import groupStore from '../../store/group.store';
+import {useNavigation} from '@react-navigation/native';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -112,23 +113,6 @@ const BillListScreenStack = () => {
       <BillStack.Screen
         name={RouteNames.BILL_INFO}
         component={BillInfoScreen}
-        options={{
-          headerShown: true,
-          // headerRight: () => {
-          //   return (
-          //     <TouchableOpacity>
-          //       <Text
-          //         style={{
-          //           color: Colors.text.orange,
-          //           fontWeight: 'bold',
-          //           fontSize: 18,
-          //         }}>
-          //         Lưu
-          //       </Text>
-          //     </TouchableOpacity>
-          //   );
-          // },
-        }}
       />
       <BillListStack.Screen
         name={RouteNames.GROUP_BILL_LIST}
@@ -136,6 +120,34 @@ const BillListScreenStack = () => {
         // options={{headerShown: false}}
       />
     </BillListStack.Navigator>
+  );
+};
+
+const TodosTopTabNavigator = createMaterialTopTabNavigator();
+
+const TodosTabs = () => {
+  const navigation = useNavigation();
+  return (
+    <TodosTopTabNavigator.Navigator
+      screenOptions={{
+        tabBarIndicatorStyle: {
+          backgroundColor: Colors.text.orange,
+        },
+      }}>
+      <TodosTopTabNavigator.Screen
+        name={RouteNames.PRIVATE_TODOS_TAB}
+        children={() => {
+          return <TodosListScreen navigation={navigation} state={'Private'} />;
+        }}
+      />
+      <TodosTopTabNavigator.Screen
+        name={RouteNames.PUBLIC_TODOS_TAB}
+        children={() => {
+          return <TodosListScreen navigation={navigation} state={'Public'} />;
+        }}
+      />
+      {/* <Tab.Screen  */}
+    </TodosTopTabNavigator.Navigator>
   );
 };
 
@@ -167,7 +179,7 @@ const TodosListScreenStack = () => {
       />
       <TodosListStack.Screen
         name={RouteNames.TODOS_TAB}
-        component={TodosTabScreen}
+        component={TodosTabs}
         // options={{headerShown: false}}
       />
       <TodosListStack.Screen

@@ -1,7 +1,9 @@
+import {observer} from 'mobx-react';
 import {useEffect, useState} from 'react';
 import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 
 import {IMAGE_URI_DEFAULT} from '../../../../../common/default';
+import groupStore from '../../../../../common/store/group.store';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../../services/group.service';
@@ -66,6 +68,7 @@ const GroupTodosListScreen = ({navigation}: {navigation: any}) => {
           style={styles.groupContainer}
           key={index}
           onPress={() => {
+            groupStore.setGroupId(group._id);
             navigation.navigate(RouteNames.TODOS_TAB, {
               groupId: group._id,
               activeTab: 'Private',
@@ -117,4 +120,4 @@ const GroupTodosListScreen = ({navigation}: {navigation: any}) => {
   );
 };
 
-export default GroupTodosListScreen;
+export default observer(GroupTodosListScreen);

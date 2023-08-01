@@ -24,6 +24,8 @@ export default {
   TODOS_LIST: 'Danh sách công việc',
   CREATE_TODOS: 'Tạo công việc',
   TODOS: 'Việc cần làm',
+  PRIVATE_TODOS_TAB: 'Cá nhân',
+  PUBLIC_TODOS_TAB: 'Nhóm',
 
   GROUP_TASK_LIST: 'Danh sách nhóm',
   TASK_LIST_STACK: 'TASK_LIST_STACK',

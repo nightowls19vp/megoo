@@ -15,6 +15,7 @@ import {useCallback, useEffect, useState} from 'react';
 import {getBillList} from './services/bill-list.service';
 import styles from './styles/style';
 import {dateFormat} from '../../../../../common/handle.string';
+import {changeStatusBillToVietnamese} from './../../../../../common/handle.string';
 
 // Define the type for the route params
 type GroupRouteParams = {
@@ -58,6 +59,7 @@ const BillListScreen = ({navigation}: {navigation: any}) => {
 
   const renderBillList = () => {
     return billList.map((bill: any, index) => {
+      const viStatus = changeStatusBillToVietnamese(bill.status);
       return (
         <TouchableOpacity
           key={index}
@@ -83,7 +85,7 @@ const BillListScreen = ({navigation}: {navigation: any}) => {
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.headingText}>Trạng thái: </Text>
-            <Text style={styles.infoText}>{bill.status}</Text>
+            <Text style={styles.infoText}>{viStatus}</Text>
             {/* <Text style={styles.infoText}>Đang chờ thanh toán</Text> */}
           </View>
         </TouchableOpacity>

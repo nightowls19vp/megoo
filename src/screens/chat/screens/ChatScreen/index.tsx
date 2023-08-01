@@ -178,7 +178,7 @@ const ChatScreen = () => {
 
         console.log('Get channel from SB:', channel.url);
         getMessages(channel).then((messages: any) => {
-          console.log('abc msg:', messages.length);
+          console.log('abc msg:', messages);
 
           setMessages(messages);
         });

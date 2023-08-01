@@ -18,6 +18,8 @@ export const getTodosList = async (groupId: string) => {
       },
     });
 
+    console.log('Get todos response:', response.data);
+
     return response.data;
   } catch (error) {
     console.log('Get todos error: ', error);

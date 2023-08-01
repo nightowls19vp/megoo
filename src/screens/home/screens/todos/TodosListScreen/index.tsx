@@ -15,14 +15,16 @@ import {getTodosList} from './services/todos.list.service';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import userStore from './../../../../../common/store/user.store';
+import groupStore from '../../../../../common/store/group.store';
+import {observer} from 'mobx-react';
 
-// Define the type for the route params
-type GroupRouteParams = {
-  groupId: string;
-};
+// // Define the type for the route params
+// type GroupRouteParams = {
+//   groupId: string;
+// };
 
-// Specify the type for the route
-type GroupRouteProp = RouteProp<Record<string, GroupRouteParams>, string>;
+// // Specify the type for the route
+// type GroupRouteProp = RouteProp<Record<string, GroupRouteParams>, string>;
 
 const TodosListScreen = ({
   navigation,
@@ -31,21 +33,20 @@ const TodosListScreen = ({
   navigation: any;
   state: string;
 }) => {
-  const route = useRoute<GroupRouteProp>();
-  const groupId = route?.params?.groupId;
+  // const route = useRoute<GroupRouteProp>();
+  // const groupId = route?.params?.groupId;
 
   const [todos, setTodos] = useState([]);
 
   const getAllTodos = async () => {
-    const todosRes = await getTodosList(groupId);
-    console.log('userStore.id:', userStore.id);
-
-    // console.log('todos', JSON.stringify(todosRes, null, 2));
+    const todosRes = await getTodosList(groupStore.id);
+    console.log('groupStore.id:', groupStore.id);
+    console.log('todosRes', JSON.stringify(todosRes.data, null, 2));
 
     if (state === 'Private') {
       // Find all todos with the status 'Private'
       // and created by the currently logged-in user
-      const privateTodos = todosRes.group.todos.filter(
+      const privateTodos = todosRes?.group?.todos?.filter(
         (todos: any) =>
           todos.state === 'Private' && todos.createdBy._id === userStore.id,
       );
@@ -110,7 +111,7 @@ const TodosListScreen = ({
   };
 
   useEffect(() => {
-    console.log('groupId:', groupId);
+    console.log('groupId:', groupStore.id);
     console.log('state:', state);
 
     getAllTodos();
@@ -199,7 +200,7 @@ const TodosListScreen = ({
         <TouchableOpacity
           onPress={() => {
             navigation.navigate(RouteNames.CREATE_TODOS, {
-              groupId: groupId,
+              groupId: groupStore.id,
             });
           }}>
           <Ionicons
@@ -241,4 +242,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TodosListScreen;
+export default observer(TodosListScreen);

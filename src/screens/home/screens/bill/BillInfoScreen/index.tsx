@@ -17,7 +17,7 @@ import {ProgressView} from '@react-native-community/progress-view';
 import {RouteProp, useRoute} from '@react-navigation/native';
 
 import {IMAGE_URI_DEFAULT} from '../../../../../common/default';
-import {dateFormat} from '../../../../../common/handle.string';
+import {dateFormat, splitString} from '../../../../../common/handle.string';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import {
@@ -48,12 +48,11 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
   const [summary, setSummary] = useState('');
   const [description, setDescription] = useState('');
 
-  const [openBorrowers, setOpenBorrowers] = useState(false);
-  const [borrowerStatus, setBorrowerStatus] = useState(null);
+  const [borrowerStatus, setBorrowerStatus] = useState<string[]>([]);
   const [status, setStatus] = useState([
-    {label: 'PENDING', value: 'PENDING'},
-    {label: 'DONE', value: 'DONE'},
-    {label: 'CANCELED', value: 'CANCELED'},
+    {label: 'Chờ thanh toán', value: 'PENDING'},
+    {label: 'Đã xác nhận', value: 'APPROVED'},
+    {label: 'Hủy', value: 'CANCELED'},
   ]);
 
   const [dropdownStates, setDropdownStates] = useState<boolean[]>([]);
@@ -114,7 +113,9 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
 
     setSummary(bill?.billing?.summary ?? '');
     setDescription(bill?.billing?.description ?? '');
-    setBorrowerStatus(bill?.billing?.borrowers[0]?.status ?? null);
+    setBorrowerStatus(
+      bill?.billing?.borrowers.map((borrower: any) => borrower.status),
+    );
     setDropdownStates(bill?.billing?.borrowers.map((borrower: any) => false));
   };
 
@@ -138,6 +139,10 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
   useEffect(() => {
     console.log('dropdownStates:', dropdownStates);
   }, [dropdownStates]);
+
+  useEffect(() => {
+    console.log('borrowerStatus:', borrowerStatus);
+  }, [borrowerStatus]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -268,14 +273,17 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                 </View>
                 <View style={styles.infoRow}>
                   <Text style={styles.headingText}>Số tiền:</Text>
-                  <Text style={styles.text}>{borrower.amount} VND</Text>
+                  <Text style={styles.text}>
+                    {splitString(borrower.amount)} VND
+                  </Text>
                 </View>
                 <View style={[styles.infoRow, {alignItems: 'center'}]}>
                   <Text style={styles.headingText}>Trạng thái:</Text>
                   {userStore.id === bill.lender._id ? (
                     <DropDownPicker
+                      listMode="SCROLLVIEW"
                       containerStyle={{
-                        width: '50%',
+                        width: '60%',
                       }}
                       dropDownContainerStyle={{
                         borderColor: Colors.border.lightgrey,
@@ -287,7 +295,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                       dropDownDirection="BOTTOM"
                       selectedItemLabelStyle={{color: Colors.title.orange}}
                       open={dropdownStates[index]}
-                      value={borrowerStatus}
+                      value={borrowerStatus[index]}
                       items={status}
                       placeholder="Chọn người mượn"
                       placeholderStyle={{color: Colors.text.lightgrey}}
@@ -300,6 +308,10 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                       setItems={setStatus}
                       onSelectItem={(item: any) => {
                         console.log('item', item);
+
+                        const newStatus = [...borrowerStatus];
+                        newStatus[index] = item.value;
+                        setBorrowerStatus(newStatus);
                       }}
                     />
                   ) : (
