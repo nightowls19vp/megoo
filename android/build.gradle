@@ -13,6 +13,9 @@ buildscript {
         googlePlayServicesAuthVersion = "19.2.0"
 
         kotlinVersion = '1.6.20'
+
+        VisionCameraCodeScanner_targetSdkVersion = 31 //add
+        VisionCameraCodeScanner_compileSdkVersion = 31 //add
     }
     repositories {
         google()

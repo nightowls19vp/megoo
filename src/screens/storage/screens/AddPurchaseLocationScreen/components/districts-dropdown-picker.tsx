@@ -84,7 +84,7 @@ const GroupProductDropdownPicker: React.FC<
         style={{
           borderColor: Colors.border.lightgrey,
         }}
-        listMode="MODAL"
+        listMode="FLATLIST"
         placeholder="Chọn quận/huyện"
         scrollViewProps={{
           nestedScrollEnabled: true,

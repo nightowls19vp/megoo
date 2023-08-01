@@ -108,7 +108,7 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
           key={index}
           onPress={() => {
             console.log('Clicked');
-            navigation.navigate(RouteNames.STORAGE, {
+            navigation.navigate('StorageMyTabs', {
               groupId: group._id,
             });
           }}>

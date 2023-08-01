@@ -70,7 +70,7 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
         backgroundColor: Colors.background.white,
         borderRadius: 10,
         // marginVertical: 10,
-        zIndex: zIndex,
+        zIndex: 10 * zIndex,
       }}>
       <View
         style={{
@@ -93,7 +93,7 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
         </Text>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate(RouteNames.ADD_STORAGE_LOCATION, {})
+            navigation.navigate(RouteNames.ADD_PURCHASE_LOCATION, {})
           }>
           <Ionicons
             name="add-circle-outline"
@@ -103,7 +103,7 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
         </TouchableOpacity>
       </View>
       <DropDownPicker
-        listMode="MODAL"
+        listMode="SCROLLVIEW"
         scrollViewProps={{
           nestedScrollEnabled: true,
         }}

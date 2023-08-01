@@ -93,9 +93,10 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      nestedScrollEnabled={true}>
+    <View
+    // contentContainerStyle={styles.container}
+    // nestedScrollEnabled={true}
+    >
       <KeyboardAvoidingView style={styles.contentContainer}>
         <View style={styles.imageContainer}>
           <Image
@@ -226,7 +227,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
           )}
         </Formik>
       </KeyboardAvoidingView>
-    </ScrollView>
+    </View>
   );
 };
 

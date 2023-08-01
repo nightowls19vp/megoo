@@ -1,60 +1,54 @@
-import {View, Text, TouchableOpacity, Button} from 'react-native';
+import {Button, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import {Colors} from '../../../constants/color.const';
 import RouteNames from '../../../constants/route-names.const';
-import appStore from './../../store/app.store';
-
-import ProfileScreen from '../../../screens/profile/screens/ProfileScreen';
-import SettingsScreen from '../../../screens/settings/screens/SettingsScreen';
-import AppInfoScreen from './../../../screens/settings/screens/AppInfoScreen';
-import PoliciesScreen from './../../../screens/settings/screens/PoliciesScreen';
-
-import PackageScreen from '../../../screens/package/screens/PackageScreen';
-import CartScreen from '../../../screens/package/screens/CartScreen';
-import PaymentScreen from '../../../screens/package/screens/PaymentScreen';
-
-import UserInfoScreen from '../../../screens/profile/screens/UserInfoScreen';
-import EditProfileScreen from '../../../screens/profile/screens/EditProfileScreen';
-import GroupInfoScreen from '../../../screens/profile/screens/GroupInfoScren';
-import GroupsScreen from '../../../screens/profile/screens/GroupsScreen';
-import CurrentPackage from '../../../screens/profile/screens/CurrentPackageScreen';
-import OtherPackages from '../../../screens/profile/screens/OtherPackages';
-import EditGroupInfoScreen from '../../../screens/profile/screens/EditGroupInfoScreen';
-
-import GroupsProductsListScreen from '../../../screens/storage/screens/GroupsScreen';
-import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
-import AddStorageLocationScreen from '../../../screens/storage/screens/AddStorageLocationScreen';
-import AddPurchaseLocationScreen from '../../../screens/storage/screens/AddPurchaseLocationScreen';
-import AddGroupProductScreen from '../../../screens/storage/screens/AddGroupProductScreen';
-import ProductsScreen from '../../../screens/storage/screens/ProductsScreen';
-import ProductDetailScreen from '../../../screens/storage/screens/ProductDetailScreen';
-import AddProdInfoScreen from '../../../screens/storage/screens/AddProdInfoScreen';
-import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScreen';
-
 import ChatScreen from '../../../screens/chat/screens/ChatScreen';
 import GroupChatListScreen from '../../../screens/chat/screens/GroupChatListScreen';
-
 import HomeScreen from '../../../screens/home';
-
-import GroupBillListScreen from '../../../screens/home/screens/bill/GroupBillListScreen';
+import BillInfoScreen from '../../../screens/home/screens/bill/BillInfoScreen';
 import BillListScreen from '../../../screens/home/screens/bill/BillListScreen';
 import BillScreen from '../../../screens/home/screens/bill/BillScreen';
-import BillInfoScreen from '../../../screens/home/screens/bill/BillInfoScreen';
-
+import GroupBillListScreen from '../../../screens/home/screens/bill/GroupBillListScreen';
+import CreateTaskScreen from '../../../screens/home/screens/task/CreateTaskScreen';
+import GroupTaskListScreen from '../../../screens/home/screens/task/GroupTaskListScreen';
+import TaskListScreen from '../../../screens/home/screens/task/TaskListScreen';
+import CreateTodosScreen from '../../../screens/home/screens/todos/CreateTodosScreen';
 import GroupTodosListScreen from '../../../screens/home/screens/todos/GroupTodosListScreen';
 import TodosListScreen from '../../../screens/home/screens/todos/TodosListScreen';
 import TodosScreen from '../../../screens/home/screens/todos/TodosScreen';
 import TodosTabScreen from '../../../screens/home/screens/todos/TodosTabScreen';
-import CreateTodosScreen from '../../../screens/home/screens/todos/CreateTodosScreen';
-
-import GroupTaskListScreen from '../../../screens/home/screens/task/GroupTaskListScreen';
-import TaskListScreen from '../../../screens/home/screens/task/TaskListScreen';
-import CreateTaskScreen from '../../../screens/home/screens/task/CreateTaskScreen';
+import CartScreen from '../../../screens/package/screens/CartScreen';
+import PackageScreen from '../../../screens/package/screens/PackageScreen';
+import PaymentScreen from '../../../screens/package/screens/PaymentScreen';
+import CurrentPackage from '../../../screens/profile/screens/CurrentPackageScreen';
+import EditGroupInfoScreen from '../../../screens/profile/screens/EditGroupInfoScreen';
+import EditProfileScreen from '../../../screens/profile/screens/EditProfileScreen';
+import GroupInfoScreen from '../../../screens/profile/screens/GroupInfoScren';
+import GroupsScreen from '../../../screens/profile/screens/GroupsScreen';
+import OtherPackages from '../../../screens/profile/screens/OtherPackages';
+import ProfileScreen from '../../../screens/profile/screens/ProfileScreen';
+import UserInfoScreen from '../../../screens/profile/screens/UserInfoScreen';
+import AppInfoScreen from '../../../screens/settings/screens/AppInfoScreen';
+import PoliciesScreen from '../../../screens/settings/screens/PoliciesScreen';
+import SettingsScreen from '../../../screens/settings/screens/SettingsScreen';
+import AddGroupProductScreen from '../../../screens/storage/screens/AddGroupProductScreen';
+import AddProdInfoScreen from '../../../screens/storage/screens/AddProdInfoScreen';
+import AddPurchaseLocationScreen from '../../../screens/storage/screens/AddPurchaseLocationScreen';
+import AddStorageLocationScreen from '../../../screens/storage/screens/AddStorageLocationScreen';
+import GroupsProductsListScreen from '../../../screens/storage/screens/GroupsScreen';
+import ManagementScreen from '../../../screens/storage/screens/ManagementScreen';
+import ProductDetailScreen from '../../../screens/storage/screens/ProductDetailScreen';
+import ProductsScreen from '../../../screens/storage/screens/ProductsScreen';
+import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScreen';
+import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
+import appStore from '../../store/app.store';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -321,7 +315,30 @@ const AddProductScreenStack = () => {
   );
 };
 
+const StorageTopTabNavigator = createMaterialTopTabNavigator();
+
+const StorageMyTabs = () => {
+  return (
+    <StorageTopTabNavigator.Navigator>
+      <StorageTopTabNavigator.Screen
+        name={RouteNames.PRODUCTS}
+        component={ProductsScreen}
+      />
+      <StorageTopTabNavigator.Screen
+        name={RouteNames.STORAGE}
+        component={StorageLocationScreen}
+      />
+      <StorageTopTabNavigator.Screen
+        name={RouteNames.PURCHASE_LOCATIONS}
+        component={StorageLocationScreen}
+      />
+      {/* <Tab.Screen  */}
+    </StorageTopTabNavigator.Navigator>
+  );
+};
+
 const StorageStack = createNativeStackNavigator();
+
 const StorageScreenStack = () => {
   return (
     <StorageStack.Navigator initialRouteName={RouteNames.STORAGE_GROUPS}>
@@ -329,10 +346,7 @@ const StorageScreenStack = () => {
         name={appStore.isLoggedIn ? RouteNames.STORAGE_GROUPS : 'Quản lý gói'}
         component={GroupsProductsListScreen}
       />
-      <StorageStack.Screen
-        name={RouteNames.STORAGE}
-        component={StorageLocationScreen}
-      />
+      <StorageStack.Screen name={'StorageMyTabs'} component={StorageMyTabs} />
       <StorageStack.Screen
         name={RouteNames.PRODUCTS}
         component={ProductsScreen}

@@ -260,7 +260,6 @@ const CartScreen = ({navigation}: {navigation: any}) => {
             </View>
             <View style={styles.cartInfoContainer}>
               <Text style={styles.text}>Số lượng:</Text>
-
               <NumericInput
                 type="plus-minus"
                 minValue={1}
@@ -268,12 +267,12 @@ const CartScreen = ({navigation}: {navigation: any}) => {
                 value={object.quantity}
                 totalWidth={150}
                 totalHeight={35}
-                iconStyle={{fontSize: 20, color: Colors.text.white}}
+                iconStyle={{fontSize: 20, color: Colors.text.white} as any}
                 rightButtonBackgroundColor="#32CD32"
                 leftButtonBackgroundColor="#FF2400"
                 rounded={true}
                 textColor={Colors.text.grey}
-                inputStyle={{fontSize: 14}}
+                inputStyle={{fontSize: 14} as any}
                 onChange={(num: number) => {
                   const index = cartList.findIndex(
                     (cartItem: any) =>
