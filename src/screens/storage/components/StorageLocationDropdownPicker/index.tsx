@@ -1,5 +1,5 @@
 import {observer} from 'mobx-react';
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -7,6 +7,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import * as sl from '../../services/storage-location.service';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import styles from '../../screens/AddGroupProductScreen/styles/style';
+
+import {Dropdown} from 'react-native-element-dropdown';
 
 interface IProps {
   groupId: string;
@@ -29,6 +33,7 @@ const StorageLocationDropdownPicker: React.FC<IProps> = ({
       value: string;
     }[]
   >([]);
+  const [isFocus, setIsFocus] = useState(false);
 
   useEffect(() => {
     search('');
@@ -102,7 +107,27 @@ const StorageLocationDropdownPicker: React.FC<IProps> = ({
         </TouchableOpacity>
       </View>
 
-      <DropDownPicker
+      <Dropdown
+        placeholderStyle={{
+          color: Colors.text.lightgrey,
+        }}
+        data={items}
+        search
+        maxHeight={300}
+        labelField="label"
+        valueField="value"
+        placeholder={!isFocus ? '"Chọn vị trí lưu trữ"' : '...'}
+        searchPlaceholder="Search..."
+        value={value}
+        onFocus={() => setIsFocus(true)}
+        onBlur={() => setIsFocus(false)}
+        onChange={item => {
+          setValue(item.value as any);
+          setIsFocus(false);
+        }}
+      />
+
+      {/* <DropDownPicker
         listMode="MODAL"
         scrollViewProps={{
           nestedScrollEnabled: true,
@@ -144,7 +169,7 @@ const StorageLocationDropdownPicker: React.FC<IProps> = ({
         disableLocalSearch={true} // required for remote search
         onChangeSearchText={text => search(text)} // required for remote search
         autoScroll={true}
-      />
+      /> */}
     </View>
   );
 };
