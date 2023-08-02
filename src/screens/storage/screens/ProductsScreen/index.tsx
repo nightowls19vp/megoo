@@ -331,6 +331,25 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
         contentContainerStyle={styles.container}
         onEndReached={fetchMoreData} // Add your function to fetch more data here
         onEndReachedThreshold={0.2} // Adjust the threshold as needed
+        ListEmptyComponent={() => (
+          <View
+            style={{
+              marginTop: 20,
+            }}>
+            <Text>
+              Không có sản phẩm
+              <Text
+                style={{
+                  color: Colors.text.orange,
+                }}>
+                {searchStore.searchText.length > 0
+                  ? ' ' + searchStore.searchText + ' '
+                  : ' '}
+              </Text>
+              nào
+            </Text>
+          </View>
+        )}
       />
     </View>
   );
