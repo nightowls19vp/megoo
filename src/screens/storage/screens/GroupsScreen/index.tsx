@@ -15,6 +15,7 @@ import * as sl from '../../services/storage-location.service';
 import styles from './styles/style';
 import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
+import groupStore from '../../../../common/store/group.store';
 
 const GroupProductListScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
@@ -59,45 +60,15 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
   };
 
   useEffect(() => {
+    // this screen is searchable
+    appStore.setSearchActive(true);
+
     getGroups();
 
-    //!TEST test api
-    // // get group products paginated
-    // gp.getGroupProductPaginated({
-    //   groupId: '1',
-    //   limit: 1,
-    // })
-    //   .then(res => {
-    //     console.log(
-    //       'GroupProductsService.getGroupProductPaginated res:',
-    //       JSON.stringify(res, null, 2),
-    //     );
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
-
-    //* storage location
-    // sl.getStorageLocationPaginated({
-    //   groupId: undefined,
-    //   limit: 1,
-    // } as any).then(res => {
-    //   console.log(
-    //     'StorageLocationService.getStorageLocationPaginated res:',
-    //     JSON.stringify(res, null, 2),
-    //   );
-    // });
-
-    //* purchase location
-    // pl.getPurchaseLocationPaginated({
-    //   groupId: '1',
-    //   limit: 1,
-    // }).then(res => {
-    //   console.log(
-    //     'PurchaseLocationService.getPurchaseLocationPaginated res:',
-    //     JSON.stringify(res, null, 2),
-    //   );
-    // });
+    // reset searchActive when unmount
+    return () => {
+      appStore.setSearchActive(false);
+    };
   }, []);
 
   const renderGroupItem = () => {
@@ -108,6 +79,9 @@ const GroupProductListScreen = ({navigation}: {navigation: any}) => {
           key={index}
           onPress={() => {
             console.log('Clicked');
+
+            groupStore.setGroupId(group._id);
+
             navigation.navigate(RouteNames.STORAGE_TABS, {
               groupId: group._id,
             });

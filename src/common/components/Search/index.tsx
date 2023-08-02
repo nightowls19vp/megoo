@@ -6,6 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import appStore from '../../store/app.store';
 import searchStore from '../../store/search.store';
 import {styles} from './styles';
+import {observer} from 'mobx-react';
 
 const SearchComp = () => {
   const [inputValue, setInputValue] = useState<string>('');
@@ -40,4 +41,4 @@ const SearchComp = () => {
   ) : null;
 };
 
-export default SearchComp;
+export default observer(SearchComp);

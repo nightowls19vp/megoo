@@ -1,3 +1,4 @@
+import {observer} from 'mobx-react';
 import moment from 'moment';
 import {useCallback, useEffect, useState} from 'react';
 import {
@@ -15,18 +16,19 @@ import {Camera, useCameraDevices} from 'react-native-vision-camera';
 
 import {useRoute} from '@react-navigation/native';
 
+import appStore from '../../../../common/store/app.store';
+import groupStore from '../../../../common/store/group.store';
+import searchStore from '../../../../common/store/search.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {IItem} from '../../interfaces/base-dto/item.interface';
+import {IGetItemsPaginatedRes} from '../../interfaces/items';
 import * as i from '../../services/items.service';
 import {
   PropsProductsScreen,
   RouteParamsProductsScreen,
 } from './props-products-screen';
 import styles from './styles/styles';
-import searchStore from '../../../../common/store/search.store';
-import {IGetItemsPaginatedRes} from '../../interfaces/items';
-import {observer} from 'mobx-react';
 
 const ProductsScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<PropsProductsScreen>();
@@ -50,35 +52,44 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
   useEffect(() => {
     requestCameraPermission();
 
+    if (groupStore.id === '' || !groupStore.id) {
+      return;
+    }
+
     // fetch the first 10 items
     i.getItemPaginated({
-      groupId: route?.params?.groupId || '1',
+      groupId: groupStore.id,
 
       // limit: 10,
     }).then(res => {
-      console.log('res: ', res);
+      console.log('res getItemPaginated: ', res.data.length);
 
       setItems(res.data);
     });
 
     // set the service for search feature
-    searchStore.setSearchService(i.getItemPaginated);
-    searchStore.setSearchParams([
-      {
-        groupId: route?.params?.groupId || '1',
-      },
-    ]);
-    searchStore.doSearch();
+    // searchStore.setSearchService(i.getItemPaginated);
+    // searchStore.setSearchParams([
+    //   {
+    //     groupId: route?.params?.groupId || '1',
+    //   },
+    // ]);
+    // searchStore.doSearch();
+
+    // reset searchActive when unmount
+    return () => {
+      appStore.setSearchActive(false);
+    };
   }, []);
 
-  useEffect(() => {
-    // search result changed
-    console.log('search result changed');
+  // useEffect(() => {
+  //   // search result changed
+  //   console.log('search result changed');
 
-    const searchResult = searchStore.searchResult as IGetItemsPaginatedRes;
+  //   const searchResult = searchStore.searchResult as IGetItemsPaginatedRes;
 
-    setItems(searchResult?.data || []);
-  }, [searchStore.searchResult]);
+  //   setItems(searchResult?.data || []);
+  // }, [searchStore.searchResult]);
 
   const openCamera = useCallback(() => {
     setModalVisible(false);

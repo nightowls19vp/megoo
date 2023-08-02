@@ -14,6 +14,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import appStore from '../../../../common/store/app.store';
+import groupStore from '../../../../common/store/group.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {IStorageLocation} from '../../interfaces/base-dto/storage-location.interface';
@@ -30,11 +31,20 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
   const [locations, setLocations] = useState<IStorageLocation[]>([]);
 
   useEffect(() => {
+    if (groupStore.id === '' || !groupStore.id) {
+      return;
+    }
+
     sl.getStorageLocationPaginated({
-      groupId: '1',
+      groupId: groupStore.id,
     }).then(res => {
       setLocations(res.data);
     });
+
+    // reset searchActive when unmount
+    return () => {
+      appStore.setSearchActive(false);
+    };
   }, []);
 
   const renderLocationItem = () => {
