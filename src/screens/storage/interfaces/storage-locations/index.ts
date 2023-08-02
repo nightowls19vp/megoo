@@ -33,6 +33,8 @@ export interface IGetStorageLocationByIdReq {
 export interface IGetStorageLocationByIdRes extends IBaseRes {
   data?: IStorageLocation;
 }
+
+//id,name,addedBy,description,timestamp.createdAt,timestamp.updatedAt,timestamp.deletedAt
 export type TypeColumnGetStorageLocationsPaginated =
   | 'id'
   | 'name'
@@ -42,8 +44,11 @@ export type TypeColumnGetStorageLocationsPaginated =
   | 'timestamp.updatedAt'
   | 'timestamp.deletedAt';
 
+//name,addedBy,description
 export type TypeGetStorageLocationsPaginatedSearchBy =
-  | `${TypeColumnGetStorageLocationsPaginated}`;
+  | 'name'
+  | 'addedBy'
+  | 'description';
 
 export type TypeGetStorageLocationsPaginatedSortBy =
   | `${TypeColumnGetStorageLocationsPaginated}:${'ASC' | 'DESC'}`;

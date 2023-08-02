@@ -1,36 +1,46 @@
 import {Formik} from 'formik';
-import React, {Fragment, useState} from 'react';
+import {observer} from 'mobx-react';
+import React, {Fragment, useEffect, useRef, useState} from 'react';
 import {Button, TextInput, TouchableOpacity, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import appStore from '../../store/app.store';
 import searchStore from '../../store/search.store';
 import {styles} from './styles';
-import {observer} from 'mobx-react';
 
 const SearchComp = () => {
   const [inputValue, setInputValue] = useState<string>('');
+  const inputRef = useRef<TextInput>(null);
 
   const handleInputChange = (text: string) => {
     setInputValue(text);
-    console.log('text: ', text);
+    console.log(`${new Date()} text: `, text);
+
+    // searchStore.setSearchText(inputValue);
   };
 
-  const onPress = () => {
-    console.log('Search button pressed');
+  // listen to change of `searchText` in `searchStore`
+  useEffect(() => {
+    setInputValue(searchStore.searchText);
+  }, [searchStore.searchText]);
 
-    // do search
-    searchStore.setSearchText(inputValue);
-    if (inputValue !== '') {
-      searchStore.doSearch();
+  const onPress = () => {
+    if (inputRef.current) {
+      inputRef.current.blur(); // Blurs the input when the button is clicked
     }
+
+    console.log('Search button pressed, change `isPerformingSearch` to true');
+    searchStore.setSearchText(inputValue);
+    searchStore.setIsPerformingSearch(true);
   };
 
   return appStore.searchActive ? (
     <Fragment>
       <TextInput
+        ref={inputRef}
         value={inputValue}
         onChangeText={handleInputChange}
+        onSubmitEditing={onPress}
         placeholder="Tìm kiếm ..."
         style={styles.textInput}
       />

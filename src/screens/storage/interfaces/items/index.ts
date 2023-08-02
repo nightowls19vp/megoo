@@ -1,5 +1,6 @@
 import {IBaseRes} from '../base-dto/base-res.interface';
 import {IItem} from '../base-dto/item.interface';
+import {FilterOperator, FilterSuffix} from '../common/paginated-filter-options';
 import {IPaginatedReq} from '../common/paginated-req.interface';
 import {IPaginatedRes} from '../common/paginated-res.interface';
 
@@ -31,7 +32,59 @@ export interface IGetItemByIdRes extends IBaseRes {
 
 /** GET ITEMS **PAGINATED** */
 
-export interface IGetItemsPaginatedReq extends IPaginatedReq {}
+//id,addedBy,bestBefore,quantity,unit,timestamp.createdAt,timestamp.updatedAt,timestamp.deletedAt,groupProduct.id,groupProduct.barcode,groupProduct.name,groupProduct.category,groupProduct.brand,groupProduct.description,groupProduct.price,groupProduct.region,purchaseLocation.id,storageLocation.id
+export type TypeColumnGetItemsPaginated =
+  | 'id'
+  | 'addedBy'
+  | 'bestBefore'
+  | 'quantity'
+  | 'unit'
+  | 'timestamp.createdAt'
+  | 'timestamp.updatedAt'
+  | 'timestamp.deletedAt'
+  | 'groupProduct.id'
+  | 'groupProduct.barcode'
+  | 'groupProduct.name'
+  | 'groupProduct.category'
+  | 'groupProduct.brand'
+  | 'groupProduct.description'
+  | 'groupProduct.price'
+  | 'groupProduct.region'
+  | 'purchaseLocation.id'
+  | 'storageLocation.id';
+
+//addedBy,bestBefore,quantity,unit,groupProduct.barcode,groupProduct.name,groupProduct.category,groupProduct.brand,groupProduct.description,groupProduct.price,groupProduct.region
+export type TypeGetItemsPaginatedSearchBy =
+  | 'addedBy'
+  | 'bestBefore'
+  | 'quantity'
+  | 'unit'
+  | 'groupProduct.barcode'
+  | 'groupProduct.name'
+  | 'groupProduct.category'
+  | 'groupProduct.brand'
+  | 'groupProduct.description'
+  | 'groupProduct.price'
+  | 'groupProduct.region';
+
+export type TypeGetItemsPaginatedSortBy =
+  | `${TypeColumnGetItemsPaginated}:${'ASC' | 'DESC'}`;
+
+export type TypeGetItemsPaginatedFilterKey = TypeColumnGetItemsPaginated;
+
+export type TypeGetItemsPaginatedFilterValue =
+  | `${FilterOperator}:${string}`
+  | `${FilterSuffix}:${FilterOperator}:${string}`;
+
+export interface IGetItemsPaginatedReq extends IPaginatedReq {
+  sortBy?: TypeGetItemsPaginatedSortBy[];
+
+  searchBy?: TypeGetItemsPaginatedSearchBy[];
+
+  filter?: Partial<
+    Record<TypeGetItemsPaginatedFilterKey, TypeGetItemsPaginatedFilterValue>
+  >;
+}
 
 export interface IGetItemsPaginatedRes extends IPaginatedRes<IItem> {
   statusCode: number;

@@ -32,6 +32,7 @@ export interface IGetGroupProductByIdRes extends IBaseRes {
 
 /** GET GROUP PRODUCTS **PAGINATED** */
 
+//id,barcode,name,category,brand,description,price,region,timestamp.createdAt,timestamp.updatedAt,timestamp.deletedAt
 export type TypeColumnGetGroupProductsPaginated =
   | 'id'
   | 'barcode'
@@ -45,11 +46,18 @@ export type TypeColumnGetGroupProductsPaginated =
   | 'timestamp.updatedAt'
   | 'timestamp.deletedAt';
 
+//barcode,name,category,brand,description,price,region
 export type TypeGetGroupProductsPaginatedSearchBy =
-  TypeColumnGetGroupProductsPaginated;
+  | 'barcode'
+  | 'name'
+  | 'category'
+  | 'brand'
+  | 'description'
+  | 'price'
+  | 'region';
 
 export type TypeGetGroupProductsPaginatedSortBy =
-  | `${TypeGetGroupProductsPaginatedSearchBy}:${'ASC' | 'DESC'}`;
+  | `${TypeColumnGetGroupProductsPaginated}:${'ASC' | 'DESC'}`;
 
 export type TypeGetGroupProductsPaginatedFilterKey =
   TypeColumnGetGroupProductsPaginated;

@@ -2,6 +2,7 @@ import {observer} from 'mobx-react';
 import moment from 'moment';
 import {useCallback, useEffect, useState} from 'react';
 import {
+  FlatList,
   Image,
   Linking,
   Modal,
@@ -22,13 +23,18 @@ import searchStore from '../../../../common/store/search.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {IItem} from '../../interfaces/base-dto/item.interface';
-import {IGetItemsPaginatedRes} from '../../interfaces/items';
+import {
+  IGetItemsPaginatedReq,
+  IGetItemsPaginatedRes,
+} from '../../interfaces/items';
 import * as i from '../../services/items.service';
 import {
   PropsProductsScreen,
   RouteParamsProductsScreen,
 } from './props-products-screen';
 import styles from './styles/styles';
+
+import _, {set} from 'lodash';
 
 const ProductsScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<PropsProductsScreen>();
@@ -41,6 +47,26 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
   const devices = useCameraDevices();
   const device = devices.back;
 
+  const [reqDto, setReqDto] = useState<IGetItemsPaginatedReq>({
+    groupId: groupStore.id,
+    page: 1,
+    limit: 5,
+    search: '',
+    searchBy: ['groupProduct.name'],
+    sortBy: ['groupProduct.name:ASC', 'timestamp.createdAt:ASC'],
+    filter: {
+      'timestamp.deletedAt': '$not:$eq:$null',
+    },
+  });
+
+  const [resDto, setResDto] = useState<IGetItemsPaginatedRes>({
+    data: [],
+    message: '',
+    statusCode: 0,
+    links: {},
+    meta: {},
+  });
+
   const requestCameraPermission = useCallback(async () => {
     const permission = await Camera.requestCameraPermission();
 
@@ -48,6 +74,28 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
       await Linking.openSettings();
     }
   }, []);
+
+  const fetchMoreData = () => {
+    console.log('fetchMoreData');
+
+    if (groupStore.id === '' || !groupStore.id) {
+      return;
+    }
+
+    if (!resDto?.links?.next) {
+      return;
+    }
+
+    reqDto.page = reqDto.page! + 1;
+
+    // fetch the first 10 items
+    i.getItemPaginated(reqDto).then(res => {
+      console.log('res getItemPaginated: ', res.data.length);
+      setResDto(_.cloneDeep(res));
+
+      setItems([...items, ...res.data]);
+    });
+  };
 
   useEffect(() => {
     requestCameraPermission();
@@ -57,24 +105,12 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
     }
 
     // fetch the first 10 items
-    i.getItemPaginated({
-      groupId: groupStore.id,
-
-      // limit: 10,
-    }).then(res => {
+    i.getItemPaginated(reqDto).then(res => {
       console.log('res getItemPaginated: ', res.data.length);
+      setResDto(_.cloneDeep(res));
 
-      setItems(res.data);
+      setItems(_.cloneDeep(res.data));
     });
-
-    // set the service for search feature
-    // searchStore.setSearchService(i.getItemPaginated);
-    // searchStore.setSearchParams([
-    //   {
-    //     groupId: route?.params?.groupId || '1',
-    //   },
-    // ]);
-    // searchStore.doSearch();
 
     // reset searchActive when unmount
     return () => {
@@ -82,14 +118,36 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   // search result changed
-  //   console.log('search result changed');
+  // listen to the search text change
+  useEffect(() => {
+    console.log('search text changed, ', searchStore.searchText);
+    if (searchStore.isPerformingSearch) {
+      // search result changed
+      console.log('btn search pressed, ready to perform searching');
 
-  //   const searchResult = searchStore.searchResult as IGetItemsPaginatedRes;
+      // reset page to 1
+      setReqDto(prevReqDto => ({
+        ...prevReqDto,
+        page: 1,
+        search: searchStore.searchText,
+      }));
 
-  //   setItems(searchResult?.data || []);
-  // }, [searchStore.searchResult]);
+      i.getItemPaginated({
+        ...reqDto,
+        page: 1,
+        search: searchStore.searchText,
+      }).then(res => {
+        console.log('res getItemPaginated: ', res.data.length);
+        setResDto(_.cloneDeep(res));
+
+        setItems(_.cloneDeep(res.data));
+      });
+
+      // reset search text and isPerformingSearch
+      searchStore.setSearchText('');
+      searchStore.setIsPerformingSearch(false);
+    }
+  }, [searchStore.searchText, searchStore.isPerformingSearch]);
 
   const openCamera = useCallback(() => {
     setModalVisible(false);
@@ -115,65 +173,55 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
     }
   };
 
-  const renderItems = () => {
-    if (items.length > 0) {
-      return items.map(item => {
-        return (
-          <TouchableOpacity style={styles.productItemContainer} key={item.id}>
-            <Image
-              source={{
-                uri:
-                  item?.image ||
-                  'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
-              }}
-              style={styles.prodImg}
-            />
-            <View style={styles.productInfoContainer}>
-              <View style={styles.productInfo}>
-                <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                  Tên sản phẩm:{' '}
-                </Text>
-                <Text style={styles.infoText} numberOfLines={3}>
-                  {item?.groupProduct?.name || 'Chưa có tên sản phẩm'}
-                </Text>
-              </View>
-              {item?.quantity ? (
-                <View style={styles.productInfo}>
-                  <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                    Số lượng:{' '}
-                  </Text>
-                  <Text style={styles.infoText}>
-                    {item?.quantity} {item?.unit || ''}
-                  </Text>
-                </View>
-              ) : (
-                false
-              )}
-              {item?.bestBefore ? (
-                <View style={styles.productInfo}>
-                  <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                    Hạn sử dụng:{' '}
-                  </Text>
-                  <Text style={styles.infoText}>
-                    {moment(item?.bestBefore).isValid()
-                      ? moment(item?.bestBefore).format('DD-MM-YYYY')
-                      : item?.bestBefore.toString()}
-                  </Text>
-                </View>
-              ) : (
-                false
-              )}
+  const renderItem = (item: IItem) => {
+    return (
+      <TouchableOpacity style={styles.productItemContainer} key={item.id}>
+        <Image
+          source={{
+            uri:
+              item?.image ||
+              'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
+          }}
+          style={styles.prodImg}
+        />
+        <View style={styles.productInfoContainer}>
+          <View style={styles.productInfo}>
+            <Text style={[styles.text, {fontWeight: 'bold'}]}>
+              Tên sản phẩm:{' '}
+            </Text>
+            <Text style={styles.infoText} numberOfLines={3}>
+              {item?.groupProduct?.name || 'Chưa có tên sản phẩm'}
+            </Text>
+          </View>
+          {item?.quantity ? (
+            <View style={styles.productInfo}>
+              <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                Số lượng:{' '}
+              </Text>
+              <Text style={styles.infoText}>
+                {item?.quantity} {item?.unit || ''}
+              </Text>
             </View>
-          </TouchableOpacity>
-        );
-      });
-    } else {
-      return (
-        <View>
-          <Text>Không có sản phẩm {searchStore.searchText} nào</Text>
+          ) : (
+            false
+          )}
+          {item?.bestBefore ? (
+            <View style={styles.productInfo}>
+              <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                Hạn sử dụng:{' '}
+              </Text>
+              <Text style={styles.infoText}>
+                {moment(item?.bestBefore).isValid()
+                  ? moment(item?.bestBefore).format('DD-MM-YYYY')
+                  : item?.bestBefore.toString()}
+              </Text>
+            </View>
+          ) : (
+            false
+          )}
         </View>
-      );
-    }
+      </TouchableOpacity>
+    );
   };
 
   return (
@@ -270,9 +318,16 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
           </View>
         </View>
       </Modal>
-      <ScrollView contentContainerStyle={styles.container}>
-        {renderItems()}
-      </ScrollView>
+      <FlatList
+        data={items}
+        keyExtractor={item =>
+          item?.id?.toString() ?? new Date().getTime().toString()
+        }
+        renderItem={({item}) => renderItem(item)}
+        contentContainerStyle={styles.container}
+        onEndReached={fetchMoreData} // Add your function to fetch more data here
+        onEndReachedThreshold={0.2} // Adjust the threshold as needed
+      />
     </View>
   );
 };

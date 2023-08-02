@@ -45,8 +45,16 @@ export type TypeColumnGetPurchaseLocationsPaginated =
   | 'timestamp.updatedAt'
   | 'timestamp.deletedAt';
 
+//name,addedBy,description,address.provinceName,address.districtName,address.wardName,address.addressLine1,address.addressLine2
 export type TypeGetPurchaseLocationsPaginatedSearchBy =
-  | `${TypeColumnGetPurchaseLocationsPaginated}`;
+  | 'name'
+  | 'addedBy'
+  | 'description'
+  | 'address.provinceName'
+  | 'address.districtName'
+  | 'address.wardName'
+  | 'address.addressLine1'
+  | 'address.addressLine2';
 
 export type TypeGetPurchaseLocationsPaginatedSortBy =
   | `${TypeColumnGetPurchaseLocationsPaginated}:${'ASC' | 'DESC'}`;
