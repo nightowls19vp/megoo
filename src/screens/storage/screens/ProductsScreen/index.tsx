@@ -56,7 +56,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
 
       // limit: 10,
     }).then(res => {
-      console.log('res: ', res);
+      // console.log('res: ', res);
 
       setItems(res.data);
     });
@@ -79,6 +79,10 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
 
     setItems(searchResult?.data || []);
   }, [searchStore.searchResult]);
+
+  useEffect(() => {
+    console.log('items: ', items);
+  }, [items]);
 
   const openCamera = useCallback(() => {
     setModalVisible(false);
@@ -158,7 +162,10 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
       });
     } else {
       return (
-        <View>
+        <View
+          style={{
+            marginTop: 20,
+          }}>
           <Text>Không có sản phẩm {searchStore.searchText} nào</Text>
         </View>
       );

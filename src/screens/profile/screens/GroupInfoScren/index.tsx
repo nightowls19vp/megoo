@@ -81,18 +81,18 @@ const GroupInfoScreen = ({navigation}: {navigation: any}) => {
     getSelectedGroup();
   }, []);
 
-  const renderTabContent = () => {
-    if (activeTab === 'currentPackage') {
-      return <CurrentPackage navigation={navigation} />;
-    } else if (activeTab === 'otherPackages') {
-      return (
-        <OtherPackages
-          navigation={navigation}
-          groupId={route.params?.groupId}
-        />
-      );
-    }
-  };
+  // const renderTabContent = () => {
+  //   if (activeTab === 'currentPackage') {
+  //     return <CurrentPackage navigation={navigation} />;
+  //   } else if (activeTab === 'otherPackages') {
+  //     return (
+  //       <OtherPackages
+  //         navigation={navigation}
+  //         groupId={route.params?.groupId}
+  //       />
+  //     );
+  //   }
+  // };
 
   return (
     <View
@@ -161,7 +161,7 @@ const GroupInfoScreen = ({navigation}: {navigation: any}) => {
           position: 'relative',
           top: 60,
         }}>
-        {renderTabContent()}
+        {/* {renderTabContent()} */}
       </ScrollView>
     </View>
   );

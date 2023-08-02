@@ -1,18 +1,39 @@
-import {Dimensions, ScrollView} from 'react-native';
-import {Text, View, StyleSheet} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import Slider from '@react-native-community/slider';
-import RouteNames from '../../constants/route-names.const';
-import {Colors} from '../../constants/color.const';
+import {useCallback, useEffect, useState} from 'react';
+import {
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import Modal from 'react-native-modal';
 import Carousel from 'react-native-reanimated-carousel';
-import {useEffect, useState} from 'react';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import Slider from '@react-native-community/slider';
+
+import {Colors} from '../../constants/color.const';
+import RouteNames from '../../constants/route-names.const';
 import {getAllPackage} from '../package/screens/PackageScreen/services/package.service';
+import appStore from '../../common/store/app.store';
+import {getUserGroup} from '../../services/group.service';
+import {observer} from 'mobx-react';
+import {getTodosList} from './screens/todos/TodosListScreen/services/todos.list.service';
+import {useFocusEffect} from '@react-navigation/native';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const HomeScreen = ({navigation}: {navigation: any}) => {
   const [packages, setPackages] = useState([]);
+  const [groups, setGroups] = useState<
+    {
+      _id: string;
+    }[]
+  >([]);
+  const [todos, setTodos] = useState<any[]>([]);
+
   const [modalVisible, setModalVisible] = useState(false);
 
   const getPackages = async () => {
@@ -20,11 +41,115 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
     setPackages(pkgs.data);
   };
 
-  useEffect(() => {
-    // getPackages();
-  }, []);
+  const getGroups = async () => {
+    const groups = await getUserGroup();
+    // console.log('groups:', JSON.stringify(groups, null, 2));
+    console.log('groups:', groups.groups);
 
-  const renderItem = ({item}: {item: any}) => {
+    setGroups(
+      groups?.groups?.map((groupItem: any) => {
+        return {
+          _id: groupItem._id ? groupItem._id : '',
+        };
+      }),
+    );
+  };
+
+  const getTodos = async () => {
+    if (groups && groups.length > 0) {
+      let newTodosArray: any[] = [];
+      for (const group of groups) {
+        console.log('groupId:', group._id);
+
+        const todosList = await getTodosList(group._id);
+        // console.log('todos:', JSON.stringify(todosList.group.todos, null, 2));
+
+        // Create a new array to store the todos
+        const updatedTodos = todosList.group.todos.map((todosItem: any) => {
+          return {
+            groupId: group._id,
+            _id: todosItem._id,
+            summary: todosItem.summary,
+            todos: todosItem.todos.map((todoItem: any) => {
+              return {
+                _id: todoItem._id,
+                todo: todoItem.todo,
+                description: todoItem.description,
+                isCompleted: todoItem.isCompleted,
+              };
+            }),
+            state: todosItem.state,
+          };
+        });
+
+        console.log('updatedTodos:', JSON.stringify(updatedTodos, null, 2));
+
+        const todosNotFullCompleted = updatedTodos.filter(
+          (todos: {
+            groupId: string;
+            _id: string;
+            summary: string;
+            todos: {
+              _id: string;
+              todo: string;
+              description: string;
+              isCompleted: boolean;
+            }[];
+            state: string;
+          }) => {
+            return todos.todos.some(
+              (todoItem: {
+                _id: string;
+                todo: string;
+                description: string;
+                isCompleted: boolean;
+              }) => {
+                return !todoItem.isCompleted;
+              },
+            );
+          },
+        );
+
+        // console.log('todosNotFullCompleted:', todosNotFullCompleted);
+
+        newTodosArray = newTodosArray.concat(todosNotFullCompleted);
+        // console.log(newTodosArray);
+        setTodos(newTodosArray);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (appStore.isLoggedIn) {
+      getGroups();
+    } else {
+      getPackages();
+    }
+  }, [appStore.isLoggedIn]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (appStore.isLoggedIn) {
+        getGroups();
+      } else {
+        getPackages();
+      }
+
+      return () => {
+        // Code to clean up the effect when the screen is unfocused
+      };
+    }, [appStore.isLoggedIn]),
+  );
+
+  useEffect(() => {
+    getTodos();
+  }, [groups]);
+
+  useEffect(() => {
+    console.log('todos:', JSON.stringify(todos, null, 2));
+  }, [todos]);
+
+  const renderPackageItem = ({item}: {item: any}) => {
     const [noOfMemb, setNoOfMemb] = useState(item.noOfMember);
     const [duration, setDuration] = useState(item.duration);
     const [totalPrice, setTotalPrice] = useState(item.price);
@@ -192,24 +317,27 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* <View style={styles.utilitiesContainer}>
-        <Text style={styles.title}>Gói người dùng</Text>
-        <Carousel
-          loop={false}
-          mode="parallax"
-          modeConfig={{
-            parallaxScrollingScale: 1,
-            parallaxScrollingOffset: 50,
-          }}
-          width={width * 0.9}
-          height={height * 0.6}
-          // autoPlay={true}
-          data={packages}
-          scrollAnimationDuration={1000}
-          onSnapToItem={index => console.log('current index:', index)}
-          renderItem={renderItem}
-        />
-      </View> */}
+      {appStore.isLoggedIn ? null : (
+        <View style={[styles.utilitiesContainer]}>
+          <Text style={styles.title}>Gói người dùng</Text>
+          <Carousel
+            loop={false}
+            mode="parallax"
+            modeConfig={{
+              parallaxScrollingScale: 1,
+              parallaxScrollingOffset: 50,
+            }}
+            width={width * 0.9}
+            height={height * 0.6}
+            // autoPlay={true}
+            data={packages}
+            scrollAnimationDuration={1000}
+            onSnapToItem={index => console.log('current index:', index)}
+            renderItem={renderPackageItem}
+          />
+        </View>
+      )}
+
       <View style={styles.utilitiesContainer}>
         <Text style={styles.title}>Tiện ích</Text>
         <View style={styles.utilitiesContent}>
@@ -241,6 +369,76 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
           </TouchableOpacity>
         </View>
       </View>
+
+      <Modal isVisible={modalVisible}>
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            backgroundColor: Colors.background.white,
+            borderRadius: 10,
+            padding: 10,
+          }}>
+          <TouchableOpacity
+            style={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+            }}
+            onPress={() => {
+              setModalVisible(false);
+            }}>
+            <Ionicons name="close" color={Colors.text.grey} size={24} />
+          </TouchableOpacity>
+          <View
+            style={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: 10,
+            }}>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+              }}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  textAlign: 'center',
+                  color: Colors.text.grey,
+                }}>
+                Vui lòng{' '}
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(false);
+                  navigation.navigate(RouteNames.LOGIN, {});
+                }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    textAlign: 'center',
+                    color: Colors.text.orange,
+                  }}>
+                  đăng nhập/đăng ký
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <Text
+              style={{
+                fontSize: 18,
+                textAlign: 'center',
+                color: Colors.text.grey,
+              }}>
+              để sử dụng chức năng này
+            </Text>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -359,4 +557,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-export default HomeScreen;
+export default observer(HomeScreen);

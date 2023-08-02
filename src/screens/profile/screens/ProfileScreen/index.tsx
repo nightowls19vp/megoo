@@ -4,14 +4,16 @@ import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
+import appStore from '../../../../common/store/app.store';
 import userStore from '../../../../common/store/user.store';
+import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import styles from './styles/styles';
 
 const ProfileScreen = ({navigation}: {navigation: any}) => {
   const [selectedImages, setSelectedImages] = useState('');
 
-  return (
+  return appStore.isLoggedIn ? (
     <ScrollView contentContainerStyle={styles.container}>
       {/* <Image
         source={{
@@ -106,6 +108,31 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
         </View> */}
       </View>
     </ScrollView>
+  ) : (
+    <View style={styles.loginContainer}>
+      <Image
+        source={require('../../../../../assets/food.png')}
+        style={{
+          width: '100%',
+          height: 100,
+          // backgroundColor: Colors.border.lightgrey,
+          resizeMode: 'center',
+          marginBottom: 50,
+        }}
+      />
+      <View style={styles.loginTextContainer}>
+        <Text style={styles.loginText}>Vui lòng </Text>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate(RouteNames.LOGIN, {});
+          }}>
+          <Text style={[styles.loginText, {color: Colors.text.orange}]}>
+            đăng nhập/đăng ký
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.loginText}>để sử dụng chức năng này.</Text>
+    </View>
   );
 };
 

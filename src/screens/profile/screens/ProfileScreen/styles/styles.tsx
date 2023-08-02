@@ -5,6 +5,23 @@ const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
+  loginContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: width,
+    height: '100%',
+  },
+  loginTextContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  loginText: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: Colors.text.grey,
+  },
   container: {
     flex: 1,
     alignItems: 'center',

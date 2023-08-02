@@ -10,6 +10,7 @@ import styles from './styles/style';
 import {Colors} from '../../../../constants/color.const';
 import {changeStatusPkgToVietnamese} from '../../../../common/handle.string';
 import groupStore from '../../../../common/store/group.store';
+import appStore from '../../../../common/store/app.store';
 
 const GroupsScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
@@ -52,12 +53,16 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
   };
 
   useEffect(() => {
-    getGroups();
+    if (appStore.isLoggedIn === true) {
+      getGroups();
+    }
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      getGroups();
+      if (appStore.isLoggedIn === true) {
+        getGroups();
+      }
       return () => {
         // Code to clean up the effect when the screen is unfocused
       };
@@ -127,7 +132,34 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
     });
   };
 
-  return <View style={styles.container}>{renderGroupItem()}</View>;
+  return appStore.isLoggedIn === true ? (
+    <View style={styles.container}>{renderGroupItem()}</View>
+  ) : (
+    <View style={styles.loginContainer}>
+      <Image
+        source={require('../../../../../assets/food.png')}
+        style={{
+          width: '100%',
+          height: 100,
+          // backgroundColor: Colors.border.lightgrey,
+          resizeMode: 'center',
+          marginBottom: 50,
+        }}
+      />
+      <View style={styles.loginTextContainer}>
+        <Text style={styles.loginText}>Vui lòng </Text>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate(RouteNames.LOGIN, {});
+          }}>
+          <Text style={[styles.loginText, {color: Colors.text.orange}]}>
+            đăng nhập/đăng ký
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.loginText}>để sử dụng chức năng này.</Text>
+    </View>
+  );
 };
 
 export default GroupsScreen;

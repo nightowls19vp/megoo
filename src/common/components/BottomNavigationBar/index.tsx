@@ -68,26 +68,6 @@ const ChatScreenStack = () => {
   );
 };
 
-const BillStack = createNativeStackNavigator();
-const BillScreenStack = () => {
-  return (
-    <BillStack.Navigator initialRouteName={RouteNames.BILL}>
-      <BillStack.Screen
-        name={RouteNames.CHAT_STACK}
-        component={ChatScreenStack}
-        options={{
-          title: 'Nhóm chat',
-        }}
-      />
-      <BillStack.Screen
-        name={RouteNames.BILL}
-        component={BillScreen}
-        options={{headerShown: true}}
-      />
-    </BillStack.Navigator>
-  );
-};
-
 const BillListStack = createNativeStackNavigator();
 const BillListScreenStack = () => {
   return (
@@ -101,23 +81,23 @@ const BillListScreenStack = () => {
         }}
       />
       <BillListStack.Screen
+        name={RouteNames.GROUP_BILL_LIST}
+        component={GroupBillListScreen}
+        // options={{headerShown: false}}
+      />
+      <BillListStack.Screen
         name={RouteNames.BILL_MANAGEMENT}
         component={BillListScreen}
         options={{headerShown: true}}
       />
-      <BillStack.Screen
+      <BillListStack.Screen
         name={RouteNames.BILL}
         component={BillScreen}
         options={{headerShown: true}}
       />
-      <BillStack.Screen
+      <BillListStack.Screen
         name={RouteNames.BILL_INFO}
         component={BillInfoScreen}
-      />
-      <BillListStack.Screen
-        name={RouteNames.GROUP_BILL_LIST}
-        component={GroupBillListScreen}
-        // options={{headerShown: false}}
       />
     </BillListStack.Navigator>
   );
@@ -162,11 +142,6 @@ const TodosListScreenStack = () => {
           title: 'Nhóm chat',
         }}
       />
-      {/* <TodosListStack.Screen
-        name={RouteNames.TODOS_LIST}
-        component={TodosListScreen}
-        // options={{headerShown: false}}
-      /> */}
       <TodosListStack.Screen
         name={RouteNames.CREATE_TODOS}
         component={CreateTodosScreen}
@@ -494,21 +469,13 @@ function ProfileScreenStack() {
           title: 'Thông tin chi tiết nhóm',
         }}
       />
-      <ProfileStack.Screen
+      {/* <ProfileStack.Screen
         name={RouteNames.PROFILE}
         component={UserInfoScreen}
-      />
+      /> */}
       <ProfileStack.Screen
         name={RouteNames.EDIT_PROFILE}
         component={EditProfileScreen}
-      />
-      <ProfileStack.Screen
-        name={RouteNames.GROUP_INFO}
-        component={GroupInfoScreen}
-      />
-      <ProfileStack.Screen
-        name={RouteNames.CURRENT_PACKAGE}
-        component={CurrentPackage}
       />
       <ProfileStack.Screen
         name={RouteNames.EDIT_GROUP_INFO}
