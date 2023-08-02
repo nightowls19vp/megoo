@@ -1,4 +1,5 @@
 import axios from 'axios';
+import qs from 'qs';
 
 import {URL_HOST} from '../../../core/config/api/api.config';
 import {
@@ -84,6 +85,11 @@ export const getPurchaseLocationPaginated = async (
     const res = await axios.get<IGetPurchaseLocationsPaginatedRes>(endpoint, {
       params: reqDto,
       validateStatus: () => true,
+      paramsSerializer: params =>
+        qs.stringify(params, {
+          encode: false,
+          allowDots: true,
+        }),
     });
 
     return res.data;

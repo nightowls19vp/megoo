@@ -16,6 +16,8 @@ import {
   IUpdateItemRes,
 } from '../interfaces/items';
 
+import qs from 'qs';
+
 /**
  * Creates a new item.
  * @param reqDto The request data needed to create the item.
@@ -81,6 +83,11 @@ export const getItemPaginated = async (
   try {
     const res = await axios.get<IGetItemsPaginatedRes>(endpoint, {
       params: reqDto,
+      paramsSerializer: params =>
+        qs.stringify(params, {
+          encode: false,
+          allowDots: true,
+        }),
     });
 
     return res.data;

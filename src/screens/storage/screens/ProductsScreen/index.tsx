@@ -55,7 +55,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
     searchBy: ['groupProduct.name'],
     sortBy: ['groupProduct.name:ASC', 'timestamp.createdAt:ASC'],
     filter: {
-      'timestamp.deletedAt': '$not:$eq:$null',
+      'timestamp.deletedAt': '$eq:$null',
     },
   });
 
