@@ -1,26 +1,33 @@
-import {Formik} from 'formik';
 import {useEffect, useState} from 'react';
-import {
-  Image,
-  Modal,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import * as Yup from 'yup';
+import {Text, View} from 'react-native';
+
+import {RouteProp, useRoute} from '@react-navigation/native';
 
 import appStore from '../../../../common/store/app.store';
-import {Colors} from '../../../../constants/color.const';
 import styles from './styles/style';
 
-const ProductDetailScreen = () => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [locations, setLocations] = useState<object[]>([]);
+// Define the type for the route params
+type GroupDetailRouteParams = {
+  groupId: string;
+  itemId: string;
+};
 
-  const renderLocationItem = () => {};
+// Specify the type for the route
+type GroupDetailRouteProp = RouteProp<
+  Record<string, GroupDetailRouteParams>,
+  string
+>;
+
+const ProductDetailScreen = () => {
+  const route = useRoute<GroupDetailRouteProp>();
+  const {groupId, itemId} = route.params;
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    console.log('groupId: ', groupId);
+    console.log('itemId: ', itemId);
+  }, []);
 
   useEffect(() => {
     appStore.setSearchActive(false);

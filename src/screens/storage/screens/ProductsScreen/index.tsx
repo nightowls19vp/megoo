@@ -149,6 +149,10 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
     }
   }, [searchStore.searchText, searchStore.isPerformingSearch]);
 
+  useEffect(() => {
+    console.log('items: ', items);
+  }, [items]);
+
   const openCamera = useCallback(() => {
     setModalVisible(false);
     setShowCamera(true);

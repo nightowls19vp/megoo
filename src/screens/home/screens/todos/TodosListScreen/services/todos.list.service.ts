@@ -17,9 +17,6 @@ export const getTodosList = async (groupId: string) => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-
-    console.log('Get todos response:', response.data);
-
     return response.data;
   } catch (error) {
     console.log('Get todos error: ', error);
