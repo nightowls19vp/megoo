@@ -102,7 +102,7 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
         </TouchableOpacity>
       </View>
       <DropDownPicker
-        listMode="SCROLLVIEW"
+        listMode="MODAL"
         scrollViewProps={{
           nestedScrollEnabled: true,
         }}

@@ -19,6 +19,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
+import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
 import GroupProductDropdownPicker from '../../components/GroupProductDropdownPicker';
 import PurchaseLocationDropdownPicker from '../../components/PurchaseLocationDropdownPicker';
@@ -40,6 +41,10 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedImage, setSelectedImage] = useState(IMAGE_URI_DEFAULT);
   const [imageFile, setImageFile] = useState<any>();
+
+  useEffect(() => {
+    appStore.setSearchActive(false);
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -140,28 +145,6 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                 zIndexInverse={1000}
                 fnUpdateGpImage={setSelectedImage}
               />
-              <Text style={styles.inputLabel}>Loại nhu yếu phẩm</Text>
-              <View style={styles.infoInput}>
-                <TextInput
-                  onChangeText={value => {
-                    setFieldValue('category', value);
-                  }}
-                  // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('category')}
-                  style={{flex: 1, color: Colors.text.grey}}
-                  placeholder={'Loại nhu yếu phẩm'}
-                  placeholderTextColor={Colors.text.lightgrey}
-                  value={values.category}
-                />
-
-                {values.prodName && (
-                  <Icon
-                    onPress={() => setFieldValue('type', '')}
-                    name={'close'}
-                    style={styles.icon}
-                  />
-                )}
-              </View>
 
               <Text style={styles.inputLabel}>Hạn sử dụng</Text>
               <View style={styles.infoInput}>

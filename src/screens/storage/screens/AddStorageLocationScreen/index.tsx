@@ -11,13 +11,14 @@ import {
   View,
 } from 'react-native';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
+import Modal from 'react-native-modal/dist/modal';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import AddImageModal from '../../../../common/components/AddImageModal';
+import {IMAGE_URI_DEFAULT} from '../../../../common/default';
+import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
 import styles from './styles/style';
-import Modal from 'react-native-modal/dist/modal';
 
 const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
   const initialValues = {
@@ -42,6 +43,10 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
       />
     );
   };
+
+  useEffect(() => {
+    appStore.setSearchActive(false);
+  }, []);
 
   useEffect(() => {
     console.log('modalState:', modalState);

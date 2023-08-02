@@ -15,6 +15,7 @@ import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
+import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
 import GroupProductDropdownPicker from '../../components/GroupProductDropdownPicker';
 import PurchaseLocationDropdownPicker from '../../components/PurchaseLocationDropdownPicker';
@@ -36,6 +37,10 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
   const [p, setP] = useState<IProvince>();
   const [d, setD] = useState<IDistrict>();
   const [w, setW] = useState<IWard>();
+
+  useEffect(() => {
+    appStore.setSearchActive(false);
+  }, []);
 
   useEffect(() => {
     setD(undefined);

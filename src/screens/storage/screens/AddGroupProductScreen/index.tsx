@@ -20,6 +20,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
+import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
 import GroupProductDropdownPicker from '../../components/GroupProductDropdownPicker';
 import PurchaseLocationDropdownPicker from '../../components/PurchaseLocationDropdownPicker';
@@ -41,6 +42,10 @@ const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedImage, setSelectedImage] = useState(IMAGE_URI_DEFAULT);
   const [imageFile, setImageFile] = useState<any>();
+
+  useEffect(() => {
+    appStore.setSearchActive(false);
+  }, []);
 
   useEffect(() => {
     if (open) {
