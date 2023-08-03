@@ -13,7 +13,6 @@ export const getBillInfo = async (billId: string) => {
   console.log('Get bill info:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.get(reqUrl, {
@@ -52,7 +51,6 @@ export const updateBillInfo = async (
   console.log('Update bill:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.put(
@@ -88,7 +86,6 @@ export const deleteBill = async (billId: string) => {
   console.log('Delete bill:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.delete(reqUrl, {
@@ -112,13 +109,12 @@ export const deleteBill = async (billId: string) => {
  * @param borrowers
  * @return response from server
  */
-export const updateBorroweStatus = async (billId: string, borrowers: any) => {
+export const updateBorrowerStatus = async (billId: string, borrowers: any) => {
   const billEndpoint = `api/pkg-mgmt/bill/${billId}/status`;
   const reqUrl = `${URL_HOST}${billEndpoint}`;
   console.log("Update borrowes's status:", reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.put(

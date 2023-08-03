@@ -22,7 +22,7 @@ const GroupTodosListScreen = ({navigation}: {navigation: any}) => {
     ) {
       return [];
     } else {
-      console.log('groupsRes:', groupsRes);
+      // console.log('groupsRes:', groupsRes);
 
       // get all active group
       const activeGroups = groupsRes.groups.filter(

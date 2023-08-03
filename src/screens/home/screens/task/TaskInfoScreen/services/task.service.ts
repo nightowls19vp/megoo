@@ -8,7 +8,6 @@ export const getTaskById = async (taskId: string) => {
   console.log('Get task by id:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.get(reqUrl, {

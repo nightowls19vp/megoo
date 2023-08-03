@@ -9,7 +9,6 @@ export const createTask = async (groupId: string, task: any) => {
   console.log('Get task list:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.post(reqUrl, task, {

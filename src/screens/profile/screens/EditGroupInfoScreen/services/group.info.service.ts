@@ -8,7 +8,6 @@ export const updateGroupName = async (groupId: string, name: string) => {
   console.log('Update group name:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.put(
@@ -39,7 +38,6 @@ export const uploadGroupAvatarWithBase64 = async (
   console.log('Update group avatar:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.post(
@@ -70,7 +68,6 @@ export const updateGroupAvatar = async (
   console.log('Update group avatar:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const uploadResponse = await uploadGroupAvatarWithBase64(

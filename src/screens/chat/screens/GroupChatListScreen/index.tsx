@@ -27,8 +27,7 @@ const GroupChatListScreen = ({navigation}: {navigation: any}) => {
     ) {
       return [];
     } else {
-      console.log('groupsRes:', groupsRes.groups[0].packages[0].package.name);
-      console.log('groupsRes:', groupsRes);
+      // console.log('groupsRes:', groupsRes);
 
       setGroups(
         groupsRes.groups.map((groupItem: any) => {

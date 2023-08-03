@@ -74,7 +74,7 @@ const TodosScreen = () => {
 
   const getTodos = async () => {
     const todosRes = await getTodosById(todosId);
-    console.log('todos', JSON.stringify(todosRes, null, 2));
+    // console.log('todos', JSON.stringify(todosRes, null, 2));
 
     setTodos({
       _id: todosRes.todos._id,
@@ -136,7 +136,7 @@ const TodosScreen = () => {
   );
 
   useEffect(() => {
-    console.log('todos:', todos);
+    // console.log('todos:', todos);
   }, [todos]);
 
   return (
@@ -355,7 +355,9 @@ const TodosScreen = () => {
                             ? {
                                 textDecorationLine: 'line-through',
                               }
-                            : {},
+                            : {
+                                textDecorationLine: 'none',
+                              },
                         ]}
                         onChangeText={newValue => {
                           todo.todo = newValue;

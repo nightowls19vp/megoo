@@ -25,8 +25,7 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
     ) {
       return [];
     } else {
-      console.log('groupsRes:', groupsRes.groups[0].packages[0].package.name);
-      console.log('groupsRes:', groupsRes);
+      // console.log('groupsRes:', groupsRes);
 
       setGroups(
         groupsRes.groups.map((groupItem: any) => {
@@ -53,14 +52,14 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
   };
 
   useEffect(() => {
-    if (appStore.isLoggedIn === true) {
+    if (appStore.isLoggedIn) {
       getGroups();
     }
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      if (appStore.isLoggedIn === true) {
+      if (appStore.isLoggedIn) {
         getGroups();
       }
       return () => {

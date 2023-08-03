@@ -13,7 +13,6 @@ export const getBillList = async (groupId: string) => {
   console.log('Get bill list:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.get(reqUrl, {

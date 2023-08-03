@@ -80,10 +80,10 @@ export const checkLogin = async () => {
 
         console.log('Access token has not expired');
         const response = await validate();
-        console.log(
-          'Validate res:',
-          JSON.stringify(response.userInfo, null, 2),
-        );
+        // console.log(
+        //   'Validate res user id:',
+        //   JSON.stringify(response.userInfo._id, null, 2),
+        // );
 
         // Store user info
         let user: IUser = {
