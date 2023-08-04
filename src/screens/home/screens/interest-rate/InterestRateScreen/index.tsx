@@ -384,8 +384,17 @@ const InterestRateScreen = () => {
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
+          <Text
+            style={{
+              color: Colors.text.red,
+              width: '100%',
+              textAlign: 'justify',
+            }}>
+            &#8251; Tiếp tục gửi tiết kiệm với lãi suất hiện tại
+          </Text>
+
           <Text style={[styles.title, {marginTop: 0, width: '100%'}]}>
-            Kỳ hạn
+            Kỳ hạn hiện tại
           </Text>
           <Dropdown
             style={{
@@ -413,7 +422,7 @@ const InterestRateScreen = () => {
             }}
           />
 
-          <Text style={[styles.title, {width: '100%'}]}>Lãi suất</Text>
+          <Text style={[styles.title, {width: '100%'}]}>Lãi suất hiện tại</Text>
           <View style={[styles.inputContainer, {width: '100%'}]}>
             <TextInput
               keyboardType="number-pad"
@@ -431,13 +440,13 @@ const InterestRateScreen = () => {
             </Text>
           </View>
 
-          <Text style={[styles.title, {width: '100%'}]}>Ngày gửi</Text>
+          <Text style={[styles.title, {width: '100%'}]}>Ngày đáo hạn</Text>
           <View style={[styles.inputContainer, {width: '100%'}]}>
             <TextInput
               editable={false}
               style={styles.inputText}
               value={oldInterest.date}
-              placeholder={'Chọn ngày gửi'}
+              placeholder={'Chọn ngày đáo hạn'}
               placeholderTextColor={Colors.text.lightgrey}
             />
 
@@ -514,7 +523,9 @@ const InterestRateScreen = () => {
             </View>
           </View>
 
-          <Text style={[styles.title, {width: '100%'}]}>Ngày đáo hạn</Text>
+          <Text style={[styles.title, {width: '100%'}]}>
+            Ngày đáo hạn kế tiếp
+          </Text>
           <Text
             style={{
               color: Colors.text.grey,
@@ -553,6 +564,14 @@ const InterestRateScreen = () => {
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
+          <Text
+            style={{
+              color: Colors.text.red,
+              width: '100%',
+              textAlign: 'justify',
+            }}>
+            &#8251; Gửi tiết kiệm với lãi suất mới
+          </Text>
           <Text style={[styles.title, {marginTop: 0, width: '100%'}]}>
             Kỳ hạn mới
           </Text>
@@ -600,7 +619,7 @@ const InterestRateScreen = () => {
             </Text>
           </View>
 
-          <Text style={[styles.title, {width: '100%'}]}>Ngày gửi</Text>
+          <Text style={[styles.title, {width: '100%'}]}>Ngày gửi mới</Text>
           <View style={[styles.inputContainer, {width: '100%'}]}>
             <TextInput
               editable={false}
@@ -706,7 +725,7 @@ const InterestRateScreen = () => {
         </View>
       </View>
 
-      <View
+      {/* <View
         style={{
           width: '90%',
           display: 'flex',
@@ -723,7 +742,7 @@ const InterestRateScreen = () => {
           )}{' '}
           VND
         </Text>
-      </View>
+      </View> */}
     </ScrollView>
   );
 };

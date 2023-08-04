@@ -2,6 +2,7 @@ import {io, Socket} from 'socket.io-client';
 import notifee from '@notifee/react-native';
 import {URL_SOCKET} from '../config/api/api.config';
 import {displayNotification} from '../push-notifee/notifee';
+import userStore from '../../common/store/user.store';
 
 export let socket: Socket;
 
@@ -57,12 +58,35 @@ export function onZpCallback() {
 
 export function onCreatedBill() {
   socket.on('createdBill', async (data: any) => {
+    console.log('createdBill data stringify:', JSON.stringify(data, null, 2));
     console.log('createdBill data:', data);
+
+    // const dataObj = JSON.parse(data);
+    // console.log('dataObj app trans id:', dataObj.app_trans_id);
   });
 }
 
 export function onUpdatedBill() {
   socket.on('updatedBill', async (data: any) => {
     console.log('updatedBill data:', data);
+  });
+}
+
+const sendCreatedBillNotification = (
+  receiverUserId: string,
+  notificationContent: {title: string; body: string},
+) => {
+  socket.emit('notification', {
+    receiverUserId,
+    content: notificationContent,
+  });
+};
+
+export function onReceivedBillNotification() {
+  socket.on('notification', ({receiverUserId, content}) => {
+    if (receiverUserId === userStore.id) {
+      // Display the notification using Notifee
+      displayNotification(content.title, content.body);
+    }
   });
 }
