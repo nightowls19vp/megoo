@@ -27,22 +27,23 @@ export const dateISOFormat = (date: string) => {
  * @param string
  * @returns the new string joined by a dot
  */
-export const splitString = (string: string): string => {
-  string = string.replace('.', '').toString();
-  const stringList: string[] = [];
-  let remainingLength = string.length;
+export const splitString = (input: string): string => {
+  // Remove commas and periods
+  let number = input.replace(/[,\.]/g, '');
 
-  while (remainingLength > 3) {
-    const part = string.slice(remainingLength - 3, remainingLength);
-    stringList.unshift(part);
-    remainingLength -= 3;
+  // Define the suffixes for thousands, millions, and billions
+  const suffixes = [' nghìn', ' triệu', ' tỷ'];
+
+  // Determine the number of suffixes needed
+  const suffixIndex = Math.floor((number.length - 1) / 3);
+
+  // Format the number by inserting periods every three digits
+  for (let i = 0; i < suffixIndex; i++) {
+    const insertPosition = number.length - (3 * (i + 1) + i);
+    number =
+      number.slice(0, insertPosition) + '.' + number.slice(insertPosition);
   }
-
-  if (remainingLength > 0) {
-    stringList.unshift(string.slice(0, remainingLength));
-  }
-
-  return stringList.join('.');
+  return number;
 };
 
 export const changeStatusPkgToVietnamese = (status: string) => {

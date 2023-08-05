@@ -274,7 +274,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                 <View style={styles.infoRow}>
                   <Text style={styles.headingText}>Số tiền:</Text>
                   <Text style={styles.text}>
-                    {splitString(borrower.amount)} VND
+                    {splitString(borrower.amount.toString())} VNĐ
                   </Text>
                 </View>
                 <View style={[styles.infoRow, {alignItems: 'center'}]}>

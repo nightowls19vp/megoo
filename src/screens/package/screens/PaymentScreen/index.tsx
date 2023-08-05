@@ -100,7 +100,7 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
           <View style={styles.infoRow}>
             <Text style={styles.text}>Thành tiền:</Text>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>
-              {splitString(Math.round(item.price).toString())} VND
+              {splitString(Math.round(item.price).toString())} VNĐ
             </Text>
           </View>
         </View>
@@ -115,7 +115,7 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
       </ScrollView>
 
       <View style={styles.paymentContainer}>
-        <Text style={styles.priceText}>{totalPrice} VND</Text>
+        <Text style={styles.priceText}>{totalPrice} VNĐ</Text>
         {appStore.isExtendedPkg === false ? (
           <TouchableOpacity
             style={styles.button}

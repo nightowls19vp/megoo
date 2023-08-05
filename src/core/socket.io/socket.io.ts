@@ -1,8 +1,10 @@
 import {io, Socket} from 'socket.io-client';
 import notifee from '@notifee/react-native';
-import {URL_SOCKET} from '../config/api/api.config';
+import {URL_HOST, URL_SOCKET} from '../config/api/api.config';
 import {displayNotification} from '../push-notifee/notifee';
 import userStore from '../../common/store/user.store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 export let socket: Socket;
 
@@ -37,6 +39,9 @@ export function listen() {
   onZpCallback();
   onCreatedBill();
   onUpdatedBill();
+  onCreatedTodos();
+  onUpdatedTodos();
+  onTaskReminder();
 }
 
 export function onZpCallback() {
@@ -56,16 +61,37 @@ export function onZpCallback() {
   });
 }
 
+const getUserInfo = async (userId: string) => {
+  const userEndpoint = `api/users/${userId}`;
+  const reqUrl = `${URL_HOST}${userEndpoint}`;
+  console.log('Get user info:', reqUrl);
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+
+  try {
+    const response = await axios.get(reqUrl, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log('Get user info error: ', error);
+  }
+};
+
 export function onCreatedBill() {
   socket.on('createdBill', async (data: any) => {
-    console.log('createdBill data stringify:', JSON.stringify(data, null, 2));
     console.log('createdBill data:', data);
 
-    const result = await displayNotification(
+    const response = await getUserInfo(data.lender);
+    console.log('response:', response.user.name);
+
+    displayNotification(
       'Phân chia chi tiêu mới',
-      `Bạn có một yêu cầu thanh toán chi tiêu mới từ ${data.lender}`,
+      `Bạn nhận được yêu cầu thanh toán chi tiêu mới từ ${response.user.name}.`,
     );
-    console.log('result:', result);
   });
 }
 
@@ -75,21 +101,49 @@ export function onUpdatedBill() {
   });
 }
 
-const sendCreatedBillNotification = (
-  receiverUserId: string,
-  notificationContent: {title: string; body: string},
-) => {
-  socket.emit('notification', {
-    receiverUserId,
-    content: notificationContent,
-  });
-};
+export function onCreatedTodos() {
+  socket.on('createdTodos', async (data: any) => {
+    console.log('createdTodos data:', data);
 
-export function onReceivedBillNotification() {
-  socket.on('notification', ({receiverUserId, content}) => {
-    if (receiverUserId === userStore.id) {
-      // Display the notification using Notifee
-      displayNotification(content.title, content.body);
+    const response = await getUserInfo(data.createdBy);
+    console.log('response:', response.user.name);
+
+    if (data.state === 'Public') {
+      displayNotification(
+        'Việc cần làm mới',
+        `${response.user.name} đã thêm việc cần làm: ${data.summary}.`,
+      );
     }
+  });
+}
+
+export function onUpdatedTodos() {
+  socket.on('updatedTodos', async (data: any) => {
+    console.log('updatedTodos data:', data);
+
+    // const response = await getUserInfo(data.createdBy);
+    // console.log('response:', response.user.name);
+
+    // if (data.state === 'Public') {
+    //   displayNotification(
+    //     'Việc cần làm mới',
+    //     `${response.user.name} đã thêm việc cần làm: ${data.summary}.`,
+    //   );
+    // }
+  });
+}
+export function onTaskReminder() {
+  socket.on('taskReminder', async (data: any) => {
+    console.log('taskReminder data:', data);
+
+    // const response = await getUserInfo(data.createdBy);
+    // console.log('response:', response.user.name);
+
+    // if (data.state === 'Public') {
+    //   displayNotification(
+    //     'Việc cần làm mới',
+    //     `${response.user.name} đã thêm việc cần làm: ${data.summary}.`,
+    //   );
+    // }
   });
 }

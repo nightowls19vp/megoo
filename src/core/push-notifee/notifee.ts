@@ -16,6 +16,8 @@ export const displayNotification = async (title: string, body: string) => {
     body: body,
     android: {
       channelId,
+      smallIcon: 'ic_launcher_foreground',
+      color: '#FA9720',
       // smallIcon: 'name-of-a-small-icon', // optional, defaults to 'ic_launcher'.
       // pressAction is needed if you want the notification to open the app when pressed
       pressAction: {

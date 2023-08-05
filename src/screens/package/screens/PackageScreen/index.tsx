@@ -174,7 +174,7 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
               }>
               <Text style={styles.text}>Giá tiền: </Text>
               <Text style={[styles.text, {fontSize: 24, fontWeight: 'bold'}]}>
-                {splitString(totalPrice)} VND
+                {splitString(totalPrice)} VNĐ
               </Text>
             </View>
 

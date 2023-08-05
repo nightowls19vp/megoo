@@ -270,7 +270,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
               }>
               <Text style={styles.text}>Giá tiền: </Text>
               <Text style={[styles.text, {fontSize: 24, fontWeight: 'bold'}]}>
-                {totalPrice} VND
+                {totalPrice} VNĐ
               </Text>
             </View>
 

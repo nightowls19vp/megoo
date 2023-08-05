@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     gap: 20,
+    marginBottom: 20,
   },
   billItemContainer: {
     width: '90%',

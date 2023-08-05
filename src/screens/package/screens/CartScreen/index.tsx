@@ -344,7 +344,7 @@ const CartScreen = ({navigation}: {navigation: any}) => {
                 {splitString(
                   Math.round(object.price * object.quantity).toString(),
                 )}{' '}
-                VND
+                VNĐ
               </Text>
             </View>
           </View>
@@ -382,7 +382,7 @@ const CartScreen = ({navigation}: {navigation: any}) => {
           <Icon name="shoppingcart" size={30} color={Colors.text.orange} />
         </View>
         <Text style={styles.price} numberOfLines={2}>
-          {splitString(Math.round(totalPrice).toString())} VND
+          {splitString(Math.round(totalPrice).toString())} VNĐ
         </Text>
 
         <TouchableOpacity

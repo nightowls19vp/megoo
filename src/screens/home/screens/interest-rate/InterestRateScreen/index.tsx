@@ -311,7 +311,7 @@ const InterestRateScreen = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Số tiền gửi</Text>
-        <Text>VND</Text>
+        <Text>VNĐ</Text>
       </View>
       <View
         style={[
@@ -537,14 +537,14 @@ const InterestRateScreen = () => {
 
           <Text style={[styles.title, {width: '100%'}]}>Số tiền lãi</Text>
           <Text style={styles.amountText}>
-            {splitString(Math.round(oldInterest.interest).toString())} VND
+            {splitString(Math.round(oldInterest.interest).toString())} VNĐ
           </Text>
 
           <Text style={[styles.title, {width: '100%'}]}>
             Số tiền khi đến hạn
           </Text>
           <Text style={styles.amountText}>
-            {splitString(Math.round(oldInterest.totalAmount).toString())} VND
+            {splitString(Math.round(oldInterest.totalAmount).toString())} VNĐ
           </Text>
         </View>
 
@@ -713,14 +713,14 @@ const InterestRateScreen = () => {
 
           <Text style={[styles.title, {width: '100%'}]}>Số tiền lãi</Text>
           <Text style={styles.amountText}>
-            {splitString(Math.round(newInterest.interest).toString())} VND
+            {splitString(Math.round(newInterest.interest).toString())} VNĐ
           </Text>
 
           <Text style={[styles.title, {width: '100%'}]}>
             Số tiền khi đến hạn
           </Text>
           <Text style={styles.amountText}>
-            {splitString(Math.round(newInterest.totalAmount).toString())} VND
+            {splitString(Math.round(newInterest.totalAmount).toString())} VNĐ
           </Text>
         </View>
       </View>

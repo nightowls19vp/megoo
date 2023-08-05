@@ -72,10 +72,6 @@ const BillScreen = ({navigation}: {navigation: any}) => {
 
   const [isFocus, setIsFocus] = useState(false);
 
-  // State to open and close the dropdown picker
-  const [openLender, setOpenLender] = useState(false);
-  const [openBorrowers, setOpenBorrowers] = useState(false);
-
   const [lender, setLender] = useState('');
   const [lenders, setLenders] = useState([{label: '', value: ''}]);
 
@@ -88,7 +84,6 @@ const BillScreen = ({navigation}: {navigation: any}) => {
     name: '',
     avatar: '',
   });
-  const [amount, setAmount] = useState(0);
   const [selectedBorrowers, setSelectedBorrowers] = useState<any[]>([]);
 
   const getMemberList = async () => {
@@ -128,6 +123,10 @@ const BillScreen = ({navigation}: {navigation: any}) => {
     );
   }, [selectedBorrowers]);
 
+  useEffect(() => {
+    console.log('totalAmount', totalAmount);
+  }, [totalAmount]);
+
   // If user changes the lender, remove the lender from the selected borrowers
   useEffect(() => {
     console.log('lender', lender);
@@ -140,7 +139,6 @@ const BillScreen = ({navigation}: {navigation: any}) => {
       setSelectedBorrowers(
         selectedBorrowers.filter((borrower: any) => borrower.email !== lender),
       );
-      setAmount(0);
     }
   }, [lender]);
 
@@ -419,53 +417,6 @@ const BillScreen = ({navigation}: {navigation: any}) => {
           <Text style={[styles.title, {marginTop: 5}]}>Người mượn</Text>
           <View style={styles.borrowerContainer}>
             <View style={[styles.addBorrowerContainer]}>
-              {/* <DropDownPicker
-                containerStyle={{
-                  width: '100%',
-                  zIndex: 1000,
-                  padding: 0,
-                  marginBottom: 5,
-                }}
-                dropDownContainerStyle={{
-                  borderColor: Colors.border.lightgrey,
-                  borderRadius: 0,
-                }}
-                style={{
-                  borderWidth: 0,
-                  borderBottomWidth: 1,
-                  borderRadius: 0,
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                  minHeight: 40,
-                  borderColor: Colors.border.lightgrey,
-                }}
-                selectedItemLabelStyle={{color: Colors.title.orange}}
-                zIndex={100000}
-                open={openBorrowers}
-                value={borrower}
-                items={borrowers}
-                placeholder="Chọn người mượn"
-                placeholderStyle={{color: Colors.text.lightgrey}}
-                setOpen={setOpenBorrowers}
-                setValue={setBorrower}
-                setItems={setBorrowers}
-                onSelectItem={(item: any) => {
-                  setFieldValue('borrower', item.value);
-
-                  //Find borrower in members
-                  const index = members.findIndex(
-                    (member: any) => member.user.email === item.label,
-                  );
-
-                  // Set selected item to selectedBorrower
-                  setCurrentBorrower({
-                    _id: members[index].user._id,
-                    email: members[index].user.email,
-                    name: members[index].user.name,
-                    avatar: members[index].user.avatar,
-                  });
-                }}
-              /> */}
               <Dropdown
                 style={{
                   width: '100%',
@@ -516,7 +467,6 @@ const BillScreen = ({navigation}: {navigation: any}) => {
               <TextInput
                 onChangeText={value => {
                   setFieldValue('amount', value);
-                  setAmount(parseFloat(value));
                 }}
                 // onBlur={() => setFieldTouched('amount')}
                 // onChangeText={value => setAmount(parseFloat(value))}
@@ -530,7 +480,7 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                 keyboardType="numeric"
                 value={splitString(values.amount)}
               />
-              <Text style={{color: Colors.text.lightgrey}}>VND</Text>
+              <Text style={{color: Colors.text.lightgrey}}>VNĐ</Text>
             </View>
             {touched.amount && selectedBorrowers.length === 0 && (
               <Text style={styles.error}>Vui lòng nhập số tiền cần trả</Text>
@@ -542,6 +492,9 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                 // handleReset();
                 console.log('selectedBorrower', selectedBorrower);
                 console.log('amount', values.amount);
+
+                const amountInt = parseInt(values.amount.replace('.', ''));
+                console.log('amount after parse int', amountInt);
 
                 if (selectedBorrower._id && values.amount) {
                   // Check if borrower existed in selectedBorrowers
@@ -558,7 +511,7 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                         email: selectedBorrower.email,
                         name: selectedBorrower.name,
                         avatar: selectedBorrower.avatar,
-                        amount: values.amount,
+                        amount: amountInt,
                         status: 'PENDING',
                       },
                     ]);
@@ -571,12 +524,14 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                           email: selectedBorrower.email,
                           name: selectedBorrower.name,
                           avatar: selectedBorrower.avatar,
-                          amount: values.amount,
+                          amount: amountInt,
                           status: 'PENDING',
                         },
                       ]);
                     }
                   }
+
+                  setFieldValue('amount', '');
                 }
               }}>
               <Text style={styles.addBorrowerButtonText}>Thêm</Text>
@@ -613,7 +568,8 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                         <View style={styles.borrowerInfoRow}>
                           <Text style={styles.headingText}>Số tiền mượn: </Text>
                           <Text style={styles.text}>
-                            {splitString(selectedBorrower.amount)} VND
+                            {splitString(selectedBorrower.amount.toString())}{' '}
+                            VNĐ
                           </Text>
                         </View>
                         <View style={styles.borrowerInfoRow}>
