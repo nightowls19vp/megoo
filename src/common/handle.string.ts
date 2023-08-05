@@ -28,21 +28,18 @@ export const dateISOFormat = (date: string) => {
  * @returns the new string joined by a dot
  */
 export const splitString = (string: string): string => {
-  string = string.toString();
+  string = string.replace('.', '').toString();
   const stringList: string[] = [];
   let remainingLength = string.length;
-  let startIndex = 0;
 
-  // Handle the case when the string length is not divisible by 3
-  if (remainingLength % 3 !== 0) {
-    stringList.push(string.slice(0, remainingLength % 3));
-    startIndex = remainingLength % 3;
+  while (remainingLength > 3) {
+    const part = string.slice(remainingLength - 3, remainingLength);
+    stringList.unshift(part);
+    remainingLength -= 3;
   }
 
-  while (startIndex < remainingLength) {
-    const part = string.slice(startIndex, startIndex + 3);
-    stringList.push(part);
-    startIndex += 3;
+  if (remainingLength > 0) {
+    stringList.unshift(string.slice(0, remainingLength));
   }
 
   return stringList.join('.');

@@ -522,7 +522,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                               text1: 'Mời thành viên thành công',
                               autoHide: true,
                               visibilityTime: 1000,
-                              topOffset: height * 0.17,
+                              topOffset: height * 0.05,
                               // onHide: () => {},
                             });
                           } else {
@@ -531,7 +531,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                               text1: 'Mời thành viên thất bại',
                               autoHide: true,
                               visibilityTime: 1000,
-                              topOffset: height * 0.2,
+                              topOffset: height * 0.05,
                               // onHide: () => {},
                             });
                           }

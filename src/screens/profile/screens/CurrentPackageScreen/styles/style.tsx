@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 10,
+    marginTop: 10,
   },
   email: {
     display: 'flex',
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 10,
     padding: 10,
     borderWidth: 1,
     borderColor: Colors.border.orange,

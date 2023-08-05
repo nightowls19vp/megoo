@@ -61,8 +61,11 @@ export function onCreatedBill() {
     console.log('createdBill data stringify:', JSON.stringify(data, null, 2));
     console.log('createdBill data:', data);
 
-    // const dataObj = JSON.parse(data);
-    // console.log('dataObj app trans id:', dataObj.app_trans_id);
+    const result = await displayNotification(
+      'Phân chia chi tiêu mới',
+      `Bạn có một yêu cầu thanh toán chi tiêu mới từ ${data.lender}`,
+    );
+    console.log('result:', result);
   });
 }
 

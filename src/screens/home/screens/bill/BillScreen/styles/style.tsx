@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   amountContainer: {
     width: '100%',
-    height: 40,
+    height: 50,
     marginBottom: 10,
     display: 'flex',
     flexDirection: 'row',
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   },
   borrowersContainer: {
     width: '100%',
-    height: Dimensions.get('window').height * 0.15,
+    height: 'fit-content',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

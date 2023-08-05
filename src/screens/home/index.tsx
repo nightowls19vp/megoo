@@ -127,7 +127,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
     } else {
       getPackages();
     }
-  }, [appStore.isLoggedIn]);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -140,7 +140,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
       return () => {
         // Code to clean up the effect when the screen is unfocused
       };
-    }, [appStore.isLoggedIn]),
+    }, []),
   );
 
   useEffect(() => {
@@ -342,7 +342,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
     <ScrollView contentContainerStyle={styles.container}>
       {appStore.isLoggedIn ? null : (
         <View style={[styles.utilitiesContainer]}>
-          <Text style={styles.title}>Gói người dùng</Text>
+          <Text style={[styles.title, {width: '100%'}]}>Gói người dùng</Text>
           <Carousel
             loop={false}
             mode="parallax"
@@ -393,26 +393,28 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
         </View>
       </View>
 
-      <View style={[styles.utilitiesContainer, {marginTop: -10}]}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Việc cần làm</Text>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate(RouteNames.TODOS_LIST_STACK, {})
-            }>
-            {todos.length > 0 ? (
-              <Text style={styles.subTitle}>Xem tất cả</Text>
-            ) : (
-              <Ionicons
-                name="add-circle-outline"
-                color={Colors.icon.orange}
-                size={24}
-              />
-            )}
-          </TouchableOpacity>
+      {appStore.isLoggedIn ? (
+        <View style={[styles.utilitiesContainer, {marginTop: -10}]}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Việc cần làm</Text>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate(RouteNames.TODOS_LIST_STACK, {})
+              }>
+              {todos.length > 0 ? (
+                <Text style={styles.subTitle}>Xem tất cả</Text>
+              ) : (
+                <Ionicons
+                  name="add-circle-outline"
+                  color={Colors.icon.orange}
+                  size={24}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+          {renderTodoItem()}
         </View>
-        {renderTodoItem()}
-      </View>
+      ) : null}
 
       <Modal isVisible={modalVisible}>
         <View
