@@ -37,7 +37,7 @@ class UserStore {
     makeAutoObservable(this);
 
     reaction(
-      () => [this.callNoti, this.msgNoti, this.newsNoti, this.stockNoti],
+      () => [this.msgNoti, this.stockNoti],
 
       async () => {
         try {
@@ -50,10 +50,10 @@ class UserStore {
           const response = await axios.put(
             reqUrl,
             {
-              callNoti: this.callNoti,
               msgNoti: this.msgNoti,
-              stockNoti: this.stockNoti,
+              callNoti: this.callNoti,
               newsNoti: this.newsNoti,
+              stockNoti: this.stockNoti,
             },
             {
               headers: {
@@ -79,14 +79,8 @@ class UserStore {
   }
 
   @action setUserSettings(settings: ISettings) {
-    this.callNoti = settings.callNoti ?? this.callNoti;
     this.msgNoti = settings.msgNoti ?? this.msgNoti;
     this.stockNoti = settings.stockNoti ?? this.stockNoti;
-    this.newsNoti = settings.newsNoti ?? this.newsNoti;
-  }
-
-  @action setCallNoti(state: boolean) {
-    this.callNoti = state;
   }
 
   @action setMsgNoti(state: boolean) {
@@ -107,10 +101,6 @@ class UserStore {
 
   @action setCalendarNoti(state: boolean) {
     this.calendarNoti = state;
-  }
-
-  @action setNewsNoti(state: boolean) {
-    this.newsNoti = state;
   }
 
   @action setUser(user: IUser) {
@@ -162,8 +152,9 @@ class UserStore {
     this.dob = '';
     this.avatar = '';
     this.msgNoti = true;
-    this.callNoti = true;
-    this.newsNoti = true;
+    this.billNoti = true;
+    this.todosNoti = true;
+    this.calendarNoti = true;
     this.stockNoti = true;
     this.cartList = {
       cart: [],

@@ -45,7 +45,6 @@ import AddProdInfoScreen from '../../../screens/storage/screens/AddProdInfoScree
 import AddPurchaseLocationScreen from '../../../screens/storage/screens/AddPurchaseLocationScreen';
 import AddStorageLocationScreen from '../../../screens/storage/screens/AddStorageLocationScreen';
 import GroupsProductsListScreen from '../../../screens/storage/screens/GroupsScreen';
-import ManagementScreen from '../../../screens/storage/screens/ManagementScreen';
 import ProductDetailScreen from '../../../screens/storage/screens/ProductDetailScreen';
 import ProductsScreen from '../../../screens/storage/screens/ProductsScreen';
 import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScreen';

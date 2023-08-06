@@ -14,14 +14,17 @@ import * as Yup from 'yup';
 import CheckBox from '@react-native-community/checkbox';
 import Modal from 'react-native-modal';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Toast from 'react-native-root-toast';
 
 import {
   addTodos,
   deleteTodoInList,
+  deleteTodos,
   editSummary,
   getTodosById,
   updateTodoInList,
 } from './services/todos.service';
+import RouteNames from '../../../../../constants/route-names.const';
 import {Colors} from '../../../../../constants/color.const';
 
 // Define the type for the route params
@@ -34,10 +37,10 @@ type TodosRouteProp = RouteProp<Record<string, TodosRouteParams>, string>;
 
 const TodosSchema = Yup.object().shape({
   summary: Yup.string().required('Vui lòng nhập tiêu đề'),
-  todoName: Yup.string().required('Vui lòng nhập tiêu đề'),
+  todoName: Yup.string().required('Vui lòng nhập tên việc cần làm'),
 });
 
-const TodosScreen = () => {
+const TodosScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<TodosRouteProp>();
   const todosId = route?.params?.todosId;
 
@@ -274,10 +277,10 @@ const TodosScreen = () => {
                       ],
                       state: todos.state,
                     });
-                    console.log(
-                      'Add new response:',
-                      JSON.stringify(response, null, 2),
-                    );
+                    // console.log(
+                    //   'Add new response:',
+                    //   JSON.stringify(response, null, 2),
+                    // );
 
                     if (response.statusCode === 200) {
                       setFieldValue('todoName', '');
@@ -326,10 +329,10 @@ const TodosScreen = () => {
                             },
                           );
 
-                          console.log(
-                            'Update isCompleted response:',
-                            JSON.stringify(response, null, 2),
-                          );
+                          // console.log(
+                          //   'Update isCompleted response:',
+                          //   JSON.stringify(response, null, 2),
+                          // );
                         } else {
                           console.log('unchecked');
                         }
@@ -505,6 +508,32 @@ const TodosScreen = () => {
                 <TouchableOpacity
                   onPress={async () => {
                     setIsDeleteTodosModalVisible(!isDeleteTodosModalVisible);
+
+                    // const response = await deleteTodos(todosId);
+                    // if(response.statusCode === 200){
+                    Toast.show('This is a message', {
+                      duration: Toast.durations.SHORT,
+                      position: Toast.positions.TOP,
+                      shadow: true,
+                      animation: true,
+                      hideOnPress: true,
+                      delay: 0,
+                      onShow: () => {
+                        // calls on toast\`s appear animation start
+                      },
+                      onShown: () => {
+                        // calls on toast\`s appear animation end.
+                      },
+                      onHide: () => {
+                        // calls on toast\`s hide animation start.
+                      },
+                      onHidden: () => {
+                        // calls on toast\`s hide animation end.
+                        // navigation.navigate(RouteNames.PUBLIC_TODOS_TAB);
+                        navigation.goBack();
+                      },
+                    });
+                    // }
                   }}
                   style={{
                     alignItems: 'center',

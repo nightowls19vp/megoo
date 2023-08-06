@@ -34,13 +34,16 @@ export function onConnect() {
   });
 }
 
-export function listen() {
+export async function listen() {
   // todo: listen for socket events
   onZpCallback();
+
   onCreatedBill();
   onUpdatedBill();
+
   onCreatedTodos();
   onUpdatedTodos();
+
   onTaskReminder();
 }
 
@@ -88,10 +91,14 @@ export function onCreatedBill() {
     const response = await getUserInfo(data.lender);
     console.log('response:', response.user.name);
 
-    displayNotification(
-      'Phân chia chi tiêu mới',
-      `Bạn nhận được yêu cầu thanh toán chi tiêu mới từ ${response.user.name}.`,
-    );
+    const billNoti = await AsyncStorage.getItem('billNoti');
+
+    if (billNoti === 'true') {
+      displayNotification(
+        'Phân chia chi tiêu mới',
+        `Bạn nhận được yêu cầu thanh toán chi tiêu mới từ ${response.user.name}.`,
+      );
+    }
   });
 }
 
@@ -108,11 +115,17 @@ export function onCreatedTodos() {
     const response = await getUserInfo(data.createdBy);
     console.log('response:', response.user.name);
 
-    if (data.state === 'Public') {
-      displayNotification(
-        'Việc cần làm mới',
-        `${response.user.name} đã thêm việc cần làm: ${data.summary}.`,
-      );
+    const todosNoti = await AsyncStorage.getItem('todosNoti');
+    console.log('todosNoti get from storage:', todosNoti);
+    console.log('todosNoti type get from storage:', typeof todosNoti);
+
+    if (todosNoti === 'true') {
+      if (data.state === 'Public') {
+        displayNotification(
+          'Việc cần làm mới',
+          `${response.user.name} đã thêm việc cần làm: ${data.summary}.`,
+        );
+      }
     }
   });
 }
@@ -124,12 +137,16 @@ export function onUpdatedTodos() {
     // const response = await getUserInfo(data.createdBy);
     // console.log('response:', response.user.name);
 
-    // if (data.state === 'Public') {
-    //   displayNotification(
-    //     'Việc cần làm mới',
-    //     `${response.user.name} đã thêm việc cần làm: ${data.summary}.`,
-    //   );
-    // }
+    const todosNoti = await AsyncStorage.getItem('todosNoti');
+
+    //  if (todosNoti === 'true') {
+    //     if (data.state === 'Public') {
+    //       displayNotification(
+    //         'Việc cần làm mới',
+    //         `${response.user.name} đã thêm việc cần làm: ${data.summary}.`,
+    //       );
+    //     }
+    //   }
   });
 }
 export function onTaskReminder() {
@@ -139,6 +156,7 @@ export function onTaskReminder() {
     // const response = await getUserInfo(data.createdBy);
     // console.log('response:', response.user.name);
 
+    const calendarNoti = await AsyncStorage.getItem('calendarNoti');
     // if (data.state === 'Public') {
     //   displayNotification(
     //     'Việc cần làm mới',
