@@ -134,19 +134,19 @@ export function onUpdatedTodos() {
   socket.on('updatedTodos', async (data: any) => {
     console.log('updatedTodos data:', data);
 
-    // const response = await getUserInfo(data.createdBy);
-    // console.log('response:', response.user.name);
+    const response = await getUserInfo(data.createdBy);
+    console.log('response:', response.user.name);
 
     const todosNoti = await AsyncStorage.getItem('todosNoti');
 
-    //  if (todosNoti === 'true') {
-    //     if (data.state === 'Public') {
-    //       displayNotification(
-    //         'Việc cần làm mới',
-    //         `${response.user.name} đã thêm việc cần làm: ${data.summary}.`,
-    //       );
-    //     }
-    //   }
+    if (todosNoti === 'true') {
+      if (data.state === 'Public') {
+        displayNotification(
+          'Cập nhật việc cần làm',
+          `${response.user.name} đã cập nhật việc cần làm: ${data.summary}.`,
+        );
+      }
+    }
   });
 }
 export function onTaskReminder() {

@@ -10,7 +10,6 @@ import {Colors} from '../../../../../constants/color.const';
 import Slider from '@react-native-community/slider';
 import {useState, useEffect} from 'react';
 import {splitString} from '../../../../../common/handle.string';
-import DropDownPicker from 'react-native-dropdown-picker';
 import {Dropdown} from 'react-native-element-dropdown';
 import DatePicker from 'react-native-date-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';

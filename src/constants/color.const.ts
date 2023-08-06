@@ -24,6 +24,7 @@ export const Colors = {
     white: '#FFFFFF',
     orange: '#F58F00',
     red: '#DD382F',
+    green: '#198757',
     lightorange: '#FFBB5B',
   },
 
@@ -62,6 +63,11 @@ export const Colors = {
     orange: '#F58F00',
     red: '#DD382F',
     lightorange: '#FFBB5B',
+  },
+
+  toastBackground: {
+    red: '#DD382F',
+    green: '#198757',
   },
 
   bottomTabBackground: '#FFFFFF',

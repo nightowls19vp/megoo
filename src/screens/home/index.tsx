@@ -13,7 +13,6 @@ import Modal from 'react-native-modal';
 import Carousel from 'react-native-reanimated-carousel';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import CheckBox from '@react-native-community/checkbox';
 import Slider from '@react-native-community/slider';
 import {useFocusEffect} from '@react-navigation/native';
 

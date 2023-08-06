@@ -14,7 +14,6 @@ import * as Yup from 'yup';
 import CheckBox from '@react-native-community/checkbox';
 import Modal from 'react-native-modal';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Toast from 'react-native-root-toast';
 
 import {
   addTodos,
@@ -26,6 +25,7 @@ import {
 } from './services/todos.service';
 import RouteNames from '../../../../../constants/route-names.const';
 import {Colors} from '../../../../../constants/color.const';
+import Toast from 'react-native-toast-message';
 
 // Define the type for the route params
 type TodosRouteParams = {
@@ -343,6 +343,7 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
+                        // gap: 10,
                       }}>
                       <TextInput
                         value={todo.todo}
@@ -383,42 +384,44 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
                           );
                         }}
                       />
-                      {todo.description && (
-                        <TextInput
-                          value={todo.description}
-                          style={{
-                            color: Colors.text.lightgrey,
-                            fontSize: 12,
-                            height: 20,
-                            padding: 0,
-                          }}
-                          onChangeText={newValue => {
-                            todo.description = newValue;
-                            setNewTodoInfo({
-                              todoName: todo.todo,
-                              todoDescription: newValue,
-                            });
-                          }}
-                          onEndEditing={async () => {
-                            console.log('newTodoInfo:', newTodoInfo);
+                      {/* {todo.description && ( */}
+                      <TextInput
+                        value={todo.description}
+                        placeholder={'Nhập mô tả việc cần làm'}
+                        placeholderTextColor={Colors.text.lightgrey}
+                        style={{
+                          color: Colors.text.lightgrey,
+                          fontSize: 12,
+                          height: 20,
+                          padding: 0,
+                        }}
+                        onChangeText={newValue => {
+                          todo.description = newValue;
+                          setNewTodoInfo({
+                            todoName: todo.todo,
+                            todoDescription: newValue,
+                          });
+                        }}
+                        onEndEditing={async () => {
+                          console.log('newTodoInfo:', newTodoInfo);
 
-                            const response = await updateTodoInList(
-                              todosId,
-                              todo._id,
-                              {
-                                todo: todo.todo,
-                                description: newTodoInfo.todoDescription,
-                                isCompleted: todo.isCompleted,
-                              },
-                            );
+                          const response = await updateTodoInList(
+                            todosId,
+                            todo._id,
+                            {
+                              todo: todo.todo,
+                              description: newTodoInfo.todoDescription,
+                              isCompleted: todo.isCompleted,
+                            },
+                          );
 
-                            console.log(
-                              'Update todo description response:',
-                              JSON.stringify(response, null, 2),
-                            );
-                          }}
-                        />
-                      )}
+                          console.log(
+                            'Update todo description response:',
+                            JSON.stringify(response, null, 2),
+                          );
+                        }}
+                      />
+                      {/* )} */}
                     </View>
                   </View>
                   <TouchableOpacity
@@ -509,31 +512,24 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
                   onPress={async () => {
                     setIsDeleteTodosModalVisible(!isDeleteTodosModalVisible);
 
-                    // const response = await deleteTodos(todosId);
-                    // if(response.statusCode === 200){
-                    Toast.show('This is a message', {
-                      duration: Toast.durations.SHORT,
-                      position: Toast.positions.TOP,
-                      shadow: true,
-                      animation: true,
-                      hideOnPress: true,
-                      delay: 0,
-                      onShow: () => {
-                        // calls on toast\`s appear animation start
-                      },
-                      onShown: () => {
-                        // calls on toast\`s appear animation end.
-                      },
-                      onHide: () => {
-                        // calls on toast\`s hide animation start.
-                      },
-                      onHidden: () => {
-                        // calls on toast\`s hide animation end.
-                        // navigation.navigate(RouteNames.PUBLIC_TODOS_TAB);
-                        navigation.goBack();
-                      },
-                    });
-                    // }
+                    const response = await deleteTodos(todosId);
+                    if (response.statusCode === 200) {
+                      Toast.show({
+                        type: 'success',
+                        text1: 'Tạo sự kiện thành công',
+                        autoHide: true,
+                        visibilityTime: 1000,
+                        onHide: () => {
+                          navigation.goBack();
+                        },
+                      });
+                    } else
+                      Toast.show({
+                        type: 'error',
+                        text1: 'Tạo sự kiện không thành công',
+                        autoHide: true,
+                        visibilityTime: 1000,
+                      });
                   }}
                   style={{
                     alignItems: 'center',

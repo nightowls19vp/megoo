@@ -1,29 +1,31 @@
+import {Formik} from 'formik';
+import moment from 'moment';
 import {useEffect, useMemo, useState} from 'react';
 import {
   Dimensions,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  ScrollView,
   TextInput,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import {RouteProp, useRoute} from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
 import DatePicker from 'react-native-date-picker';
-import DropDownPicker from 'react-native-dropdown-picker';
+import {Dropdown} from 'react-native-element-dropdown';
 import {RadioButtonProps, RadioGroup} from 'react-native-radio-buttons-group';
-import CheckBox from '@react-native-community/checkbox';
+import Toast from 'react-native-toast-message';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as Yup from 'yup';
+import {ButtonGroup} from 'react-native-elements/dist/buttons/ButtonGroup';
 
-import RouteNames from '../../../../../constants/route-names.const';
+import CheckBox from '@react-native-community/checkbox';
+import {RouteProp, useRoute} from '@react-navigation/native';
+
 import {Colors} from '../../../../../constants/color.const';
-import moment from 'moment';
+import RouteNames from '../../../../../constants/route-names.const';
 import {getMembers} from '../../../../../services/group.service';
 import {createTask} from './services/task.service';
-import Toast from 'react-native-toast-message';
 
 type GroupRouteParams = {
   groupId: string;
@@ -45,7 +47,6 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
   const [selectedDate, setSelectedDate] = useState(date);
   const [open, setOpen] = useState(false);
 
-  const [openDropdown, setOpenDropdown] = useState(false);
   const [items, setItems] = useState<
     {
       label: string;
@@ -57,7 +58,7 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
       value: 'Does not repeat',
     },
     {
-      label: 'Hàng ngày',
+      label: 'Hằng ngày',
       value: 'Daily',
     },
     {
@@ -65,7 +66,67 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
       value: 'Custom',
     },
   ]);
-  const [value, setValue] = useState(items[0].value);
+  const [units, setUnits] = useState<
+    {
+      label: string;
+      value: string;
+    }[]
+  >([
+    {
+      label: 'ngày',
+      value: 'day',
+    },
+    {
+      label: 'tuần',
+      value: 'week',
+    },
+    {
+      label: 'tháng',
+      value: 'month',
+    },
+    {
+      label: 'năm',
+      value: 'year',
+    },
+  ]);
+  const [recurrenceValue, setRecurenceValue] = useState(items[0].value);
+  const [isRecurrenceFocus, setIsRecurrenceFocus] = useState(false);
+
+  const [unitValue, setUnitValue] = useState(units[1].value);
+  const [isUnitFocus, setIsUnitFocus] = useState(false);
+
+  const [times, setTimes] = useState('');
+  const [repeatOn, setRepeatOn] = useState<string[]>([]);
+
+  const buttons: string[] = ['2', '3', '4', '5', '6', '7', 'CN'];
+  const [selectedButtons, setSelectedButtons] = useState<number[]>([]);
+
+  const radioButtons: RadioButtonProps[] = useMemo(
+    () => [
+      {
+        id: '1', // acts as primary key, should be unique and non-empty string
+        label: 'Không bao giờ',
+        value: 'never',
+        size: 20,
+        color: Colors.icon.orange,
+        labelStyle: {color: Colors.text.grey},
+      },
+      {
+        id: '2',
+        label: 'Vào ngày',
+        value: 'on',
+        size: 20,
+        color: Colors.icon.orange,
+        labelStyle: {color: Colors.text.grey},
+      },
+    ],
+    [],
+  );
+
+  const [selectedId, setSelectedId] = useState<string | undefined>(
+    radioButtons[0].id,
+  );
+  const [selectedOption, setSelectedOption] = useState<string | undefined>();
 
   const [members, setMembers] = useState<
     {
@@ -116,6 +177,54 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
     );
   };
 
+  const convertDateToString = (date: string): string => {
+    let result = '';
+    switch (date) {
+      case '2':
+        result = 'Mon';
+        break;
+      case '3':
+        result = 'Tue';
+        break;
+      case '4':
+        result = 'Wen';
+        break;
+      case '5':
+        result = 'Thu';
+        break;
+      case '6':
+        result = 'Fri';
+        break;
+      case '7':
+        result = 'Sat';
+        break;
+      case 'CN':
+        result = 'Sun';
+        break;
+      default:
+        result = '';
+        break;
+    }
+    return result;
+  };
+
+  useEffect(() => {
+    let selectedDay: string[] = [];
+    selectedButtons.map(item => {
+      console.log('item', item);
+      console.log('buttons[index]:', buttons[item]);
+      const dateString = convertDateToString(buttons[item]);
+      if (selectedDay.indexOf(dateString) === -1) {
+        selectedDay.push(dateString);
+      }
+    });
+    setRepeatOn(selectedDay);
+  }, [selectedButtons]);
+
+  useEffect(() => {
+    console.log('repeatOn', repeatOn);
+  }, [repeatOn]);
+
   useEffect(() => {
     console.log('groupId', groupId);
     getMembersInGroup();
@@ -148,7 +257,7 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
       onSubmit={async values => {
         console.log('values', values);
 
-        const isRepeated = value === 'Does not repeat' ? false : true;
+        const isRepeated = recurrenceValue === 'Does not repeat' ? false : true;
 
         const task = {
           summary: values.summary,
@@ -158,8 +267,19 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
             'DD/MM/YYYY hh:mm A',
           ).toISOString(),
           isRepeated: isRepeated,
-          state: state === true ? 'Public' : 'Private',
+          recurrence: isRepeated
+            ? {
+                times: times,
+                unit: unitValue,
+                repeatOn: repeatOn,
+                ends: moment(
+                  values.startDate,
+                  'DD/MM/YYYY hh:mm A',
+                ).toISOString(),
+              }
+            : undefined,
           members: state === true ? selectedMembers : undefined,
+          state: state === true ? 'Public' : 'Private',
         };
 
         console.log('task', JSON.stringify(task, null, 2));
@@ -174,17 +294,16 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
             text1: 'Tạo sự kiện thành công',
             autoHide: true,
             visibilityTime: 1000,
-            topOffset: 30,
             onHide: () => {
-              navigation.navigate(RouteNames.TASK_LIST, {});
+              navigation.goBack();
             },
           });
         } else {
           Toast.show({
             type: 'error',
-            text1: response.message,
-            autoHide: false,
-            topOffset: 20,
+            text1: 'Tạo sự kiện thất bại',
+            autoHide: true,
+            visibilityTime: 1000,
           });
         }
       }}>
@@ -220,7 +339,8 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
           {touched.summary && errors.summary && (
             <Text style={styles.error}>{errors.summary}</Text>
           )}
-          <Text style={styles.title}>Thời gian</Text>
+
+          <Text style={styles.title}>Thời gian bắt đầu</Text>
           <View style={[styles.inputContainer]}>
             <TextInput
               editable={false}
@@ -285,43 +405,171 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
           {touched.startDate && errors.startDate && (
             <Text style={styles.error}>{errors.startDate}</Text>
           )}
-          <DropDownPicker
-            containerStyle={{
-              width: '90%',
-              zIndex: 1000,
-              padding: 0,
-              marginBottom: 5,
-              backgroundColor: 'pink',
-            }}
-            dropDownContainerStyle={{
-              borderColor: Colors.border.lightgrey,
-              borderRadius: 0,
-            }}
-            // style={{borderColor: Colors.border.lightgrey, borderRadius: 10}}
+
+          <Dropdown
             style={{
-              borderWidth: 0,
+              width: '90%',
+              height: 50,
               borderBottomWidth: 1,
-              borderRadius: 0,
-              paddingLeft: 0,
-              paddingRight: 0,
-              minHeight: 50,
               borderColor: Colors.border.lightgrey,
             }}
-            iconContainerStyle={{
-              paddingRight: 0,
-              display: 'none',
+            data={items}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={!isRecurrenceFocus ? 'Lặp lại' : '...'}
+            placeholderStyle={{
+              fontSize: 14,
+              color: Colors.text.lightgrey,
             }}
-            // selectedItemLabelStyle={{color: Colors.title.orange}}
-            open={openDropdown}
-            value={value}
-            items={items}
-            setOpen={setOpenDropdown}
-            setValue={setValue}
-            setItems={setItems}
-            placeholder={items[0].label}
-            // placeholderStyle={{color: Colors.text.lightgrey}}
+            selectedTextStyle={{
+              color: Colors.text.grey,
+              fontSize: 14,
+            }}
+            itemTextStyle={{
+              color: Colors.text.grey,
+              fontSize: 14,
+            }}
+            value={recurrenceValue}
+            onFocus={() => setIsRecurrenceFocus(true)}
+            onBlur={() => setIsRecurrenceFocus(false)}
+            onChange={item => {
+              setRecurenceValue(item.value);
+              setIsRecurrenceFocus(false);
+            }}
           />
-          <Text style={styles.title}>Chế độ</Text>
+          {recurrenceValue === 'Custom' && (
+            <View
+              style={{
+                width: '90%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+              }}>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+
+                  gap: 10,
+                }}>
+                <Text>Lặp lại mỗi:</Text>
+                <TextInput
+                  style={{
+                    width: '10%',
+                    paddingLeft: 5,
+                    paddingVertical: 0,
+                    borderBottomWidth: 1,
+                    borderColor: Colors.border.lightgrey,
+                    color: Colors.text.grey,
+                  }}
+                  textAlign={'center'}
+                  keyboardType="numeric"
+                  value={times}
+                  onChangeText={text => setTimes(text)}
+                />
+                <Dropdown
+                  style={{
+                    width: '30%',
+                    height: 50,
+                  }}
+                  data={units}
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={!isUnitFocus ? 'Chọn đơn vị' : '...'}
+                  placeholderStyle={{
+                    color: Colors.text.lightgrey,
+                  }}
+                  itemTextStyle={{
+                    color: Colors.text.grey,
+                    fontSize: 14,
+                  }}
+                  value={unitValue}
+                  onFocus={() => setIsUnitFocus(true)}
+                  onBlur={() => setIsUnitFocus(false)}
+                  onChange={item => {
+                    setUnitValue(item.value);
+
+                    setIsUnitFocus(false);
+                  }}
+                />
+              </View>
+
+              {unitValue !== 'day' && (
+                <View
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    marginTop: 10,
+                  }}>
+                  <Text>Lặp lại vào thứ:</Text>
+                  <ButtonGroup
+                    onPress={item => {
+                      console.log('item:', item);
+
+                      setSelectedButtons(item);
+                    }}
+                    selectMultiple={true}
+                    selectedIndexes={selectedButtons}
+                    buttons={buttons}
+                    containerStyle={{
+                      width: '100%',
+                      height: 30,
+                      borderWidth: 0,
+                      marginLeft: 0,
+                      // backgroundColor: 'pink',
+                    }}
+                    innerBorderStyle={{
+                      width: 0,
+                    }}
+                    selectedButtonStyle={{
+                      backgroundColor: Colors.icon.orange,
+                      borderRadius: 50,
+                    }}
+                    buttonContainerStyle={{
+                      alignItems: 'flex-start',
+                      justifyContent: 'flex-start',
+                    }}
+                    buttonStyle={{
+                      width: 30,
+                      height: 30,
+                      borderRadius: 15,
+                      borderWidth: 1,
+                      borderColor: Colors.border.orange,
+                      backgroundColor: Colors.background.white,
+                    }}
+                    textStyle={{
+                      color: Colors.text.orange,
+                    }}
+                  />
+                </View>
+              )}
+
+              <View
+                style={{
+                  width: '90%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  marginTop: 10,
+                }}>
+                <Text>Kết thúc:</Text>
+                <RadioGroup
+                  containerStyle={styles.radioButtonContainer}
+                  layout="column"
+                  radioButtons={radioButtons}
+                  onPress={setSelectedId}
+                  selectedId={selectedId}
+                />
+              </View>
+            </View>
+          )}
+
+          <Text style={[styles.title, {marginTop: 15}]}>Chế độ</Text>
           <View
             style={{
               width: '90%',
@@ -422,8 +670,6 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
               Tạo
             </Text>
           </TouchableOpacity>
-
-          <Toast position="top" />
         </ScrollView>
       )}
     </Formik>
@@ -475,7 +721,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'flex-start',
     gap: 10,
-    marginTop: 10,
   },
   createButton: {
     width: '90%',
