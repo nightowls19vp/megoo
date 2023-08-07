@@ -14,7 +14,7 @@ export interface IItem {
 
   addedBy?: string;
 
-  bestBefore?: Date;
+  bestBefore?: string;
 
   quantity?: number;
 

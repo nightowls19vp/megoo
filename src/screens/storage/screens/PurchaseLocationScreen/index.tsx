@@ -96,7 +96,15 @@ const PurchaseLocationScreen = ({navigation}: {navigation: any}) => {
               <Text
                 style={{...styles.infoText, flexWrap: 'wrap', marginTop: -5}}
                 numberOfLines={3}>
-                {Object.values(stoLoc?.address || {}).join(', ')}
+                {[
+                  stoLoc?.address?.addressLine1,
+                  stoLoc?.address?.addressLine2,
+                  stoLoc?.address?.wardName,
+                  stoLoc?.address?.districtName,
+                  stoLoc?.address?.provinceName,
+                ]
+                  .filter(Boolean)
+                  .join(', ')}
               </Text>
             </View>
           </View>

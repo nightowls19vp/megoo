@@ -1,23 +1,20 @@
-import Modal from 'react-native-modal';
-import {Text, View} from 'react-native';
-import {Colors} from '../../../constants/color.const';
-import {TouchableOpacity} from 'react-native';
-
-import {FC, useState} from 'react';
 import {observer} from 'mobx-react';
+import {FC} from 'react';
+import {Text, TouchableOpacity, View} from 'react-native';
 import {
   Asset,
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import {IMAGE_URI_DEFAULT} from '../../../common/default';
+import Modal from 'react-native-modal';
+
+import {Colors} from '../../../constants/color.const';
 
 interface IImageSelectionOptionModalProps {
   title: string;
   isModalOpen: boolean;
   setIsModalOpen: (state: boolean) => void;
-  // optional
-  fnUpdateSelectedImage?: (image: string) => void; //set selected image from parent component
+  fnUpdateSelectedImage: (image: string) => void; //set selected image from parent component
 }
 
 const AddImageModal: FC<IImageSelectionOptionModalProps> = ({
@@ -26,9 +23,6 @@ const AddImageModal: FC<IImageSelectionOptionModalProps> = ({
   setIsModalOpen,
   fnUpdateSelectedImage,
 }) => {
-  const [imageFile, setImageFile] = useState<any>();
-  const [selectedImage, setSelectedImage] = useState(IMAGE_URI_DEFAULT);
-
   return (
     <Modal isVisible={isModalOpen}>
       <View
@@ -47,7 +41,7 @@ const AddImageModal: FC<IImageSelectionOptionModalProps> = ({
             color: Colors.title.orange,
             fontWeight: 'bold',
           }}>
-          {'title'}
+          {title}
         </Text>
 
         <View
@@ -62,19 +56,33 @@ const AddImageModal: FC<IImageSelectionOptionModalProps> = ({
                 {
                   mediaType: 'photo',
                   cameraType: 'back',
+                  includeBase64: true,
+                  quality: 1,
                 },
                 response => {
-                  console.log('Response = ', response);
-
                   if (response.didCancel) {
                     console.log('User cancelled image picker');
                   } else if (response.errorMessage) {
                     console.log('ImagePicker Error: ', response.errorMessage);
                   } else {
-                    let source: Asset[] = response.assets as Asset[];
-                    setSelectedImage(`${source[0].uri}`);
-                    setImageFile(source[0].base64);
-                    // console.log('File:', source[0].base64);
+                    const source: Asset[] = response.assets as Asset[];
+
+                    if (
+                      source?.[0]?.uri &&
+                      fnUpdateSelectedImage &&
+                      source?.[0]?.base64
+                    ) {
+                      const fileExtension = source[0].uri.split('.').pop();
+                      const base64String = `data:image/${fileExtension};base64,${source[0].base64}`;
+
+                      fnUpdateSelectedImage(base64String);
+
+                      console.log(
+                        'take pic base64String:',
+                        base64String.slice(0, 100),
+                      );
+                    }
+                    setIsModalOpen(false);
                   }
                 },
               );
@@ -94,7 +102,7 @@ const AddImageModal: FC<IImageSelectionOptionModalProps> = ({
               await launchImageLibrary(
                 // If need base64String, include this option:
                 // includeBase64: true
-                {mediaType: 'mixed', includeBase64: true},
+                {mediaType: 'photo', includeBase64: true, selectionLimit: 1},
                 response => {
                   // console.log('Response = ', response);
                   if (response.didCancel) {
@@ -103,9 +111,17 @@ const AddImageModal: FC<IImageSelectionOptionModalProps> = ({
                     console.log('ImagePicker Error: ', response.errorMessage);
                   } else {
                     let source: Asset[] = response.assets as Asset[];
-                    setSelectedImage(`${source[0].uri}`);
-                    setImageFile(source[0].base64);
-                    // console.log('File:', source[0].base64);
+                    if (
+                      source?.[0]?.uri &&
+                      fnUpdateSelectedImage &&
+                      source?.[0]?.base64
+                    ) {
+                      const fileExtension = source[0].uri.split('.').pop();
+                      const base64String = `data:image/${fileExtension};base64,${source[0].base64}`;
+
+                      fnUpdateSelectedImage(base64String);
+                    }
+                    setIsModalOpen(false);
                   }
                 },
               );

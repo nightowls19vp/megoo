@@ -13,20 +13,16 @@ import styles from '../../screens/AddGroupProductScreen/styles/style';
 import {Dropdown} from 'react-native-element-dropdown';
 
 interface IProps {
-  groupId: string;
-  zIndex: number;
-  zIndexInverse: number;
   navigation: any;
+  groupId: string;
+  fnUpdateStorageLocationId: (id: string) => void;
 }
 const StorageLocationDropdownPicker: React.FC<IProps> = ({
-  groupId,
-  zIndex,
-  zIndexInverse,
   navigation,
+  groupId,
+  fnUpdateStorageLocationId,
 }) => {
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState('');
   const [items, setItems] = useState<
     {
       label: string;
@@ -40,12 +36,9 @@ const StorageLocationDropdownPicker: React.FC<IProps> = ({
   }, []);
 
   const search = async (text: string) => {
-    // Show the loading animation
-    setLoading(true);
-
     // Get items from API
     const resp = await sl.getStorageLocationPaginated({
-      groupId: '1',
+      groupId: groupId,
       searchBy: ['name'],
       search: text,
       limit: 100,
@@ -74,8 +67,6 @@ const StorageLocationDropdownPicker: React.FC<IProps> = ({
         // alignItems: 'flex-end',
         backgroundColor: Colors.background.white,
         borderRadius: 10,
-        // marginVertical: 10,
-        zIndex: zIndex,
       }}>
       <View
         style={{
@@ -108,68 +99,34 @@ const StorageLocationDropdownPicker: React.FC<IProps> = ({
       </View>
 
       <Dropdown
+        containerStyle={{
+          width: '100%',
+        }}
         placeholderStyle={{
           color: Colors.text.lightgrey,
+          fontSize: 14,
+        }}
+        itemTextStyle={{
+          color: Colors.text.grey,
+          fontSize: 14,
         }}
         data={items}
         search
         maxHeight={300}
         labelField="label"
         valueField="value"
-        placeholder={!isFocus ? '"Chọn vị trí lưu trữ"' : '...'}
-        searchPlaceholder="Search..."
+        placeholder={!isFocus ? 'Chọn vị trí lưu trữ ...' : '...'}
+        searchPlaceholder="Tìm kiếm ..."
         value={value}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={item => {
-          setValue(item.value as any);
+          setValue(item.value);
           setIsFocus(false);
+
+          fnUpdateStorageLocationId(item.value);
         }}
       />
-
-      {/* <DropDownPicker
-        listMode="MODAL"
-        scrollViewProps={{
-          nestedScrollEnabled: true,
-        }}
-        placeholder="Chọn vị trí lưu trữ"
-        placeholderStyle={{
-          color: Colors.text.lightgrey,
-        }}
-        loading={loading}
-        open={open}
-        value={value}
-        items={items}
-        setOpen={setOpen}
-        setValue={setValue}
-        setItems={setItems}
-        zIndex={zIndex}
-        zIndexInverse={zIndexInverse}
-        containerStyle={{
-          width: '100%',
-          zIndex: 1000,
-          padding: 0,
-          marginBottom: 5,
-        }}
-        dropDownContainerStyle={{
-          borderColor: Colors.border.lightgrey,
-          borderRadius: 0,
-        }}
-        style={{
-          borderWidth: 0,
-          borderBottomWidth: 1,
-          borderRadius: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-          minHeight: 40,
-          borderColor: Colors.border.lightgrey,
-        }}
-        searchable={true}
-        searchPlaceholder="Tìm kiếm ..."
-        disableLocalSearch={true} // required for remote search
-        onChangeSearchText={text => search(text)} // required for remote search
-        autoScroll={true}
-      /> */}
     </View>
   );
 };

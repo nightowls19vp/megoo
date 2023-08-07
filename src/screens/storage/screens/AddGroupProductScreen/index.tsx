@@ -1,6 +1,5 @@
 import {Formik} from 'formik';
 import {observer} from 'mobx-react';
-import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {
   Image,
@@ -11,26 +10,23 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import DatePicker from 'react-native-date-picker';
-import {
-  Asset,
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
+import {Asset, launchCamera} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
-import GroupProductDropdownPicker from '../../components/GroupProductDropdownPicker';
-import PurchaseLocationDropdownPicker from '../../components/PurchaseLocationDropdownPicker';
-import StorageLocationDropdownPicker from '../../components/StorageLocationDropdownPicker';
 import styles from './styles/style';
+import {ICreateGroupProductReq} from '../../interfaces/group-products';
+import groupStore from '../../../../common/store/group.store';
+import {createGroupProduct} from '../../services/group-products.service';
+import Toast from 'react-native-toast-message';
+import AddImageModal from '../../../../common/components/AddImageModal';
 
 const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
   const initialValues = {
+    name: '',
     barcode: '',
-    prodName: '',
     price: '',
     region: '',
     brand: '',
@@ -38,20 +34,13 @@ const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
     description: '',
   };
 
-  const [open, setOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedImage, setSelectedImage] = useState(IMAGE_URI_DEFAULT);
   const [imageFile, setImageFile] = useState<any>();
+  const [modalState, setModalState] = useState(false);
 
   useEffect(() => {
     appStore.setSearchActive(false);
   }, []);
-
-  useEffect(() => {
-    if (open) {
-      setSelectedDate(new Date());
-    }
-  }, [open]);
 
   return (
     <ScrollView
@@ -74,81 +63,70 @@ const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
               bottom: 0,
             }}
             onPress={async () => {
-              launchCamera(
-                {
-                  mediaType: 'photo',
-                  cameraType: 'back',
-                },
-                response => {
-                  console.log('Response = ', response);
-
-                  if (response.didCancel) {
-                    console.log('User cancelled image picker');
-                  } else if (response.errorMessage) {
-                    console.log('ImagePicker Error: ', response.errorMessage);
-                  } else {
-                    let source: Asset[] = response.assets as Asset[];
-                    setSelectedImage(`${source[0].uri}`);
-                    setImageFile(source[0].base64);
-                    // console.log('File:', source[0].base64);
-                  }
-                },
-              );
-
-              // await launchCamera(
-              //   // If need base64String, include this option:
-              //   // includeBase64: true
-              //   {mediaType: 'mixed', includeBase64: true},
-              //   response => {
-              //     // console.log('Response = ', response);
-
-              //     if (response.didCancel) {
-              //       console.log('User cancelled image picker');
-              //     } else if (response.errorMessage) {
-              //       console.log('ImagePicker Error: ', response.errorMessage);
-              //     } else {
-              //       let source: Asset[] = response.assets as Asset[];
-              //       setSelectedImage(`${source[0].uri}`);
-              //       setImageFile(source[0].base64);
-              //       // console.log('File:', source[0].base64);
-              //     }
-              //   },
-              // );
+              setModalState(true);
             }}>
             <Icon name="camera" size={40} color={Colors.icon.lightgrey} />
           </TouchableOpacity>
         </View>
 
-        {/* <TouchableOpacity
-          style={{marginVertical: 10}}
-          onPress={async () => {
-            await launchImageLibrary(
-              // If need base64String, include this option:
-              // includeBase64: true
-              {mediaType: 'mixed', includeBase64: true},
-              response => {
-                // console.log('Response = ', response);
-
-                if (response.didCancel) {
-                  console.log('User cancelled image picker');
-                } else if (response.errorMessage) {
-                  console.log('ImagePicker Error: ', response.errorMessage);
-                } else {
-                  let source: Asset[] = response.assets as Asset[];
-                  setSelectedImage(`${source[0].uri}`);
-                  setImageFile(source[0].base64);
-                  // console.log('File:', source[0].base64);
-                }
-              },
-            );
-          }}>
-          <Text style={{color: Colors.text}}>Chỉnh sửa ảnh sản phẩm</Text>
-        </TouchableOpacity> */}
-
         <Formik
           initialValues={initialValues}
-          onSubmit={values => {
+          onSubmit={(values, {resetForm}) => {
             console.log('values:', values);
+
+            if (!values.name) {
+              Toast.show({
+                type: 'error',
+                text1: 'Vui lòng nhập tên mẫu mã nhu yếu phẩm',
+                visibilityTime: 1000,
+                autoHide: true,
+              });
+              return;
+            }
+
+            const reqDto: ICreateGroupProductReq = {
+              name: values.name,
+              image: imageFile !== IMAGE_URI_DEFAULT ? imageFile : undefined,
+              barcode: values.barcode,
+              price: parseInt(values.price),
+              region: values.region,
+              brand: values.brand,
+              category: values.category,
+              description: values.description,
+              groupId: groupStore.id,
+            };
+
+            createGroupProduct(reqDto)
+              .then(resp => {
+                if (resp.statusCode.toString().startsWith('2')) {
+                  Toast.show({
+                    type: 'success',
+                    text1: 'Thêm mẫu mã nhu yếu phẩm thành công',
+                    visibilityTime: 1000,
+                    autoHide: true,
+                  });
+                } else {
+                  Toast.show({
+                    type: 'error',
+                    text1: 'Thêm mẫu mã nhu yếu phẩm thất bại',
+                    visibilityTime: 1000,
+                    autoHide: true,
+                  });
+                }
+              })
+              .catch(err => {
+                Toast.show({
+                  type: 'error',
+                  text1: 'Thêm mẫu mã nhu yếu phẩm thất bại',
+                  visibilityTime: 1000,
+                  autoHide: true,
+                });
+              })
+              .finally(() => {
+                resetForm();
+                setSelectedImage(IMAGE_URI_DEFAULT);
+                setImageFile(undefined);
+              });
           }}>
           {({
             values,
@@ -185,18 +163,18 @@ const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
               <View style={styles.infoInput}>
                 <TextInput
                   onChangeText={value => {
-                    setFieldValue('prodName', value);
+                    setFieldValue('name', value);
                   }}
-                  onBlur={() => setFieldTouched('prodName')}
+                  onBlur={() => setFieldTouched('name')}
                   style={{flex: 1, color: Colors.text.grey}}
                   placeholder={'Nhập tên nhu yếu phẩm'}
                   placeholderTextColor={Colors.text.lightgrey}
-                  value={values.prodName}
+                  value={values.name}
                 />
 
-                {values.prodName && (
+                {values.name && (
                   <Icon
-                    onPress={() => setFieldValue('prodName', '')}
+                    onPress={() => setFieldValue('name', '')}
                     name={'close'}
                     style={styles.icon}
                   />
@@ -214,7 +192,7 @@ const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
                   style={{flex: 1, color: Colors.text.grey}}
                   placeholder={'Nhập giá tiền'}
                   placeholderTextColor={Colors.text.lightgrey}
-                  value={values.price}
+                  value={values.price.toString()}
                 />
 
                 {values.price && (
@@ -324,6 +302,13 @@ const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
             </View>
           )}
         </Formik>
+        <AddImageModal
+          key="addImageModal"
+          title={'Chọn hình ảnh'}
+          isModalOpen={modalState}
+          setIsModalOpen={setModalState}
+          fnUpdateSelectedImage={setSelectedImage}
+        />
       </KeyboardAvoidingView>
     </ScrollView>
   );

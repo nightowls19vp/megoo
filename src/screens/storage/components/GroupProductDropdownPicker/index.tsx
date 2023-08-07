@@ -1,32 +1,29 @@
 import {observer} from 'mobx-react';
 import React, {useEffect, useState} from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {Dropdown, SelectCountry} from 'react-native-element-dropdown';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import {Colors} from '../../../../constants/color.const';
+import RouteNames from '../../../../constants/route-names.const';
 import {IItem} from '../../interfaces/base-dto/item.interface';
 import * as gp from '../../services/group-products.service';
 
 interface IProps {
   navigation: any;
   groupId: string;
-  zIndex: number;
-  zIndexInverse: number;
+  fnUpdateGroupProductId: (id: string) => void;
   fnUpdateGpImage: Function;
 }
-import RouteNames from '../../../../constants/route-names.const';
 const GroupProductDropdownPicker: React.FC<IProps> = ({
   navigation,
   groupId,
-  zIndex,
-  zIndexInverse,
+  fnUpdateGroupProductId,
   fnUpdateGpImage,
 }) => {
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState('');
   const [items, setItems] = useState<
     {
       label: string;
@@ -35,18 +32,16 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
   >([]);
 
   const [itemsFullData, setItemsFullData] = useState<IItem[]>([]);
+  const [isFocus, setIsFocus] = useState(false);
 
   useEffect(() => {
     search('');
   }, []);
 
   const search = async (text: string) => {
-    // Show the loading animation
-    setLoading(true);
-
     // Get items from API
     const resp = await gp.getGroupProductPaginated({
-      groupId: '1',
+      groupId: groupId,
       searchBy: ['name'],
       search: text,
       limit: 100,
@@ -61,23 +56,30 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
       .map(item => ({
         label: item.name || '',
         value: item.id || '',
+        image: {
+          uri: item.image || IMAGE_URI_DEFAULT,
+        },
       }))
-      .filter(item => item.label !== '');
+      .filter(item => item.label !== '')
+      .filter(item => item.value !== '');
 
     setItems(items);
+
+    console.log('items[0]: ', JSON.stringify(items[0], null, 2));
+
     setItemsFullData(resp.data);
   };
 
   return (
     <View
       style={{
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
         // alignItems: 'flex-end',
-        backgroundColor: Colors.background.white,
+        // backgroundColor: Colors.background.white,
         borderRadius: 10,
         marginTop: 10,
-        zIndex: zIndex,
       }}>
       <View
         style={{
@@ -106,47 +108,43 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
         </TouchableOpacity>
       </View>
 
-      <DropDownPicker
-        listMode="MODAL"
-        placeholder="Chọn nhu yếu phẩm"
-        placeholderStyle={{color: Colors.text.lightgrey}}
-        scrollViewProps={{
-          nestedScrollEnabled: true,
-        }}
-        loading={loading}
-        open={open}
-        value={value}
-        items={items}
-        setOpen={setOpen}
-        setValue={setValue}
-        setItems={setItems}
-        zIndex={zIndex}
+      <SelectCountry
         containerStyle={{
           width: '100%',
-          zIndex: 1000,
-          padding: 0,
-          marginBottom: 5,
         }}
-        dropDownContainerStyle={{
-          borderColor: Colors.border.lightgrey,
-          borderRadius: 0,
+        placeholderStyle={{
+          color: Colors.text.lightgrey,
+          fontSize: 14,
         }}
-        style={{
-          borderWidth: 0,
-          borderBottomWidth: 1,
-          borderRadius: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-          minHeight: 40,
-          borderColor: Colors.border.lightgrey,
+        itemTextStyle={{
+          color: Colors.text.grey,
+          fontSize: 14,
         }}
-        zIndexInverse={zIndexInverse}
-        searchable={true}
+        selectedTextStyle={{
+          color: Colors.text.grey,
+          fontSize: 14,
+          overflow: 'visible',
+        }}
+        imageStyle={{
+          width: 40,
+          height: 40,
+          borderRadius: 12,
+        }}
+        data={items}
+        search
+        maxHeight={300}
+        labelField="label"
+        valueField="value"
+        imageField="image"
+        placeholder={!isFocus ? 'Chọn loại nhu yếu phẩm' : '...'}
         searchPlaceholder="Tìm kiếm ..."
-        disableLocalSearch={true} // required for remote search
-        onChangeSearchText={text => search(text)} // required for remote search
-        autoScroll={true}
-        onSelectItem={item => {
+        value={value}
+        onFocus={() => setIsFocus(true)}
+        onBlur={() => setIsFocus(false)}
+        onChange={item => {
+          setValue(item.value);
+          setIsFocus(false);
+
           console.log('gp selected: ', JSON.stringify(item, null, 2));
 
           console.log(
@@ -157,12 +155,14 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
               2,
             ),
           );
-
           fnUpdateGpImage(
             itemsFullData.find(i => i.id === item.value)?.image ||
               IMAGE_URI_DEFAULT,
           );
+
+          fnUpdateGroupProductId(item.value);
         }}
+        onChangeText={text => search(text)}
       />
     </View>
   );

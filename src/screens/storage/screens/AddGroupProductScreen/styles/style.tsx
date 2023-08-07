@@ -24,12 +24,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     alignSelf: 'center',
-    // backgroundColor: 'pink',
   },
   image: {
     width: 200,
     height: 200,
-    borderRadius: 200 / 2,
+    // borderRadius: 200 / 2,
     borderWidth: 1,
     borderColor: Colors.border.lightgrey,
   },
@@ -39,8 +38,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // gap: 20,
-    // marginTop: 20,
   },
   inputLabel: {
     width: '100%',
@@ -53,14 +50,14 @@ const styles = StyleSheet.create({
   },
   infoInput: {
     width: '100%',
-    height: 50,
+    height: 40,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 15,
+    marginTop: -5,
+    marginBottom: 5,
     borderColor: Colors.border.lightgrey,
-    borderWidth: 1,
-    borderRadius: 10,
+    borderBottomWidth: 1,
   },
   icon: {
     fontWeight: '200',
@@ -83,7 +80,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  // View > dropdown
   dropdownContainer: {
     display: 'flex',
     backgroundColor: Colors.background.white,

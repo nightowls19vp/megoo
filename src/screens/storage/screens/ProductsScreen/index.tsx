@@ -1,12 +1,12 @@
+import _ from 'lodash';
 import {observer} from 'mobx-react';
 import moment from 'moment';
-import {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
   Linking,
   Modal,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -15,8 +15,9 @@ import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Camera, useCameraDevices} from 'react-native-vision-camera';
 
-import {useRoute} from '@react-navigation/native';
+import {useFocusEffect, useRoute} from '@react-navigation/native';
 
+import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import appStore from '../../../../common/store/app.store';
 import groupStore from '../../../../common/store/group.store';
 import searchStore from '../../../../common/store/search.store';
@@ -28,13 +29,8 @@ import {
   IGetItemsPaginatedRes,
 } from '../../interfaces/items';
 import * as i from '../../services/items.service';
-import {
-  PropsProductsScreen,
-  RouteParamsProductsScreen,
-} from './props-products-screen';
+import {PropsProductsScreen} from './props-products-screen';
 import styles from './styles/styles';
-
-import _, {set} from 'lodash';
 
 const ProductsScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<PropsProductsScreen>();
@@ -86,37 +82,43 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
       return;
     }
 
-    reqDto.page = reqDto.page! + 1;
-
-    // fetch the first 10 items
-    i.getItemPaginated(reqDto).then(res => {
-      console.log('res getItemPaginated: ', res.data.length);
-      setResDto(_.cloneDeep(res));
-
-      setItems([...items, ...res.data]);
-    });
+    // update page
+    setReqDto(prevReqDto => ({
+      ...prevReqDto,
+      page: prevReqDto.page! + 1,
+    }));
   };
 
   useEffect(() => {
     requestCameraPermission();
+    appStore.setSearchActive(true);
+    searchStore.setSearchText('');
+    searchStore.setIsPerformingSearch(false);
 
     if (groupStore.id === '' || !groupStore.id) {
       return;
     }
 
+    // reset searchActive when unmount
+    return () => {
+      appStore.setSearchActive(false);
+      searchStore.setSearchText('');
+    };
+  }, []);
+
+  useEffect(() => {
     // fetch the first 10 items
     i.getItemPaginated(reqDto).then(res => {
       console.log('res getItemPaginated: ', res.data.length);
       setResDto(_.cloneDeep(res));
 
-      setItems(_.cloneDeep(res.data));
+      if (reqDto.page === 1) {
+        setItems(_.cloneDeep(res.data));
+      } else {
+        setItems([...items, ...res.data]);
+      }
     });
-
-    // reset searchActive when unmount
-    return () => {
-      appStore.setSearchActive(false);
-    };
-  }, []);
+  }, [reqDto]);
 
   // listen to the search text change
   useEffect(() => {
@@ -132,31 +134,27 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
         search: searchStore.searchText,
       }));
 
-      i.getItemPaginated({
-        ...reqDto,
-        page: 1,
-        search: searchStore.searchText,
-      }).then(res => {
-        console.log('res getItemPaginated: ', res.data.length);
-        setResDto(_.cloneDeep(res));
-
-        setItems(_.cloneDeep(res.data));
-      });
-
       // reset search text and isPerformingSearch
-      searchStore.setSearchText('');
+      // searchStore.setSearchText('');
       searchStore.setIsPerformingSearch(false);
     }
   }, [searchStore.searchText, searchStore.isPerformingSearch]);
-
-  useEffect(() => {
-    console.log('items: ', items);
-  }, [items]);
 
   const openCamera = useCallback(() => {
     setModalVisible(false);
     setShowCamera(true);
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      //reset page to 1
+      setReqDto(prevReqDto => ({
+        ...prevReqDto,
+        page: 1,
+        search: searchStore.searchText,
+      }));
+    }, []),
+  );
 
   const renderCamera = () => {
     if (!showCamera) {
@@ -182,9 +180,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
       <TouchableOpacity style={styles.productItemContainer} key={item.id}>
         <Image
           source={{
-            uri:
-              item?.image ||
-              'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
+            uri: item?.image || IMAGE_URI_DEFAULT,
           }}
           style={styles.prodImg}
         />

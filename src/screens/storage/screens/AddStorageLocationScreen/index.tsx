@@ -18,7 +18,12 @@ import AddImageModal from '../../../../common/components/AddImageModal';
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
+import {createStorageLocation} from '../../services/storage-location.service';
 import styles from './styles/style';
+import {ICreateStorageLocationReq} from '../../interfaces/storage-locations';
+import userStore from '../../../../common/store/user.store';
+import groupStore from '../../../../common/store/group.store';
+import Toast from 'react-native-toast-message';
 
 const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
   const initialValues = {
@@ -26,23 +31,9 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
     description: '',
   };
 
-  const [selectedImage, setSelectedImage] = useState(IMAGE_URI_DEFAULT);
+  const [selectedImage, setSelectedImage] = useState<string>(IMAGE_URI_DEFAULT);
   const [imageFile, setImageFile] = useState<any>();
   const [modalState, setModalState] = useState(false);
-
-  const renderAddImageModal = (title: string, modalState: boolean) => {
-    // trace render
-    console.log('renderAddImageModal');
-
-    return (
-      <AddImageModal
-        key="addImageModal"
-        title={title}
-        isModalOpen={modalState}
-        setIsModalOpen={setModalState}
-      />
-    );
-  };
 
   useEffect(() => {
     appStore.setSearchActive(false);
@@ -60,25 +51,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
         <TouchableOpacity
           style={styles.imageContainer}
           onPress={async () => {
-            setModalState(!modalState);
-            // await launchImageLibrary(
-            //   // If need base64String, include this option:
-            //   // includeBase64: true
-            //   {mediaType: 'mixed', includeBase64: true},
-            //   response => {
-            //     // console.log('Response = ', response);
-            //     if (response.didCancel) {
-            //       console.log('User cancelled image picker');
-            //     } else if (response.errorMessage) {
-            //       console.log('ImagePicker Error: ', response.errorMessage);
-            //     } else {
-            //       let source: Asset[] = response.assets as Asset[];
-            //       setSelectedImage(`${source[0].uri}`);
-            //       setImageFile(source[0].base64);
-            //       // console.log('File:', source[0].base64);
-            //     }
-            //   },
-            // );
+            setModalState(true);
           }}>
           <Image
             source={{
@@ -101,6 +74,55 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
           initialValues={initialValues}
           onSubmit={values => {
             console.log('values:', values);
+
+            if (!values.storageName) {
+              Toast.show({
+                type: 'error',
+                text1: 'Vui lòng nhập tên nơi lưu trữ',
+                visibilityTime: 1000,
+                autoHide: true,
+              });
+              return;
+            }
+
+            const reqDto: ICreateStorageLocationReq = {
+              addedBy: userStore.id,
+              description: values.description,
+              image: imageFile !== IMAGE_URI_DEFAULT ? imageFile : undefined,
+              name: values.storageName,
+              groupId: groupStore.id,
+            };
+
+            createStorageLocation(reqDto)
+              .then(res => {
+                console.log('res:', JSON.stringify(res, null, 2));
+
+                if (res.statusCode.toString().startsWith('2')) {
+                  Toast.show({
+                    type: 'success',
+                    text1: 'Thêm nơi lưu trữ thành công',
+                    visibilityTime: 1000,
+                    autoHide: true,
+                  });
+                } else {
+                  Toast.show({
+                    type: 'error',
+                    text1: 'Thêm nơi lưu trữ thất bại',
+                    visibilityTime: 1000,
+                    autoHide: true,
+                  });
+                }
+              })
+              .catch(err => {
+                console.log('err:', err);
+
+                Toast.show({
+                  type: 'error',
+                  text1: 'Thêm nơi lưu trữ thất bại',
+                  visibilityTime: 1000,
+                  autoHide: true,
+                });
+              });
           }}>
           {({
             values,
@@ -201,7 +223,13 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
             </View>
           )}
         </Formik>
-        {renderAddImageModal('Chọn ảnh', modalState)}
+        <AddImageModal
+          key="addImageModal"
+          title={'Chọn ảnh'}
+          isModalOpen={modalState}
+          setIsModalOpen={setModalState}
+          fnUpdateSelectedImage={setSelectedImage}
+        />
       </KeyboardAvoidingView>
     </ScrollView>
   );

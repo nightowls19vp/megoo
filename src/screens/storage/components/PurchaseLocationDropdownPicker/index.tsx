@@ -2,45 +2,40 @@ import {observer} from 'mobx-react';
 import {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {Dropdown} from 'react-native-element-dropdown';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {Colors} from '../../../../constants/color.const';
+import RouteNames from '../../../../constants/route-names.const';
 import * as pl from '../../services/purchase-locations.service';
 
 interface IProps {
-  groupId: string;
-  zIndex: number;
-  zIndexInverse: number;
   navigation: any;
+  groupId: string;
+  fnUpdatePurchaseLocationId: (id: string) => void;
 }
-import RouteNames from '../../../../constants/route-names.const';
 const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
-  groupId,
-  zIndex,
-  zIndexInverse,
   navigation,
+  groupId,
+  fnUpdatePurchaseLocationId,
 }) => {
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState('');
   const [items, setItems] = useState<
     {
       label: string;
       value: string;
     }[]
   >([]);
+  const [isFocus, setIsFocus] = useState(false);
 
   useEffect(() => {
     search('');
   }, []);
 
   const search = async (text: string) => {
-    // Show the loading animation
-    setLoading(true);
-
     // Get items from API
     const resp = await pl.getPurchaseLocationPaginated({
-      groupId: '1',
+      groupId: groupId,
       searchBy: ['name'],
       search: text,
       limit: 100,
@@ -69,8 +64,6 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
         // alignItems: 'flex-end',
         backgroundColor: Colors.background.white,
         borderRadius: 10,
-        // marginVertical: 10,
-        zIndex: 10 * zIndex,
       }}>
       <View
         style={{
@@ -101,50 +94,34 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
           />
         </TouchableOpacity>
       </View>
-      <DropDownPicker
-        listMode="MODAL"
-        scrollViewProps={{
-          nestedScrollEnabled: true,
-        }}
-        placeholder="Chọn địa điểm mua hàng"
-        placeholderStyle={{color: Colors.text.lightgrey}}
-        loading={loading}
-        open={open}
-        value={value}
-        items={items}
-        setOpen={setOpen}
-        setValue={setValue}
-        setItems={setItems}
-        zIndex={zIndex}
-        zIndexInverse={zIndexInverse}
+      <Dropdown
         containerStyle={{
           width: '100%',
-          zIndex: 1000,
-          padding: 5,
-          marginBottom: 5,
         }}
-        dropDownContainerStyle={{
-          borderColor: Colors.border.lightgrey,
-          borderRadius: 0,
+        placeholderStyle={{
+          color: Colors.text.lightgrey,
+          fontSize: 14,
         }}
-        style={{
-          borderWidth: 0,
-          borderBottomWidth: 1,
-          borderRadius: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-          minHeight: 40,
-
-          borderColor: Colors.border.lightgrey,
+        itemTextStyle={{
+          color: Colors.text.grey,
+          fontSize: 14,
         }}
-        // searchTextInputStyle={{
-        //   borderColor: Colors.border.lightgrey,
-        // }}
-        searchable={true}
+        data={items}
+        search
+        maxHeight={300}
+        labelField="label"
+        valueField="value"
+        placeholder={!isFocus ? 'Chọn nơi mua sắm ...' : '...'}
         searchPlaceholder="Tìm kiếm ..."
-        disableLocalSearch={true} // required for remote search
-        onChangeSearchText={text => search(text)} // required for remote search
-        autoScroll={true}
+        value={value}
+        onFocus={() => setIsFocus(true)}
+        onBlur={() => setIsFocus(false)}
+        onChange={item => {
+          setValue(item.value);
+          setIsFocus(false);
+
+          fnUpdatePurchaseLocationId(item.value);
+        }}
       />
     </View>
   );

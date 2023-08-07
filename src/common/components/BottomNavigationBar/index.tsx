@@ -1,10 +1,10 @@
-import {Button, Text, TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import FeatherIcon from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import {Colors} from '../../../constants/color.const';
@@ -25,18 +25,15 @@ import CreateTodosScreen from '../../../screens/home/screens/todos/CreateTodosSc
 import GroupTodosListScreen from '../../../screens/home/screens/todos/GroupTodosListScreen';
 import TodosListScreen from '../../../screens/home/screens/todos/TodosListScreen';
 import TodosScreen from '../../../screens/home/screens/todos/TodosScreen';
-import TodosTabScreen from '../../../screens/home/screens/todos/TodosTabScreen';
 import CartScreen from '../../../screens/package/screens/CartScreen';
 import PackageScreen from '../../../screens/package/screens/PackageScreen';
 import PaymentScreen from '../../../screens/package/screens/PaymentScreen';
 import CurrentPackage from '../../../screens/profile/screens/CurrentPackageScreen';
 import EditGroupInfoScreen from '../../../screens/profile/screens/EditGroupInfoScreen';
 import EditProfileScreen from '../../../screens/profile/screens/EditProfileScreen';
-import GroupInfoScreen from '../../../screens/profile/screens/GroupInfoScren';
 import GroupsScreen from '../../../screens/profile/screens/GroupsScreen';
 import OtherPackages from '../../../screens/profile/screens/OtherPackages';
 import ProfileScreen from '../../../screens/profile/screens/ProfileScreen';
-import UserInfoScreen from '../../../screens/profile/screens/UserInfoScreen';
 import AppInfoScreen from '../../../screens/settings/screens/AppInfoScreen';
 import PoliciesScreen from '../../../screens/settings/screens/PoliciesScreen';
 import SettingsScreen from '../../../screens/settings/screens/SettingsScreen';
@@ -45,15 +42,12 @@ import AddProdInfoScreen from '../../../screens/storage/screens/AddProdInfoScree
 import AddPurchaseLocationScreen from '../../../screens/storage/screens/AddPurchaseLocationScreen';
 import AddStorageLocationScreen from '../../../screens/storage/screens/AddStorageLocationScreen';
 import GroupsProductsListScreen from '../../../screens/storage/screens/GroupsScreen';
-import ManagementScreen from '../../../screens/storage/screens/ManagementScreen';
 import ProductDetailScreen from '../../../screens/storage/screens/ProductDetailScreen';
 import ProductsScreen from '../../../screens/storage/screens/ProductsScreen';
+import PurchaseLocationScreen from '../../../screens/storage/screens/PurchaseLocationScreen';
 import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScreen';
 import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
 import appStore from '../../store/app.store';
-import PurchaseLocationScreen from '../../../screens/storage/screens/PurchaseLocationScreen';
-import groupStore from '../../store/group.store';
-import {useNavigation} from '@react-navigation/native';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {

@@ -25,16 +25,22 @@ import GroupProductDropdownPicker from '../../components/GroupProductDropdownPic
 import PurchaseLocationDropdownPicker from '../../components/PurchaseLocationDropdownPicker';
 import StorageLocationDropdownPicker from '../../components/StorageLocationDropdownPicker';
 import styles from './styles/style';
+import {ICreateItemReq} from '../../interfaces/items';
+import groupStore from '../../../../common/store/group.store';
+
+import {createItem} from '../../services/items.service';
+
+import userStore from '../../../../common/store/user.store';
+import Toast from 'react-native-toast-message';
 
 const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
   const initialValues = {
-    prodName: '',
-    brand: '',
-    category: '',
-    description: '',
-    price: '',
-    region: '',
-    exp: '',
+    groupProductId: '',
+    storageLocationId: '',
+    purchaseLocationId: '',
+    bestBefore: '',
+    unit: '',
+    quantity: '',
   };
 
   const [open, setOpen] = useState(false);
@@ -64,13 +70,12 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
             }}
             style={styles.image}
           />
-
           <TouchableOpacity
             style={{
               display: 'flex',
               position: 'absolute',
-              right: 20,
-              bottom: 0,
+              right: 10,
+              bottom: 10,
             }}
             onPress={async () => {
               launchCamera(
@@ -126,8 +131,37 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
 
         <Formik
           initialValues={initialValues}
-          onSubmit={values => {
-            console.log('values:', values);
+          onSubmit={(values, {resetForm}) => {
+            const reqDto: ICreateItemReq = {
+              addedBy: userStore.id ?? 'unknown',
+              groupProductId: values.groupProductId,
+              storageLocationId: values.storageLocationId,
+              purchaseLocationId: values.purchaseLocationId,
+              bestBefore: moment(values.bestBefore, 'DD/MM/YYYY').toISOString(),
+              unit: values.unit,
+              quantity: parseInt(values.quantity),
+              image: imageFile,
+            };
+
+            console.log('reqDto:', JSON.stringify(reqDto, null, 2));
+
+            createItem(reqDto)
+              .then(res => {
+                if (res.statusCode === 201) {
+                  Toast.show({
+                    type: 'success',
+                    text1: 'Thêm nhu yếu phẩm thành công',
+                    visibilityTime: 1000,
+                    autoHide: true,
+                  });
+                }
+              })
+              .catch(err => {
+                console.log('createItem:', err);
+              })
+              .finally(() => {
+                resetForm();
+              });
           }}>
           {({
             values,
@@ -140,12 +174,14 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
             <View style={styles.infoContainer}>
               <GroupProductDropdownPicker
                 navigation={navigation}
-                groupId="1"
-                zIndex={3000}
-                zIndexInverse={1000}
+                groupId={groupStore.id}
                 fnUpdateGpImage={setSelectedImage}
+                fnUpdateGroupProductId={value =>
+                  setFieldValue('groupProductId', value)
+                }
               />
 
+              {/* bestBefore */}
               <Text style={styles.inputLabel}>Hạn sử dụng</Text>
               <View style={styles.infoInput}>
                 <TextInput
@@ -153,9 +189,10 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   style={{flex: 1, color: Colors.text.grey}}
                   placeholder={'Hạn sử dụng'}
                   placeholderTextColor={Colors.text.lightgrey}
-                  value={values.exp}
+                  value={values.bestBefore}
                 />
 
+                {/* bestBefore */}
                 <DatePicker
                   modal
                   open={open}
@@ -170,16 +207,19 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
 
                     setOpen(false);
                     // setDate(value);
-                    setFieldValue('exp', moment(value).format('DD/MM/YYYY'));
+                    setFieldValue(
+                      'bestBefore',
+                      moment(value).format('DD/MM/YYYY'),
+                    );
                   }}
                   onCancel={() => {
                     setOpen(false);
                   }}
                 />
 
-                {values.exp && (
+                {values.bestBefore && (
                   <Icon
-                    onPress={() => setFieldValue('exp', '')}
+                    onPress={() => setFieldValue('bestBefore', '')}
                     name={'close'}
                     style={[styles.icon, {marginRight: 5}]}
                   />
@@ -193,47 +233,48 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                 />
               </View>
 
+              {/* quantity */}
               <Text style={styles.inputLabel}>Số lượng</Text>
               <View style={styles.infoInput}>
                 <TextInput
                   onChangeText={value => {
-                    setFieldValue('description', value);
+                    setFieldValue('quantity', value);
                   }}
                   // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('description')}
+                  onBlur={() => setFieldTouched('quantity')}
                   style={{flex: 1, color: Colors.text.grey}}
                   placeholder={'Số lượng'}
                   placeholderTextColor={Colors.text.lightgrey}
-                  value={values.description}
+                  value={values.quantity}
                 />
 
-                {values.description && (
+                {values.quantity && (
                   <Icon
-                    onPress={() => setFieldValue('description', '')}
+                    onPress={() => setFieldValue('quantity', '')}
                     name={'close'}
                     style={styles.icon}
                   />
                 )}
               </View>
 
+              {/* unit */}
               <Text style={styles.inputLabel}>Đơn vị tính</Text>
-
               <View style={styles.infoInput}>
                 <TextInput
                   onChangeText={value => {
-                    setFieldValue('description', value);
+                    setFieldValue('unit', value);
                   }}
                   // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('description')}
+                  onBlur={() => setFieldTouched('unit')}
                   style={{flex: 1, color: Colors.text.grey}}
                   placeholder={'Đơn vị tính'}
                   placeholderTextColor={Colors.text.lightgrey}
-                  value={values.description}
+                  value={values.unit}
                 />
 
-                {values.description && (
+                {values.unit && (
                   <Icon
-                    onPress={() => setFieldValue('description', '')}
+                    onPress={() => setFieldValue('unit', '')}
                     name={'close'}
                     style={styles.icon}
                   />
@@ -242,16 +283,18 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
 
               <StorageLocationDropdownPicker
                 navigation={navigation}
-                groupId="1"
-                zIndex={2000}
-                zIndexInverse={2000}
+                groupId={groupStore.id}
+                fnUpdateStorageLocationId={value =>
+                  setFieldValue('storageLocationId', value)
+                }
               />
 
               <PurchaseLocationDropdownPicker
                 navigation={navigation}
-                groupId="1"
-                zIndex={1000}
-                zIndexInverse={3000}
+                groupId={groupStore.id}
+                fnUpdatePurchaseLocationId={value =>
+                  setFieldValue('purchaseLocationId', value)
+                }
               />
 
               <TouchableOpacity style={styles.button} onPress={handleSubmit}>
