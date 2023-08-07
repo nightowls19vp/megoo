@@ -94,10 +94,12 @@ export function onCreatedBill() {
     const billNoti = await AsyncStorage.getItem('billNoti');
 
     if (billNoti === 'true') {
-      displayNotification(
-        'Phân chia chi tiêu mới',
-        `Bạn nhận được yêu cầu thanh toán chi tiêu mới từ ${response.user.name}.`,
-      );
+      if (userStore.id === data.lender) {
+        displayNotification(
+          'Phân chia chi tiêu mới',
+          `Bạn nhận được yêu cầu thanh toán chi tiêu mới từ ${response.user.name}.`,
+        );
+      }
     }
   });
 }
@@ -121,10 +123,12 @@ export function onCreatedTodos() {
 
     if (todosNoti === 'true') {
       if (data.state === 'Public') {
-        displayNotification(
-          'Việc cần làm mới',
-          `${response.user.name} đã thêm việc cần làm: ${data.summary}.`,
-        );
+        if (userStore.id === data.createdBy) {
+          displayNotification(
+            'Việc cần làm mới',
+            `${response.user.name} đã thêm việc cần làm: ${data.summary}.`,
+          );
+        }
       }
     }
   });

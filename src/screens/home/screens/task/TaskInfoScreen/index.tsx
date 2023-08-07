@@ -21,6 +21,7 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
 
   useEffect(() => {
     console.log('taskId', taskId);
+    getTaskDetail();
   }, []);
 
   return (

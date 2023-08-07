@@ -151,7 +151,7 @@ const TaskListScreen = ({navigation}: {navigation: any}) => {
 
   const getTasks = async () => {
     const response = await getTaskList(groupId);
-    console.log('Task list:', response.group.task);
+    // console.log('Task list:', response.group.task);
 
     if (!response.group) {
       setTasks([]);
