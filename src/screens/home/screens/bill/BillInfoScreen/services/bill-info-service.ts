@@ -109,7 +109,10 @@ export const deleteBill = async (billId: string) => {
  * @param borrowers
  * @return response from server
  */
-export const updateBorrowerStatus = async (billId: string, borrowers: any) => {
+export const updateBorrowersStatus = async (
+  billId: string,
+  borrowers: {user: string; status: string}[],
+) => {
   const billEndpoint = `api/pkg-mgmt/bill/${billId}/status`;
   const reqUrl = `${URL_HOST}${billEndpoint}`;
   console.log("Update borrowes's status:", reqUrl);
@@ -131,6 +134,6 @@ export const updateBorrowerStatus = async (billId: string, borrowers: any) => {
     );
     return response.data;
   } catch (error) {
-    console.log('Delete bill error: ', error);
+    console.log('Update bill status error: ', error);
   }
 };

@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Dimensions,
   ScrollView,
@@ -14,9 +14,14 @@ import * as Yup from 'yup';
 import CheckBox from '@react-native-community/checkbox';
 import Modal from 'react-native-modal';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import RadioGroup, {
+  RadioButton,
+  RadioButtonProps,
+} from 'react-native-radio-buttons-group';
 
 import {
   addTodos,
+  changeState,
   deleteTodoInList,
   deleteTodos,
   editSummary,
@@ -26,6 +31,7 @@ import {
 import RouteNames from '../../../../../constants/route-names.const';
 import {Colors} from '../../../../../constants/color.const';
 import Toast from 'react-native-toast-message';
+import styles from './styles/styles';
 
 // Define the type for the route params
 type TodosRouteParams = {
@@ -43,6 +49,33 @@ const TodosSchema = Yup.object().shape({
 const TodosScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<TodosRouteProp>();
   const todosId = route?.params?.todosId;
+
+  const radioButtons: RadioButtonProps[] = useMemo(
+    () => [
+      {
+        id: '1', // acts as primary key, should be unique and non-empty string
+        label: 'Cá nhân',
+        value: 'Private',
+        size: 20,
+        color: Colors.icon.orange,
+        labelStyle: {color: Colors.text.grey},
+      },
+      {
+        id: '2',
+        label: 'Nhóm',
+        value: 'Public',
+        size: 20,
+        color: Colors.icon.orange,
+        labelStyle: {color: Colors.text.grey},
+      },
+    ],
+    [],
+  );
+
+  const [selectedId, setSelectedId] = useState<string | undefined>(
+    radioButtons[0].id,
+  );
+  const [selectedOption, setSelectedOption] = useState<string | undefined>();
 
   const [todos, setTodos] = useState({
     _id: '',
@@ -93,9 +126,20 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
       state: todosRes.todos.state,
     });
 
+    if (todosRes.todos.state === 'Public') {
+      setSelectedId('2');
+    } else {
+      setSelectedId('1');
+    }
+
     setToggleCheckBoxArray(
       todosRes.todos.todos.map((todo: any) => todo.isCompleted),
     );
+  };
+
+  const changeStatus = async (state: string) => {
+    const todosRes = await changeState(todosId, state);
+    console.log('todosRes', JSON.stringify(todosRes, null, 2));
   };
 
   const handleToggleCheckBox = (index: number, newValue: boolean) => {
@@ -141,6 +185,14 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
   useEffect(() => {
     // console.log('todos:', todos);
   }, [todos]);
+
+  useEffect(() => {
+    console.log('selectedId:', selectedId);
+    // Find selectedId in radioButtons
+    const selectedRadioButton = radioButtons.find(e => e.id === selectedId);
+    const state = selectedRadioButton?.value as string;
+    changeStatus(state);
+  }, [selectedId]);
 
   return (
     <Formik
@@ -190,6 +242,15 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
           {touched.summary && errors.summary && (
             <Text style={styles.error}>{errors.summary}</Text>
           )}
+
+          <Text style={styles.title}>Chế độ</Text>
+          <RadioGroup
+            containerStyle={styles.radioButtonContainer}
+            layout="column"
+            radioButtons={radioButtons}
+            onPress={setSelectedId}
+            selectedId={selectedId}
+          />
 
           <View style={[styles.titleContainer, {marginTop: 10}]}>
             <Text style={styles.title}>Việc cần làm</Text>
@@ -516,7 +577,7 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
                     if (response.statusCode === 200) {
                       Toast.show({
                         type: 'success',
-                        text1: 'Tạo sự kiện thành công',
+                        text1: 'Xóa việc cần làm thành công',
                         autoHide: true,
                         visibilityTime: 1000,
                         onHide: () => {
@@ -526,7 +587,7 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
                     } else
                       Toast.show({
                         type: 'error',
-                        text1: 'Tạo sự kiện không thành công',
+                        text1: 'Xóa việc cần làm không thành công',
                         autoHide: true,
                         visibilityTime: 1000,
                       });
@@ -544,118 +605,5 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
     </Formik>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: Colors.background.white,
-    width: Dimensions.get('window').width,
-    minHeight: Dimensions.get('window').height,
-  },
-  titleContainer: {
-    width: '90%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-  },
-  title: {
-    width: '90%',
-    textAlign: 'left',
-    textAlignVertical: 'center',
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: Colors.title.orange,
-    marginTop: 10,
-  },
-  inputContainer: {
-    width: '90%',
-    height: 40,
-    flexDirection: 'row',
-    alignItems: 'center',
-    // paddingHorizontal: 15,
-    marginBottom: 5,
-    borderColor: Colors.border.lightgrey,
-    borderBottomWidth: 1,
-    // borderRadius: 10,
-  },
-  inputIcon: {
-    fontWeight: '200',
-    color: Colors.icon.lightgrey,
-    fontSize: 20,
-  },
-  inputText: {flex: 1, color: Colors.text.grey},
-  error: {
-    width: '90%',
-    color: Colors.text.red,
-    textAlign: 'left',
-    marginBottom: 10,
-  },
-  removeIcon: {
-    fontWeight: '200',
-    color: Colors.icon.red,
-    fontSize: 24,
-  },
-  checkBoxContainer: {
-    width: '90%',
-    display: 'flex',
-    gap: 10,
-    marginTop: 10,
-  },
-  todosContainer: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: Colors.itemBackground.lightorange,
-    padding: 10,
-    borderRadius: 10,
-  },
-  todo: {
-    width: '90%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-  },
-  modalContentContainer: {
-    display: 'flex',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    gap: 10,
-    padding: 20,
-  },
-  modalTextContainer: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 30,
-  },
-  modalTitle: {
-    fontSize: 18,
-    textAlign: 'left',
-    color: Colors.text.grey,
-  },
-  deleteButton: {
-    width: '90%',
-    // height: 40,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    backgroundColor: Colors.buttonBackground.red,
-    borderRadius: 10,
-    marginVertical: 20,
-  },
-  deleteButtonText: {
-    color: Colors.text.white,
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
-});
 
 export default TodosScreen;

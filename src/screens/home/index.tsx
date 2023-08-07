@@ -1,6 +1,7 @@
 import {observer} from 'mobx-react';
 import {useCallback, useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   ScrollView,
@@ -29,6 +30,7 @@ const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const HomeScreen = ({navigation}: {navigation: any}) => {
+  const [loading, setLoading] = useState(true);
   const [packages, setPackages] = useState([]);
   const [groups, setGroups] = useState<
     {
@@ -121,20 +123,30 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
   };
 
   useEffect(() => {
-    if (appStore.isLoggedIn) {
-      getGroups();
-    } else {
-      getPackages();
-    }
+    // if (appStore.isLoggedIn) {
+    //   getGroups();
+    // } else {
+    //   getPackages();
+    // }
+
+    getGroups();
+    getPackages();
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      if (appStore.isLoggedIn) {
-        getGroups();
-      } else {
-        getPackages();
-      }
+      // if (appStore.isLoggedIn) {
+      //   getGroups();
+      // } else {
+      //   getPackages();
+      // }
+
+      getGroups();
+      getPackages();
 
       return () => {
         // Code to clean up the effect when the screen is unfocused
@@ -339,82 +351,100 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {appStore.isLoggedIn ? null : (
-        <View style={[styles.utilitiesContainer]}>
-          <Text style={[styles.title, {width: '100%'}]}>Gói người dùng</Text>
-          <Carousel
-            loop={false}
-            mode="parallax"
-            modeConfig={{
-              parallaxScrollingScale: 1,
-              parallaxScrollingOffset: 50,
-            }}
-            width={width * 0.9}
-            height={height * 0.6}
-            // autoPlay={true}
-            data={packages}
-            scrollAnimationDuration={1000}
-            onSnapToItem={index => console.log('current index:', index)}
-            renderItem={renderPackageItem}
-          />
-        </View>
-      )}
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="orange"
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+          }}
+        />
+      ) : (
+        <>
+          {appStore.isLoggedIn ? null : (
+            <View style={[styles.utilitiesContainer]}>
+              <Text style={[styles.title, {width: '100%'}]}>
+                Gói người dùng
+              </Text>
+              <Carousel
+                loop={false}
+                mode="parallax"
+                modeConfig={{
+                  parallaxScrollingScale: 1,
+                  parallaxScrollingOffset: 50,
+                }}
+                width={width * 0.9}
+                height={height * 0.6}
+                // autoPlay={true}
+                data={packages}
+                scrollAnimationDuration={1000}
+                onSnapToItem={index => console.log('current index:', index)}
+                renderItem={renderPackageItem}
+              />
+            </View>
+          )}
 
-      <View style={styles.utilitiesContainer}>
-        <Text style={[styles.title, {width: '100%'}]}>Tiện ích</Text>
-        <View style={styles.utilitiesContent}>
-          <TouchableOpacity
-            style={styles.utility}
-            onPress={() => navigation.navigate(RouteNames.BILL_LIST_STACK, {})}>
-            <Text style={styles.utilityText}>Quản lý chi tiêu</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.utility}
-            onPress={() =>
-              navigation.navigate(RouteNames.TODOS_LIST_STACK, {})
-            }>
-            <Text style={styles.utilityText}>Việc cần làm</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.utility}
-            onPress={() => navigation.navigate(RouteNames.TASK_LIST_STACK, {})}>
-            <Text style={styles.utilityText}>Lịch biểu</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.utility}
-            onPress={() =>
-              navigation.navigate(RouteNames.BANK_INTEREST_RATE, {})
-            }>
-            <Text numberOfLines={2} style={styles.utilityText}>
-              Tính lãi suất {'\n'} ngân hàng
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {appStore.isLoggedIn ? (
-        <View style={[styles.utilitiesContainer, {marginTop: -10}]}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>Việc cần làm</Text>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate(RouteNames.TODOS_LIST_STACK, {})
-              }>
-              {todos.length > 0 ? (
-                <Text style={styles.subTitle}>Xem tất cả</Text>
-              ) : (
-                <Ionicons
-                  name="add-circle-outline"
-                  color={Colors.icon.orange}
-                  size={24}
-                />
-              )}
-            </TouchableOpacity>
+          <View style={styles.utilitiesContainer}>
+            <Text style={[styles.title, {width: '100%'}]}>Tiện ích</Text>
+            <View style={styles.utilitiesContent}>
+              <TouchableOpacity
+                style={styles.utility}
+                onPress={() =>
+                  navigation.navigate(RouteNames.BILL_LIST_STACK, {})
+                }>
+                <Text style={styles.utilityText}>Quản lý chi tiêu</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.utility}
+                onPress={() =>
+                  navigation.navigate(RouteNames.TODOS_LIST_STACK, {})
+                }>
+                <Text style={styles.utilityText}>Việc cần làm</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.utility}
+                onPress={() =>
+                  navigation.navigate(RouteNames.TASK_LIST_STACK, {})
+                }>
+                <Text style={styles.utilityText}>Lịch biểu</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.utility}
+                onPress={() =>
+                  navigation.navigate(RouteNames.BANK_INTEREST_RATE, {})
+                }>
+                <Text numberOfLines={2} style={styles.utilityText}>
+                  Tính lãi suất {'\n'} ngân hàng
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          {renderTodoItem()}
-        </View>
-      ) : null}
 
+          {appStore.isLoggedIn ? (
+            <View style={[styles.utilitiesContainer, {marginTop: -10}]}>
+              <View style={styles.titleContainer}>
+                <Text style={styles.title}>Việc cần làm</Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate(RouteNames.TODOS_LIST_STACK, {})
+                  }>
+                  {todos.length > 0 ? (
+                    <Text style={styles.subTitle}>Xem tất cả</Text>
+                  ) : (
+                    <Ionicons
+                      name="add-circle-outline"
+                      color={Colors.icon.orange}
+                      size={24}
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
+              {renderTodoItem()}
+            </View>
+          ) : null}
+        </>
+      )}
       <Modal isVisible={modalVisible}>
         <View
           style={{

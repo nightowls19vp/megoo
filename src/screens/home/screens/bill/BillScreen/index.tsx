@@ -190,7 +190,6 @@ const BillScreen = ({navigation}: {navigation: any}) => {
             text1: 'Tạo khoản chi tiêu thành công',
             autoHide: true,
             visibilityTime: 1000,
-            topOffset: 30,
             onHide: () => {
               navigation.navigate(
                 RouteNames.BILL_MANAGEMENT as never,
@@ -203,7 +202,6 @@ const BillScreen = ({navigation}: {navigation: any}) => {
             type: 'error',
             text1: response.message,
             autoHide: false,
-            topOffset: 30,
           });
         }
       }}
@@ -623,7 +621,6 @@ const BillScreen = ({navigation}: {navigation: any}) => {
             onPress={handleSubmit}>
             <Text style={styles.buttonText}>Tạo</Text>
           </TouchableOpacity>
-          <Toast position="top" />
         </ScrollView>
       )}
     </Formik>

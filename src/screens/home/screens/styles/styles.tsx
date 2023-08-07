@@ -8,9 +8,10 @@ const styles = StyleSheet.create({
   container: {
     width: width,
     display: 'flex',
+    // flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    minHeight: height,
+    minHeight: '100%',
     // backgroundColor: 'pink',
   },
   text: {

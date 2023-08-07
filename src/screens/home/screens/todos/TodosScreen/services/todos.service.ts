@@ -164,3 +164,29 @@ export const editSummary = async (todosId: string, summary: string) => {
     console.log('Edit summary error: ', error);
   }
 };
+
+export const changeState = async (todosId: string, state: string) => {
+  const todoEndpoint = `api/pkg-mgmt/todos/${todosId}/state`;
+  const reqUrl = `${URL_HOST}${todoEndpoint}`;
+  console.log('Change todos state:', reqUrl);
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+
+  try {
+    const response = await axios.put(
+      reqUrl,
+      {
+        state: state,
+      },
+      {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.log('Change todos state error: ', error);
+  }
+};

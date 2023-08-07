@@ -43,9 +43,13 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupRouteProp>();
   const groupId = route.params.groupId;
 
-  const [date, setDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(date);
-  const [open, setOpen] = useState(false);
+  const [startDate, setStartDate] = useState(new Date());
+  const [selectedStartDate, setSelectedStartDate] = useState(startDate);
+  const [openStartDate, setOpenStartDate] = useState(false);
+
+  const [endDate, setEndDate] = useState(new Date());
+  const [selectedEndDate, setSelectedEndDate] = useState(endDate);
+  const [openEndDate, setOpenEndDate] = useState(false);
 
   const [items, setItems] = useState<
     {
@@ -226,6 +230,13 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
   }, [repeatOn]);
 
   useEffect(() => {
+    console.log('recurrenceValue:', recurrenceValue);
+    if (recurrenceValue === 'Daily') {
+      setRepeatOn(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+    }
+  }, [recurrenceValue]);
+
+  useEffect(() => {
     console.log('groupId', groupId);
     getMembersInGroup();
   }, []);
@@ -272,10 +283,10 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
                 times: times,
                 unit: unitValue,
                 repeatOn: repeatOn,
-                ends: moment(
-                  values.startDate,
-                  'DD/MM/YYYY hh:mm A',
-                ).toISOString(),
+                ends:
+                  selectedId === '2'
+                    ? moment(values.endDate, 'DD/MM/YYYY hh:mm A').toISOString()
+                    : undefined,
               }
             : undefined,
           members: state === true ? selectedMembers : undefined,
@@ -286,7 +297,7 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
 
         const response = await createTask(groupId, task);
 
-        console.log('response', JSON.stringify(response, null, 2));
+        console.log('response', response);
 
         if (response.statusCode === 201) {
           Toast.show({
@@ -346,7 +357,7 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
               editable={false}
               // onChangeText={value => setFieldValue('dob', value)}
               onBlur={() => setFieldTouched('startDate')}
-              placeholder={'Chọn thời gian sự kiện'}
+              placeholder={'Chọn thời gian bắt đầu'}
               style={styles.inputText}
               placeholderTextColor={Colors.text.lightgrey}
               value={values.startDate}
@@ -354,8 +365,8 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
 
             <DatePicker
               modal
-              open={open}
-              date={selectedDate}
+              open={openStartDate}
+              date={selectedStartDate}
               mode={'datetime'}
               locale={'vi'}
               title={'Chọn ngày'}
@@ -364,14 +375,14 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
               onDateChange={value => {
                 console.log('Date change value:', value);
 
-                setSelectedDate(value);
+                setSelectedStartDate(value);
                 setFieldValue('startDate', value);
               }}
               onConfirm={value => {
                 console.log('Selected date:', value);
 
-                setOpen(false);
-                setDate(value);
+                setOpenStartDate(false);
+                setStartDate(value);
                 setFieldValue(
                   'startDate',
                   moment(value)
@@ -383,7 +394,7 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
                 console.log('startDate', values.startDate);
               }}
               onCancel={() => {
-                setOpen(false);
+                setOpenStartDate(false);
               }}
             />
 
@@ -396,7 +407,7 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
             )}
             <Ionicons
               onPress={() => {
-                setOpen(true);
+                setOpenStartDate(true);
               }}
               name={'calendar'}
               style={styles.inputIcon}
@@ -551,11 +562,12 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
 
               <View
                 style={{
-                  width: '90%',
+                  width: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'flex-start',
                   marginTop: 10,
+                  // backgroundColor: 'yellow',
                 }}>
                 <Text>Kết thúc:</Text>
                 <RadioGroup
@@ -565,6 +577,82 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
                   onPress={setSelectedId}
                   selectedId={selectedId}
                 />
+                {selectedId === '2' && (
+                  <>
+                    <View
+                      style={[
+                        styles.inputContainer,
+                        {
+                          width: '89%',
+                          alignSelf: 'flex-end',
+                          // backgroundColor: 'pink',
+                        },
+                      ]}>
+                      <TextInput
+                        editable={false}
+                        // onChangeText={value => setFieldValue('dob', value)}
+                        onBlur={() => setFieldTouched('endDate')}
+                        placeholder={'Chọn thời gian kết thúc nhắc nhở'}
+                        style={styles.inputText}
+                        placeholderTextColor={Colors.text.lightgrey}
+                        value={values.endDate}
+                      />
+
+                      <DatePicker
+                        modal
+                        open={openEndDate}
+                        date={selectedEndDate}
+                        mode={'datetime'}
+                        locale={'vi'}
+                        title={'Chọn ngày'}
+                        confirmText={'Chọn'}
+                        cancelText={'Huỷ'}
+                        onDateChange={value => {
+                          console.log('Date change value:', value);
+
+                          setSelectedEndDate(value);
+                          setFieldValue('endDate', value);
+                        }}
+                        onConfirm={value => {
+                          console.log('Selected date:', value);
+
+                          setOpenEndDate(false);
+                          setEndDate(value);
+                          setFieldValue(
+                            'endDate',
+                            moment(value)
+                              .format('DD/MM/YYYY LT')
+                              .replace('PM', 'CH')
+                              .replace('AM', 'SA'),
+                          );
+
+                          console.log('endDate', values.endDate);
+                        }}
+                        onCancel={() => {
+                          setOpenEndDate(false);
+                        }}
+                      />
+
+                      {values.startDate && (
+                        <Ionicons
+                          onPress={() => setFieldValue('endDate', '')}
+                          name={'close'}
+                          style={[styles.inputIcon, {marginRight: 5}]}
+                        />
+                      )}
+                      <Ionicons
+                        onPress={() => {
+                          setOpenEndDate(true);
+                        }}
+                        name={'calendar'}
+                        style={styles.inputIcon}
+                      />
+                    </View>
+                    {touched.endDate && errors.endDate && (
+                      <Text style={styles.error}>{errors.endDate}</Text>
+                    )}
+                  </>
+                )}
               </View>
             </View>
           )}
