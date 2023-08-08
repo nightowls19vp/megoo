@@ -20,5 +20,8 @@ export const createTask = async (groupId: string, task: any) => {
     return response.data;
   } catch (error) {
     console.log('Create task error: ', error);
+    if (axios.isAxiosError(error)) {
+      console.log('Create task error: ', error);
+    }
   }
 };

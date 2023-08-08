@@ -161,11 +161,13 @@ export function onTaskReminder() {
     // console.log('response:', response.user.name);
 
     const calendarNoti = await AsyncStorage.getItem('calendarNoti');
-    // if (data.state === 'Public') {
-    //   displayNotification(
-    //     'Việc cần làm mới',
-    //     `${response.user.name} đã thêm việc cần làm: ${data.summary}.`,
-    //   );
-    // }
+
+    if (calendarNoti === 'true') {
+      displayNotification(
+        'Nhắc nhở việc cần làm',
+        `<b>${data.summary}</b>
+        ${data.description}`,
+      );
+    }
   });
 }

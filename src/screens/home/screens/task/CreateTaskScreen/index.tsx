@@ -26,6 +26,8 @@ import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import {getMembers} from '../../../../../services/group.service';
 import {createTask} from './services/task.service';
+import {convertDayNumberToDayText} from '../../../../../common/handle.string';
+import userStore from '../../../../../common/store/user.store';
 
 type GroupRouteParams = {
   groupId: string;
@@ -48,6 +50,8 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
   const [openStartDate, setOpenStartDate] = useState(false);
 
   const [endDate, setEndDate] = useState(new Date());
+  // const newDate = new Date();
+  // endDate.setMonth(endDate.getMonth() + 1);
   const [selectedEndDate, setSelectedEndDate] = useState(endDate);
   const [openEndDate, setOpenEndDate] = useState(false);
 
@@ -61,10 +65,10 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
       label: 'Không lặp lại',
       value: 'Does not repeat',
     },
-    {
-      label: 'Hằng ngày',
-      value: 'Daily',
-    },
+    // {
+    //   label: 'Hằng ngày',
+    //   value: 'Daily',
+    // },
     {
       label: 'Tùy chỉnh',
       value: 'Custom',
@@ -78,19 +82,19 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
   >([
     {
       label: 'ngày',
-      value: 'day',
+      value: 'Day',
     },
     {
       label: 'tuần',
-      value: 'week',
+      value: 'Week',
     },
     {
       label: 'tháng',
-      value: 'month',
+      value: 'Month',
     },
     {
       label: 'năm',
-      value: 'year',
+      value: 'Year',
     },
   ]);
   const [recurrenceValue, setRecurenceValue] = useState(items[0].value);
@@ -103,7 +107,7 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
   const [repeatOn, setRepeatOn] = useState<string[]>([]);
 
   const buttons: string[] = ['2', '3', '4', '5', '6', '7', 'CN'];
-  const [selectedButtons, setSelectedButtons] = useState<number[]>([]);
+  const [selectedButtons, setSelectedButtons] = useState<number[]>([0]);
 
   const radioButtons: RadioButtonProps[] = useMemo(
     () => [
@@ -145,7 +149,7 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
   >([]);
 
   const [toggleCheckBoxArray, setToggleCheckBoxArray] = useState(
-    members.map(() => false),
+    members.map((_, index) => index === 0),
   );
   const [state, setState] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
@@ -161,55 +165,33 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
 
   const getMembersInGroup = async () => {
     const response = await getMembers(groupId);
-    console.log(
-      'Members response:',
-      JSON.stringify(response.group.members, null, 2),
+    // console.log(
+    //   'Members response:',
+    //   // JSON.stringify(response.group.members, null, 2),
+    //   response.group.members,
+    // );
+
+    const updatedMembers = response.group.members.map((member: any) => ({
+      role: member.role,
+      user: {
+        _id: member.user._id,
+        name: member.user.name,
+        avatar: member.user.avatar,
+        email: member.user.email,
+      },
+    }));
+
+    setMembers(updatedMembers);
+
+    // Initialize toggleCheckBoxArray with true for the current user's index, if found
+    const currentUserIndex = updatedMembers.findIndex(
+      (member: any) => member.user._id === userStore.id,
     );
 
-    setMembers(
-      response.group.members.map((member: any) => {
-        return {
-          role: member.role,
-          user: {
-            _id: member.user._id,
-            name: member.user.name,
-            avatar: member.user.avatar,
-            email: member.user.email,
-          },
-        };
-      }),
+    const initialToggleValues = updatedMembers.map(
+      (_: any, index: number) => index === currentUserIndex,
     );
-  };
-
-  const convertDateToString = (date: string): string => {
-    let result = '';
-    switch (date) {
-      case '2':
-        result = 'Mon';
-        break;
-      case '3':
-        result = 'Tue';
-        break;
-      case '4':
-        result = 'Wen';
-        break;
-      case '5':
-        result = 'Thu';
-        break;
-      case '6':
-        result = 'Fri';
-        break;
-      case '7':
-        result = 'Sat';
-        break;
-      case 'CN':
-        result = 'Sun';
-        break;
-      default:
-        result = '';
-        break;
-    }
-    return result;
+    setToggleCheckBoxArray(initialToggleValues);
   };
 
   useEffect(() => {
@@ -217,7 +199,7 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
     selectedButtons.map(item => {
       console.log('item', item);
       console.log('buttons[index]:', buttons[item]);
-      const dateString = convertDateToString(buttons[item]);
+      const dateString = convertDayNumberToDayText(buttons[item]);
       if (selectedDay.indexOf(dateString) === -1) {
         selectedDay.push(dateString);
       }
@@ -229,19 +211,28 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
     console.log('repeatOn', repeatOn);
   }, [repeatOn]);
 
-  useEffect(() => {
-    console.log('recurrenceValue:', recurrenceValue);
-    if (recurrenceValue === 'Daily') {
-      setRepeatOn(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
-    }
-  }, [recurrenceValue]);
+  // useEffect(() => {
+  //   console.log('recurrenceValue:', recurrenceValue);
+  //   if (recurrenceValue === 'Daily') {
+  //     setRepeatOn(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+  //   }
+  // }, [recurrenceValue]);
 
   useEffect(() => {
     console.log('groupId', groupId);
+
     getMembersInGroup();
   }, []);
 
   useEffect(() => {
+    if (toggleCheckBoxArray.length === 0) {
+      setState(true);
+    }
+  }, [toggleCheckBoxArray]);
+
+  useEffect(() => {
+    console.log('toggleCheckBoxArray', toggleCheckBoxArray);
+
     const newSelectedMembers = toggleCheckBoxArray
       .map((item, index) =>
         toggleCheckBoxArray[index] ? members[index].user._id : null,
@@ -251,9 +242,9 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
     setSelectedMembers(newSelectedMembers);
   }, [toggleCheckBoxArray]);
 
-  useEffect(() => {
-    console.log('selectedMembers', selectedMembers);
-  }, [selectedMembers]);
+  // useEffect(() => {
+  //   console.log('selectedMembers', selectedMembers);
+  // }, [selectedMembers]);
 
   return (
     <Formik
@@ -261,7 +252,13 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
         summary: '',
         description: '',
         startDate: '',
-        endDate: '',
+        endDate: moment(new Date())
+          .add(1, 'month')
+          .format('DD/MM/YYYY HH:mm A')
+          .replace('AM', 'SA')
+          .replace('PM', 'CH'),
+        times: '1',
+        members: '',
       }}
       enableReinitialize={true}
       validationSchema={CreateTaskSchema}
@@ -280,7 +277,7 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
           isRepeated: isRepeated,
           recurrence: isRepeated
             ? {
-                times: times,
+                times: parseInt(values.times),
                 unit: unitValue,
                 repeatOn: repeatOn,
                 ends:
@@ -295,31 +292,34 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
 
         console.log('task', JSON.stringify(task, null, 2));
 
-        const response = await createTask(groupId, task);
+        // const response = await createTask(groupId, task);
 
-        console.log('response', response);
+        // console.log('response', response);
 
-        if (response.statusCode === 201) {
-          Toast.show({
-            type: 'success',
-            text1: 'Tạo sự kiện thành công',
-            autoHide: true,
-            visibilityTime: 1000,
-            onHide: () => {
-              navigation.goBack();
-            },
-          });
-        } else {
-          Toast.show({
-            type: 'error',
-            text1: 'Tạo sự kiện thất bại',
-            autoHide: true,
-            visibilityTime: 1000,
-          });
-        }
+        // if (response.statusCode === 201) {
+        //   Toast.show({
+        //     type: 'success',
+        //     text1: 'Tạo sự kiện thành công',
+        //     autoHide: true,
+        //     visibilityTime: 1000,
+        //     onHide: () => {
+        //       navigation.goBack();
+        //     },
+        //   });
+        // } else {
+        //   Toast.show({
+        //     type: 'error',
+        //     text1: 'Tạo sự kiện thất bại',
+        //     autoHide: true,
+        //     visibilityTime: 1000,
+        //   });
+        // }
       }}>
       {({
         setFieldValue,
+        setFieldError,
+        setTouched,
+
         setFieldTouched,
         handleSubmit,
         isValid,
@@ -386,12 +386,10 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
                 setFieldValue(
                   'startDate',
                   moment(value)
-                    .format('DD/MM/YYYY LT')
+                    .format('DD/MM/YYYY HH:mm A')
                     .replace('PM', 'CH')
                     .replace('AM', 'SA'),
                 );
-
-                console.log('startDate', values.startDate);
               }}
               onCancel={() => {
                 setOpenStartDate(false);
@@ -477,9 +475,22 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
                   }}
                   textAlign={'center'}
                   keyboardType="numeric"
-                  value={times}
-                  onChangeText={text => setTimes(text)}
+                  value={values.times}
+                  onBlur={() => setFieldTouched('times')}
+                  onChangeText={text => {
+                    if (text.length === 0) {
+                      setFieldError('times', 'Vui lòng nhập số lần lặp lại');
+                    }
+                    setFieldValue('times', text);
+                    // setTimes(text);
+                  }}
+                  onEndEditing={() => {
+                    if (values.times.length === 0) {
+                      setFieldError('times', 'Vui lòng nhập số lần lặp lại');
+                    }
+                  }}
                 />
+
                 <Dropdown
                   style={{
                     width: '30%',
@@ -507,8 +518,11 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
                   }}
                 />
               </View>
+              {touched.times && errors.times && (
+                <Text style={styles.error}>{errors.times}</Text>
+              )}
 
-              {unitValue !== 'day' && (
+              {unitValue !== 'Day' && (
                 <View
                   style={{
                     width: '100%',
@@ -633,7 +647,7 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
                         }}
                       />
 
-                      {values.startDate && (
+                      {values.endDate && (
                         <Ionicons
                           onPress={() => setFieldValue('endDate', '')}
                           name={'close'}
@@ -714,6 +728,9 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
               ))}
             </View>
           )}
+          {toggleCheckBoxArray.every(item => !item) && (
+            <Text style={styles.error}>Vui lòng chọn thành viên</Text>
+          )}
 
           <Text style={styles.title}>Mô tả</Text>
           <View style={styles.inputContainer}>
@@ -740,7 +757,11 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
 
           <TouchableOpacity
             disabled={!isValid}
-            onPress={handleSubmit}
+            onPress={() => {
+              console.log('isValid', isValid);
+
+              handleSubmit();
+            }}
             style={[
               styles.createButton,
               {

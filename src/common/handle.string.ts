@@ -12,6 +12,17 @@ export const dateFormat = (dateISO: string) => {
 };
 
 /**
+ * Convert date from ISO format to DD/MM/YYYY HH:mm A
+ * @param dateISO
+ * @return date format DD/MM/YYYY HH:mm A
+ */
+export const dateFormatWithTime = (dateISO: string) => {
+  const date = moment(dateISO).format('DD/MM/YYYY HH:mm A').toString();
+
+  return date;
+};
+
+/**
  * Convert date from DD/MM/YYYY to ISO format
  * @param date
  * @return date format ISO
@@ -64,4 +75,65 @@ export const changeStatusBillToVietnamese = (status: string) => {
   } else if (status === 'CANCELED') {
     return 'Từ chối';
   }
+};
+
+export const convertDayNumberToDayText = (dayNumber: string): string => {
+  let result = '';
+  switch (dayNumber) {
+    case '2':
+      result = 'Mon';
+      break;
+    case '3':
+      result = 'Tue';
+      break;
+    case '4':
+      result = 'Wed';
+      break;
+    case '5':
+      result = 'Thu';
+      break;
+    case '6':
+      result = 'Fri';
+      break;
+    case '7':
+      result = 'Sat';
+      break;
+    case 'CN':
+      result = 'Sun';
+      break;
+    default:
+      result = '';
+      break;
+  }
+  return result;
+};
+export const convertDayTextToDayNumber = (dayText: string): string => {
+  let result = '';
+  switch (dayText) {
+    case 'Mon':
+      result = '2';
+      break;
+    case 'Tue':
+      result = '3';
+      break;
+    case 'Wed':
+      result = '4';
+      break;
+    case 'Thu':
+      result = '5';
+      break;
+    case 'Fri':
+      result = '6';
+      break;
+    case 'Sat':
+      result = '7';
+      break;
+    case 'Sun':
+      result = 'CN';
+      break;
+    default:
+      result = '';
+      break;
+  }
+  return result;
 };

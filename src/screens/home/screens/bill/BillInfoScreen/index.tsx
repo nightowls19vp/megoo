@@ -303,40 +303,6 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                   <View style={[styles.infoRow, {alignItems: 'center'}]}>
                     <Text style={styles.headingText}>Trạng thái:</Text>
                     {userStore.id === bill.lender._id ? (
-                      // <DropDownPicker
-                      //   listMode="SCROLLVIEW"
-                      //   containerStyle={{
-                      //     width: '60%',
-                      //   }}
-                      //   dropDownContainerStyle={{
-                      //     borderColor: Colors.border.lightgrey,
-                      //   }}
-                      //   style={{
-                      //     borderColor: Colors.border.lightgrey,
-                      //     minHeight: 30,
-                      //   }}
-                      //   dropDownDirection="BOTTOM"
-                      //   selectedItemLabelStyle={{color: Colors.title.orange}}
-                      //   open={dropdownStates[index]}
-                      //   value={borrowerStatus[index]}
-                      //   items={status}
-                      //   placeholder="Chọn người mượn"
-                      //   placeholderStyle={{color: Colors.text.lightgrey}}
-                      //   setOpen={(isOpen: any) => {
-                      //     const newState = [...dropdownStates];
-                      //     newState[index] = isOpen;
-                      //     setDropdownStates(newState);
-                      //   }}
-                      //   setValue={setBorrowerStatus}
-                      //   setItems={setStatus}
-                      //   onSelectItem={(item: any) => {
-                      //     console.log('item', item);
-
-                      //     const newStatus = [...borrowerStatus];
-                      //     newStatus[index] = item.value;
-                      //     setBorrowerStatus(newStatus);
-                      //   }}
-                      // />
                       <Dropdown
                         style={{
                           width: '60%',
@@ -363,7 +329,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                     ) : (
                       <Text style={styles.text}>{viStatus}</Text>
                     )}
-                    {/* <Text style={styles.text}>{borrower.status}</Text> */}
+                    <Text style={styles.text}>{borrower.status}</Text>
                   </View>
                 </View>
               </View>
