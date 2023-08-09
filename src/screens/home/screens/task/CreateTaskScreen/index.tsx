@@ -251,10 +251,13 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
       initialValues={{
         summary: '',
         description: '',
-        startDate: '',
+        startDate: moment(new Date())
+          .format('DD/MM/YYYY hh:mm A')
+          .replace('AM', 'SA')
+          .replace('PM', 'CH'),
         endDate: moment(new Date())
           .add(1, 'month')
-          .format('DD/MM/YYYY HH:mm A')
+          .format('DD/MM/YYYY hh:mm A')
           .replace('AM', 'SA')
           .replace('PM', 'CH'),
         times: '1',
@@ -272,7 +275,7 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
           description: values.description,
           startDate: moment(
             values.startDate,
-            'DD/MM/YYYY hh:mm A',
+            'DD/MM/YYYY HH:mm A',
           ).toISOString(),
           isRepeated: isRepeated,
           recurrence: isRepeated
@@ -282,7 +285,7 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
                 repeatOn: repeatOn,
                 ends:
                   selectedId === '2'
-                    ? moment(values.endDate, 'DD/MM/YYYY hh:mm A').toISOString()
+                    ? moment(values.endDate, 'DD/MM/YYYY HH:mm A').toISOString()
                     : undefined,
               }
             : undefined,
@@ -292,28 +295,28 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
 
         console.log('task', JSON.stringify(task, null, 2));
 
-        // const response = await createTask(groupId, task);
+        const response = await createTask(groupId, task);
 
-        // console.log('response', response);
+        console.log('response', response);
 
-        // if (response.statusCode === 201) {
-        //   Toast.show({
-        //     type: 'success',
-        //     text1: 'Tạo sự kiện thành công',
-        //     autoHide: true,
-        //     visibilityTime: 1000,
-        //     onHide: () => {
-        //       navigation.goBack();
-        //     },
-        //   });
-        // } else {
-        //   Toast.show({
-        //     type: 'error',
-        //     text1: 'Tạo sự kiện thất bại',
-        //     autoHide: true,
-        //     visibilityTime: 1000,
-        //   });
-        // }
+        if (response.statusCode === 201) {
+          Toast.show({
+            type: 'success',
+            text1: 'Tạo sự kiện thành công',
+            autoHide: true,
+            visibilityTime: 1000,
+            onHide: () => {
+              navigation.goBack();
+            },
+          });
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: 'Tạo sự kiện thất bại',
+            autoHide: true,
+            visibilityTime: 1000,
+          });
+        }
       }}>
       {({
         setFieldValue,
@@ -635,7 +638,7 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
                           setFieldValue(
                             'endDate',
                             moment(value)
-                              .format('DD/MM/YYYY LT')
+                              .format('DD/MM/YYYY HH:mm A')
                               .replace('PM', 'CH')
                               .replace('AM', 'SA'),
                           );

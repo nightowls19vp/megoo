@@ -448,7 +448,7 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
                       {/* {todo.description && ( */}
                       <TextInput
                         value={todo.description}
-                        placeholder={'Nhập mô tả việc cần làm'}
+                        placeholder={'Nhập mô tả/ghi chú việc cần làm'}
                         placeholderTextColor={Colors.text.lightgrey}
                         style={{
                           color: Colors.text.lightgrey,
@@ -506,8 +506,7 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
             }}>
             <View style={styles.modalContentContainer}>
               <Text style={styles.modalTitle}>
-                Xóa "{deleteTodo.todoName}" khỏi danh sách danh sách việc cần
-                làm?
+                Xóa "{deleteTodo.todoName}" khỏi danh sách danh sách công việc?
               </Text>
 
               <View style={styles.modalTextContainer}>
@@ -526,7 +525,7 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
                   onPress={async () => {
                     setIsModalVisible(!isModalVisible);
                     const response = await deleteTodoInList(
-                      todosId,
+                      todos._id,
                       deleteTodo._id,
                     );
 
@@ -555,7 +554,9 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
 
           <Modal isVisible={isDeleteTodosModalVisible}>
             <View style={styles.modalContentContainer}>
-              <Text style={styles.modalTitle}>Xóa việc cần làm?</Text>
+              <Text style={styles.modalTitle}>
+                Xóa danh sách công việc này?
+              </Text>
 
               <View style={styles.modalTextContainer}>
                 <TouchableOpacity
@@ -573,24 +574,25 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
                   onPress={async () => {
                     setIsDeleteTodosModalVisible(!isDeleteTodosModalVisible);
 
-                    const response = await deleteTodos(todosId);
+                    const response = await deleteTodos(todos._id);
                     if (response.statusCode === 200) {
                       Toast.show({
                         type: 'success',
-                        text1: 'Xóa việc cần làm thành công',
+                        text1: 'Xóa công việc thành công',
                         autoHide: true,
                         visibilityTime: 1000,
                         onHide: () => {
                           navigation.goBack();
                         },
                       });
-                    } else
+                    } else {
                       Toast.show({
                         type: 'error',
-                        text1: 'Xóa việc cần làm không thành công',
+                        text1: 'Xóa công việc không thành công',
                         autoHide: true,
                         visibilityTime: 1000,
                       });
+                    }
                   }}
                   style={{
                     alignItems: 'center',

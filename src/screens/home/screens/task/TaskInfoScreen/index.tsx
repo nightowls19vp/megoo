@@ -2,6 +2,7 @@ import {Formik} from 'formik';
 import {useEffect, useMemo, useState} from 'react';
 import {
   Dimensions,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -16,7 +17,7 @@ import * as Yup from 'yup';
 import {RouteProp, useRoute} from '@react-navigation/native';
 
 import {Colors} from '../../../../../constants/color.const';
-import {getTaskById} from './services/task.service';
+import {deleteTask, editTaskDetail, getTaskById} from './services/task.service';
 import {Dropdown} from 'react-native-element-dropdown';
 import {RadioButtonProps, RadioGroup} from 'react-native-radio-buttons-group';
 import {ButtonGroup} from 'react-native-elements';
@@ -29,6 +30,7 @@ import {
   dateFormatWithTime,
   dateISOFormat,
 } from './../../../../../common/handle.string';
+import Toast from 'react-native-toast-message';
 
 type TaskRouteParams = {
   taskId: string;
@@ -39,6 +41,7 @@ type TaskRouteProp = RouteProp<Record<string, TaskRouteParams>, string>;
 
 const TaskSchema = Yup.object().shape({
   summary: Yup.string().required('Vui lòng nhập tiêu đề'),
+  startDate: Yup.string().required('Vui lòng chọn ngày bắt đầu'),
 });
 
 const TaskDetailScreen = ({navigation}: {navigation: any}) => {
@@ -53,7 +56,7 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
       times: number;
       unit: string;
       repeatOn: string[];
-      ends: string;
+      ends?: string;
     };
     startDate: string;
     state: string;
@@ -165,9 +168,15 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
     radioButtons[0].id,
   );
 
+  const [startDate, setStartDate] = useState(new Date());
+  const [selectedStartDate, setSelectedStartDate] = useState(startDate);
+  const [openStartDate, setOpenStartDate] = useState(false);
+
   const [endDate, setEndDate] = useState(new Date());
   const [selectedEndDate, setSelectedEndDate] = useState(endDate);
   const [openEndDate, setOpenEndDate] = useState(false);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const getTaskDetail = async () => {
     const response = await getTaskById(taskId);
@@ -182,9 +191,11 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
         times: response?.task.recurrence?.times,
         unit: response?.task.recurrence?.unit,
         repeatOn: response?.task.recurrence?.repeatOn,
-        ends: dateFormatWithTime(response?.task.recurrence?.ends as string),
+        ends: response?.task.recurrence?.ends
+          ? (response?.task.recurrence?.ends as string)
+          : undefined,
       },
-      startDate: dateFormatWithTime(response?.task.startDate as string),
+      startDate: response?.task.startDate as string,
       state: response?.task.state,
       members: response.task?.members?.map((member: any) => ({
         _id: member._id,
@@ -266,16 +277,55 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
     setRepeatOn(selectedDay);
   }, [selectedButtons]);
 
-  // useEffect(() => {
-  //   console.log('repeatOn', repeatOn);
-  // }, [repeatOn]);
+  useEffect(() => {
+    setTask({
+      ...task,
+      recurrence: {
+        times: parseInt(times),
+        unit: unitValue,
+        repeatOn: repeatOn,
+        ends: endDate.toISOString(),
+      },
+    });
+  }, [repeatOn]);
+
+  useEffect(() => {
+    if (selectedId === '2') {
+      setTask({
+        ...task,
+        recurrence: {
+          times: parseInt(times),
+          unit: unitValue,
+          repeatOn: repeatOn,
+          ends: endDate.toISOString(),
+        },
+      });
+    } else if (selectedId === '1') {
+      setTask({
+        ...task,
+        recurrence: {
+          times: parseInt(times),
+          unit: unitValue,
+          repeatOn: repeatOn,
+          ends: undefined,
+        },
+      });
+    }
+  }, [selectedId]);
 
   return (
     <Formik
       initialValues={{
         summary: task.summary,
         description: task.description,
-        endDate: task.recurrence?.ends ?? '',
+        startDate: task.startDate ? dateFormatWithTime(task.startDate) : '',
+        endDate: task.recurrence?.ends
+          ? dateFormatWithTime(task.recurrence?.ends)
+          : moment(new Date())
+              .add(1, 'month')
+              .format('DD/MM/YYYY hh:mm A')
+              .replace('AM', 'SA')
+              .replace('PM', 'CH'),
       }}
       validationSchema={TaskSchema}
       enableReinitialize={true}
@@ -290,13 +340,24 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
         handleSubmit,
         handleChange,
       }) => (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
           <Text style={styles.title}>Tiêu đề</Text>
           <View style={styles.inputContainer}>
             <TextInput
               onChangeText={value => setFieldValue('summary', value)}
               onEndEditing={async () => {
                 console.log('values.summary:', values.summary);
+
+                const newTaskDetail = {
+                  ...task,
+                  summary: values.summary,
+                };
+
+                console.log('newTaskDetail', newTaskDetail);
+
+                // const response = await editTaskDetail(task._id, newTaskDetail);
+
+                // console.log('response', response);
               }}
               onBlur={() => setFieldTouched('summary')}
               style={styles.inputText}
@@ -316,53 +377,77 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
             <Text style={styles.error}>{errors.summary}</Text>
           )}
 
-          <Text style={styles.title}>Mô tả/Ghi chú</Text>
+          <Text style={styles.title}>Thời gian bắt đầu</Text>
           <View style={styles.inputContainer}>
             <TextInput
-              onChangeText={value => setFieldValue('description', value)}
-              onEndEditing={async () => {
-                console.log('values.description:', values.description);
-              }}
-              onBlur={() => setFieldTouched('description')}
+              editable={false}
+              onChangeText={value => setFieldValue('startDate', value)}
+              onBlur={() => setFieldTouched('startDate')}
               style={styles.inputText}
-              placeholder={'Nhập tóm tắt việc cần làm'}
+              placeholder={'Chọn thời gian bắt đầu'}
               placeholderTextColor={Colors.text.lightgrey}
-              value={values.description}
+              value={values.startDate}
             />
-            {values.description && (
+
+            <DatePicker
+              modal
+              open={openStartDate}
+              date={selectedStartDate}
+              mode={'datetime'}
+              locale={'vi'}
+              title={'Chọn ngày'}
+              confirmText={'Chọn'}
+              cancelText={'Huỷ'}
+              onDateChange={value => {
+                console.log('Date change value:', value);
+
+                setSelectedStartDate(value);
+                setFieldValue('startDate', value);
+              }}
+              onConfirm={value => {
+                console.log('Selected date:', value);
+
+                setOpenStartDate(false);
+                setStartDate(value);
+                setFieldValue(
+                  'startDate',
+                  moment(value)
+                    .format('DD/MM/YYYY HH:mm A')
+                    .replace('PM', 'CH')
+                    .replace('AM', 'SA'),
+                );
+
+                const newTaskDetail = {
+                  ...task,
+                  startDate: moment(value, 'DD/MM/YYYY HH:mm A').toISOString(),
+                };
+
+                console.log('newTaskDetail', newTaskDetail);
+              }}
+              onCancel={() => {
+                setOpenStartDate(false);
+              }}
+            />
+
+            {values.startDate && (
               <Ionicons
-                onPress={() => setFieldValue('description', '')}
+                onPress={() => setFieldValue('startDate', '')}
                 name={'close'}
                 style={styles.inputIcon}
               />
             )}
-          </View>
 
-          <Text style={[styles.title, {marginTop: 15}]}>Chế độ</Text>
-          <View
-            style={{
-              width: '90%',
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 10,
-              marginTop: 5,
-              alignItems: 'center',
-              // justifyContent: 'space-between',
-            }}>
-            <TouchableOpacity onPress={() => setState(!state)}>
-              <FontAwesomeIcon
-                name={state ? 'toggle-on' : 'toggle-off'}
-                style={[styles.inputIcon, {color: Colors.icon.orange}]}
-              />
-            </TouchableOpacity>
-            <Text
-              style={{
-                fontSize: 16,
-                color: Colors.text.grey,
-              }}>
-              Nhóm
-            </Text>
+            <Ionicons
+              onPress={() => {
+                setOpenStartDate(true);
+              }}
+              name={'calendar'}
+              style={styles.inputIcon}
+            />
           </View>
+          {touched.startDate && errors.startDate && (
+            <Text style={styles.error}>{errors.startDate}</Text>
+          )}
 
           <Dropdown
             style={{
@@ -397,36 +482,31 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
             }}
           />
           {recurrenceValue === 'Custom' && (
-            <View
-              style={{
-                width: '90%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-              }}>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-
-                  gap: 10,
-                }}>
+            <View style={styles.recurrenceContainer}>
+              <View style={styles.timesContainer}>
                 <Text>Lặp lại mỗi:</Text>
                 <TextInput
-                  style={{
-                    width: '10%',
-                    paddingLeft: 5,
-                    paddingVertical: 0,
-                    borderBottomWidth: 1,
-                    borderColor: Colors.border.lightgrey,
-                    color: Colors.text.grey,
-                  }}
+                  style={styles.timesInput}
                   textAlign={'center'}
                   keyboardType="numeric"
                   value={times}
                   onChangeText={text => setTimes(text)}
+                  onEndEditing={() => {
+                    console.log('times:', times);
+
+                    const newTaskDetail = {
+                      ...task,
+                      recurrence: {
+                        times: parseInt(times),
+                        unit: unitValue,
+                        repeatOn: repeatOn,
+                        ends: endDate.toISOString(),
+                      },
+                    };
+                    console.log('newTaskDetail', newTaskDetail);
+                  }}
                 />
+
                 <Dropdown
                   style={{
                     width: '30%',
@@ -449,21 +529,23 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
                   onBlur={() => setIsUnitFocus(false)}
                   onChange={item => {
                     setUnitValue(item.value);
-
                     setIsUnitFocus(false);
+                    const newTaskDetail = {
+                      ...task,
+                      recurrence: {
+                        times: parseInt(times),
+                        unit: item.value,
+                        repeatOn: repeatOn,
+                        ends: endDate.toISOString(),
+                      },
+                    };
+                    console.log('newTaskDetail', newTaskDetail);
                   }}
                 />
               </View>
 
               {unitValue !== 'Day' && (
-                <View
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    marginTop: 10,
-                  }}>
+                <View style={styles.repeatContainer}>
                   <Text>Lặp lại vào thứ:</Text>
                   <ButtonGroup
                     onPress={item => {
@@ -507,15 +589,7 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
                 </View>
               )}
 
-              <View
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
-                  marginTop: 10,
-                  // backgroundColor: 'yellow',
-                }}>
+              <View style={styles.endsContainer}>
                 <Text>Kết thúc:</Text>
                 <RadioGroup
                   containerStyle={styles.radioButtonContainer}
@@ -573,7 +647,20 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
                               .replace('AM', 'SA'),
                           );
 
-                          console.log('endDate', values.endDate);
+                          const newTaskDetail = {
+                            ...task,
+                            recurrence: {
+                              times: parseInt(times),
+                              unit: unitValue,
+                              repeatOn: repeatOn,
+                              ends: moment(
+                                value,
+                                'DD/MM/YYYY HH:mm A',
+                              ).toISOString(),
+                            },
+                          };
+
+                          console.log('newTaskDetail', newTaskDetail);
                         }}
                         onCancel={() => {
                           setOpenEndDate(false);
@@ -603,7 +690,126 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
               </View>
             </View>
           )}
-        </View>
+
+          <Text style={styles.title}>Mô tả</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              onChangeText={value => setFieldValue('description', value)}
+              onEndEditing={async () => {
+                console.log('values.description:', values.description);
+
+                const newTaskDetail = {
+                  ...task,
+                  description: values.description,
+                };
+
+                console.log('newTaskDetail', newTaskDetail);
+
+                // const response = await editTaskDetail(task._id, newTaskDetail);
+
+                // console.log('response', response);
+              }}
+              onBlur={() => setFieldTouched('description')}
+              style={styles.inputText}
+              placeholder={'Nhập mô tả việc cần làm'}
+              placeholderTextColor={Colors.text.lightgrey}
+              value={values.description}
+            />
+            {values.description && (
+              <Ionicons
+                onPress={() => setFieldValue('description', '')}
+                name={'close'}
+                style={styles.inputIcon}
+              />
+            )}
+          </View>
+
+          <Text style={[styles.title, {marginTop: 15}]}>Chế độ</Text>
+          <View
+            style={{
+              width: '90%',
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 10,
+              marginTop: 5,
+              alignItems: 'center',
+              // justifyContent: 'space-between',
+            }}>
+            <TouchableOpacity onPress={() => setState(!state)}>
+              <FontAwesomeIcon
+                name={state ? 'toggle-on' : 'toggle-off'}
+                style={[styles.inputIcon, {color: Colors.icon.orange}]}
+              />
+            </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: 16,
+                color: Colors.text.grey,
+              }}>
+              Nhóm
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => {
+              setIsModalVisible(true);
+            }}>
+            <Text style={styles.deleteButtonText}>Xóa</Text>
+          </TouchableOpacity>
+
+          <Modal isVisible={isModalVisible}>
+            <View style={styles.modalContentContainer}>
+              <Text style={styles.modalTitle}>Xóa sự kiện này?</Text>
+
+              <View style={styles.modalTextContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsModalVisible(!isModalVisible);
+                  }}
+                  style={{
+                    alignItems: 'center',
+                  }}>
+                  <Text style={{fontSize: 16, color: Colors.text.orange}}>
+                    Huỷ
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={async () => {
+                    setIsModalVisible(!isModalVisible);
+
+                    const response = await deleteTask(task._id);
+
+                    console.log('response', response);
+
+                    if (response.statusCode === 200) {
+                      Toast.show({
+                        type: 'success',
+                        text1: 'Xóa việc cần làm thành công',
+                        autoHide: true,
+                        visibilityTime: 1000,
+                        onHide: () => {
+                          navigation.goBack();
+                        },
+                      });
+                    } else {
+                      Toast.show({
+                        type: 'error',
+                        text1: 'Xóa việc cần làm không thành công',
+                        autoHide: true,
+                        visibilityTime: 1000,
+                      });
+                    }
+                  }}
+                  style={{
+                    alignItems: 'center',
+                  }}>
+                  <Text style={{fontSize: 16, color: 'red'}}>Xóa</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        </ScrollView>
       )}
     </Formik>
   );
@@ -611,7 +817,7 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    display: 'flex',
     alignItems: 'center',
     // justifyContent: 'center',
     width: Dimensions.get('window').width,
@@ -659,10 +865,40 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginBottom: 10,
   },
-  removeIcon: {
-    fontWeight: '200',
-    color: Colors.icon.red,
-    fontSize: 24,
+  recurrenceContainer: {
+    width: '90%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  timesContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  timesInput: {
+    width: '10%',
+    paddingLeft: 5,
+    paddingVertical: 0,
+    borderBottomWidth: 1,
+    borderColor: Colors.border.lightgrey,
+    color: Colors.text.grey,
+  },
+  repeatContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    marginTop: 10,
+  },
+  endsContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    marginTop: 10,
+    // backgroundColor: 'yellow',
   },
   radioButtonContainer: {
     width: '90%',
@@ -670,13 +906,39 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: 10,
   },
-  createButton: {
-    width: '90%',
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
+  modalContentContainer: {
+    display: 'flex',
+    backgroundColor: 'white',
     borderRadius: 10,
+    gap: 10,
+    padding: 20,
+  },
+  modalTextContainer: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 30,
+  },
+  modalTitle: {
+    fontSize: 18,
+    textAlign: 'left',
+    color: Colors.text.grey,
+  },
+  deleteButton: {
+    width: '90%',
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: Colors.buttonBackground.red,
+    borderRadius: 10,
+    padding: 10,
     marginVertical: 20,
+  },
+  deleteButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: Colors.text.white,
   },
 });
 
