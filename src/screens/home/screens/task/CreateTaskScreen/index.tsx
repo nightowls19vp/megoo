@@ -482,14 +482,20 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
                   onBlur={() => setFieldTouched('times')}
                   onChangeText={text => {
                     if (text.length === 0) {
-                      setFieldError('times', 'Vui lòng nhập số lần lặp lại');
+                      setFieldError(
+                        'times',
+                        'Vui lòng nhập khoảng thời gian lặp lại',
+                      );
                     }
                     setFieldValue('times', text);
                     // setTimes(text);
                   }}
                   onEndEditing={() => {
                     if (values.times.length === 0) {
-                      setFieldError('times', 'Vui lòng nhập số lần lặp lại');
+                      setFieldError(
+                        'times',
+                        'Vui lòng nhập khoảng thời gian lặp lại',
+                      );
                     }
                   }}
                 />

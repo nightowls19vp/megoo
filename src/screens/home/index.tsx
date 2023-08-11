@@ -390,30 +390,38 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
             <View style={styles.utilitiesContent}>
               <TouchableOpacity
                 style={styles.utility}
-                onPress={() =>
-                  navigation.navigate(RouteNames.BILL_LIST_STACK, {})
-                }>
+                onPress={() => {
+                  appStore.isLoggedIn
+                    ? navigation.navigate(RouteNames.BILL_LIST_STACK, {})
+                    : setModalVisible(true);
+                }}>
                 <Text style={styles.utilityText}>Quản lý chi tiêu</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.utility}
-                onPress={() =>
-                  navigation.navigate(RouteNames.TODOS_LIST_STACK, {})
-                }>
+                onPress={() => {
+                  appStore.isLoggedIn
+                    ? navigation.navigate(RouteNames.TODOS_LIST_STACK, {})
+                    : setModalVisible(true);
+                }}>
                 <Text style={styles.utilityText}>Việc cần làm</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.utility}
-                onPress={() =>
-                  navigation.navigate(RouteNames.TASK_LIST_STACK, {})
-                }>
+                onPress={() => {
+                  appStore.isLoggedIn
+                    ? navigation.navigate(RouteNames.TASK_LIST_STACK, {})
+                    : setModalVisible(true);
+                }}>
                 <Text style={styles.utilityText}>Lịch biểu</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.utility}
-                onPress={() =>
-                  navigation.navigate(RouteNames.BANK_INTEREST_RATE, {})
-                }>
+                onPress={() => {
+                  appStore.isLoggedIn
+                    ? navigation.navigate(RouteNames.BANK_INTEREST_RATE, {})
+                    : setModalVisible(true);
+                }}>
                 <Text numberOfLines={2} style={styles.utilityText}>
                   Tính lãi suất {'\n'} ngân hàng
                 </Text>

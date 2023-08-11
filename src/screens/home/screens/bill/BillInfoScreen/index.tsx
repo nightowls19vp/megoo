@@ -124,6 +124,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
   };
 
   const updateStatus = async (borrowers: {user: string; status: string}[]) => {
+    console.log('borrowers:', JSON.stringify(borrowers, null, 2));
     const response = await updateBorrowersStatus(billId, borrowers);
     console.log('response', response);
   };
@@ -329,7 +330,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                     ) : (
                       <Text style={styles.text}>{viStatus}</Text>
                     )}
-                    <Text style={styles.text}>{borrower.status}</Text>
+                    {/* <Text style={styles.text}>{borrower.status}</Text> */}
                   </View>
                 </View>
               </View>

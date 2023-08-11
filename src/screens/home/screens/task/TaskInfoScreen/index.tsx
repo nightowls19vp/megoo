@@ -31,6 +31,7 @@ import {
   dateISOFormat,
 } from './../../../../../common/handle.string';
 import Toast from 'react-native-toast-message';
+import _ from 'lodash';
 
 type TaskRouteParams = {
   taskId: string;
@@ -47,6 +48,8 @@ const TaskSchema = Yup.object().shape({
 const TaskDetailScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<TaskRouteProp>();
   const taskId = route.params.taskId;
+  const [isMounted, setIsMounted] = useState(false);
+
   const [task, setTask] = useState<{
     _id: string;
     summary: string;
@@ -88,8 +91,21 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
       email: '',
     },
   });
+  const [summary, setSummary] = useState('');
+  const [description, setDescription] = useState('');
+
+  const [startDatetime, setStartDatetime] = useState('');
+  const [startDate, setStartDate] = useState(new Date());
+  const [selectedStartDate, setSelectedStartDate] = useState(startDate);
+  const [openStartDate, setOpenStartDate] = useState(false);
+
+  const [endDatetime, setEndDatetime] = useState('');
+  const [endDate, setEndDate] = useState(new Date());
+  const [selectedEndDate, setSelectedEndDate] = useState(endDate);
+  const [openEndDate, setOpenEndDate] = useState(false);
+
   const [state, setState] = useState(false);
-  const [items, setItems] = useState<
+  const [recurrenceOptions, setRecurrenceOptions] = useState<
     {
       label: string;
       value: string;
@@ -131,17 +147,20 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
       value: 'Year',
     },
   ]);
-  const [recurrenceValue, setRecurenceValue] = useState(items[0].value);
+  const [selectedRecurrenceValue, setSelectedRecurrenceValue] = useState(
+    recurrenceOptions[0].value,
+  );
   const [isRecurrenceFocus, setIsRecurrenceFocus] = useState(false);
 
-  const [unitValue, setUnitValue] = useState(units[1].value);
+  const [times, setTimes] = useState('1');
+
+  const [selectedUnit, setSelectedUnit] = useState(units[1].value);
   const [isUnitFocus, setIsUnitFocus] = useState(false);
 
-  const [times, setTimes] = useState('');
   const [repeatOn, setRepeatOn] = useState<string[]>([]);
 
   const buttons: string[] = ['2', '3', '4', '5', '6', '7', 'CN'];
-  const [selectedButtons, setSelectedButtons] = useState<number[]>([]);
+  const [selectedButtons, setSelectedButtons] = useState<number[]>([0]);
 
   const radioButtons: RadioButtonProps[] = useMemo(
     () => [
@@ -168,90 +187,142 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
     radioButtons[0].id,
   );
 
-  const [startDate, setStartDate] = useState(new Date());
-  const [selectedStartDate, setSelectedStartDate] = useState(startDate);
-  const [openStartDate, setOpenStartDate] = useState(false);
-
-  const [endDate, setEndDate] = useState(new Date());
-  const [selectedEndDate, setSelectedEndDate] = useState(endDate);
-  const [openEndDate, setOpenEndDate] = useState(false);
-
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const [newTaskDetail, setNewTaskDetail] = useState<{
+    summary: string;
+    description: string;
+    isRepeated: boolean;
+    recurrence?: {
+      times: number;
+      unit: string;
+      repeatOn?: string[];
+      ends?: string;
+    };
+    startDate: string;
+  }>({
+    summary: '',
+    description: '',
+    isRepeated: false,
+    recurrence: {
+      times: 1,
+      unit: 'Day',
+      repeatOn: [],
+      ends: '',
+    },
+    startDate: '',
+  });
+
+  const [recurrence, setRecurrence] = useState<{
+    times: number;
+    unit: string;
+    repeatOn?: string[];
+    ends?: string;
+  }>({
+    times: 1,
+    unit: 'Day',
+    repeatOn: [],
+    ends: '',
+  });
 
   const getTaskDetail = async () => {
     const response = await getTaskById(taskId);
     console.log('Get task response', response.task);
+    if (response.statusCode === 200) {
+      setNewTaskDetail({
+        summary: response?.task.summary,
+        description: response?.task.description,
+        isRepeated: response?.task.isRepeated,
+        recurrence: {
+          times: response?.task.recurrence?.times,
+          unit: response?.task.recurrence?.unit,
+          repeatOn: response?.task.recurrence?.repeatOn,
+          ends: response?.task.recurrence?.ends
+            ? response?.task.recurrence?.ends //ISO 8601 format
+            : undefined,
+        },
+        startDate: response?.task.startDate, //ISO 8601 format
+      });
 
-    setTask({
-      _id: response?.task._id,
-      summary: response?.task.summary,
-      description: response?.task.description,
-      isRepeated: response?.task.isRepeated,
-      recurrence: {
+      setSummary(response?.task.summary);
+
+      setDescription(response?.task.description);
+
+      setStartDatetime(dateFormatWithTime(response?.task.startDate));
+
+      const currentDate = moment();
+      const nextMonthDate = currentDate.add(1, 'month');
+
+      setEndDatetime(
+        dateFormatWithTime(
+          response?.task.recurrence?.ends
+            ? response?.task.recurrence?.ends
+            : nextMonthDate,
+        ),
+      );
+
+      setState(response?.task.state);
+
+      setSelectedRecurrenceValue(
+        response?.task.isRepeated
+          ? recurrenceOptions[1].value
+          : recurrenceOptions[0].value,
+      );
+
+      setRecurrence({
         times: response?.task.recurrence?.times,
         unit: response?.task.recurrence?.unit,
-        repeatOn: response?.task.recurrence?.repeatOn,
-        ends: response?.task.recurrence?.ends
-          ? (response?.task.recurrence?.ends as string)
-          : undefined,
-      },
-      startDate: response?.task.startDate as string,
-      state: response?.task.state,
-      members: response.task?.members?.map((member: any) => ({
-        _id: member._id,
-        name: member.name,
-        avatar: member.avatar,
-        email: member.email,
-      })),
-      createdBy: {
-        _id: response?.task.createdBy._id,
-        name: response?.task.createdBy.name,
-        avatar: response?.task.createdBy.avatar,
-        email: response?.task.createdBy.email,
-      },
-    });
-    setState(response?.task.state);
-    setRecurenceValue(
-      response?.task.isRepeated ? items[1].value : items[0].value,
-    );
-    setTimes(`${response?.task.recurrence?.times}` ?? '');
-    if (response?.task.recurrence?.unit === 'Day') {
-      setUnitValue(units[0].value);
-    } else if (response?.task.recurrence?.unit === 'Week') {
-      setUnitValue(units[1].value);
-    } else if (response?.task.recurrence?.unit === 'Month') {
-      setUnitValue(units[2].value);
-    } else if (response?.task.recurrence?.unit === 'Year') {
-      setUnitValue(units[3].value);
-    }
-    setRepeatOn(
-      response?.task.recurrence?.repeatOn.map((item: any) =>
-        convertDayTextToDayNumber(item),
-      ),
-    );
-
-    if (response?.task.recurrence?.repeatOn.length > 0) {
-      let buttonList: number[] = [];
-      response?.task.recurrence?.repeatOn.map((day: any) => {
-        // console.log('day', day);
-
-        const index = buttons.findIndex(
-          item => item === convertDayTextToDayNumber(day),
-        );
-        // Add index to selectedButtons of index !== -1
-        if (index !== -1) {
-          buttonList.push(index);
-        }
+        repeatOn: response?.task.recurrence?.repeatOn ?? undefined,
+        ends: response?.task.recurrence?.ends ?? undefined,
       });
-      // console.log('buttonList:', buttonList);
 
-      setSelectedButtons(buttonList);
-    }
+      if (response?.task.recurrence?.unit === 'Day') {
+        setSelectedUnit(units[0].value);
+      } else if (response?.task.recurrence?.unit === 'Week') {
+        setSelectedUnit(units[1].value);
+      } else if (response?.task.recurrence?.unit === 'Month') {
+        setSelectedUnit(units[2].value);
+      } else if (response?.task.recurrence?.unit === 'Year') {
+        setSelectedUnit(units[3].value);
+      }
 
-    if (response?.task.recurrence?.ends) {
-      setSelectedId(radioButtons[1].id);
-      // setEndDate(new Date(response?.task.recurrence?.ends));
-      console.log('ends', response?.task.recurrence?.ends);
+      if (response?.task.recurrence?.repeatOn !== null) {
+        setRepeatOn(
+          response?.task.recurrence?.repeatOn.map((item: any) =>
+            convertDayTextToDayNumber(item),
+          ),
+        );
+      } else {
+        setRepeatOn([]);
+      }
+
+      if (response?.task.recurrence?.repeatOn !== null) {
+        let buttonList: number[] = [];
+        response?.task.recurrence?.repeatOn.map((day: any) => {
+          // console.log('day', day);
+
+          const index = buttons.findIndex(
+            item => item === convertDayTextToDayNumber(day),
+          );
+          // Add index to selectedButtons of index !== -1
+          if (index !== -1) {
+            buttonList.push(index);
+          }
+        });
+        // console.log('buttonList:', buttonList);
+
+        setSelectedButtons(buttonList);
+      } else {
+        setSelectedButtons([0]);
+      }
+
+      if (response?.task.recurrence?.ends) {
+        setSelectedId(radioButtons[1].id);
+        // setEndDate(new Date(response?.task.recurrence?.ends));
+        console.log('ends', response?.task.recurrence?.ends);
+      }
+
+      setIsMounted(true);
     }
   };
 
@@ -274,544 +345,607 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
         selectedDay.push(dateString);
       }
     });
+    console.log('selectedDay', selectedDay);
+
     setRepeatOn(selectedDay);
+    setRecurrence({
+      ...recurrence,
+      repeatOn: selectedDay,
+    });
   }, [selectedButtons]);
 
+  const updateTask = async (newTaskDetail: {
+    summary: string;
+    description: string;
+    isRepeated: boolean;
+    recurrence?: {
+      times?: number;
+      unit?: string;
+      repeatOn?: string[];
+      ends?: string;
+    };
+    startDate: string;
+  }) => {
+    const response = await editTaskDetail(taskId, newTaskDetail);
+
+    console.log('Edit task response', response);
+
+    // if (response.statusCode === 200) {
+    //   setNewTaskDetail({
+    //     summary: response?.task.summary,
+    //     description: response?.task.description,
+    //     isRepeated: response?.task.isRepeated,
+    //     recurrence: {
+    //       times: response?.task.recurrence?.times,
+    //       unit: response?.task.recurrence?.unit,
+    //       repeatOn: response?.task.recurrence?.repeatOn,
+    //       ends: response?.task.recurrence?.ends
+    //         ? response?.task.recurrence?.ends //ISO 8601 format
+    //         : undefined,
+    //     },
+    //     startDate: response?.task.startDate, //ISO 8601 format
+    //   });
+
+    //   setSummary(response?.task.summary);
+
+    //   setDescription(response?.task.description);
+
+    //   setStartDatetime(dateFormatWithTime(response?.task.startDate));
+
+    //   const currentDate = moment();
+    //   const nextMonthDate = currentDate.add(1, 'month');
+
+    //   setEndDatetime(
+    //     dateFormatWithTime(
+    //       response?.task.recurrence?.ends
+    //         ? response?.task.recurrence?.ends
+    //         : nextMonthDate,
+    //     ),
+    //   );
+
+    //   setState(response?.task.state);
+
+    //   setSelectedRecurrenceValue(
+    //     response?.task.isRepeated
+    //       ? recurrenceOptions[1].value
+    //       : recurrenceOptions[0].value,
+    //   );
+
+    //   setRecurrence({
+    //     times: response?.task.recurrence?.times,
+    //     unit: response?.task.recurrence?.unit,
+    //     repeatOn: response?.task.recurrence?.repeatOn ?? undefined,
+    //     ends: response?.task.recurrence?.ends ?? undefined,
+    //   });
+
+    //   if (response?.task.recurrence?.unit === 'Day') {
+    //     setSelectedUnit(units[0].value);
+    //   } else if (response?.task.recurrence?.unit === 'Week') {
+    //     setSelectedUnit(units[1].value);
+    //   } else if (response?.task.recurrence?.unit === 'Month') {
+    //     setSelectedUnit(units[2].value);
+    //   } else if (response?.task.recurrence?.unit === 'Year') {
+    //     setSelectedUnit(units[3].value);
+    //   }
+
+    //   setRepeatOn(
+    //     response?.task.recurrence?.repeatOn.map((item: any) =>
+    //       convertDayTextToDayNumber(item),
+    //     ),
+    //   );
+
+    //   if (response?.task.recurrence?.repeatOn.length > 0) {
+    //     let buttonList: number[] = [];
+    //     response?.task.recurrence?.repeatOn.map((day: any) => {
+    //       // console.log('day', day);
+
+    //       const index = buttons.findIndex(
+    //         item => item === convertDayTextToDayNumber(day),
+    //       );
+    //       // Add index to selectedButtons of index !== -1
+    //       if (index !== -1) {
+    //         buttonList.push(index);
+    //       }
+    //     });
+    //     // console.log('buttonList:', buttonList);
+
+    //     setSelectedButtons(buttonList);
+    //   } else {
+    //     setSelectedButtons([0]);
+    //   }
+
+    //   if (response?.task.recurrence?.ends) {
+    //     setSelectedId(radioButtons[1].id);
+    //     // setEndDate(new Date(response?.task.recurrence?.ends));
+    //     console.log('ends', response?.task.recurrence?.ends);
+    //   }
+    // } else {
+    //   // setTimes('');
+    //   setRepeatOn(['Mon']);
+    //   setSelectedButtons([0]);
+    //   setSelectedId(radioButtons[0].id);
+    //   setEndDate(new Date());
+    // }
+  };
+
+  // If user selects custom repeat mode but doesn't choose end time then set "repeatOn" and ends" to "undefined"
   useEffect(() => {
-    setTask({
-      ...task,
-      recurrence: {
-        times: parseInt(times),
-        unit: unitValue,
-        repeatOn: repeatOn,
-        ends: endDate.toISOString(),
-      },
-    });
-  }, [repeatOn]);
+    if (selectedRecurrenceValue === 'Custom') {
+      if (selectedId === '1') {
+        console.log('endDatetime', endDatetime);
+
+        setRecurrence({
+          ...recurrence,
+          ends: undefined,
+        });
+      } else if (selectedId === '2') {
+        console.log('endDatetime', endDatetime);
+
+        setRecurrence({
+          ...recurrence,
+          ends: moment(endDatetime, 'DD/MM/YYYY HH:mm A').toISOString(),
+        });
+      }
+    }
+  }, [selectedRecurrenceValue, selectedId]);
 
   useEffect(() => {
-    if (selectedId === '2') {
-      setTask({
-        ...task,
+    console.log('recurrence', recurrence);
+    if (isMounted && selectedRecurrenceValue === 'Custom') {
+      setNewTaskDetail({
+        ...newTaskDetail,
+        isRepeated: true,
         recurrence: {
-          times: parseInt(times),
-          unit: unitValue,
-          repeatOn: repeatOn,
-          ends: endDate.toISOString(),
+          times: recurrence.times,
+          unit: recurrence.unit,
+          repeatOn: recurrence.repeatOn,
+          ends: recurrence.ends,
         },
       });
-    } else if (selectedId === '1') {
-      setTask({
-        ...task,
-        recurrence: {
-          times: parseInt(times),
-          unit: unitValue,
-          repeatOn: repeatOn,
-          ends: undefined,
-        },
+    } else if (isMounted && selectedRecurrenceValue === 'Does not repeat') {
+      setNewTaskDetail({
+        ...newTaskDetail,
+        isRepeated: false,
+        recurrence: undefined,
       });
     }
-  }, [selectedId]);
+  }, [recurrence]);
+
+  useEffect(() => {
+    console.log('newTaskDetail', newTaskDetail);
+    if (isMounted) {
+      updateTask(newTaskDetail);
+    }
+  }, [newTaskDetail]);
 
   return (
-    <Formik
-      initialValues={{
-        summary: task.summary,
-        description: task.description,
-        startDate: task.startDate ? dateFormatWithTime(task.startDate) : '',
-        endDate: task.recurrence?.ends
-          ? dateFormatWithTime(task.recurrence?.ends)
-          : moment(new Date())
-              .add(1, 'month')
-              .format('DD/MM/YYYY hh:mm A')
-              .replace('AM', 'SA')
-              .replace('PM', 'CH'),
-      }}
-      validationSchema={TaskSchema}
-      enableReinitialize={true}
-      onSubmit={values => {}}>
-      {({
-        values,
-        errors,
-        touched,
-        setFieldTouched,
-        setFieldValue,
-        isValid,
-        handleSubmit,
-        handleChange,
-      }) => (
-        <ScrollView contentContainerStyle={styles.container}>
-          <Text style={styles.title}>Tiêu đề</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              onChangeText={value => setFieldValue('summary', value)}
-              onEndEditing={async () => {
-                console.log('values.summary:', values.summary);
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Tiêu đề</Text>
+      <View style={styles.inputContainer}>
+        <TextInput
+          onChangeText={value => setSummary(value)}
+          onEndEditing={async () => {
+            console.log('summary:', summary);
 
-                const newTaskDetail = {
-                  ...task,
-                  summary: values.summary,
-                };
-
-                console.log('newTaskDetail', newTaskDetail);
-
-                // const response = await editTaskDetail(task._id, newTaskDetail);
-
-                // console.log('response', response);
-              }}
-              onBlur={() => setFieldTouched('summary')}
-              style={styles.inputText}
-              placeholder={'Nhập tóm tắt việc cần làm'}
-              placeholderTextColor={Colors.text.lightgrey}
-              value={values.summary}
-            />
-            {values.summary && (
-              <Ionicons
-                onPress={() => setFieldValue('summary', '')}
-                name={'close'}
-                style={styles.inputIcon}
-              />
-            )}
-          </View>
-          {touched.summary && errors.summary && (
-            <Text style={styles.error}>{errors.summary}</Text>
-          )}
-
-          <Text style={styles.title}>Thời gian bắt đầu</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              editable={false}
-              onChangeText={value => setFieldValue('startDate', value)}
-              onBlur={() => setFieldTouched('startDate')}
-              style={styles.inputText}
-              placeholder={'Chọn thời gian bắt đầu'}
-              placeholderTextColor={Colors.text.lightgrey}
-              value={values.startDate}
-            />
-
-            <DatePicker
-              modal
-              open={openStartDate}
-              date={selectedStartDate}
-              mode={'datetime'}
-              locale={'vi'}
-              title={'Chọn ngày'}
-              confirmText={'Chọn'}
-              cancelText={'Huỷ'}
-              onDateChange={value => {
-                console.log('Date change value:', value);
-
-                setSelectedStartDate(value);
-                setFieldValue('startDate', value);
-              }}
-              onConfirm={value => {
-                console.log('Selected date:', value);
-
-                setOpenStartDate(false);
-                setStartDate(value);
-                setFieldValue(
-                  'startDate',
-                  moment(value)
-                    .format('DD/MM/YYYY HH:mm A')
-                    .replace('PM', 'CH')
-                    .replace('AM', 'SA'),
-                );
-
-                const newTaskDetail = {
-                  ...task,
-                  startDate: moment(value, 'DD/MM/YYYY HH:mm A').toISOString(),
-                };
-
-                console.log('newTaskDetail', newTaskDetail);
-              }}
-              onCancel={() => {
-                setOpenStartDate(false);
-              }}
-            />
-
-            {values.startDate && (
-              <Ionicons
-                onPress={() => setFieldValue('startDate', '')}
-                name={'close'}
-                style={styles.inputIcon}
-              />
-            )}
-
-            <Ionicons
-              onPress={() => {
-                setOpenStartDate(true);
-              }}
-              name={'calendar'}
-              style={styles.inputIcon}
-            />
-          </View>
-          {touched.startDate && errors.startDate && (
-            <Text style={styles.error}>{errors.startDate}</Text>
-          )}
-
-          <Dropdown
-            style={{
-              width: '90%',
-              height: 50,
-              borderBottomWidth: 1,
-              borderColor: Colors.border.lightgrey,
-            }}
-            data={items}
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder={!isRecurrenceFocus ? 'Lặp lại' : '...'}
-            placeholderStyle={{
-              fontSize: 14,
-              color: Colors.text.lightgrey,
-            }}
-            selectedTextStyle={{
-              color: Colors.text.grey,
-              fontSize: 14,
-            }}
-            itemTextStyle={{
-              color: Colors.text.grey,
-              fontSize: 14,
-            }}
-            value={recurrenceValue}
-            onFocus={() => setIsRecurrenceFocus(true)}
-            onBlur={() => setIsRecurrenceFocus(false)}
-            onChange={item => {
-              setRecurenceValue(item.value);
-              setIsRecurrenceFocus(false);
-            }}
+            setNewTaskDetail({
+              ...newTaskDetail,
+              summary,
+            });
+          }}
+          style={styles.inputText}
+          placeholder={'Nhập tóm tắt việc cần làm'}
+          placeholderTextColor={Colors.text.lightgrey}
+          value={summary}
+        />
+        {summary && (
+          <Ionicons
+            onPress={() => setSummary('')}
+            name={'close'}
+            style={styles.inputIcon}
           />
-          {recurrenceValue === 'Custom' && (
-            <View style={styles.recurrenceContainer}>
-              <View style={styles.timesContainer}>
-                <Text>Lặp lại mỗi:</Text>
-                <TextInput
-                  style={styles.timesInput}
-                  textAlign={'center'}
-                  keyboardType="numeric"
-                  value={times}
-                  onChangeText={text => setTimes(text)}
-                  onEndEditing={() => {
-                    console.log('times:', times);
+        )}
+      </View>
+      {!summary && <Text style={styles.error}>Vui lòng nhập tiêu đề</Text>}
 
-                    const newTaskDetail = {
-                      ...task,
-                      recurrence: {
-                        times: parseInt(times),
-                        unit: unitValue,
-                        repeatOn: repeatOn,
-                        ends: endDate.toISOString(),
-                      },
-                    };
-                    console.log('newTaskDetail', newTaskDetail);
-                  }}
-                />
+      <Text style={styles.title}>Thời gian bắt đầu</Text>
+      <View style={styles.inputContainer}>
+        <TextInput
+          editable={false}
+          onChangeText={value => setStartDatetime(value)}
+          style={styles.inputText}
+          placeholder={'Chọn thời gian bắt đầu'}
+          placeholderTextColor={Colors.text.lightgrey}
+          value={startDatetime}
+        />
 
-                <Dropdown
-                  style={{
-                    width: '30%',
-                    height: 50,
-                  }}
-                  data={units}
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isUnitFocus ? 'Chọn đơn vị' : '...'}
-                  placeholderStyle={{
-                    color: Colors.text.lightgrey,
-                  }}
-                  itemTextStyle={{
-                    color: Colors.text.grey,
-                    fontSize: 14,
-                  }}
-                  value={unitValue}
-                  onFocus={() => setIsUnitFocus(true)}
-                  onBlur={() => setIsUnitFocus(false)}
-                  onChange={item => {
-                    setUnitValue(item.value);
-                    setIsUnitFocus(false);
-                    const newTaskDetail = {
-                      ...task,
-                      recurrence: {
-                        times: parseInt(times),
-                        unit: item.value,
-                        repeatOn: repeatOn,
-                        ends: endDate.toISOString(),
-                      },
-                    };
-                    console.log('newTaskDetail', newTaskDetail);
-                  }}
-                />
-              </View>
+        <DatePicker
+          modal
+          open={openStartDate}
+          date={selectedStartDate}
+          mode={'datetime'}
+          locale={'vi'}
+          title={'Chọn ngày'}
+          confirmText={'Chọn'}
+          cancelText={'Huỷ'}
+          onDateChange={value => {
+            console.log('Date change value:', value);
 
-              {unitValue !== 'Day' && (
-                <View style={styles.repeatContainer}>
-                  <Text>Lặp lại vào thứ:</Text>
-                  <ButtonGroup
-                    onPress={item => {
-                      console.log('item:', item);
+            setSelectedStartDate(value);
+          }}
+          onConfirm={value => {
+            console.log('Selected date:', value);
 
-                      setSelectedButtons(item);
-                    }}
-                    selectMultiple={true}
-                    selectedIndexes={selectedButtons}
-                    buttons={buttons}
-                    containerStyle={{
-                      width: '100%',
-                      height: 30,
-                      borderWidth: 0,
-                      marginLeft: 0,
+            setOpenStartDate(false);
+            setStartDate(value);
+            setStartDatetime(dateFormatWithTime(`${value}`));
+            setNewTaskDetail({
+              ...newTaskDetail,
+              startDate: moment(value).toISOString(),
+            });
+
+            // updateTask(newTaskDetail);
+          }}
+          onCancel={() => {
+            setOpenStartDate(false);
+          }}
+        />
+
+        {startDatetime && (
+          <Ionicons
+            onPress={() => setStartDatetime('')}
+            name={'close'}
+            style={[styles.inputIcon, {marginRight: 5}]}
+          />
+        )}
+
+        <Ionicons
+          onPress={() => {
+            setOpenStartDate(true);
+          }}
+          name={'calendar'}
+          style={styles.inputIcon}
+        />
+      </View>
+      {!startDatetime && (
+        <Text style={styles.error}>Vui lòng chọn thời gian bắt đầu</Text>
+      )}
+
+      <Dropdown
+        style={{
+          width: '90%',
+          height: 50,
+          borderBottomWidth: 1,
+          borderColor: Colors.border.lightgrey,
+        }}
+        data={recurrenceOptions}
+        maxHeight={300}
+        labelField="label"
+        valueField="value"
+        placeholder={!isRecurrenceFocus ? 'Lặp lại' : '...'}
+        placeholderStyle={{
+          fontSize: 14,
+          color: Colors.text.lightgrey,
+        }}
+        selectedTextStyle={{
+          color: Colors.text.grey,
+          fontSize: 14,
+        }}
+        itemTextStyle={{
+          color: Colors.text.grey,
+          fontSize: 14,
+        }}
+        value={selectedRecurrenceValue}
+        onFocus={() => setIsRecurrenceFocus(true)}
+        onBlur={() => setIsRecurrenceFocus(false)}
+        onChange={item => {
+          setSelectedRecurrenceValue(item.value);
+          setIsRecurrenceFocus(false);
+        }}
+      />
+      {selectedRecurrenceValue === 'Custom' && (
+        <View style={styles.recurrenceContainer}>
+          <View style={styles.timesContainer}>
+            <Text>Lặp lại mỗi:</Text>
+            <TextInput
+              style={styles.timesInput}
+              textAlign={'center'}
+              keyboardType="numeric"
+              value={times}
+              onChangeText={text => setTimes(text)}
+              onEndEditing={() => {
+                setRecurrence({
+                  ...recurrence,
+                  times: parseInt(times),
+                });
+              }}
+            />
+
+            <Dropdown
+              style={{
+                width: '30%',
+                height: 50,
+              }}
+              data={units}
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isUnitFocus ? 'Chọn đơn vị' : '...'}
+              placeholderStyle={{
+                color: Colors.text.lightgrey,
+              }}
+              itemTextStyle={{
+                color: Colors.text.grey,
+                fontSize: 14,
+              }}
+              value={selectedUnit}
+              onFocus={() => setIsUnitFocus(true)}
+              onBlur={() => setIsUnitFocus(false)}
+              onChange={item => {
+                setSelectedUnit(item.value);
+                setIsUnitFocus(false);
+                setRecurrence({
+                  ...recurrence,
+                  repeatOn:
+                    item.value === 'Day' ? undefined : recurrence.repeatOn,
+                  unit: item.value,
+                });
+              }}
+            />
+          </View>
+          {recurrence.times.toString().length === 0 && (
+            <Text style={styles.error}>
+              Vui lòng nhập khoảng thời gian lặp lại
+            </Text>
+          )}
+
+          {selectedUnit !== 'Day' && (
+            <View style={styles.repeatContainer}>
+              <Text>Lặp lại vào thứ:</Text>
+              <ButtonGroup
+                onPress={item => {
+                  console.log('item:', item);
+
+                  setSelectedButtons(item);
+                }}
+                selectMultiple={true}
+                selectedIndexes={selectedButtons}
+                buttons={buttons}
+                containerStyle={{
+                  width: '100%',
+                  height: 30,
+                  borderWidth: 0,
+                  marginLeft: 0,
+                  // backgroundColor: 'pink',
+                }}
+                innerBorderStyle={{
+                  width: 0,
+                }}
+                selectedButtonStyle={{
+                  backgroundColor: Colors.icon.orange,
+                  borderRadius: 50,
+                }}
+                buttonContainerStyle={{
+                  alignItems: 'flex-start',
+                  justifyContent: 'flex-start',
+                }}
+                buttonStyle={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: 15,
+                  borderWidth: 1,
+                  borderColor: Colors.border.orange,
+                  backgroundColor: Colors.background.white,
+                }}
+                textStyle={{
+                  color: Colors.text.orange,
+                }}
+              />
+            </View>
+          )}
+
+          <View style={styles.endsContainer}>
+            <Text>Kết thúc:</Text>
+            <RadioGroup
+              containerStyle={styles.radioButtonContainer}
+              layout="column"
+              radioButtons={radioButtons}
+              onPress={setSelectedId}
+              selectedId={selectedId}
+            />
+            {selectedId === '2' && (
+              <>
+                <View
+                  style={[
+                    styles.inputContainer,
+                    {
+                      width: '89%',
+                      alignSelf: 'flex-end',
                       // backgroundColor: 'pink',
+                    },
+                  ]}>
+                  <TextInput
+                    editable={false}
+                    // onChangeText={value => setFieldValue('dob', value)}
+                    placeholder={'Chọn thời gian kết thúc nhắc nhở'}
+                    style={styles.inputText}
+                    placeholderTextColor={Colors.text.lightgrey}
+                    value={endDatetime}
+                  />
+
+                  <DatePicker
+                    modal
+                    open={openEndDate}
+                    date={selectedEndDate}
+                    mode={'datetime'}
+                    locale={'vi'}
+                    title={'Chọn ngày'}
+                    confirmText={'Chọn'}
+                    cancelText={'Huỷ'}
+                    onDateChange={value => {
+                      console.log('Date change value:', value);
+
+                      setSelectedEndDate(value);
                     }}
-                    innerBorderStyle={{
-                      width: 0,
+                    onConfirm={value => {
+                      console.log('Selected date:', value);
+
+                      setOpenEndDate(false);
+                      setEndDate(value);
+                      setEndDatetime(dateFormatWithTime(`${value}`));
+                      setRecurrence({
+                        ...recurrence,
+                        ends: moment(value).toISOString(),
+                      });
                     }}
-                    selectedButtonStyle={{
-                      backgroundColor: Colors.icon.orange,
-                      borderRadius: 50,
-                    }}
-                    buttonContainerStyle={{
-                      alignItems: 'flex-start',
-                      justifyContent: 'flex-start',
-                    }}
-                    buttonStyle={{
-                      width: 30,
-                      height: 30,
-                      borderRadius: 15,
-                      borderWidth: 1,
-                      borderColor: Colors.border.orange,
-                      backgroundColor: Colors.background.white,
-                    }}
-                    textStyle={{
-                      color: Colors.text.orange,
+                    onCancel={() => {
+                      setOpenEndDate(false);
                     }}
                   />
+
+                  {endDatetime && (
+                    <Ionicons
+                      onPress={() => setEndDatetime('')}
+                      name={'close'}
+                      style={[styles.inputIcon, {marginRight: 5}]}
+                    />
+                  )}
+                  <Ionicons
+                    onPress={() => {
+                      setOpenEndDate(true);
+                    }}
+                    name={'calendar'}
+                    style={styles.inputIcon}
+                  />
                 </View>
-              )}
-
-              <View style={styles.endsContainer}>
-                <Text>Kết thúc:</Text>
-                <RadioGroup
-                  containerStyle={styles.radioButtonContainer}
-                  layout="column"
-                  radioButtons={radioButtons}
-                  onPress={setSelectedId}
-                  selectedId={selectedId}
-                />
-                {selectedId === '2' && (
-                  <>
-                    <View
-                      style={[
-                        styles.inputContainer,
-                        {
-                          width: '89%',
-                          alignSelf: 'flex-end',
-                          // backgroundColor: 'pink',
-                        },
-                      ]}>
-                      <TextInput
-                        editable={false}
-                        // onChangeText={value => setFieldValue('dob', value)}
-                        onBlur={() => setFieldTouched('endDate')}
-                        placeholder={'Chọn thời gian kết thúc nhắc nhở'}
-                        style={styles.inputText}
-                        placeholderTextColor={Colors.text.lightgrey}
-                        value={values.endDate}
-                      />
-
-                      <DatePicker
-                        modal
-                        open={openEndDate}
-                        date={selectedEndDate}
-                        mode={'datetime'}
-                        locale={'vi'}
-                        title={'Chọn ngày'}
-                        confirmText={'Chọn'}
-                        cancelText={'Huỷ'}
-                        onDateChange={value => {
-                          console.log('Date change value:', value);
-
-                          setSelectedEndDate(value);
-                          setFieldValue('endDate', value);
-                        }}
-                        onConfirm={value => {
-                          console.log('Selected date:', value);
-
-                          setOpenEndDate(false);
-                          setEndDate(value);
-                          setFieldValue(
-                            'endDate',
-                            moment(value)
-                              .format('DD/MM/YYYY LT')
-                              .replace('PM', 'CH')
-                              .replace('AM', 'SA'),
-                          );
-
-                          const newTaskDetail = {
-                            ...task,
-                            recurrence: {
-                              times: parseInt(times),
-                              unit: unitValue,
-                              repeatOn: repeatOn,
-                              ends: moment(
-                                value,
-                                'DD/MM/YYYY HH:mm A',
-                              ).toISOString(),
-                            },
-                          };
-
-                          console.log('newTaskDetail', newTaskDetail);
-                        }}
-                        onCancel={() => {
-                          setOpenEndDate(false);
-                        }}
-                      />
-
-                      {values.endDate && (
-                        <Ionicons
-                          onPress={() => setFieldValue('endDate', '')}
-                          name={'close'}
-                          style={[styles.inputIcon, {marginRight: 5}]}
-                        />
-                      )}
-                      <Ionicons
-                        onPress={() => {
-                          setOpenEndDate(true);
-                        }}
-                        name={'calendar'}
-                        style={styles.inputIcon}
-                      />
-                    </View>
-                    {touched.endDate && errors.endDate && (
-                      <Text style={styles.error}>{errors.endDate}</Text>
-                    )}
-                  </>
+                {!endDatetime && selectedId === '2' && (
+                  <Text
+                    style={[
+                      styles.error,
+                      {
+                        width: '100%',
+                        textAlign: 'left',
+                        paddingLeft: 40,
+                      },
+                    ]}>
+                    Vui lòng chọn thời gian kết thúc lặp lại
+                  </Text>
                 )}
-              </View>
-            </View>
-          )}
-
-          <Text style={styles.title}>Mô tả</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              onChangeText={value => setFieldValue('description', value)}
-              onEndEditing={async () => {
-                console.log('values.description:', values.description);
-
-                const newTaskDetail = {
-                  ...task,
-                  description: values.description,
-                };
-
-                console.log('newTaskDetail', newTaskDetail);
-
-                // const response = await editTaskDetail(task._id, newTaskDetail);
-
-                // console.log('response', response);
-              }}
-              onBlur={() => setFieldTouched('description')}
-              style={styles.inputText}
-              placeholder={'Nhập mô tả việc cần làm'}
-              placeholderTextColor={Colors.text.lightgrey}
-              value={values.description}
-            />
-            {values.description && (
-              <Ionicons
-                onPress={() => setFieldValue('description', '')}
-                name={'close'}
-                style={styles.inputIcon}
-              />
+              </>
             )}
           </View>
-
-          <Text style={[styles.title, {marginTop: 15}]}>Chế độ</Text>
-          <View
-            style={{
-              width: '90%',
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 10,
-              marginTop: 5,
-              alignItems: 'center',
-              // justifyContent: 'space-between',
-            }}>
-            <TouchableOpacity onPress={() => setState(!state)}>
-              <FontAwesomeIcon
-                name={state ? 'toggle-on' : 'toggle-off'}
-                style={[styles.inputIcon, {color: Colors.icon.orange}]}
-              />
-            </TouchableOpacity>
-            <Text
-              style={{
-                fontSize: 16,
-                color: Colors.text.grey,
-              }}>
-              Nhóm
-            </Text>
-          </View>
-
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={() => {
-              setIsModalVisible(true);
-            }}>
-            <Text style={styles.deleteButtonText}>Xóa</Text>
-          </TouchableOpacity>
-
-          <Modal isVisible={isModalVisible}>
-            <View style={styles.modalContentContainer}>
-              <Text style={styles.modalTitle}>Xóa sự kiện này?</Text>
-
-              <View style={styles.modalTextContainer}>
-                <TouchableOpacity
-                  onPress={() => {
-                    setIsModalVisible(!isModalVisible);
-                  }}
-                  style={{
-                    alignItems: 'center',
-                  }}>
-                  <Text style={{fontSize: 16, color: Colors.text.orange}}>
-                    Huỷ
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={async () => {
-                    setIsModalVisible(!isModalVisible);
-
-                    const response = await deleteTask(task._id);
-
-                    console.log('response', response);
-
-                    if (response.statusCode === 200) {
-                      Toast.show({
-                        type: 'success',
-                        text1: 'Xóa việc cần làm thành công',
-                        autoHide: true,
-                        visibilityTime: 1000,
-                        onHide: () => {
-                          navigation.goBack();
-                        },
-                      });
-                    } else {
-                      Toast.show({
-                        type: 'error',
-                        text1: 'Xóa việc cần làm không thành công',
-                        autoHide: true,
-                        visibilityTime: 1000,
-                      });
-                    }
-                  }}
-                  style={{
-                    alignItems: 'center',
-                  }}>
-                  <Text style={{fontSize: 16, color: 'red'}}>Xóa</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-        </ScrollView>
+        </View>
       )}
-    </Formik>
+
+      <Text style={styles.title}>Mô tả</Text>
+      <View style={styles.inputContainer}>
+        <TextInput
+          onChangeText={value => setDescription(value)}
+          onEndEditing={async () => {
+            console.log('values.description:', description);
+
+            setNewTaskDetail({
+              ...newTaskDetail,
+              description,
+            });
+          }}
+          style={styles.inputText}
+          placeholder={'Nhập mô tả việc cần làm'}
+          placeholderTextColor={Colors.text.lightgrey}
+          value={description}
+        />
+        {description && (
+          <Ionicons
+            onPress={() => setDescription('')}
+            name={'close'}
+            style={styles.inputIcon}
+          />
+        )}
+      </View>
+
+      <Text style={[styles.title, {marginTop: 15}]}>Chế độ</Text>
+      <View
+        style={{
+          width: '90%',
+          display: 'flex',
+          flexDirection: 'row',
+          gap: 10,
+          marginTop: 5,
+          alignItems: 'center',
+          // justifyContent: 'space-between',
+        }}>
+        <TouchableOpacity onPress={() => setState(!state)}>
+          <FontAwesomeIcon
+            name={state ? 'toggle-on' : 'toggle-off'}
+            style={[styles.inputIcon, {color: Colors.icon.orange}]}
+          />
+        </TouchableOpacity>
+        <Text
+          style={{
+            fontSize: 16,
+            color: Colors.text.grey,
+          }}>
+          Nhóm
+        </Text>
+      </View>
+
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => {
+          setIsModalVisible(true);
+        }}>
+        <Text style={styles.deleteButtonText}>Xóa</Text>
+      </TouchableOpacity>
+
+      <Modal isVisible={isModalVisible}>
+        <View style={styles.modalContentContainer}>
+          <Text style={styles.modalTitle}>Xóa sự kiện này?</Text>
+
+          <View style={styles.modalTextContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                setIsModalVisible(!isModalVisible);
+              }}
+              style={{
+                alignItems: 'center',
+              }}>
+              <Text style={{fontSize: 16, color: Colors.text.orange}}>Huỷ</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={async () => {
+                setIsModalVisible(!isModalVisible);
+
+                const response = await deleteTask(task._id);
+
+                console.log('response', response);
+
+                if (response.statusCode === 200) {
+                  Toast.show({
+                    type: 'success',
+                    text1: 'Xóa việc cần làm thành công',
+                    autoHide: true,
+                    visibilityTime: 1000,
+                    onHide: () => {
+                      navigation.goBack();
+                    },
+                  });
+                } else {
+                  Toast.show({
+                    type: 'error',
+                    text1: 'Xóa việc cần làm không thành công',
+                    autoHide: true,
+                    visibilityTime: 1000,
+                  });
+                }
+              }}
+              style={{
+                alignItems: 'center',
+              }}>
+              <Text style={{fontSize: 16, color: 'red'}}>Xóa</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </ScrollView>
   );
 };
 
