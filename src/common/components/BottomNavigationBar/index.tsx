@@ -53,6 +53,7 @@ import appStore from '../../store/app.store';
 import PurchaseLocationScreen from '../../../screens/storage/screens/PurchaseLocationScreen';
 import groupStore from '../../store/group.store';
 import {useNavigation} from '@react-navigation/native';
+import {observer} from 'mobx-react';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = () => {
@@ -522,7 +523,7 @@ function SettingsScreenStack() {
 
 const Tab = createBottomTabNavigator();
 
-export default function BottomNavigationBar() {
+export default observer(function BottomNavigationBar() {
   return (
     <Tab.Navigator
       backBehavior="none"
@@ -609,4 +610,4 @@ export default function BottomNavigationBar() {
       />
     </Tab.Navigator>
   );
-}
+});

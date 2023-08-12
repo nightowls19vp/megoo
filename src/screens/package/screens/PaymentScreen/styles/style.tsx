@@ -43,6 +43,12 @@ const styles = StyleSheet.create({
     color: Colors.text.orange,
     fontWeight: 'bold',
   },
+  radioButtonContainer: {
+    width: '90%',
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 10,
+  },
   paymentContainer: {
     width: '100%',
     height: 50,

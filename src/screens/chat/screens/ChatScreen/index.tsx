@@ -4,9 +4,11 @@ import {
   Bubble,
   Composer,
   GiftedChat,
+  IMessage,
   InputToolbar,
   Message,
   MessageContainer,
+  MessageImage,
   MessageText,
   Send,
   SystemMessage,
@@ -18,8 +20,14 @@ import {GroupChannel} from '@sendbird/chat/groupChannel';
 
 import userStore from '../../../../common/store/user.store';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
-import {getMessages, sendMessage} from './services/chat.service';
+import {
+  getMessages,
+  sendMessage,
+  sendMessageImageToSendBird,
+  uploadImage,
+} from './services/chat.service';
 import {Colors} from '../../../../constants/color.const';
+import {Image} from 'react-native-elements';
 
 // Define the type for the route params
 type ChannelUrlRouteParams = {
@@ -95,6 +103,10 @@ const renderMessageText = (props: any) => (
   />
 );
 
+const renderMessageImage = (currentMessage: any) => (
+  <Image source={{uri: currentMessage.imageURL}}></Image>
+);
+
 const renderSystemMessage = (props: any) => (
   <SystemMessage
     {...props}
@@ -112,8 +124,7 @@ const renderInputToolbar = (props: any) => (
       paddingTop: 6,
       paddingLeft: -10,
     }}
-    primaryStyle={{alignItems: 'center'}}
-  />
+    primaryStyle={{alignItems: 'center'}}></InputToolbar>
 );
 
 const renderSend = (props: any) => (
@@ -153,20 +164,13 @@ const renderComposer = (props: any) => {
 const ChatScreen = () => {
   const route = useRoute<ChannelUrlRouteProp>();
   const channelUrl = route.params.channelUrl;
-  const [messages, setMessages] = useState<
-    {
-      _id: number;
-      text: string;
-      createdAt: Date;
-      user: {
-        _id: number;
-        name: string;
-        avatar: string;
-      };
-    }[]
-  >([]);
-  const [selectedImage, setSelectedImage] = useState('');
-  const [imageFile, setImageFile] = useState<any>();
+
+  const [isMounted, setIsMounted] = useState(false);
+
+  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [selectedFilenames, setSelectedFilenames] = useState<string[]>([]);
+  const [base64Strings, setBase64Strings] = useState<string[]>([]);
   const [message, setMessage] = useState('');
   let channel: GroupChannel;
 
@@ -182,15 +186,70 @@ const ChatScreen = () => {
 
           setMessages(messages);
         });
+
+        setIsMounted(true);
       });
   }, []);
 
   const onSend = useCallback((messages: any[] = []) => {
+    console.log('messages useCallback:', messages);
+
     setMessages(previousMessages =>
       GiftedChat.append(previousMessages, messages),
     );
     sendMessage(channel, messages[0].text);
   }, []);
+
+  const sendMessageImage = async (channel: GroupChannel) => {
+    selectedImages.forEach(async (image: string, index: number) => {
+      // console.log('index:', index);
+      // console.log('base64String:', base64Strings[index]);
+      console.log('selectedFilenames:', selectedFilenames[index]);
+
+      const fileExtension = image.split('.').pop();
+      const base64String = `data:image/${fileExtension};base64,${base64Strings[index]}`;
+      // console.log('base64String:', base64String);
+
+      uploadImage(base64String).then((imageURL: any) => {
+        console.log('response:', imageURL);
+
+        if (imageURL.statusCode === 200) {
+          sendMessageImageToSendBird(
+            channel,
+            selectedFilenames[index],
+            imageURL.data,
+          ).then((sendMessageResponse: any) => {
+            console.log('sendMessageResponse:', sendMessageResponse);
+          });
+        }
+      });
+    });
+
+    getMessages(channel).then((messages: any) => {
+      console.log('Messages after send image:', messages);
+
+      setMessages(messages);
+    });
+  };
+
+  useEffect(() => {
+    console.log('messages:', messages);
+  }, [messages]);
+
+  useEffect(() => {
+    console.log('selectedImages:', selectedImages);
+    console.log('selectedFilenames:', selectedFilenames);
+
+    if (isMounted && selectedImages.length > 0) {
+      SendBirdChatService.getInstance()
+        .sendbird.groupChannel.getChannel(channelUrl)
+        .then((groupChannel: GroupChannel) => {
+          channel = groupChannel;
+
+          sendMessageImage(channel);
+        });
+    }
+  }, [selectedImages]);
 
   return (
     <GiftedChat
@@ -203,12 +262,16 @@ const ChatScreen = () => {
       // renderMessage={renderMessage}
       // renderMessageText={renderMessageText}
       // renderSystemMessage={renderSystemMessage}
+      renderMessageImage={renderMessageImage}
       renderInputToolbar={renderInputToolbar}
       renderSend={renderSend}
       renderComposer={renderComposer}
+      // onSend={messages => onSend(messages)}
       onSend={messages => onSend(messages)}
       user={{
         _id: userStore.id,
+        name: userStore.name,
+        avatar: userStore.avatar,
       }}
       renderActions={() => (
         <TouchableOpacity
@@ -219,7 +282,7 @@ const ChatScreen = () => {
             await launchImageLibrary(
               // If need base64String, include this option:
               // includeBase64: true
-              {mediaType: 'mixed', includeBase64: true},
+              {mediaType: 'mixed', selectionLimit: 5, includeBase64: true},
               response => {
                 // console.log('Response = ', response);
 
@@ -229,9 +292,28 @@ const ChatScreen = () => {
                   console.log('ImagePicker Error: ', response.errorMessage);
                 } else {
                   let source: Asset[] = response.assets as Asset[];
-                  setSelectedImage(`${source[0].uri}`);
-                  setImageFile(source[0].base64);
-                  console.log('Image file:', source[0].uri);
+                  setSelectedImages(source.map(image => `${image.uri}`));
+                  setSelectedFilenames(
+                    source.map(image => `${image.fileName}`),
+                  );
+                  setBase64Strings(source.map(image => `${image.base64}`));
+                  // console.log('Image file:', source);
+
+                  // setMessages(previousMessages =>
+                  //   GiftedChat.append(previousMessages, [
+                  //     {
+                  //       _id: new Date().getTime(),
+                  //       text: '',
+                  //       createdAt: new Date(),
+                  //       image: `${source[0].uri}`,
+                  //       user: {
+                  //         _id: userStore.id,
+                  //         name: userStore.name,
+                  //         avatar: userStore.avatar,
+                  //       },
+                  //     },
+                  //   ]),
+                  // );
                 }
               },
             );
