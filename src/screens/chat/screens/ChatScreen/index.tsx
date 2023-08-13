@@ -1,5 +1,10 @@
 import {useCallback, useEffect, useState} from 'react';
-import {KeyboardAvoidingView, Platform, TouchableOpacity} from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import {
   Bubble,
   Composer,
@@ -44,11 +49,17 @@ const renderBubble = (props: any) => (
   <Bubble
     {...props}
     // renderTime={() => <Text>Time</Text>}
-    // renderTicks={() => <Text>Ticks</Text>}
+    // renderTicks={() => <Text>{props.currentMessage.image}</Text>}
     // containerStyle={{
     //   left: {borderColor: 'teal', borderWidth: 8},
     //   right: {},
     // }}
+    // renderMessageImage={() => (
+    //   <Image
+    //     style={{width: 100, height: 100}}
+    //     source={{uri: props.currentMessage.image}}
+    //   />
+    // )}
     wrapperStyle={{
       left: {
         // borderColor: 'tomato', borderWidth: 4,
@@ -62,11 +73,11 @@ const renderBubble = (props: any) => (
     tickStyle={{}}
     usernameStyle={{color: 'tomato', fontWeight: '100'}}
     containerToNextStyle={{
-      left: {borderColor: 'navy', borderWidth: 4},
+      left: {},
       right: {},
     }}
     containerToPreviousStyle={{
-      left: {borderColor: 'mediumorchid', borderWidth: 4},
+      left: {},
       right: {},
     }}
   />
@@ -103,8 +114,19 @@ const renderMessageText = (props: any) => (
   />
 );
 
-const renderMessageImage = (currentMessage: any) => (
-  <Image source={{uri: currentMessage.imageURL}}></Image>
+const renderMessageImage = (props: any) => (
+  <MessageImage
+    currentMessage={props}
+    containerStyle={{
+      width: 100,
+      height: 100,
+    }}
+    imageProps={{resizeMode: 'center'}}
+    imageStyle={{
+      width: 100,
+      height: 100,
+    }}
+  />
 );
 
 const renderSystemMessage = (props: any) => (
@@ -180,10 +202,7 @@ const ChatScreen = () => {
       .then((groupChannel: GroupChannel) => {
         channel = groupChannel;
 
-        console.log('Get channel from SB:', channel.url);
         getMessages(channel).then((messages: any) => {
-          console.log('abc msg:', messages);
-
           setMessages(messages);
         });
 
@@ -192,8 +211,6 @@ const ChatScreen = () => {
   }, []);
 
   const onSend = useCallback((messages: any[] = []) => {
-    console.log('messages useCallback:', messages);
-
     setMessages(previousMessages =>
       GiftedChat.append(previousMessages, messages),
     );
@@ -218,17 +235,9 @@ const ChatScreen = () => {
             channel,
             selectedFilenames[index],
             imageURL.data,
-          ).then((sendMessageResponse: any) => {
-            console.log('sendMessageResponse:', sendMessageResponse);
-          });
+          );
         }
       });
-    });
-
-    getMessages(channel).then((messages: any) => {
-      console.log('Messages after send image:', messages);
-
-      setMessages(messages);
     });
   };
 
@@ -240,16 +249,28 @@ const ChatScreen = () => {
     console.log('selectedImages:', selectedImages);
     console.log('selectedFilenames:', selectedFilenames);
 
-    if (isMounted && selectedImages.length > 0) {
+    if (
+      isMounted &&
+      selectedImages.length > 0 &&
+      selectedFilenames.length > 0 &&
+      base64Strings.length > 0
+    ) {
       SendBirdChatService.getInstance()
         .sendbird.groupChannel.getChannel(channelUrl)
         .then((groupChannel: GroupChannel) => {
           channel = groupChannel;
+          console.log('channel.url:', channel.url);
 
           sendMessageImage(channel);
+
+          getMessages(channel).then((messages: any) => {
+            console.log('Messages after send image:', messages);
+
+            setMessages(messages);
+          });
         });
     }
-  }, [selectedImages]);
+  }, [selectedImages, selectedFilenames, base64Strings]);
 
   return (
     <GiftedChat
@@ -262,7 +283,7 @@ const ChatScreen = () => {
       // renderMessage={renderMessage}
       // renderMessageText={renderMessageText}
       // renderSystemMessage={renderSystemMessage}
-      renderMessageImage={renderMessageImage}
+      // renderMessageImage={renderMessageImage}
       renderInputToolbar={renderInputToolbar}
       renderSend={renderSend}
       renderComposer={renderComposer}

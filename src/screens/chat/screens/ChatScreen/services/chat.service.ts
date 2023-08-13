@@ -12,15 +12,15 @@ import axios from 'axios';
 export const getMessages = async (channel: GroupChannel) => {
   try {
     const params: MessageListParams = {
-      prevResultSize: 5,
-      nextResultSize: 5,
+      prevResultSize: 50,
+      nextResultSize: 50,
       // ...
     };
     const messages: BaseMessage[] = await channel.getMessagesByTimestamp(
       0,
       params,
     );
-    console.log('messages by timestamp', messages);
+    // console.log('messages by timestamp', messages);
 
     // Reverse message array by message.createdAt
     messages.reverse();
@@ -29,7 +29,7 @@ export const getMessages = async (channel: GroupChannel) => {
       return {
         _id: message.messageId,
         text: message.message,
-        image: message.plainURL,
+        image: message.plainUrl,
         createdAt: new Date(message.createdAt),
         user: {
           _id: message.sender.userId,
@@ -102,11 +102,14 @@ export const sendMessageImageToSendBird = async (
     // Up to three thumbnail images are allowed.// Either DEFAULT or SUPPRESS
   };
 
-  console.log('params:', params);
-
   channel.sendFileMessage(params).onSucceeded((message: any) => {
     const messageId = message.messageId;
-    console.log('after send message', message);
-    console.log('after send messageId', messageId);
+    console.log(
+      'After send file message',
+      messageId,
+      message.sendingStatus,
+      message.plainUrl,
+    );
+    // console.log('after send messageId', messageId);
   });
 };

@@ -126,10 +126,18 @@ export const checkLogin = async () => {
 
         console.log('User id:', user._id);
 
-        const userSendBird = await SendBirdChatService.getInstance().connect(
+        // Connect user to SendBird server
+        console.log('before connect to sendbird');
+        const userConnected = await SendBirdChatService.getInstance().connect(
           user._id,
         );
-        console.log('userSendBird from auth:', userSendBird);
+
+        const userUpdated =
+          await SendBirdChatService.getInstance().updateUserInfo(
+            user.name,
+            user.avatar,
+          );
+        console.log('userUpdated:', userUpdated);
 
         // Get user's SendBird's channels
         const channelsUrl =

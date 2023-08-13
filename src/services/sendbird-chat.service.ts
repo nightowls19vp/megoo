@@ -1,7 +1,11 @@
 import axios from 'axios';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import SendbirdChat, {SendbirdChatParams} from '@sendbird/chat';
+import SendbirdChat, {
+  SendbirdChatParams,
+  User,
+  UserUpdateParams,
+} from '@sendbird/chat';
 import {
   GroupChannel,
   GroupChannelCreateParams,
@@ -134,7 +138,6 @@ export class SendBirdChatService {
    * @param userId
    * @return user object
    */
-
   public async connect(userId: string) {
     try {
       const user = await this.sendbird.connect(userId);
@@ -142,6 +145,19 @@ export class SendBirdChatService {
       return user;
     } catch (error) {
       console.log("Error connecting to SendBird's server:", error);
+    }
+  }
+
+  public async updateUserInfo(nickname: string, profileURL: string) {
+    try {
+      const params: UserUpdateParams = {
+        nickname: nickname,
+        profileUrl: profileURL,
+      };
+      const user = await this.sendbird.updateCurrentUserInfo(params);
+      return user;
+    } catch (error) {
+      console.error('Error updating user info:', error);
     }
   }
 

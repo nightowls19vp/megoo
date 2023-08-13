@@ -97,10 +97,16 @@ export default function LoginScreen({navigation}: {navigation: any}) {
 
           // Connect user to SendBird server
           console.log('before connect to sendbird');
-          const userSendBird = await SendBirdChatService.getInstance().connect(
+          const userConnected = await SendBirdChatService.getInstance().connect(
             user._id,
           );
-          console.log('userSendBird:', userSendBird);
+
+          const userUpdated =
+            await SendBirdChatService.getInstance().updateUserInfo(
+              user.name,
+              user.avatar,
+            );
+          console.log('userUpdated:', userUpdated);
 
           // Store user token
           await AsyncStorage.setItem('accessToken', `${response?.accessToken}`);
