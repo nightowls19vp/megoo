@@ -169,12 +169,14 @@ export class SendBirdChatService {
    */
   public async createGroupChannel(
     channelName: string,
+    coverUrl: string,
     userIds: string[],
   ): Promise<GroupChannel | undefined> {
     try {
       const params: GroupChannelCreateParams = {
         invitedUserIds: userIds,
         name: channelName,
+        coverUrl: coverUrl,
       };
 
       const channel: GroupChannel =

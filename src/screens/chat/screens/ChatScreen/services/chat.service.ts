@@ -60,7 +60,7 @@ export const sendMessage = async (channel: GroupChannel, message: string) => {
 };
 
 export const uploadImage = async (base64String: string) => {
-  const uploadImageEndpoint = 'api/file/upload-avatar-with-base64';
+  const uploadImageEndpoint = 'api/file/upload-image-with-base64';
   const reqUrl = `${URL_HOST}${uploadImageEndpoint}`;
   console.log('Upload image:', reqUrl);
 

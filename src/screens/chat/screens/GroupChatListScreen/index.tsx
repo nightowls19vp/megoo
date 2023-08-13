@@ -9,6 +9,7 @@ import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
 import styles from './styles/style';
+import groupStore from '../../../../common/store/group.store';
 
 // const appId = 'ADD4546B-CF09-4980-B6AC-DB7FFD2E70EC';
 // export const sendbird = new SendBird({appId});
@@ -102,6 +103,13 @@ const GroupChatListScreen = ({navigation}: {navigation: any}) => {
     getGroupChannels();
   }, []);
 
+  useEffect(() => {
+    groups.map((group: any) => {
+      console.log('group:', group._id);
+      console.log('group:', group.channelUrl);
+    });
+  }, [groups]);
+
   const renderGroupItem = () => {
     return groups.map((group: any, index) => {
       return group.channelUrl ? (
@@ -109,11 +117,13 @@ const GroupChatListScreen = ({navigation}: {navigation: any}) => {
           style={styles.groupContainer}
           key={index}
           onPress={() => {
-            console.log('Clicked');
-            console.log('Group channel:', group.channelUrl);
+            // console.log('Group channel:', group.channelUrl);
+            // console.log('Group id:', group._id);
+            groupStore.setGroup(group._id, group.channelUrl);
 
             navigation.navigate(RouteNames.CHAT, {
               channelUrl: group.channelUrl,
+              groupId: group._id,
             });
           }}>
           <Image

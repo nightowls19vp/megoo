@@ -54,15 +54,43 @@ import PurchaseLocationScreen from '../../../screens/storage/screens/PurchaseLoc
 import groupStore from '../../store/group.store';
 import {useNavigation} from '@react-navigation/native';
 import {observer} from 'mobx-react';
+import GroupChatDetailScreen from './../../../screens/chat/screens/GroupChatDetailScreen/index';
 
 const ChatStack = createNativeStackNavigator();
-const ChatScreenStack = () => {
+const ChatScreenStack = ({navigation}: {navigation: any}) => {
   return (
     <ChatStack.Navigator initialRouteName={RouteNames.GROUP_CHATS}>
-      <ChatStack.Screen name={RouteNames.CHAT} component={ChatScreen} />
+      <ChatStack.Screen
+        name={RouteNames.CHAT}
+        component={ChatScreen}
+        options={{
+          headerRight: () => {
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  console.log('Cart');
+                  navigation.navigate(RouteNames.GROUP_CHAT_DETAIL as never, {
+                    groupId: groupStore.id,
+                    channelUrl: groupStore.channelUrl,
+                  });
+                }}>
+                <Ionicons
+                  name="information-circle-outline"
+                  size={24}
+                  color={'black'}
+                />
+              </TouchableOpacity>
+            );
+          },
+        }}
+      />
       <ChatStack.Screen
         name={RouteNames.GROUP_CHATS}
         component={GroupChatListScreen}
+      />
+      <ChatStack.Screen
+        name={RouteNames.GROUP_CHAT_DETAIL}
+        component={GroupChatDetailScreen}
       />
     </ChatStack.Navigator>
   );

@@ -82,4 +82,5 @@ export default {
   CHAT_STACK: 'CHAT_STACK',
   CHAT: 'Đoạn chat',
   GROUP_CHATS: 'Nhóm chat',
+  GROUP_CHAT_DETAIL: 'Chi tiết nhóm chat',
 };

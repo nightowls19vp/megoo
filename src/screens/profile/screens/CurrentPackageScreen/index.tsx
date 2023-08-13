@@ -301,6 +301,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                     const channelResponse =
                       await SendBirdChatService.getInstance().createGroupChannel(
                         group.name,
+                        group.avatar,
                         [`${group.members[0].user._id}`],
                       );
 
