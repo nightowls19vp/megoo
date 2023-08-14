@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Button,
@@ -29,9 +29,90 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
   const [callNoti, setCallNoti] = useState(false);
   const [msgNoti, setMsgNoti] = useState(userStore.msgNoti);
   const [stockNoti, setStockNoti] = useState(userStore.stockNoti);
-  const [billNoti, setBillNoti] = useState(userStore.billNoti);
-  const [todosNoti, setTodosNoti] = useState(userStore.todosNoti);
-  const [calendarNoti, setCalendarNoti] = useState(userStore.calendarNoti);
+  const [billNoti, setBillNoti] = useState(true);
+  const [todosNoti, setTodosNoti] = useState(true);
+  const [calendarNoti, setCalendarNoti] = useState(true);
+
+  const getNotiFromStorage = async (notiType: string) => {
+    try {
+      const noti = await AsyncStorage.getItem(`${notiType}`);
+      if (noti) {
+        console.log(`${notiType} get from storage:`, JSON.parse(noti));
+        return JSON.parse(noti);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const setBillNotiToStorage = async (value: boolean) => {
+    try {
+      const bill = await getNotiFromStorage('billNoti');
+
+      if (bill !== value) {
+        await AsyncStorage.setItem('billNoti', JSON.stringify(value));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const initBillNoti = async () => {
+    const bill = await getNotiFromStorage('billNoti');
+    setBillNoti(bill);
+  };
+
+  const setTodosNotiToStorage = async (value: boolean) => {
+    try {
+      const todos = await getNotiFromStorage('todosNoti');
+
+      if (todos !== value) {
+        await AsyncStorage.setItem('todosNoti', JSON.stringify(value));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const initTodosNoti = async () => {
+    const todos = await getNotiFromStorage('todosNoti');
+    setTodosNoti(todos);
+  };
+
+  const setCalendarNotiToStorage = async (value: boolean) => {
+    try {
+      const calendar = await getNotiFromStorage('calendarNoti');
+
+      if (calendar !== value) {
+        await AsyncStorage.setItem('calendarNoti', JSON.stringify(value));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const initCalendarNoti = async () => {
+    const calendar = await getNotiFromStorage('calendarNoti');
+    setCalendarNoti(calendar);
+  };
+
+  useEffect(() => {
+    setBillNotiToStorage(billNoti);
+  }, [billNoti]);
+
+  useEffect(() => {
+    setTodosNotiToStorage(todosNoti);
+  }, [todosNoti]);
+
+  useEffect(() => {
+    setCalendarNotiToStorage(calendarNoti);
+  }, [calendarNoti]);
+
+  useEffect(() => {
+    initBillNoti();
+    initTodosNoti();
+    initCalendarNoti();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -45,8 +126,10 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
               <Text style={styles.text}>Tin nhắn</Text>
               <FontAwesomeIcon
                 onPress={() => {
+                  console.log('msgNoti:', msgNoti);
+
                   setMsgNoti(!msgNoti);
-                  // userStore.setMsgNoti(msgNoti);
+                  userStore.setMsgNoti(msgNoti);
                   console.log('Msg noti:', userStore.msgNoti);
                 }}
                 name={userStore.msgNoti ? 'toggle-on' : 'toggle-off'}
@@ -58,11 +141,11 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
               <Text style={styles.text}>Số lượng nhu yếu phẩm tồn kho</Text>
               <FontAwesomeIcon
                 onPress={() => {
-                  setMsgNoti(!msgNoti);
-                  // userStore.setMsgNoti(msgNoti);
-                  console.log('Msg noti:', userStore.msgNoti);
+                  setStockNoti(!stockNoti);
+                  userStore.setStockNoti(stockNoti);
+                  console.log('Stock noti:', userStore.msgNoti);
                 }}
-                name={userStore.msgNoti ? 'toggle-on' : 'toggle-off'}
+                name={userStore.stockNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}
               />
             </View>
@@ -88,12 +171,15 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
             <View style={styles.settingItem}>
               <Text style={styles.text}>Quản lý chi tiêu</Text>
               <FontAwesomeIcon
-                onPress={() => {
+                onPress={async () => {
                   setBillNoti(!billNoti);
-                  userStore.setBillNoti(billNoti);
-                  console.log('Bill noti:', userStore.billNoti);
+
+                  // await AsyncStorage.setItem('billNoti', `${billNoti}`);
+                  // const noti = await AsyncStorage.getItem('billNoti');
+                  // userStore.setBillNoti(billNoti);
+                  // console.log('Bill noti after set & get:', noti);
                 }}
-                name={userStore.stockNoti ? 'toggle-on' : 'toggle-off'}
+                name={billNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}
               />
             </View>
@@ -101,12 +187,14 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
             <View style={styles.settingItem}>
               <Text style={styles.text}>Việc cần làm</Text>
               <FontAwesomeIcon
-                onPress={() => {
+                onPress={async () => {
                   setTodosNoti(!todosNoti);
-                  userStore.setTodosNoti(todosNoti);
-                  console.log('Todos noti:', userStore.todosNoti);
+                  // await AsyncStorage.setItem('todosNoti', `${todosNoti}`);
+                  // const noti = await AsyncStorage.getItem('todosNoti');
+                  // userStore.setTodosNoti(todosNoti);
+                  // console.log('Todos noti:', noti);
                 }}
-                name={userStore.newsNoti ? 'toggle-on' : 'toggle-off'}
+                name={todosNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}
               />
             </View>
@@ -119,7 +207,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
                   userStore.setCalendarNoti(calendarNoti);
                   console.log('Calendar noti:', userStore.calendarNoti);
                 }}
-                name={userStore.newsNoti ? 'toggle-on' : 'toggle-off'}
+                name={userStore.calendarNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}
               />
             </View>

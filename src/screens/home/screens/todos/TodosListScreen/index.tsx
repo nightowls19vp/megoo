@@ -51,7 +51,7 @@ const TodosListScreen = ({
           todos.state === 'Private' && todos.createdBy._id === userStore.id,
       );
 
-      console.log('privateTodos', JSON.stringify(privateTodos, null, 2));
+      // console.log('privateTodos', JSON.stringify(privateTodos, null, 2));
 
       setTodos(
         privateTodos.map((todosItem: any) => {
@@ -82,7 +82,7 @@ const TodosListScreen = ({
         (todos: any) => todos.state === 'Public',
       );
 
-      console.log('privateTodos', JSON.stringify(publicTodos, null, 2));
+      // console.log('privateTodos', JSON.stringify(publicTodos, null, 2));
 
       setTodos(
         publicTodos.map((todosItem: any) => {
@@ -125,6 +125,35 @@ const TodosListScreen = ({
       };
     }, []),
   );
+
+  useEffect(() => {
+    const todosFullCompleted = todos.filter(
+      (todos: {
+        groupId: string;
+        _id: string;
+        summary: string;
+        todos: {
+          _id: string;
+          todo: string;
+          description: string;
+          isCompleted: boolean;
+        }[];
+        state: string;
+      }) => {
+        return todos.todos.some(
+          (todoItem: {
+            _id: string;
+            todo: string;
+            description: string;
+            isCompleted: boolean;
+          }) => {
+            return todoItem.isCompleted;
+          },
+        );
+      },
+    );
+    console.log('todosFullCompleted:', todosFullCompleted);
+  }, [todos]);
 
   const renderTodos = () => {
     return todos.map((todosItem: any) => {

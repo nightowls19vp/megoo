@@ -1,31 +1,36 @@
+import {observer} from 'mobx-react';
 import {useCallback, useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
+  FlatList,
   ScrollView,
   StyleSheet,
   Text,
-  View,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import Carousel from 'react-native-reanimated-carousel';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Slider from '@react-native-community/slider';
+import {useFocusEffect} from '@react-navigation/native';
 
+import appStore from '../../common/store/app.store';
 import {Colors} from '../../constants/color.const';
 import RouteNames from '../../constants/route-names.const';
-import {getAllPackage} from '../package/screens/PackageScreen/services/package.service';
-import appStore from '../../common/store/app.store';
 import {getUserGroup} from '../../services/group.service';
-import {observer} from 'mobx-react';
+import {getAllPackage} from '../package/screens/PackageScreen/services/package.service';
 import {getTodosList} from './screens/todos/TodosListScreen/services/todos.list.service';
-import {useFocusEffect} from '@react-navigation/native';
+import styles from './screens/styles/styles';
+import TodoItem from './screens/components/Todo/TodoItem';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const HomeScreen = ({navigation}: {navigation: any}) => {
+  const [loading, setLoading] = useState(true);
   const [packages, setPackages] = useState([]);
   const [groups, setGroups] = useState<
     {
@@ -43,8 +48,6 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
 
   const getGroups = async () => {
     const groups = await getUserGroup();
-    // console.log('groups:', JSON.stringify(groups, null, 2));
-    console.log('groups:', groups.groups);
 
     setGroups(
       groups?.groups?.map((groupItem: any) => {
@@ -82,7 +85,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
           };
         });
 
-        console.log('updatedTodos:', JSON.stringify(updatedTodos, null, 2));
+        // console.log('updatedTodos:', JSON.stringify(updatedTodos, null, 2));
 
         const todosNotFullCompleted = updatedTodos.filter(
           (todos: {
@@ -120,34 +123,44 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
   };
 
   useEffect(() => {
-    if (appStore.isLoggedIn) {
-      getGroups();
-    } else {
-      getPackages();
-    }
-  }, [appStore.isLoggedIn]);
+    // if (appStore.isLoggedIn) {
+    //   getGroups();
+    // } else {
+    //   getPackages();
+    // }
+
+    getGroups();
+    getPackages();
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
-      if (appStore.isLoggedIn) {
-        getGroups();
-      } else {
-        getPackages();
-      }
+      // if (appStore.isLoggedIn) {
+      //   getGroups();
+      // } else {
+      //   getPackages();
+      // }
+
+      getGroups();
+      getPackages();
 
       return () => {
         // Code to clean up the effect when the screen is unfocused
       };
-    }, [appStore.isLoggedIn]),
+    }, []),
   );
 
   useEffect(() => {
     getTodos();
   }, [groups]);
 
-  useEffect(() => {
-    console.log('todos:', JSON.stringify(todos, null, 2));
-  }, [todos]);
+  // useEffect(() => {
+  //   console.log('todos:', JSON.stringify(todos, null, 2));
+  // }, [todos]);
 
   const renderPackageItem = ({item}: {item: any}) => {
     const [noOfMemb, setNoOfMemb] = useState(item.noOfMember);
@@ -268,7 +281,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
               }>
               <Text style={styles.text}>Giá tiền: </Text>
               <Text style={[styles.text, {fontSize: 24, fontWeight: 'bold'}]}>
-                {totalPrice} VND
+                {totalPrice} VNĐ
               </Text>
             </View>
 
@@ -315,61 +328,131 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
     );
   };
 
+  const renderTodoItem = () => {
+    if (todos && todos.length > 0) {
+      return todos.map(
+        (todo: {
+          _id: string;
+          summary: string;
+          todos: {
+            _id: string;
+            todo: string;
+            description: string;
+            isCompleted: boolean;
+          }[];
+        }) => {
+          return <TodoItem todosItem={todo} key={todo._id} />;
+        },
+      );
+    } else {
+      return null;
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {appStore.isLoggedIn ? null : (
-        <View style={[styles.utilitiesContainer]}>
-          <Text style={styles.title}>Gói người dùng</Text>
-          <Carousel
-            loop={false}
-            mode="parallax"
-            modeConfig={{
-              parallaxScrollingScale: 1,
-              parallaxScrollingOffset: 50,
-            }}
-            width={width * 0.9}
-            height={height * 0.6}
-            // autoPlay={true}
-            data={packages}
-            scrollAnimationDuration={1000}
-            onSnapToItem={index => console.log('current index:', index)}
-            renderItem={renderPackageItem}
-          />
-        </View>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="orange"
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+          }}
+        />
+      ) : (
+        <>
+          {appStore.isLoggedIn ? null : (
+            <View style={[styles.utilitiesContainer]}>
+              <Text style={[styles.title, {width: '100%'}]}>
+                Gói người dùng
+              </Text>
+              <Carousel
+                loop={false}
+                mode="parallax"
+                modeConfig={{
+                  parallaxScrollingScale: 1,
+                  parallaxScrollingOffset: 50,
+                }}
+                width={width * 0.9}
+                height={height * 0.6}
+                // autoPlay={true}
+                data={packages}
+                scrollAnimationDuration={1000}
+                onSnapToItem={index => console.log('current index:', index)}
+                renderItem={renderPackageItem}
+              />
+            </View>
+          )}
+
+          <View style={styles.utilitiesContainer}>
+            <Text style={[styles.title, {width: '100%'}]}>Tiện ích</Text>
+            <View style={styles.utilitiesContent}>
+              <TouchableOpacity
+                style={styles.utility}
+                onPress={() => {
+                  appStore.isLoggedIn
+                    ? navigation.navigate(RouteNames.BILL_LIST_STACK, {})
+                    : setModalVisible(true);
+                }}>
+                <Text style={styles.utilityText}>Quản lý chi tiêu</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.utility}
+                onPress={() => {
+                  appStore.isLoggedIn
+                    ? navigation.navigate(RouteNames.TODOS_LIST_STACK, {})
+                    : setModalVisible(true);
+                }}>
+                <Text style={styles.utilityText}>Việc cần làm</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.utility}
+                onPress={() => {
+                  appStore.isLoggedIn
+                    ? navigation.navigate(RouteNames.TASK_LIST_STACK, {})
+                    : setModalVisible(true);
+                }}>
+                <Text style={styles.utilityText}>Lịch biểu</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.utility}
+                onPress={() => {
+                  appStore.isLoggedIn
+                    ? navigation.navigate(RouteNames.BANK_INTEREST_RATE, {})
+                    : setModalVisible(true);
+                }}>
+                <Text numberOfLines={2} style={styles.utilityText}>
+                  Tính lãi suất {'\n'} ngân hàng
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {appStore.isLoggedIn ? (
+            <View style={[styles.utilitiesContainer, {marginTop: -10}]}>
+              <View style={styles.titleContainer}>
+                <Text style={styles.title}>Việc cần làm</Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate(RouteNames.TODOS_LIST_STACK, {})
+                  }>
+                  {todos.length > 0 ? (
+                    <Text style={styles.subTitle}>Xem tất cả</Text>
+                  ) : (
+                    <Ionicons
+                      name="add-circle-outline"
+                      color={Colors.icon.orange}
+                      size={24}
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
+              {renderTodoItem()}
+            </View>
+          ) : null}
+        </>
       )}
-
-      <View style={styles.utilitiesContainer}>
-        <Text style={styles.title}>Tiện ích</Text>
-        <View style={styles.utilitiesContent}>
-          <TouchableOpacity
-            style={styles.utility}
-            onPress={() => navigation.navigate(RouteNames.BILL_LIST_STACK, {})}>
-            <Text style={styles.utilityText}>Quản lý chi tiêu</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.utility}
-            onPress={() =>
-              navigation.navigate(RouteNames.TODOS_LIST_STACK, {})
-            }>
-            <Text style={styles.utilityText}>Việc cần làm</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.utility}
-            onPress={() => navigation.navigate(RouteNames.TASK_LIST_STACK, {})}>
-            <Text style={styles.utilityText}>Lịch biểu</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.utility}
-            onPress={() =>
-              navigation.navigate(RouteNames.BANK_INTEREST_RATE, {})
-            }>
-            <Text numberOfLines={2} style={styles.utilityText}>
-              Tính lãi suất {'\n'} ngân hàng
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
       <Modal isVisible={modalVisible}>
         <View
           style={{
@@ -443,118 +526,4 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    width: width,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    // backgroundColor: 'pink',
-  },
-  text: {
-    fontSize: 16,
-    color: Colors.text.grey,
-  },
-  title: {
-    width: '100%',
-    textAlign: 'left',
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.title.orange,
-  },
-  utilitiesContainer: {
-    display: 'flex',
-    width: '90%',
-    alignItems: 'center',
-    gap: 10,
-    marginVertical: 10,
-  },
-  utilitiesContent: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    // gap: 10,
-    // marginBottom: 10,
-    flexWrap: 'wrap',
-    // backgroundColor: 'green',
-  },
-  utility: {
-    minWidth: '47.5%',
-    height: 60,
-    // padding: 20,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.background.white,
-    borderRadius: 10,
-    borderColor: Colors.border.orange,
-    borderWidth: 1,
-    marginBottom: 20,
-  },
-  utilityText: {
-    fontSize: 14,
-    color: Colors.text.orange,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  carouselItemContainer: {
-    width: width * 0.7,
-    backgroundColor: Colors.background.white,
-    borderRadius: 10,
-    flex: 1,
-    justifyContent: 'flex-start',
-    paddingHorizontal: 20,
-  },
-  carouselItem: {
-    display: 'flex',
-    height: '100%',
-    justifyContent: 'space-between',
-  },
-  infoRow: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 10,
-    marginTop: 5,
-  },
-  pkgTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.text.orange,
-    marginTop: 10,
-    textAlign: 'center',
-  },
-  buttonContainer: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-    // backgroundColor: 'yellow',
-    gap: 10,
-    // marginHorizontal: 15,
-  },
-  button: {
-    width: 110,
-    height: 45,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: Colors.border.orange,
-    padding: 5,
-  },
-  buttonText: {
-    fontSize: 12,
-    color: Colors.buttonText.orange,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-});
 export default observer(HomeScreen);

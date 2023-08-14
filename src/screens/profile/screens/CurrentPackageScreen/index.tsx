@@ -301,6 +301,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                     const channelResponse =
                       await SendBirdChatService.getInstance().createGroupChannel(
                         group.name,
+                        group.avatar,
                         [`${group.members[0].user._id}`],
                       );
 
@@ -522,7 +523,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                               text1: 'Mời thành viên thành công',
                               autoHide: true,
                               visibilityTime: 1000,
-                              topOffset: height * 0.17,
+                              topOffset: height * 0.05,
                               // onHide: () => {},
                             });
                           } else {
@@ -531,7 +532,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                               text1: 'Mời thành viên thất bại',
                               autoHide: true,
                               visibilityTime: 1000,
-                              topOffset: height * 0.2,
+                              topOffset: height * 0.05,
                               // onHide: () => {},
                             });
                           }

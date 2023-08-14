@@ -1,3 +1,4 @@
+import {observer} from 'mobx-react';
 import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,6 +11,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Colors} from '../../../constants/color.const';
 import RouteNames from '../../../constants/route-names.const';
 import ChatScreen from '../../../screens/chat/screens/ChatScreen';
+import GroupChatDetailScreen from '../../../screens/chat/screens/GroupChatDetailScreen/index';
 import GroupChatListScreen from '../../../screens/chat/screens/GroupChatListScreen';
 import HomeScreen from '../../../screens/home';
 import BillInfoScreen from '../../../screens/home/screens/bill/BillInfoScreen';
@@ -48,15 +50,43 @@ import PurchaseLocationScreen from '../../../screens/storage/screens/PurchaseLoc
 import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScreen';
 import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
 import appStore from '../../store/app.store';
+import groupStore from '../../store/group.store';
 
 const ChatStack = createNativeStackNavigator();
-const ChatScreenStack = () => {
+const ChatScreenStack = ({navigation}: {navigation: any}) => {
   return (
     <ChatStack.Navigator initialRouteName={RouteNames.GROUP_CHATS}>
-      <ChatStack.Screen name={RouteNames.CHAT} component={ChatScreen} />
+      <ChatStack.Screen
+        name={RouteNames.CHAT}
+        component={ChatScreen}
+        options={{
+          headerRight: () => {
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  console.log('Cart');
+                  navigation.navigate(RouteNames.GROUP_CHAT_DETAIL as never, {
+                    groupId: groupStore.id,
+                    channelUrl: groupStore.channelUrl,
+                  });
+                }}>
+                <Ionicons
+                  name="information-circle-outline"
+                  size={24}
+                  color={'black'}
+                />
+              </TouchableOpacity>
+            );
+          },
+        }}
+      />
       <ChatStack.Screen
         name={RouteNames.GROUP_CHATS}
         component={GroupChatListScreen}
+      />
+      <ChatStack.Screen
+        name={RouteNames.GROUP_CHAT_DETAIL}
+        component={GroupChatDetailScreen}
       />
     </ChatStack.Navigator>
   );
@@ -517,7 +547,7 @@ function SettingsScreenStack() {
 
 const Tab = createBottomTabNavigator();
 
-export default function BottomNavigationBar() {
+export default observer(function BottomNavigationBar() {
   return (
     <Tab.Navigator
       backBehavior="none"
@@ -604,4 +634,4 @@ export default function BottomNavigationBar() {
       />
     </Tab.Navigator>
   );
-}
+});

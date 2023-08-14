@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {Dropdown} from 'react-native-element-dropdown';
 import Modal from 'react-native-modal';
 import Toast from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -24,9 +25,11 @@ import {
   deleteBill,
   getBillInfo,
   updateBillInfo,
+  updateBorrowersStatus,
 } from './services/bill-info-service';
 import styles from './styles/style';
 import userStore from '../../../../../common/store/user.store';
+import {changeStatusBillToVietnamese} from './../../../../../common/handle.string';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -56,7 +59,8 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
   ]);
 
   const [dropdownStates, setDropdownStates] = useState<boolean[]>([]);
-
+  const [isFocus, setIsFocus] = useState(false);
+  const [value, setValue] = useState(status[0].value);
   const [bill, setBill] = useState({
     _id: '',
     summary: '',
@@ -119,6 +123,12 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
     setDropdownStates(bill?.billing?.borrowers.map((borrower: any) => false));
   };
 
+  const updateStatus = async (borrowers: {user: string; status: string}[]) => {
+    console.log('borrowers:', JSON.stringify(borrowers, null, 2));
+    const response = await updateBorrowersStatus(billId, borrowers);
+    console.log('response', response);
+  };
+
   useEffect(() => {
     console.log('billId:', route.params.billId);
     getBill();
@@ -137,11 +147,20 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
   }, [summary]);
 
   useEffect(() => {
-    console.log('dropdownStates:', dropdownStates);
-  }, [dropdownStates]);
-
-  useEffect(() => {
     console.log('borrowerStatus:', borrowerStatus);
+
+    borrowerStatus.map((status: string, index) => {
+      if (status !== bill.borrowers[index].status) {
+        console.log(status, bill.borrowers[index].status);
+        const borrowers = [
+          {
+            user: bill.borrowers[index].borrower._id,
+            status: status,
+          },
+        ];
+        updateStatus(borrowers);
+      }
+    });
   }, [borrowerStatus]);
 
   return (
@@ -251,78 +270,73 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
 
       <Text style={styles.title}>Danh sách người mượn</Text>
       <View style={styles.contentContainer}>
-        {bill.borrowers.map((borrower, index) => (
-          <View
-            key={index}
-            style={[styles.borrowerContainer, {zIndex: 10000 - index}]}>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 10,
-              }}>
-              <Image
-                source={{uri: borrower?.borrower?.avatar || IMAGE_URI_DEFAULT}}
-                style={styles.avatar}
-              />
-              <View style={styles.infoContainer}>
-                <View style={styles.infoRow}>
-                  <Text style={styles.headingText}>Họ và tên:</Text>
-                  <Text style={styles.text}>{borrower.borrower.name}</Text>
-                </View>
-                <View style={styles.infoRow}>
-                  <Text style={styles.headingText}>Số tiền:</Text>
-                  <Text style={styles.text}>
-                    {splitString(borrower.amount)} VND
-                  </Text>
-                </View>
-                <View style={[styles.infoRow, {alignItems: 'center'}]}>
-                  <Text style={styles.headingText}>Trạng thái:</Text>
-                  {userStore.id === bill.lender._id ? (
-                    <DropDownPicker
-                      listMode="SCROLLVIEW"
-                      containerStyle={{
-                        width: '60%',
-                      }}
-                      dropDownContainerStyle={{
-                        borderColor: Colors.border.lightgrey,
-                      }}
-                      style={{
-                        borderColor: Colors.border.lightgrey,
-                        minHeight: 30,
-                      }}
-                      dropDownDirection="BOTTOM"
-                      selectedItemLabelStyle={{color: Colors.title.orange}}
-                      open={dropdownStates[index]}
-                      value={borrowerStatus[index]}
-                      items={status}
-                      placeholder="Chọn người mượn"
-                      placeholderStyle={{color: Colors.text.lightgrey}}
-                      setOpen={(isOpen: any) => {
-                        const newState = [...dropdownStates];
-                        newState[index] = isOpen;
-                        setDropdownStates(newState);
-                      }}
-                      setValue={setBorrowerStatus}
-                      setItems={setStatus}
-                      onSelectItem={(item: any) => {
-                        console.log('item', item);
+        {bill.borrowers.map((borrower, index) => {
+          const viStatus = changeStatusBillToVietnamese(borrower.status);
 
-                        const newStatus = [...borrowerStatus];
-                        newStatus[index] = item.value;
-                        setBorrowerStatus(newStatus);
-                      }}
-                    />
-                  ) : (
-                    <Text style={styles.text}>{borrower.status}</Text>
-                  )}
-                  {/* <Text style={styles.text}>{borrower.status}</Text> */}
+          return (
+            <View
+              key={index}
+              style={[styles.borrowerContainer, {zIndex: 10000 - index}]}>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 10,
+                }}>
+                <Image
+                  source={{
+                    uri: borrower?.borrower?.avatar || IMAGE_URI_DEFAULT,
+                  }}
+                  style={styles.avatar}
+                />
+                <View style={styles.infoContainer}>
+                  <View style={styles.infoRow}>
+                    <Text style={styles.headingText}>Họ và tên:</Text>
+                    <Text style={styles.text}>{borrower.borrower.name}</Text>
+                  </View>
+                  <View style={styles.infoRow}>
+                    <Text style={styles.headingText}>Số tiền:</Text>
+                    <Text style={styles.text}>
+                      {splitString(borrower.amount.toString())} VNĐ
+                    </Text>
+                  </View>
+                  <View style={[styles.infoRow, {alignItems: 'center'}]}>
+                    <Text style={styles.headingText}>Trạng thái:</Text>
+                    {userStore.id === bill.lender._id ? (
+                      <Dropdown
+                        style={{
+                          width: '60%',
+                        }}
+                        data={status}
+                        maxHeight={300}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={!isFocus ? 'Chọn người cho mượn' : '...'}
+                        placeholderStyle={{
+                          color: Colors.text.lightgrey,
+                        }}
+                        value={borrowerStatus[index]}
+                        onFocus={() => setIsFocus(true)}
+                        onBlur={() => setIsFocus(false)}
+                        onChange={item => {
+                          // setValue(item.value);
+
+                          const newStatus = [...borrowerStatus];
+                          newStatus[index] = item.value;
+                          setBorrowerStatus(newStatus);
+                        }}
+                      />
+                    ) : (
+                      <Text style={styles.text}>{viStatus}</Text>
+                    )}
+                    {/* <Text style={styles.text}>{borrower.status}</Text> */}
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
-        ))}
+          );
+        })}
       </View>
 
       <TouchableOpacity
@@ -359,7 +373,6 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                     text1: 'Xóa khoản chỉ tiêu thành công',
                     autoHide: true,
                     visibilityTime: 1000,
-                    topOffset: 30,
                     onHide: () => {
                       navigation.navigate(RouteNames.BILL_MANAGEMENT);
                     },
@@ -382,7 +395,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
         </View>
       </Modal>
 
-      <Toast position="top" />
+      {/* <Toast position="top" /> */}
     </ScrollView>
   );
 };

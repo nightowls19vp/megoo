@@ -14,7 +14,6 @@ export const createTodos = async (groupId: string, todos: any) => {
   console.log('Create todos:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.post(reqUrl, todos, {
@@ -41,7 +40,6 @@ export const deleteTodos = async (todoId: string) => {
   console.log('Delete todos by id:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.delete(reqUrl, {

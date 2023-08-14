@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   amountContainer: {
     width: '100%',
-    height: 40,
+    height: 50,
     marginBottom: 10,
     display: 'flex',
     flexDirection: 'row',

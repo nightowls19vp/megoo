@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     width: width,
+    minHeight: height,
     marginTop: 20,
   },
   avatar: {

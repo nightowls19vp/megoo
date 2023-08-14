@@ -21,7 +21,7 @@ import {MarkedDates} from 'react-native-calendars/src/types';
 import Modal from 'react-native-modal';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {RouteProp, useRoute, useFocusEffect} from '@react-navigation/native';
 
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
@@ -151,7 +151,7 @@ const TaskListScreen = ({navigation}: {navigation: any}) => {
 
   const getTasks = async () => {
     const response = await getTaskList(groupId);
-    console.log('Task list:', JSON.stringify(response.group.task, null, 2));
+    // console.log('Task list:', response.group.task);
 
     if (!response.group) {
       setTasks([]);
@@ -203,6 +203,12 @@ const TaskListScreen = ({navigation}: {navigation: any}) => {
     getTasks();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      getTasks();
+    }, []),
+  );
+
   useEffect(() => {
     setTaskItems(
       tasks.map((task: any) => {
@@ -222,9 +228,9 @@ const TaskListScreen = ({navigation}: {navigation: any}) => {
     );
   }, [tasks]);
 
-  useEffect(() => {
-    console.log('taskItems:', JSON.stringify(taskItems, null, 2));
-  }, [taskItems]);
+  // useEffect(() => {
+  //   console.log('taskItems:', JSON.stringify(taskItems, null, 2));
+  // }, [taskItems]);
 
   const combinedTaskItems = taskItems.reduce((acc: any, taskItem) => {
     const existingItemIndex = acc.findIndex(
@@ -283,12 +289,12 @@ const TaskListScreen = ({navigation}: {navigation: any}) => {
     }
   });
 
-  useEffect(() => {
-    console.log(
-      'sortedCombinedTaskItems:',
-      JSON.stringify(sortedCombinedTaskItems, null, 2),
-    );
-  }, [sortedCombinedTaskItems]);
+  // useEffect(() => {
+  //   console.log(
+  //     'sortedCombinedTaskItems:',
+  //     JSON.stringify(sortedCombinedTaskItems, null, 2),
+  //   );
+  // }, [sortedCombinedTaskItems]);
 
   const renderItem = useCallback(({item}: any) => {
     return (

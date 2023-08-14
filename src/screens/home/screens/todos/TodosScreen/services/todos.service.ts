@@ -8,7 +8,6 @@ export const getTodosById = async (todosId: string) => {
   console.log('Get todos by id:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.get(reqUrl, {
@@ -36,7 +35,6 @@ export const addTodos = async (
   console.log('Add new todos to checklist:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.post(
@@ -65,7 +63,6 @@ export const deleteTodos = async (todosId: string) => {
   console.log('Delete todos:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.delete(reqUrl, {
@@ -91,7 +88,6 @@ export const updateTodoInList = async (
   console.log('Update todo by id:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.put(
@@ -121,7 +117,6 @@ export const deleteTodoInList = async (todosId: string, todoId: string) => {
   console.log('Delete todo by id:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.delete(reqUrl, {
@@ -150,7 +145,6 @@ export const editSummary = async (todosId: string, summary: string) => {
   console.log('Edit summary:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.put(
@@ -168,5 +162,31 @@ export const editSummary = async (todosId: string, summary: string) => {
     return response.data;
   } catch (error) {
     console.log('Edit summary error: ', error);
+  }
+};
+
+export const changeState = async (todosId: string, state: string) => {
+  const todoEndpoint = `api/pkg-mgmt/todos/${todosId}/state`;
+  const reqUrl = `${URL_HOST}${todoEndpoint}`;
+  console.log('Change todos state:', reqUrl);
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+
+  try {
+    const response = await axios.put(
+      reqUrl,
+      {
+        state: state,
+      },
+      {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.log('Change todos state error: ', error);
   }
 };

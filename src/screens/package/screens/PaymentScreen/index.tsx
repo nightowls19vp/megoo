@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {
   AppState,
   Linking,
@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
-
+import {RadioButtonProps, RadioGroup} from 'react-native-radio-buttons-group';
 import {RouteProp, useRoute} from '@react-navigation/native';
 
 import {ICartList} from '../../../../common/interfaces/package.interface';
@@ -16,6 +16,7 @@ import appStore from '../../../../common/store/app.store';
 import {checkout, getUserById, renew} from './services/payment.service';
 import styles from './styles/style';
 import {splitString} from '../../../../common/handle.string';
+import {Colors} from '../../../../constants/color.const';
 
 // Define the type for the route params
 type SelectedItemsRouteParams = {
@@ -31,6 +32,33 @@ type SelectedItemsRouteProp = RouteProp<
 
 const PaymentScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<SelectedItemsRouteProp>();
+
+  const radioButtons: RadioButtonProps[] = useMemo(
+    () => [
+      {
+        id: '1', // acts as primary key, should be unique and non-empty string
+        label: 'ZALOPAY',
+        value: 'ZALOPAY',
+        size: 20,
+        color: Colors.icon.orange,
+        labelStyle: {color: Colors.text.grey},
+      },
+      {
+        id: '2',
+        label: 'VNPAY',
+        value: 'VNPAY',
+        size: 20,
+        color: Colors.icon.orange,
+        labelStyle: {color: Colors.text.grey},
+      },
+    ],
+    [],
+  );
+
+  const [selectedId, setSelectedId] = useState<string | undefined>(
+    radioButtons[0].id,
+  );
+
   const [selectedItemList, setSelectedItemList] = useState<ICartList>({
     cart: [],
   });
@@ -100,7 +128,7 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
           <View style={styles.infoRow}>
             <Text style={styles.text}>Thành tiền:</Text>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>
-              {splitString(Math.round(item.price).toString())} VND
+              {splitString(Math.round(item.price).toString())} VNĐ
             </Text>
           </View>
         </View>
@@ -111,83 +139,81 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.title}>Phương thức thanh toán</Text>
+        <RadioGroup
+          containerStyle={styles.radioButtonContainer}
+          layout="column"
+          radioButtons={radioButtons}
+          onPress={setSelectedId}
+          selectedId={selectedId}
+        />
         <View style={styles.itemsContainer}>{renderItem()}</View>
       </ScrollView>
 
       <View style={styles.paymentContainer}>
-        <Text style={styles.priceText}>{totalPrice} VND</Text>
+        <Text style={styles.priceText}>{totalPrice} VNĐ</Text>
         {appStore.isExtendedPkg === false ? (
           <TouchableOpacity
             style={styles.button}
             onPress={async () => {
               console.log('route.params:', itemsInfo);
-              const response = await checkout(selectedItemList);
-              console.log('Checkout response:', response);
-              const order = response.order;
-              const trans = response.trans;
-              console.log('order res:', order);
-              console.log('trans res:', trans);
-              const trans_id = response.trans._id;
-              console.log('trans_id', trans_id);
+              if (selectedId === '1') {
+                console.log('ZALOPAY');
 
-              // Open URL for payment
-              Linking.openURL(response.order.order_url);
-              // Linking.openURL(response.data);
+                const response = await checkout(selectedItemList, 'ZALOPAY');
+                console.log('Checkout response:', response);
+                const order = response.order;
+                const trans = response.trans;
+                console.log('order res:', order);
+                console.log('trans res:', trans);
+                const trans_id = response.trans._id;
+                console.log('trans_id', trans_id);
 
-              let intervalCheckActive = true;
-              let interValCheck = setInterval(async () => {
-                if (!intervalCheckActive) {
+                // Open URL for payment
+                Linking.openURL(response.order.order_url);
+                // Linking.openURL(response.data);
+                let intervalCheckActive = true;
+                let interValCheck = setInterval(async () => {
+                  if (!intervalCheckActive) {
+                    clearInterval(interValCheck);
+                    return;
+                  }
+
+                  const getRes = await getUserById();
+                  console.log('trans id in hist:', getRes.user.trxHist);
+                  if (getRes.user.trxHist.includes(trans_id)) {
+                    console.log(trans_id, 'exists in trxHist');
+                    clearInterval(interValCheck);
+
+                    intervalCheckActive = false;
+
+                    Toast.show({
+                      type: 'success',
+                      text1: 'Thanh toán thành công',
+                      autoHide: true,
+                      visibilityTime: 3000,
+                      topOffset: 20,
+                      onHide: () => {
+                        navigation.navigate('PROFILE_STACK', {
+                          params: {
+                            screen: 'PROFILE',
+                            activeTab: 'group',
+                          },
+                        });
+                      },
+                    });
+                  }
+                }, 10 * 1000);
+
+                setTimeout(() => {
                   clearInterval(interValCheck);
-                  return;
-                }
-
-                const getRes = await getUserById();
-                console.log('trans id in hist:', getRes.user.trxHist);
-                if (getRes.user.trxHist.includes(trans_id)) {
-                  console.log(trans_id, 'exists in trxHist');
-                  clearInterval(interValCheck);
-
                   intervalCheckActive = false;
-
-                  Toast.show({
-                    type: 'success',
-                    text1: 'Thanh toán thành công',
-                    autoHide: true,
-                    visibilityTime: 3000,
-                    topOffset: 20,
-                    onHide: () => {
-                      navigation.navigate('PROFILE_STACK', {
-                        params: {
-                          screen: 'PROFILE',
-                          activeTab: 'group',
-                        },
-                      });
-                    },
-                  });
-                }
-                // if (!intervalCheckActive) {
-                //   Toast.show({
-                //     type: 'success',
-                //     text1: 'Thanh toán thành công',
-                //     autoHide: true,
-                //     visibilityTime: 3000,
-                //     topOffset: 20,
-                //     onHide: () => {
-                //       navigation.navigate('PROFILE_STACK', {
-                //         params: {
-                //           screen: 'PROFILE',
-                //           activeTab: 'group',
-                //         },
-                //       });
-                //     },
-                //   });
-                // }
-              }, 10 * 1000);
-
-              setTimeout(() => {
-                clearInterval(interValCheck);
-                intervalCheckActive = false;
-              }, 2 * 60 * 1000);
+                }, 2 * 60 * 1000);
+              } else if (selectedId === '2') {
+                console.log('VNPAY');
+                const response = await checkout(selectedItemList, 'VNPAY');
+                console.log('Checkout response:', response);
+              }
             }}>
             <Text style={styles.buttonText}>Thanh toán</Text>
           </TouchableOpacity>
@@ -205,7 +231,7 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
                 duration: appStore.renewPkg.duration,
               };
 
-              const response = await renew(appStore.renewPkg);
+              const response = await renew(appStore.renewPkg, 'ZALOPAY');
               console.log('Renew res:', response);
 
               const order = response.order;

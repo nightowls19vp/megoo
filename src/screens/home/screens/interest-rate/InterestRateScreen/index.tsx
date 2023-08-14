@@ -1,9 +1,16 @@
-import {Dimensions, StyleSheet, Text, View, TextInput} from 'react-native';
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  ScrollView,
+} from 'react-native';
 import {Colors} from '../../../../../constants/color.const';
 import Slider from '@react-native-community/slider';
 import {useState, useEffect} from 'react';
 import {splitString} from '../../../../../common/handle.string';
-import DropDownPicker from 'react-native-dropdown-picker';
+import {Dropdown} from 'react-native-element-dropdown';
 import DatePicker from 'react-native-date-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {dateFormat} from './../../../../../common/handle.string';
@@ -13,19 +20,47 @@ import styles from './styles/style';
 const InterestRateScreen = () => {
   const [sliderAmount, setSliderAmount] = useState(50000000);
   const [amount, setAmount] = useState<string>(sliderAmount.toString());
-  const [rate, setRate] = useState('');
-  const [interest, setInterest] = useState(0);
-  const [totalAmount, setTotalAmount] = useState(0);
-
   const [date, setDate] = useState(new Date());
-  const [dateString, setDateString] = useState(dateFormat(date.toISOString()));
-  const [selectedDate, setSelectedDate] = useState(date);
-  const [maturityDateString, setMaturityDateString] = useState(
-    dateFormat(date.toISOString()),
-  );
-  const [openDatePicker, setOpenDatePicker] = useState(false);
 
-  const [openDropdown, setOpenDropdown] = useState(false);
+  const [oldInterest, setOldInterest] = useState<{
+    rate: string;
+    date: string;
+    maturityDate: string;
+    period: string;
+    interest: number;
+    totalAmount: number;
+    openPicker: boolean;
+  }>({
+    rate: '',
+    date: dateFormat(date.toISOString()),
+    maturityDate: '',
+    period: '',
+    interest: 0,
+    totalAmount: 0,
+    openPicker: false,
+  });
+
+  const [newInterest, setNewInterest] = useState<{
+    rate: string;
+    date: string;
+    maturityDate: string;
+    period: string;
+    interest: number;
+    totalAmount: number;
+    openPicker: boolean;
+  }>({
+    rate: '',
+    date: dateFormat(date.toISOString()),
+    maturityDate: '',
+    period: '',
+    interest: 0,
+    totalAmount: 0,
+    openPicker: false,
+  });
+
+  const [selectedDate, setSelectedDate] = useState(date);
+
+  const [isFocus, setIsFocus] = useState(false);
   const [items, setItems] = useState<
     {
       label: string;
@@ -97,16 +132,29 @@ const InterestRateScreen = () => {
       value: '36',
     },
   ]);
-  const [period, setPeriod] = useState(items[0].value);
 
-  const handleRateChange = (value: string) => {
+  const handleRateChange = (value: string, type: string) => {
     // Remove non-digit characters from the input value
     const numericValue = value.replace(/[^\d.]/g, '');
 
     // Validate the input to allow only decimal with 2 digits after the comma
     const decimalRegex = /^\d+(\.\d{0,2})?$/;
     if (decimalRegex.test(numericValue) || numericValue === '') {
-      setRate(numericValue);
+      if (type === 'old') {
+        setOldInterest(oldInterest => {
+          return {
+            ...oldInterest,
+            rate: numericValue,
+          };
+        });
+      } else {
+        setNewInterest(newInterest => {
+          return {
+            ...newInterest,
+            rate: numericValue,
+          };
+        });
+      }
     }
   };
 
@@ -123,54 +171,146 @@ const InterestRateScreen = () => {
 
   useEffect(() => {
     // Check if both send date and period are valid
-    if (dateString && period) {
+    if (oldInterest.date && oldInterest.period) {
       // Parse the send date using moment
-      const parsedSendDate = moment(dateString, 'D/M/YYYY');
+      const parsedSendDate = moment(oldInterest.date, 'D/M/YYYY');
 
       // Calculate the maturity date by adding the period to the send date
       const calculatedMaturityDate = parsedSendDate.add(
-        parseInt(period),
+        parseInt(oldInterest.period),
         'months',
       );
 
       // Format the calculated maturity date as "D/M/YYYY" and set it to state
       // Format the calculated maturity date as "D/M/YYYY" and convert it to string
       const formattedMaturityDate = calculatedMaturityDate.format('DD/MM/YYYY');
+      console.log('formattedMaturityDate', formattedMaturityDate);
 
       // Set the formatted maturity date to the state
-      setMaturityDateString(formattedMaturityDate);
+      setOldInterest(oldInterest => {
+        return {
+          ...oldInterest,
+          maturityDate: formattedMaturityDate,
+        };
+      });
     }
-  }, [dateString, period]);
+  }, [oldInterest.date, oldInterest.period]);
 
   useEffect(() => {
-    if (amount && rate && period) {
-      console.log('amount', amount);
-      console.log('rate', rate);
-      console.log('period', period);
+    // Check if both send date and period are valid
+    if (newInterest.date && newInterest.period) {
+      // Parse the send date using moment
+      const parsedSendDate = moment(newInterest.date, 'D/M/YYYY');
 
+      // Calculate the maturity date by adding the period to the send date
+      const calculatedMaturityDate = parsedSendDate.add(
+        parseInt(newInterest.period),
+        'months',
+      );
+
+      // Format the calculated maturity date as "D/M/YYYY" and set it to state
+      // Format the calculated maturity date as "D/M/YYYY" and convert it to string
+      const formattedMaturityDate = calculatedMaturityDate.format('DD/MM/YYYY');
+      console.log('formattedMaturityDate', formattedMaturityDate);
+
+      // Set the formatted maturity date to the state
+      setNewInterest(newInterest => {
+        return {
+          ...newInterest,
+          maturityDate: formattedMaturityDate,
+        };
+      });
+    }
+  }, [newInterest.date, newInterest.period]);
+
+  useEffect(() => {
+    if (amount && oldInterest.rate && oldInterest.period) {
       const interestAmount =
-        ((parseInt(amount) * parseFloat(rate)) / 100 / 12) * parseInt(period);
+        ((parseInt(amount) * parseFloat(oldInterest.rate)) / 100 / 12) *
+        parseInt(oldInterest.period);
       console.log('interestAmount', interestAmount);
 
-      setInterest(Math.round(interestAmount));
+      setOldInterest(oldInterest => {
+        return {
+          ...oldInterest,
+          interest: interestAmount,
+        };
+      });
     } else {
-      setInterest(0);
+      setOldInterest(oldInterest => {
+        return {
+          ...oldInterest,
+          interest: 0,
+        };
+      });
     }
-  }, [amount, rate, period]);
+  }, [amount, oldInterest.rate, oldInterest.period]);
 
   useEffect(() => {
-    if (amount && interest) {
-      setTotalAmount(parseInt(amount) + interest);
+    if (amount && newInterest.rate && newInterest.period) {
+      const interestAmount =
+        ((parseInt(amount) * parseFloat(newInterest.rate)) / 100 / 12) *
+        parseInt(newInterest.period);
+
+      console.log('interestAmount', interestAmount);
+
+      setNewInterest(newInterest => {
+        return {
+          ...newInterest,
+          interest: interestAmount,
+        };
+      });
     } else {
-      setTotalAmount(0);
+      setNewInterest(newInterest => {
+        return {
+          ...newInterest,
+          interest: 0,
+        };
+      });
     }
-  }, [interest]);
+  }, [amount, newInterest.rate, newInterest.period]);
+
+  useEffect(() => {
+    if (amount && oldInterest.interest) {
+      setOldInterest(oldInterest => {
+        return {
+          ...oldInterest,
+          totalAmount: parseInt(amount) + oldInterest.interest,
+        };
+      });
+    } else {
+      setOldInterest(oldInterest => {
+        return {
+          ...oldInterest,
+          totalAmount: 0,
+        };
+      });
+    }
+  }, [oldInterest.interest]);
+
+  useEffect(() => {
+    if (amount && newInterest.interest) {
+      setNewInterest(newInterest => {
+        return {
+          ...newInterest,
+          totalAmount: parseInt(amount) + newInterest.interest,
+        };
+      });
+    } else {
+      setNewInterest(newInterest => {
+        return {
+          ...newInterest,
+          totalAmount: 0,
+        };
+      });
+    }
+  }, [newInterest.interest]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Số tiền gửi</Text>
-        <Text>VND</Text>
+        <Text>VNĐ</Text>
       </View>
       <View
         style={[
@@ -226,132 +366,383 @@ const InterestRateScreen = () => {
         <Text>3 tỷ</Text>
       </View>
 
-      <Text style={styles.title}>Kỳ hạn</Text>
-      <DropDownPicker
-        listMode="MODAL"
-        scrollViewProps={{
-          nestedScrollEnabled: true,
-        }}
-        containerStyle={{
-          width: '90%',
-          zIndex: 1000,
-          padding: 0,
-          marginBottom: 5,
-        }}
-        dropDownContainerStyle={{
-          borderColor: Colors.border.lightgrey,
-          borderRadius: 0,
-        }}
-        // style={{borderColor: Colors.border.lightgrey, borderRadius: 10}}
+      <View
         style={{
-          borderWidth: 0,
-          borderBottomWidth: 1,
-          borderRadius: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-          minHeight: 40,
-          borderColor: Colors.border.lightgrey,
-        }}
-        iconContainerStyle={{
-          paddingRight: 0,
-          display: 'none',
-        }}
-        // selectedItemLabelStyle={{color: Colors.title.orange}}
-        open={openDropdown}
-        value={period}
-        items={items}
-        setOpen={setOpenDropdown}
-        setValue={setPeriod}
-        setItems={setItems}
-        placeholder={items[0].label}
-      />
-
-      <Text style={styles.title}>Lãi suất</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          keyboardType="number-pad"
-          style={styles.inputText}
-          value={rate}
-          maxLength={5}
-          placeholder={'Nhập lãi suất'}
-          placeholderTextColor={Colors.text.lightgrey}
-          onChangeText={handleRateChange}
-        />
-        <Text>
-          {'%'} {'/'} năm
-        </Text>
-      </View>
-
-      <Text style={styles.title}>Ngày gửi</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          editable={false}
-          style={styles.inputText}
-          value={dateString}
-          placeholder={'Chọn ngày gửi'}
-          placeholderTextColor={Colors.text.lightgrey}
-        />
-
-        <DatePicker
-          modal
-          open={openDatePicker}
-          date={selectedDate}
-          mode={'date'}
-          locale={'vi'}
-          title={'Chọn ngày'}
-          confirmText={'Chọn'}
-          cancelText={'Huỷ'}
-          onDateChange={value => {
-            setSelectedDate(value);
-          }}
-          onConfirm={value => {
-            console.log('Selected date:', value);
-            setSelectedDate(value);
-            setOpenDatePicker(false);
-            setDateString(dateFormat(value.toString()));
-          }}
-          onCancel={() => {
-            setOpenDatePicker(false);
-          }}
-        />
+          width: '90%',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginTop: 10,
+        }}>
         <View
-          style={{display: 'flex', alignItems: 'center', flexDirection: 'row'}}>
-          {date && (
-            <Ionicons
-              onPress={() => setDateString('')}
-              name={'close'}
-              style={[styles.inputIcon, {marginRight: 5}]}
-            />
-          )}
-          <Ionicons
-            onPress={() => {
-              setOpenDatePicker(true);
+          style={{
+            width: '45%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <Text
+            style={{
+              color: Colors.text.red,
+              width: '100%',
+              textAlign: 'justify',
+            }}>
+            &#8251; Tiếp tục gửi tiết kiệm với lãi suất hiện tại
+          </Text>
+
+          <Text style={[styles.title, {marginTop: 0, width: '100%'}]}>
+            Kỳ hạn hiện tại
+          </Text>
+          <Dropdown
+            style={{
+              width: '100%',
             }}
-            name={'calendar'}
-            style={styles.inputIcon}
+            data={items}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={!isFocus ? 'Chọn thời hạn gửi' : '...'}
+            placeholderStyle={{
+              color: Colors.text.lightgrey,
+            }}
+            value={oldInterest.period}
+            onFocus={() => setIsFocus(true)}
+            onBlur={() => setIsFocus(false)}
+            onChange={item => {
+              setOldInterest(oldInterest => {
+                return {
+                  ...oldInterest,
+                  period: item.value,
+                };
+              });
+              setIsFocus(false);
+            }}
           />
+
+          <Text style={[styles.title, {width: '100%'}]}>Lãi suất hiện tại</Text>
+          <View style={[styles.inputContainer, {width: '100%'}]}>
+            <TextInput
+              keyboardType="number-pad"
+              style={styles.inputText}
+              value={oldInterest.rate}
+              maxLength={5}
+              placeholder={'Nhập lãi suất'}
+              placeholderTextColor={Colors.text.lightgrey}
+              onChangeText={(value: string) => {
+                handleRateChange(value, 'old');
+              }}
+            />
+            <Text>
+              {'%'} {'/'} năm
+            </Text>
+          </View>
+
+          <Text style={[styles.title, {width: '100%'}]}>Ngày đáo hạn</Text>
+          <View style={[styles.inputContainer, {width: '100%'}]}>
+            <TextInput
+              editable={false}
+              style={styles.inputText}
+              value={oldInterest.date}
+              placeholder={'Chọn ngày đáo hạn'}
+              placeholderTextColor={Colors.text.lightgrey}
+            />
+
+            <DatePicker
+              modal
+              open={oldInterest.openPicker}
+              date={selectedDate}
+              mode={'date'}
+              locale={'vi'}
+              title={'Chọn ngày'}
+              confirmText={'Chọn'}
+              cancelText={'Huỷ'}
+              onDateChange={value => {
+                setSelectedDate(value);
+              }}
+              onConfirm={value => {
+                console.log('Selected date:', value);
+                setSelectedDate(value);
+                setOldInterest(oldInterest => {
+                  return {
+                    ...oldInterest,
+                    openPicker: false,
+                  };
+                });
+                // setDateString(dateFormat(value.toString()));
+                setOldInterest(oldInterest => {
+                  return {
+                    ...oldInterest,
+                    date: dateFormat(value.toISOString()),
+                  };
+                });
+              }}
+              onCancel={() => {
+                setOldInterest(oldInterest => {
+                  return {
+                    ...oldInterest,
+                    openPicker: false,
+                  };
+                });
+              }}
+            />
+            <View
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'row',
+              }}>
+              {date && (
+                <Ionicons
+                  onPress={() =>
+                    setOldInterest(oldInterest => {
+                      return {
+                        ...oldInterest,
+                        date: '',
+                      };
+                    })
+                  }
+                  name={'close'}
+                  style={[styles.inputIcon, {marginRight: 5}]}
+                />
+              )}
+              <Ionicons
+                onPress={() => {
+                  setOldInterest(oldInterest => {
+                    return {
+                      ...oldInterest,
+                      openPicker: true,
+                    };
+                  });
+                }}
+                name={'calendar'}
+                style={styles.inputIcon}
+              />
+            </View>
+          </View>
+
+          <Text style={[styles.title, {width: '100%'}]}>
+            Ngày đáo hạn kế tiếp
+          </Text>
+          <Text
+            style={{
+              color: Colors.text.grey,
+              width: '100%',
+              marginVertical: 3,
+            }}>
+            {oldInterest.maturityDate}
+          </Text>
+
+          <Text style={[styles.title, {width: '100%'}]}>Số tiền lãi</Text>
+          <Text style={styles.amountText}>
+            {splitString(Math.round(oldInterest.interest).toString())} VNĐ
+          </Text>
+
+          <Text style={[styles.title, {width: '100%'}]}>
+            Số tiền khi đến hạn
+          </Text>
+          <Text style={styles.amountText}>
+            {splitString(Math.round(oldInterest.totalAmount).toString())} VNĐ
+          </Text>
+        </View>
+
+        <View
+          style={{
+            height: '100%',
+            borderLeftWidth: 0.5,
+            borderLeftColor: Colors.border.lightgrey,
+          }}
+        />
+
+        <View
+          style={{
+            width: '45%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <Text
+            style={{
+              color: Colors.text.red,
+              width: '100%',
+              textAlign: 'justify',
+            }}>
+            &#8251; Gửi tiết kiệm với lãi suất mới
+          </Text>
+          <Text style={[styles.title, {marginTop: 0, width: '100%'}]}>
+            Kỳ hạn mới
+          </Text>
+          <Dropdown
+            style={{
+              width: '100%',
+            }}
+            data={items}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={!isFocus ? 'Chọn kỳ hạn gửi' : '...'}
+            placeholderStyle={{
+              color: Colors.text.lightgrey,
+            }}
+            value={newInterest.period}
+            onFocus={() => setIsFocus(true)}
+            onBlur={() => setIsFocus(false)}
+            onChange={item => {
+              setNewInterest(newInterest => {
+                return {
+                  ...newInterest,
+                  period: item.value,
+                };
+              });
+              setIsFocus(false);
+            }}
+          />
+
+          <Text style={[styles.title, {width: '100%'}]}>Lãi suất mới</Text>
+          <View style={[styles.inputContainer, {width: '100%'}]}>
+            <TextInput
+              keyboardType="number-pad"
+              style={styles.inputText}
+              value={newInterest.rate}
+              maxLength={5}
+              placeholder={'Nhập lãi suất'}
+              placeholderTextColor={Colors.text.lightgrey}
+              onChangeText={(value: string) => {
+                handleRateChange(value, 'new');
+              }}
+            />
+            <Text>
+              {'%'} {'/'} năm
+            </Text>
+          </View>
+
+          <Text style={[styles.title, {width: '100%'}]}>Ngày gửi mới</Text>
+          <View style={[styles.inputContainer, {width: '100%'}]}>
+            <TextInput
+              editable={false}
+              style={styles.inputText}
+              value={newInterest.date}
+              placeholder={'Chọn ngày gửi'}
+              placeholderTextColor={Colors.text.lightgrey}
+            />
+
+            <DatePicker
+              modal
+              open={newInterest.openPicker}
+              date={selectedDate}
+              mode={'date'}
+              locale={'vi'}
+              title={'Chọn ngày'}
+              confirmText={'Chọn'}
+              cancelText={'Huỷ'}
+              onDateChange={value => {
+                setSelectedDate(value);
+              }}
+              onConfirm={value => {
+                console.log('Selected date:', value);
+                setSelectedDate(value);
+                setNewInterest(newInterest => {
+                  return {
+                    ...newInterest,
+                    openPicker: false,
+                  };
+                });
+                setNewInterest(newInterest => {
+                  return {
+                    ...newInterest,
+                    date: dateFormat(value.toISOString()),
+                  };
+                });
+              }}
+              onCancel={() => {
+                setOldInterest(oldInterest => {
+                  return {
+                    ...oldInterest,
+                    openPicker: false,
+                  };
+                });
+              }}
+            />
+            <View
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'row',
+              }}>
+              {date && (
+                <Ionicons
+                  onPress={() =>
+                    setNewInterest(newInterest => {
+                      return {
+                        ...newInterest,
+                        date: '',
+                      };
+                    })
+                  }
+                  name={'close'}
+                  style={[styles.inputIcon, {marginRight: 5}]}
+                />
+              )}
+              <Ionicons
+                onPress={() => {
+                  setNewInterest(newInterest => {
+                    return {
+                      ...newInterest,
+                      openPicker: true,
+                    };
+                  });
+                }}
+                name={'calendar'}
+                style={styles.inputIcon}
+              />
+            </View>
+          </View>
+
+          <Text style={[styles.title, {width: '100%'}]}>Ngày đáo hạn</Text>
+          <Text
+            style={{
+              color: Colors.text.grey,
+              width: '100%',
+              marginVertical: 3,
+            }}>
+            {newInterest.maturityDate}
+          </Text>
+
+          <Text style={[styles.title, {width: '100%'}]}>Số tiền lãi</Text>
+          <Text style={styles.amountText}>
+            {splitString(Math.round(newInterest.interest).toString())} VNĐ
+          </Text>
+
+          <Text style={[styles.title, {width: '100%'}]}>
+            Số tiền khi đến hạn
+          </Text>
+          <Text style={styles.amountText}>
+            {splitString(Math.round(newInterest.totalAmount).toString())} VNĐ
+          </Text>
         </View>
       </View>
 
-      <View style={styles.titleContainer}>
-        <Text style={[styles.title, {width: '50%'}]}>Ngày đáo hạn</Text>
-        <Text style={{color: Colors.text.lightgrey}}>{maturityDateString}</Text>
-      </View>
-
-      <View style={styles.titleContainer}>
-        <Text style={[styles.title, {width: '50%'}]}>Số tiền lãi</Text>
-        <Text style={styles.amountText}>
-          {splitString(interest.toString())} VND
+      {/* <View
+        style={{
+          width: '90%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'baseline',
+          marginVertical: 10,
+        }}>
+        <Text style={styles.title}>
+          Số tiền chênh lệch (Số tiền cũ - Số tiền mới)
         </Text>
-      </View>
-
-      <View style={[styles.titleContainer, {flexDirection: 'column'}]}>
-        <Text style={[styles.title]}>Số tiền khi đến hạn</Text>
         <Text style={styles.amountText}>
-          {splitString(totalAmount.toString())} VND
+          {splitString(
+            Math.abs(oldInterest.interest - newInterest.interest).toString(),
+          )}{' '}
+          VND
         </Text>
-      </View>
-    </View>
+      </View> */}
+    </ScrollView>
   );
 };
 

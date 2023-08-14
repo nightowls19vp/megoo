@@ -45,7 +45,7 @@ const GroupInfoScreen = ({navigation}: {navigation: any}) => {
   const getSelectedGroup = async () => {
     // Get all user's groups
     const groupsRes = await getUserGroup();
-    console.log('groupsRes:', groupsRes);
+    // console.log('groupsRes:', groupsRes);
     console.log('route param:', route);
 
     const groups = groupsRes.groups.map((groupItem: any) => {

@@ -80,10 +80,10 @@ export const checkLogin = async () => {
 
         console.log('Access token has not expired');
         const response = await validate();
-        console.log(
-          'Validate res:',
-          JSON.stringify(response.userInfo, null, 2),
-        );
+        // console.log(
+        //   'Validate res user id:',
+        //   JSON.stringify(response.userInfo._id, null, 2),
+        // );
 
         // Store user info
         let user: IUser = {
@@ -126,10 +126,18 @@ export const checkLogin = async () => {
 
         console.log('User id:', user._id);
 
-        const userSendBird = await SendBirdChatService.getInstance().connect(
+        // Connect user to SendBird server
+        console.log('before connect to sendbird');
+        const userConnected = await SendBirdChatService.getInstance().connect(
           user._id,
         );
-        console.log('userSendBird from auth:', userSendBird);
+
+        const userUpdated =
+          await SendBirdChatService.getInstance().updateUserInfo(
+            user.name,
+            user.avatar,
+          );
+        console.log('userUpdated:', userUpdated);
 
         // Get user's SendBird's channels
         const channelsUrl =

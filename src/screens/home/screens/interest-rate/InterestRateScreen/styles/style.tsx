@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   inputText: {
-    width: '80%',
+    width: '60%',
     color: Colors.text.grey,
     paddingLeft: 0,
   },
@@ -54,9 +54,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   amountText: {
+    width: '100%',
     color: Colors.text.grey,
     fontSize: 16,
     fontWeight: 'bold',
+    marginVertical: 3,
   },
 });
 

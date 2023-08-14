@@ -9,7 +9,6 @@ export const createTask = async (groupId: string, task: any) => {
   console.log('Get task list:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-  console.log('Access token:', accessToken);
 
   try {
     const response = await axios.post(reqUrl, task, {
@@ -21,5 +20,8 @@ export const createTask = async (groupId: string, task: any) => {
     return response.data;
   } catch (error) {
     console.log('Create task error: ', error);
+    if (axios.isAxiosError(error)) {
+      console.log('Create task error: ', error);
+    }
   }
 };

@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Dimensions,
   ScrollView,
@@ -14,15 +14,24 @@ import * as Yup from 'yup';
 import CheckBox from '@react-native-community/checkbox';
 import Modal from 'react-native-modal';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import RadioGroup, {
+  RadioButton,
+  RadioButtonProps,
+} from 'react-native-radio-buttons-group';
 
 import {
   addTodos,
+  changeState,
   deleteTodoInList,
+  deleteTodos,
   editSummary,
   getTodosById,
   updateTodoInList,
 } from './services/todos.service';
+import RouteNames from '../../../../../constants/route-names.const';
 import {Colors} from '../../../../../constants/color.const';
+import Toast from 'react-native-toast-message';
+import styles from './styles/styles';
 
 // Define the type for the route params
 type TodosRouteParams = {
@@ -34,12 +43,39 @@ type TodosRouteProp = RouteProp<Record<string, TodosRouteParams>, string>;
 
 const TodosSchema = Yup.object().shape({
   summary: Yup.string().required('Vui lòng nhập tiêu đề'),
-  todoName: Yup.string().required('Vui lòng nhập tiêu đề'),
+  todoName: Yup.string().required('Vui lòng nhập tên việc cần làm'),
 });
 
-const TodosScreen = () => {
+const TodosScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<TodosRouteProp>();
   const todosId = route?.params?.todosId;
+
+  const radioButtons: RadioButtonProps[] = useMemo(
+    () => [
+      {
+        id: '1', // acts as primary key, should be unique and non-empty string
+        label: 'Cá nhân',
+        value: 'Private',
+        size: 20,
+        color: Colors.icon.orange,
+        labelStyle: {color: Colors.text.grey},
+      },
+      {
+        id: '2',
+        label: 'Nhóm',
+        value: 'Public',
+        size: 20,
+        color: Colors.icon.orange,
+        labelStyle: {color: Colors.text.grey},
+      },
+    ],
+    [],
+  );
+
+  const [selectedId, setSelectedId] = useState<string | undefined>(
+    radioButtons[0].id,
+  );
+  const [selectedOption, setSelectedOption] = useState<string | undefined>();
 
   const [todos, setTodos] = useState({
     _id: '',
@@ -74,7 +110,7 @@ const TodosScreen = () => {
 
   const getTodos = async () => {
     const todosRes = await getTodosById(todosId);
-    console.log('todos', JSON.stringify(todosRes, null, 2));
+    // console.log('todos', JSON.stringify(todosRes, null, 2));
 
     setTodos({
       _id: todosRes.todos._id,
@@ -90,9 +126,20 @@ const TodosScreen = () => {
       state: todosRes.todos.state,
     });
 
+    if (todosRes.todos.state === 'Public') {
+      setSelectedId('2');
+    } else {
+      setSelectedId('1');
+    }
+
     setToggleCheckBoxArray(
       todosRes.todos.todos.map((todo: any) => todo.isCompleted),
     );
+  };
+
+  const changeStatus = async (state: string) => {
+    const todosRes = await changeState(todosId, state);
+    console.log('todosRes', JSON.stringify(todosRes, null, 2));
   };
 
   const handleToggleCheckBox = (index: number, newValue: boolean) => {
@@ -136,8 +183,16 @@ const TodosScreen = () => {
   );
 
   useEffect(() => {
-    console.log('todos:', todos);
+    // console.log('todos:', todos);
   }, [todos]);
+
+  useEffect(() => {
+    console.log('selectedId:', selectedId);
+    // Find selectedId in radioButtons
+    const selectedRadioButton = radioButtons.find(e => e.id === selectedId);
+    const state = selectedRadioButton?.value as string;
+    changeStatus(state);
+  }, [selectedId]);
 
   return (
     <Formik
@@ -187,6 +242,15 @@ const TodosScreen = () => {
           {touched.summary && errors.summary && (
             <Text style={styles.error}>{errors.summary}</Text>
           )}
+
+          <Text style={styles.title}>Chế độ</Text>
+          <RadioGroup
+            containerStyle={styles.radioButtonContainer}
+            layout="column"
+            radioButtons={radioButtons}
+            onPress={setSelectedId}
+            selectedId={selectedId}
+          />
 
           <View style={[styles.titleContainer, {marginTop: 10}]}>
             <Text style={styles.title}>Việc cần làm</Text>
@@ -274,10 +338,10 @@ const TodosScreen = () => {
                       ],
                       state: todos.state,
                     });
-                    console.log(
-                      'Add new response:',
-                      JSON.stringify(response, null, 2),
-                    );
+                    // console.log(
+                    //   'Add new response:',
+                    //   JSON.stringify(response, null, 2),
+                    // );
 
                     if (response.statusCode === 200) {
                       setFieldValue('todoName', '');
@@ -326,10 +390,10 @@ const TodosScreen = () => {
                             },
                           );
 
-                          console.log(
-                            'Update isCompleted response:',
-                            JSON.stringify(response, null, 2),
-                          );
+                          // console.log(
+                          //   'Update isCompleted response:',
+                          //   JSON.stringify(response, null, 2),
+                          // );
                         } else {
                           console.log('unchecked');
                         }
@@ -340,6 +404,7 @@ const TodosScreen = () => {
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
+                        // gap: 10,
                       }}>
                       <TextInput
                         value={todo.todo}
@@ -355,7 +420,9 @@ const TodosScreen = () => {
                             ? {
                                 textDecorationLine: 'line-through',
                               }
-                            : {},
+                            : {
+                                textDecorationLine: 'none',
+                              },
                         ]}
                         onChangeText={newValue => {
                           todo.todo = newValue;
@@ -378,42 +445,44 @@ const TodosScreen = () => {
                           );
                         }}
                       />
-                      {todo.description && (
-                        <TextInput
-                          value={todo.description}
-                          style={{
-                            color: Colors.text.lightgrey,
-                            fontSize: 12,
-                            height: 20,
-                            padding: 0,
-                          }}
-                          onChangeText={newValue => {
-                            todo.description = newValue;
-                            setNewTodoInfo({
-                              todoName: todo.todo,
-                              todoDescription: newValue,
-                            });
-                          }}
-                          onEndEditing={async () => {
-                            console.log('newTodoInfo:', newTodoInfo);
+                      {/* {todo.description && ( */}
+                      <TextInput
+                        value={todo.description}
+                        placeholder={'Nhập mô tả/ghi chú việc cần làm'}
+                        placeholderTextColor={Colors.text.lightgrey}
+                        style={{
+                          color: Colors.text.lightgrey,
+                          fontSize: 12,
+                          height: 20,
+                          padding: 0,
+                        }}
+                        onChangeText={newValue => {
+                          todo.description = newValue;
+                          setNewTodoInfo({
+                            todoName: todo.todo,
+                            todoDescription: newValue,
+                          });
+                        }}
+                        onEndEditing={async () => {
+                          console.log('newTodoInfo:', newTodoInfo);
 
-                            const response = await updateTodoInList(
-                              todosId,
-                              todo._id,
-                              {
-                                todo: todo.todo,
-                                description: newTodoInfo.todoDescription,
-                                isCompleted: todo.isCompleted,
-                              },
-                            );
+                          const response = await updateTodoInList(
+                            todosId,
+                            todo._id,
+                            {
+                              todo: todo.todo,
+                              description: newTodoInfo.todoDescription,
+                              isCompleted: todo.isCompleted,
+                            },
+                          );
 
-                            console.log(
-                              'Update todo description response:',
-                              JSON.stringify(response, null, 2),
-                            );
-                          }}
-                        />
-                      )}
+                          console.log(
+                            'Update todo description response:',
+                            JSON.stringify(response, null, 2),
+                          );
+                        }}
+                      />
+                      {/* )} */}
                     </View>
                   </View>
                   <TouchableOpacity
@@ -437,8 +506,7 @@ const TodosScreen = () => {
             }}>
             <View style={styles.modalContentContainer}>
               <Text style={styles.modalTitle}>
-                Xóa "{deleteTodo.todoName}" khỏi danh sách danh sách việc cần
-                làm?
+                Xóa "{deleteTodo.todoName}" khỏi danh sách danh sách công việc?
               </Text>
 
               <View style={styles.modalTextContainer}>
@@ -457,7 +525,7 @@ const TodosScreen = () => {
                   onPress={async () => {
                     setIsModalVisible(!isModalVisible);
                     const response = await deleteTodoInList(
-                      todosId,
+                      todos._id,
                       deleteTodo._id,
                     );
 
@@ -486,7 +554,9 @@ const TodosScreen = () => {
 
           <Modal isVisible={isDeleteTodosModalVisible}>
             <View style={styles.modalContentContainer}>
-              <Text style={styles.modalTitle}>Xóa việc cần làm?</Text>
+              <Text style={styles.modalTitle}>
+                Xóa danh sách công việc này?
+              </Text>
 
               <View style={styles.modalTextContainer}>
                 <TouchableOpacity
@@ -503,6 +573,26 @@ const TodosScreen = () => {
                 <TouchableOpacity
                   onPress={async () => {
                     setIsDeleteTodosModalVisible(!isDeleteTodosModalVisible);
+
+                    const response = await deleteTodos(todos._id);
+                    if (response.statusCode === 200) {
+                      Toast.show({
+                        type: 'success',
+                        text1: 'Xóa công việc thành công',
+                        autoHide: true,
+                        visibilityTime: 1000,
+                        onHide: () => {
+                          navigation.goBack();
+                        },
+                      });
+                    } else {
+                      Toast.show({
+                        type: 'error',
+                        text1: 'Xóa công việc không thành công',
+                        autoHide: true,
+                        visibilityTime: 1000,
+                      });
+                    }
                   }}
                   style={{
                     alignItems: 'center',
@@ -517,118 +607,5 @@ const TodosScreen = () => {
     </Formik>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: Colors.background.white,
-    width: Dimensions.get('window').width,
-    minHeight: Dimensions.get('window').height,
-  },
-  titleContainer: {
-    width: '90%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-  },
-  title: {
-    width: '90%',
-    textAlign: 'left',
-    textAlignVertical: 'center',
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: Colors.title.orange,
-    marginTop: 10,
-  },
-  inputContainer: {
-    width: '90%',
-    height: 40,
-    flexDirection: 'row',
-    alignItems: 'center',
-    // paddingHorizontal: 15,
-    marginBottom: 5,
-    borderColor: Colors.border.lightgrey,
-    borderBottomWidth: 1,
-    // borderRadius: 10,
-  },
-  inputIcon: {
-    fontWeight: '200',
-    color: Colors.icon.lightgrey,
-    fontSize: 20,
-  },
-  inputText: {flex: 1, color: Colors.text.grey},
-  error: {
-    width: '90%',
-    color: Colors.text.red,
-    textAlign: 'left',
-    marginBottom: 10,
-  },
-  removeIcon: {
-    fontWeight: '200',
-    color: Colors.icon.red,
-    fontSize: 24,
-  },
-  checkBoxContainer: {
-    width: '90%',
-    display: 'flex',
-    gap: 10,
-    marginTop: 10,
-  },
-  todosContainer: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: Colors.itemBackground.lightorange,
-    padding: 10,
-    borderRadius: 10,
-  },
-  todo: {
-    width: '90%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-  },
-  modalContentContainer: {
-    display: 'flex',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    gap: 10,
-    padding: 20,
-  },
-  modalTextContainer: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 30,
-  },
-  modalTitle: {
-    fontSize: 18,
-    textAlign: 'left',
-    color: Colors.text.grey,
-  },
-  deleteButton: {
-    width: '90%',
-    // height: 40,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    backgroundColor: Colors.buttonBackground.red,
-    borderRadius: 10,
-    marginVertical: 20,
-  },
-  deleteButtonText: {
-    color: Colors.text.white,
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
-});
 
 export default TodosScreen;

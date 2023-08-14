@@ -1,12 +1,20 @@
 import {useCallback, useEffect, useState} from 'react';
-import {KeyboardAvoidingView, Platform, TouchableOpacity} from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Linking,
+  Platform,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import {
   Bubble,
   Composer,
   GiftedChat,
+  IMessage,
   InputToolbar,
   Message,
   MessageContainer,
+  MessageImage,
   MessageText,
   Send,
   SystemMessage,
@@ -15,15 +23,25 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import {GroupChannel} from '@sendbird/chat/groupChannel';
+// import {v4 as uuid} from 'uuid';
+// import 'react-native-get-random-values';
 
 import userStore from '../../../../common/store/user.store';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
-import {getMessages, sendMessage} from './services/chat.service';
+import {
+  getMessages,
+  sendMessage,
+  sendMessageImageToSendBird,
+  uploadImage,
+} from './services/chat.service';
 import {Colors} from '../../../../constants/color.const';
+import {Image} from 'react-native-elements';
+import groupStore from './../../../../common/store/group.store';
 
 // Define the type for the route params
 type ChannelUrlRouteParams = {
   channelUrl: string;
+  groupId: string;
 };
 
 // Specify the type for the route
@@ -36,11 +54,17 @@ const renderBubble = (props: any) => (
   <Bubble
     {...props}
     // renderTime={() => <Text>Time</Text>}
-    // renderTicks={() => <Text>Ticks</Text>}
+    // renderTicks={() => <Text>{props.currentMessage.image}</Text>}
     // containerStyle={{
     //   left: {borderColor: 'teal', borderWidth: 8},
     //   right: {},
     // }}
+    // renderMessageImage={() => (
+    //   <Image
+    //     style={{width: 100, height: 100}}
+    //     source={{uri: props.currentMessage.image}}
+    //   />
+    // )}
     wrapperStyle={{
       left: {
         // borderColor: 'tomato', borderWidth: 4,
@@ -54,11 +78,11 @@ const renderBubble = (props: any) => (
     tickStyle={{}}
     usernameStyle={{color: 'tomato', fontWeight: '100'}}
     containerToNextStyle={{
-      left: {borderColor: 'navy', borderWidth: 4},
+      left: {},
       right: {},
     }}
     containerToPreviousStyle={{
-      left: {borderColor: 'mediumorchid', borderWidth: 4},
+      left: {},
       right: {},
     }}
   />
@@ -95,6 +119,21 @@ const renderMessageText = (props: any) => (
   />
 );
 
+const renderMessageImage = (props: any) => (
+  <MessageImage
+    currentMessage={props}
+    containerStyle={{
+      width: 100,
+      height: 100,
+    }}
+    imageProps={{resizeMode: 'center'}}
+    imageStyle={{
+      width: 100,
+      height: 100,
+    }}
+  />
+);
+
 const renderSystemMessage = (props: any) => (
   <SystemMessage
     {...props}
@@ -112,8 +151,7 @@ const renderInputToolbar = (props: any) => (
       paddingTop: 6,
       paddingLeft: -10,
     }}
-    primaryStyle={{alignItems: 'center'}}
-  />
+    primaryStyle={{alignItems: 'center'}}></InputToolbar>
 );
 
 const renderSend = (props: any) => (
@@ -153,21 +191,22 @@ const renderComposer = (props: any) => {
 const ChatScreen = () => {
   const route = useRoute<ChannelUrlRouteProp>();
   const channelUrl = route.params.channelUrl;
-  const [messages, setMessages] = useState<
+  const groupId = route.params.groupId;
+
+  const [isMounted, setIsMounted] = useState(false);
+
+  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [selectedFilenames, setSelectedFilenames] = useState<string[]>([]);
+  const [base64Strings, setBase64Strings] = useState<string[]>([]);
+  const [fileMessages, setFileMessages] = useState<
     {
-      _id: number;
-      text: string;
-      createdAt: Date;
-      user: {
-        _id: number;
-        name: string;
-        avatar: string;
-      };
+      uri: string;
+      filename: string;
+      base64: string;
     }[]
   >([]);
-  const [selectedImage, setSelectedImage] = useState('');
-  const [imageFile, setImageFile] = useState<any>();
-  const [message, setMessage] = useState('');
+
   let channel: GroupChannel;
 
   useEffect(() => {
@@ -176,12 +215,12 @@ const ChatScreen = () => {
       .then((groupChannel: GroupChannel) => {
         channel = groupChannel;
 
-        console.log('Get channel from SB:', channel.url);
         getMessages(channel).then((messages: any) => {
-          console.log('abc msg:', messages);
-
           setMessages(messages);
         });
+
+        setIsMounted(true);
+        // groupStore.setGroup(groupId, channelUrl);
       });
   }, []);
 
@@ -192,10 +231,80 @@ const ChatScreen = () => {
     sendMessage(channel, messages[0].text);
   }, []);
 
+  const sendMessageImages = async (channel: GroupChannel) => {
+    const uploadPromises = fileMessages.map(async image => {
+      const fileExtension = image.uri.split('.').pop();
+      const base64String = `data:image/${fileExtension};base64,${image.base64}`;
+
+      const imageUrl = await uploadImage(base64String);
+      console.log('response:', imageUrl);
+
+      if (imageUrl.statusCode === 200) {
+        sendMessageImageToSendBird(channel, image.filename, imageUrl.data);
+      }
+
+      return imageUrl.data;
+    });
+
+    try {
+      const uploadedImageUrls = await Promise.all(uploadPromises);
+      return uploadedImageUrls;
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      return [];
+    }
+  };
+
+  const handleSendFileMessage = async () => {
+    setMessages(previousMessages =>
+      GiftedChat.append(
+        previousMessages,
+        fileMessages.map(image => {
+          return {
+            _id: image.uri,
+            text: '',
+            createdAt: new Date(),
+            image: image.uri,
+            user: {
+              _id: userStore.id,
+              name: userStore.name,
+            },
+          };
+        }),
+      ),
+    );
+
+    const groupChannel =
+      await SendBirdChatService.getInstance().sendbird.groupChannel.getChannel(
+        channelUrl,
+      );
+
+    channel = groupChannel;
+    // console.log('channel.url:', channel.url);
+
+    const imageUrls = await sendMessageImages(channel);
+    // const newMessages = await getMessages(channel);
+    // console.log('Get messages after send file image:', newMessages);
+  };
+
+  useEffect(() => {
+    // console.log('messages:', messages);
+  }, [messages]);
+
+  useEffect(() => {
+    // console.log('selectedImages:', selectedImages);
+    // console.log('selectedFilenames:', selectedFilenames);
+
+    if (isMounted && fileMessages.length > 0) {
+      handleSendFileMessage();
+    }
+  }, [fileMessages]);
+
   return (
     <GiftedChat
       messages={messages}
       // alignTop
+
       alwaysShowSend
       scrollToBottom
       messagesContainerStyle={{paddingBottom: 10}}
@@ -203,12 +312,16 @@ const ChatScreen = () => {
       // renderMessage={renderMessage}
       // renderMessageText={renderMessageText}
       // renderSystemMessage={renderSystemMessage}
+      // renderMessageImage={renderMessageImage}
       renderInputToolbar={renderInputToolbar}
       renderSend={renderSend}
       renderComposer={renderComposer}
+      // onSend={messages => onSend(messages)}
       onSend={messages => onSend(messages)}
       user={{
         _id: userStore.id,
+        name: userStore.name,
+        avatar: userStore.avatar,
       }}
       renderActions={() => (
         <TouchableOpacity
@@ -219,7 +332,7 @@ const ChatScreen = () => {
             await launchImageLibrary(
               // If need base64String, include this option:
               // includeBase64: true
-              {mediaType: 'mixed', includeBase64: true},
+              {mediaType: 'mixed', selectionLimit: 5, includeBase64: true},
               response => {
                 // console.log('Response = ', response);
 
@@ -229,9 +342,39 @@ const ChatScreen = () => {
                   console.log('ImagePicker Error: ', response.errorMessage);
                 } else {
                   let source: Asset[] = response.assets as Asset[];
-                  setSelectedImage(`${source[0].uri}`);
-                  setImageFile(source[0].base64);
-                  console.log('Image file:', source[0].uri);
+
+                  setFileMessages(
+                    source.map(image => {
+                      return {
+                        uri: `${image.uri}`,
+                        filename: `${image.fileName}`,
+                        base64: `${image.base64}`,
+                      };
+                    }),
+                  );
+
+                  // setSelectedImages(source.map(image => `${image.uri}`));
+                  // setSelectedFilenames(
+                  //   source.map(image => `${image.fileName}`),
+                  // );
+                  // setBase64Strings(source.map(image => `${image.base64}`));
+                  // console.log('Image file:', source);
+
+                  // setMessages(previousMessages =>
+                  //   GiftedChat.append(previousMessages, [
+                  //     {
+                  //       _id: new Date().getTime(),
+                  //       text: '',
+                  //       createdAt: new Date(),
+                  //       image: `${source[0].uri}`,
+                  //       user: {
+                  //         _id: userStore.id,
+                  //         name: userStore.name,
+                  //         avatar: userStore.avatar,
+                  //       },
+                  //     },
+                  //   ]),
+                  // );
                 }
               },
             );
@@ -247,6 +390,17 @@ const ChatScreen = () => {
           />
         </TouchableOpacity>
       )}
+      parsePatterns={linkStyle => [
+        {
+          type: 'phone',
+          style: linkStyle,
+          onPress: (phoneNumber: string) => {
+            // console.log('event', JSON.stringify(e, null, 2));
+
+            Linking.openURL(`tel:${phoneNumber}`);
+          },
+        },
+      ]}
     />
   );
 };

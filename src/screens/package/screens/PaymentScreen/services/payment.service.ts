@@ -5,24 +5,14 @@ import appStore from '../../../../../common/store/app.store';
 import userStore from '../../../../../common/store/user.store';
 import {URL_HOST} from '../../../../../core/config/api/api.config';
 
-export const checkout = async (cartList: ICartList) => {
+export const checkout = async (cartList: ICartList, method: string) => {
   // const checkoutEndpoint = `api/users/${userStore.id}/checkout`;
   const checkoutEndpoint = `api/users/checkout`;
   const reqUrl = `${URL_HOST}${checkoutEndpoint}`;
   console.log('Checkout:', reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
-
-  const reqObject = {
-    cart: cartList.cart,
-    method: {
-      type: 'EWALLET',
-      // bank_code: 'VNPAY',
-      bank_code: 'ZALOPAY',
-    },
-  };
-
-  console.log('Checkout reqObject:', reqObject);
+  console.log(cartList);
 
   try {
     const response = await axios.post(
@@ -32,7 +22,7 @@ export const checkout = async (cartList: ICartList) => {
         method: {
           type: 'EWALLET',
           // bank_code: 'VNPAY',
-          bank_code: 'ZALOPAY',
+          bank_code: method === 'ZALOPAY' ? 'ZALOPAY' : 'VNPAY',
         },
       },
       {
@@ -89,7 +79,7 @@ export const getUserById = async () => {
   }
 };
 
-export const renew = async (pkg: {}) => {
+export const renew = async (pkg: {}, method: string) => {
   const renewEndpoint = `api/users/renew/${appStore.renewGroupId}`;
   const reqUrl = `${URL_HOST}${renewEndpoint}`;
   console.log('Renew:', reqUrl);
@@ -104,7 +94,7 @@ export const renew = async (pkg: {}) => {
         method: {
           type: 'EWALLET',
           // bank_code: 'VNPAY',
-          bank_code: 'ZALOPAY',
+          bank_code: method === 'ZALOPAY' ? 'ZALOPAY' : 'VNPAY',
         },
         cart: pkg,
       },

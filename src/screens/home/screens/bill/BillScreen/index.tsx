@@ -2,17 +2,15 @@ import {Formik} from 'formik';
 import moment from 'moment';
 import {useEffect, useState} from 'react';
 import {
-  Dimensions,
   Image,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import DropDownPicker from 'react-native-dropdown-picker';
+import {Dropdown} from 'react-native-element-dropdown';
 import Modal from 'react-native-modal';
 import Toast from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -28,8 +26,8 @@ import {
 } from '../../../../../common/handle.string';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
-import {createBill} from './services/bill-service';
 import {getMembers} from '../../../../../services/group.service';
+import {createBill} from './services/bill-service';
 import styles from './styles/style';
 
 // Define the type for the route params
@@ -43,7 +41,7 @@ type GroupRouteProp = RouteProp<Record<string, GroupRouteParams>, string>;
 const BillSchema = Yup.object().shape({
   summary: Yup.string().required('Vui lòng nhập tên khoản chi tiêu'),
   date: Yup.string().required('Vui lòng chọn ngày'),
-  description: Yup.string().required('Vui lòng nhập mô tả'),
+  // description: Yup.string().required('Vui lòng nhập mô tả'),
   amount: Yup.string(),
   lender: Yup.string().required('Vui lòng chọn người cho mượn'),
   borrower: Yup.string(),
@@ -72,14 +70,12 @@ const BillScreen = ({navigation}: {navigation: any}) => {
 
   const [totalAmount, setTotalAmount] = useState(0);
 
-  // State to open and close the dropdown picker
-  const [openLender, setOpenLender] = useState(false);
-  const [openBorrowers, setOpenBorrowers] = useState(false);
+  const [isFocus, setIsFocus] = useState(false);
 
-  const [lender, setLender] = useState(null);
+  const [lender, setLender] = useState('');
   const [lenders, setLenders] = useState([{label: '', value: ''}]);
 
-  const [borrower, setBorrower] = useState(null);
+  const [borrower, setBorrower] = useState('');
   const [borrowers, setBorrowers] = useState([{label: '', value: ''}]);
 
   const [selectedBorrower, setCurrentBorrower] = useState({
@@ -88,7 +84,6 @@ const BillScreen = ({navigation}: {navigation: any}) => {
     name: '',
     avatar: '',
   });
-  const [amount, setAmount] = useState(0);
   const [selectedBorrowers, setSelectedBorrowers] = useState<any[]>([]);
 
   const getMemberList = async () => {
@@ -128,6 +123,10 @@ const BillScreen = ({navigation}: {navigation: any}) => {
     );
   }, [selectedBorrowers]);
 
+  useEffect(() => {
+    console.log('totalAmount', totalAmount);
+  }, [totalAmount]);
+
   // If user changes the lender, remove the lender from the selected borrowers
   useEffect(() => {
     console.log('lender', lender);
@@ -140,7 +139,6 @@ const BillScreen = ({navigation}: {navigation: any}) => {
       setSelectedBorrowers(
         selectedBorrowers.filter((borrower: any) => borrower.email !== lender),
       );
-      setAmount(0);
     }
   }, [lender]);
 
@@ -192,7 +190,6 @@ const BillScreen = ({navigation}: {navigation: any}) => {
             text1: 'Tạo khoản chi tiêu thành công',
             autoHide: true,
             visibilityTime: 1000,
-            topOffset: 30,
             onHide: () => {
               navigation.navigate(
                 RouteNames.BILL_MANAGEMENT as never,
@@ -205,7 +202,6 @@ const BillScreen = ({navigation}: {navigation: any}) => {
             type: 'error',
             text1: response.message,
             autoHide: false,
-            topOffset: 30,
           });
         }
       }}
@@ -328,9 +324,9 @@ const BillScreen = ({navigation}: {navigation: any}) => {
               />
             )}
           </View>
-          {touched.description && errors.description && (
+          {/* {touched.description && errors.description && (
             <Text style={styles.error}>{errors.description}</Text>
-          )}
+          )} */}
 
           <View
             style={{
@@ -363,46 +359,33 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                 {splitString(totalAmount.toString())}
               </Text>
               <Text style={{fontSize: 20, color: Colors.text.lightgrey}}>
-                VND
+                VNĐ
               </Text>
             </View>
           </View>
 
           <Text style={styles.title}>Người cho mượn</Text>
           <View style={styles.lenderContainer}>
-            <DropDownPicker
-              containerStyle={{
-                width: '100%',
-                zIndex: 1000,
-                padding: 0,
-                marginBottom: 5,
-              }}
-              dropDownContainerStyle={{
-                borderColor: Colors.border.lightgrey,
-                borderRadius: 0,
-              }}
+            <Dropdown
               style={{
-                borderWidth: 0,
-                borderBottomWidth: 1,
-                borderRadius: 0,
-                paddingLeft: 0,
-                paddingRight: 0,
-                minHeight: 40,
-                borderColor: Colors.border.lightgrey,
+                width: '100%',
               }}
-              selectedItemLabelStyle={{color: Colors.title.orange}}
-              open={openLender}
+              data={lenders}
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocus ? 'Chọn người cho mượn' : '...'}
+              placeholderStyle={{
+                color: Colors.text.lightgrey,
+              }}
               value={lender}
-              items={lenders}
-              placeholder="Chọn người cho mượn"
-              placeholderStyle={{color: Colors.text.lightgrey}}
-              setOpen={setOpenLender}
-              setValue={setLender}
-              setItems={setLenders}
-              searchable={true}
-              onSelectItem={(item: any) => {
-                setLender(item);
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                setLender(item.value);
                 setFieldValue('lender', item.value);
+
+                setIsFocus(false);
 
                 // Remove lender from borrowers
                 const index = borrowers.findIndex(
@@ -432,37 +415,30 @@ const BillScreen = ({navigation}: {navigation: any}) => {
           <Text style={[styles.title, {marginTop: 5}]}>Người mượn</Text>
           <View style={styles.borrowerContainer}>
             <View style={[styles.addBorrowerContainer]}>
-              <DropDownPicker
-                containerStyle={{
-                  width: '100%',
-                  zIndex: 1000,
-                  padding: 0,
-                  marginBottom: 5,
-                }}
-                dropDownContainerStyle={{
-                  borderColor: Colors.border.lightgrey,
-                  borderRadius: 0,
-                }}
+              <Dropdown
                 style={{
-                  borderWidth: 0,
-                  borderBottomWidth: 1,
-                  borderRadius: 0,
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                  minHeight: 40,
-                  borderColor: Colors.border.lightgrey,
+                  width: '100%',
                 }}
-                selectedItemLabelStyle={{color: Colors.title.orange}}
-                zIndex={100000}
-                open={openBorrowers}
+                data={borrowers}
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Chọn người mượn' : '...'}
+                placeholderStyle={{
+                  color: Colors.text.lightgrey,
+                }}
+                itemTextStyle={{
+                  color: Colors.text.grey,
+                  fontSize: 14,
+                }}
                 value={borrower}
-                items={borrowers}
-                placeholder="Chọn người mượn"
-                placeholderStyle={{color: Colors.text.lightgrey}}
-                setOpen={setOpenBorrowers}
-                setValue={setBorrower}
-                setItems={setBorrowers}
-                onSelectItem={(item: any) => {
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+                onChange={item => {
+                  setBorrower(item.value);
+
+                  setIsFocus(false);
+
                   setFieldValue('borrower', item.value);
 
                   //Find borrower in members
@@ -489,20 +465,20 @@ const BillScreen = ({navigation}: {navigation: any}) => {
               <TextInput
                 onChangeText={value => {
                   setFieldValue('amount', value);
-                  setAmount(parseFloat(value));
                 }}
                 // onBlur={() => setFieldTouched('amount')}
                 // onChangeText={value => setAmount(parseFloat(value))}
                 style={{
                   width: '70%',
                   textAlign: 'left',
+                  color: Colors.text.grey,
                 }}
                 placeholder={'Nhập số tiền cần trả'}
                 placeholderTextColor={Colors.text.lightgrey}
                 keyboardType="numeric"
-                value={values.amount}
+                value={splitString(values.amount)}
               />
-              <Text style={{color: Colors.text.lightgrey}}>VND</Text>
+              <Text style={{color: Colors.text.lightgrey}}>VNĐ</Text>
             </View>
             {touched.amount && selectedBorrowers.length === 0 && (
               <Text style={styles.error}>Vui lòng nhập số tiền cần trả</Text>
@@ -514,6 +490,9 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                 // handleReset();
                 console.log('selectedBorrower', selectedBorrower);
                 console.log('amount', values.amount);
+
+                const amountInt = parseInt(values.amount.replace('.', ''));
+                console.log('amount after parse int', amountInt);
 
                 if (selectedBorrower._id && values.amount) {
                   // Check if borrower existed in selectedBorrowers
@@ -530,7 +509,7 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                         email: selectedBorrower.email,
                         name: selectedBorrower.name,
                         avatar: selectedBorrower.avatar,
-                        amount: values.amount,
+                        amount: amountInt,
                         status: 'PENDING',
                       },
                     ]);
@@ -543,12 +522,14 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                           email: selectedBorrower.email,
                           name: selectedBorrower.name,
                           avatar: selectedBorrower.avatar,
-                          amount: values.amount,
+                          amount: amountInt,
                           status: 'PENDING',
                         },
                       ]);
                     }
                   }
+
+                  setFieldValue('amount', '');
                 }
               }}>
               <Text style={styles.addBorrowerButtonText}>Thêm</Text>
@@ -561,25 +542,32 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                   justifyContent: 'center',
                   width: '100%',
                 }}>
-                {selectedBorrowers.map((borrower: any, index) => {
+                {selectedBorrowers.map((selectedBorrower: any, index) => {
                   const viStatus = changeStatusBillToVietnamese(
-                    borrower.status,
+                    selectedBorrower.status,
                   );
                   return (
-                    <View key={index} style={styles.borrowersContainer}>
+                    <View
+                      key={selectedBorrower._id}
+                      style={styles.borrowersContainer}>
                       <Image
-                        source={{uri: borrower?.avatar || IMAGE_URI_DEFAULT}}
+                        source={{
+                          uri: selectedBorrower?.avatar || IMAGE_URI_DEFAULT,
+                        }}
                         style={styles.borrowerAvatar}
                       />
                       <View style={styles.borrowerInfo}>
                         <View style={styles.borrowerInfoRow}>
                           <Text style={styles.headingText}>Người mượn: </Text>
-                          <Text style={styles.text}>{borrower.name}</Text>
+                          <Text style={styles.text}>
+                            {selectedBorrower.name}
+                          </Text>
                         </View>
                         <View style={styles.borrowerInfoRow}>
                           <Text style={styles.headingText}>Số tiền mượn: </Text>
                           <Text style={styles.text}>
-                            {splitString(borrower.amount)} VND
+                            {splitString(selectedBorrower.amount.toString())}{' '}
+                            VNĐ
                           </Text>
                         </View>
                         <View style={styles.borrowerInfoRow}>
@@ -590,9 +578,22 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                       <TouchableOpacity>
                         <Ionicons
                           onPress={() => {
-                            // const borrowerIndex = borrowers.findIndex(
-                            //   (borrower: any) => borrower === object,
-                            // );
+                            console.log(selectedBorrower._id);
+
+                            const borrowerIndex = selectedBorrowers.findIndex(
+                              (borrower: any) =>
+                                selectedBorrower._id === borrower._id,
+                            );
+
+                            // Remove borrower from selectedBorrowers
+                            if (borrowerIndex >= 0) {
+                              setSelectedBorrowers(
+                                selectedBorrowers.filter(
+                                  (borrower: any) =>
+                                    borrower._id !== selectedBorrower._id,
+                                ),
+                              );
+                            }
                           }}
                           name={'remove-circle'}
                           style={styles.deleteIcon}
@@ -620,7 +621,6 @@ const BillScreen = ({navigation}: {navigation: any}) => {
             onPress={handleSubmit}>
             <Text style={styles.buttonText}>Tạo</Text>
           </TouchableOpacity>
-          <Toast position="top" />
         </ScrollView>
       )}
     </Formik>
