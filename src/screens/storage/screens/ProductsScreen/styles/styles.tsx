@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   productItemContainer: {
+    position: 'relative',
     width: '90%',
     backgroundColor: Colors.background.white,
     borderRadius: 10,
@@ -33,6 +34,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     // justifyContent: 'center',
     // padding: 10,
+    borderColor: 'transparent', // Add this to remove default highlight effect
+  },
+  selectedItemHighlight: {
+    // ... Your existing styles for the selectedItemHighlight
+    borderColor: '#FFA500',
+    borderWidth: 2,
+    borderRadius: 5,
+    zIndex: 3,
   },
   productInfoContainer: {
     width: '70%',
@@ -53,6 +62,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     borderTopLeftRadius: 10,
   },
+
   text: {
     fontSize: 14,
     color: Colors.text.grey,

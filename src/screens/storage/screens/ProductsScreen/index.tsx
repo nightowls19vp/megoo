@@ -31,6 +31,7 @@ import {
 import * as i from '../../services/items.service';
 import {PropsProductsScreen} from './props-products-screen';
 import styles from './styles/styles';
+import BottomMenu from './components/bottom-menu';
 
 const ProductsScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<PropsProductsScreen>();
@@ -39,6 +40,8 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [items, setItems] = useState<IItem[]>([]);
   const [showCamera, setShowCamera] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [bottomMenuVisible, setBottomMenuVisible] = useState(false);
 
   const devices = useCameraDevices();
   const device = devices.back;
@@ -177,7 +180,16 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
 
   const renderItem = (item: IItem) => {
     return (
-      <TouchableOpacity style={styles.productItemContainer} key={item.id}>
+      <TouchableOpacity
+        style={[
+          styles.productItemContainer,
+          selectedItemId === item.id && styles.selectedItemHighlight,
+        ]}
+        key={item.id}
+        onLongPress={() => {
+          setSelectedItemId(item.id!);
+          setBottomMenuVisible(true);
+        }}>
         <Image
           source={{
             uri: item?.image || IMAGE_URI_DEFAULT,
@@ -346,6 +358,29 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
             </Text>
           </View>
         )}
+      />
+      <BottomMenu
+        isVisible={bottomMenuVisible}
+        onClose={() => {
+          setBottomMenuVisible(false);
+          setSelectedItemId(null);
+        }}
+        onUse={() => {
+          // Handle "Use" option
+          setBottomMenuVisible(false);
+        }}
+        onUpdate={() => {
+          // Handle "Update" option
+          setBottomMenuVisible(false);
+        }}
+        onDelete={() => {
+          // Handle "Delete" option
+          setBottomMenuVisible(false);
+        }}
+        onDetail={() => {
+          // Handle "Detail" option
+          setBottomMenuVisible(false);
+        }}
       />
     </View>
   );
