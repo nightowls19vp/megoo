@@ -37,7 +37,9 @@ const PurchaseLocationScreen = ({navigation}: {navigation: any}) => {
     ps.getPurchaseLocationPaginated({
       groupId: groupStore.id,
     }).then(res => {
-      setLocations(res.data);
+      if (res && res.data && res.data.length > 0) {
+        setLocations(res.data);
+      }
     });
 
     // reset searchActive when unmount

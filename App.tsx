@@ -13,6 +13,7 @@ import {View} from 'react-native';
 import Toast from 'react-native-toast-message';
 
 import notifee from '@notifee/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -24,9 +25,6 @@ import RoutesName from './src/constants/route-names.const';
 import LoginScreen from './src/screens/login/screens/LoginScreen';
 import RegisterScreen from './src/screens/register/RegisterScreen';
 import SplashScreen from './src/screens/splash/SplashScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import Toast from 'react-native-toast-message';
 
 const Stack = createNativeStackNavigator();
 
