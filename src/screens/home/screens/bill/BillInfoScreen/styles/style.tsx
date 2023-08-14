@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.buttonBackground.red,
     borderRadius: 10,
     padding: 10,
-    marginTop: 30,
+    // marginTop: 10,
   },
   modalContainer: {
     display: 'flex',

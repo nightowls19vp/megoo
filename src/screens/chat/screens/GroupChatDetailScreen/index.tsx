@@ -13,7 +13,7 @@ import Foundation from 'react-native-vector-icons/Foundation';
 
 import {RouteProp, useRoute} from '@react-navigation/native';
 
-import {getMembers} from '../../../../services/group.service';
+import {getGroupById, getMembers} from '../../../../services/group.service';
 import {Colors} from '../../../../constants/color.const';
 import userStore from '../../../../common/store/user.store';
 
@@ -31,6 +31,18 @@ type GroupChatRouteProp = RouteProp<
 const GroupChatDetailScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupChatRouteProp>();
   const {channelUrl, groupId} = route.params;
+
+  const [group, setGroup] = useState<{
+    _id: string;
+    name: string;
+    avatar: string;
+    channelUrl: string;
+  }>({
+    _id: '',
+    name: '',
+    avatar: '',
+    channelUrl: '',
+  });
 
   const [members, setMembers] = useState<
     {
@@ -69,22 +81,46 @@ const GroupChatDetailScreen = ({navigation}: {navigation: any}) => {
         );
       }
     } catch (error) {
-      console.log(error);
+      console.log('Get members error:', error);
+    }
+  };
+
+  const getGroupDetail = async () => {
+    try {
+      const response = await getGroupById(groupId);
+      // console.log('Get group response', response);
+
+      setGroup({
+        _id: response.group._id,
+        name: response.group.name,
+        avatar: response.group.avatar,
+        channelUrl: response.group.channel,
+      });
+    } catch (error) {
+      console.log('Get group error:', error);
     }
   };
 
   useEffect(() => {
     console.log(route.params);
-
+    getGroupDetail();
     getGroupMembers();
   }, []);
 
+  // useEffect(() => {
+  //   console.log(members);
+  // }, [members]);
+
   useEffect(() => {
-    console.log(members);
-  }, [members]);
+    console.log(group);
+  }, [group]);
 
   return (
     <View style={styles.container}>
+      <View style={styles.groupContainer}>
+        <Image source={{uri: group?.avatar}} style={styles.groupAvatar} />
+        <Text style={styles.groupName}>{group.name}</Text>
+      </View>
       <Text style={styles.title}>Danh sách thành viên</Text>
       <View style={styles.memberListContainer}>
         {members.map((member, index) => {
@@ -138,6 +174,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: Dimensions.get('window').width,
     minHeight: '100%',
+    paddingVertical: 20,
+  },
+  groupContainer: {
+    width: '90%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  groupAvatar: {
+    width: 150,
+    height: 150,
+    borderRadius: 150 / 2,
+    borderWidth: 1,
+    borderColor: Colors.border.lightgrey,
+  },
+  groupName: {
+    width: '80%',
+    textAlign: 'center',
+    fontSize: 18,
+    color: Colors.title.grey,
+    fontWeight: 'bold',
   },
   avatar: {
     width: 40,

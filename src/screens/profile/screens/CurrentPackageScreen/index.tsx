@@ -15,6 +15,7 @@ import Toast from 'react-native-toast-message';
 import Foundation from 'react-native-vector-icons/Foundation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
+import Modal from 'react-native-modal';
 
 import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
 
@@ -28,8 +29,9 @@ import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {getGroupById} from '../../../../services/group.service';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
-import {activate, invite} from './services/group.info.service';
+import {activate, deleteMember, invite} from './services/group.info.service';
 import styles from './styles/style';
+import userStore from '../../../../common/store/user.store';
 
 const height = Dimensions.get('window').height;
 
@@ -76,11 +78,18 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
     ],
   });
 
+  const [superUser, setSuperUser] = useState({
+    _id: '',
+    role: '',
+  });
+
   const [emails, setEmails] = useState<string[]>([]);
 
-  // const groupId = route.params?.groupId;
-  // console.log('Group id from route:', groupId);
-  console.log('Group id from route:', groupStore.id);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedMember, setSelectedMember] = useState({
+    _id: '',
+    name: '',
+  });
 
   const getSelectedGroup = async () => {
     // Get group info by id
@@ -112,12 +121,8 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
         status: groupRes?.group.packages[0].status
           ? groupRes?.group.packages[0].status
           : '',
-        startDate: activePackage?.startDate
-          ? dateFormat(activePackage?.startDate)
-          : '',
-        endDate: activePackage?.endDate
-          ? dateFormat(activePackage?.endDate)
-          : '',
+        startDate: '',
+        endDate: '',
         members: groupRes?.group?.members ? groupRes?.group?.members : [],
       });
     } else {
@@ -143,6 +148,22 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
           ? dateFormat(activePackage?.endDate)
           : '',
         members: groupRes?.group.members ? groupRes?.group.members : [],
+      });
+    }
+
+    const superUser = groupRes?.group.members.find(
+      (user: any) => user.role === 'Super User',
+    );
+
+    if (superUser) {
+      setSuperUser({
+        _id: superUser.user._id ? superUser.user._id : '',
+        role: superUser.role ? superUser.role : '',
+      });
+    } else {
+      setSuperUser({
+        _id: '',
+        role: '',
       });
     }
   };
@@ -201,6 +222,10 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
       };
     }, []),
   );
+
+  useEffect(() => {
+    console.log('superUser:', superUser);
+  }, [superUser]);
 
   return (
     <KeyboardAvoidingView behavior={'position'} keyboardVerticalOffset={20}>
@@ -363,31 +388,57 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
-                    gap: 10,
+                    justifyContent: 'space-between',
+                    // gap: 10,
                   }}>
-                  <Image
-                    source={{uri: member.user.avatar}}
-                    style={styles.userAvatar}
-                  />
-                  <View style={styles.userNameContainer}>
-                    <Text
-                      style={
-                        member.role !== 'Super User'
-                          ? styles.infoText
-                          : styles.superUserText
-                      }>
-                      {member.user.name}
-                    </Text>
-                    {member.role === 'Super User' ? (
-                      <Foundation
-                        name="crown"
-                        size={20}
-                        color={Colors.icon.orange}
-                      />
-                    ) : (
-                      false
-                    )}
+                  <View
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 10,
+                    }}>
+                    <Image
+                      source={{uri: member.user.avatar}}
+                      style={styles.userAvatar}
+                    />
+                    <View style={styles.userNameContainer}>
+                      <Text
+                        style={
+                          member.role !== 'Super User'
+                            ? styles.infoText
+                            : styles.superUserText
+                        }>
+                        {member.user.name}
+                      </Text>
+                      {member.role === 'Super User' ? (
+                        <Foundation
+                          name="crown"
+                          size={20}
+                          color={Colors.icon.orange}
+                        />
+                      ) : (
+                        false
+                      )}
+                    </View>
                   </View>
+                  {member.role === 'User' && userStore.id === superUser._id ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setIsModalVisible(true);
+                        setSelectedMember({
+                          _id: member.user._id,
+                          name: member.user.name,
+                        });
+                      }}>
+                      <Ionicons
+                        name={'remove-circle'}
+                        style={styles.removeIcon}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    false
+                  )}
                 </View>
               );
             })}
@@ -405,7 +456,10 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
               }}
               validationSchema={InviteSchema}
               onSubmit={values => {
-                setEmails(prevMembers => [...prevMembers, values.email]);
+                if (values.email === '') {
+                } else {
+                  setEmails(prevMembers => [...prevMembers, values.email]);
+                }
                 // setFieldValue('email', '');
               }}>
               {({
@@ -437,7 +491,17 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                       <TextInput
                         onChangeText={value => {
                           setFieldValue('email', value);
+                          if (value === '') {
+                            setFieldTouched('email');
+                          } else {
+                            setFieldTouched('email', false);
+                          }
                         }}
+                        editable={
+                          group.noOfMember !== group.members.length
+                            ? true
+                            : false
+                        }
                         // onSubmitEditing={handleSubmit}
                         onBlur={() => setFieldTouched('email')}
                         style={styles.inputText}
@@ -455,7 +519,11 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                         />
                       )}
                     </View>
+
                     <TouchableOpacity
+                      disabled={
+                        group.noOfMember !== group.members.length ? false : true
+                      }
                       onPress={handleSubmit}
                       style={styles.addButton}>
                       <Text style={styles.addButtonText}>Thêm</Text>
@@ -465,6 +533,12 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                   {touched.email && errors.email && (
                     <Text style={styles.errorText}>{errors.email}</Text>
                   )}
+
+                  {touched.email &&
+                    values.email === '' &&
+                    errors.email?.length === 0 && (
+                      <Text style={styles.errorText}>Vui lòng nhập email</Text>
+                    )}
 
                   <View>
                     {emails.map((object, index) => {
@@ -523,7 +597,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                               text1: 'Mời thành viên thành công',
                               autoHide: true,
                               visibilityTime: 1000,
-                              topOffset: height * 0.05,
+                              topOffset: 20,
                               // onHide: () => {},
                             });
                           } else {
@@ -568,6 +642,54 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
           </>
         ) : null}
       </ScrollView>
+
+      <Modal isVisible={isModalVisible}>
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalText}>
+            Xóa {selectedMember.name} khỏi nhóm?
+          </Text>
+
+          <View style={styles.modalButtonContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                setIsModalVisible(!isModalVisible);
+              }}
+              style={{
+                alignItems: 'center',
+              }}>
+              <Text style={{fontSize: 16, color: Colors.text.orange}}>Huỷ</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={async () => {
+                setIsModalVisible(!isModalVisible);
+
+                const response = await deleteMember(
+                  group._id,
+                  selectedMember._id,
+                );
+                console.log('Delete member response:', response);
+
+                if (response.statusCode === 200) {
+                  Toast.show({
+                    type: 'success',
+                    text1: 'Xóa thành viên thành công',
+                    autoHide: true,
+                    visibilityTime: 1000,
+                    topOffset: 20,
+                    onHide: () => {
+                      getSelectedGroup();
+                    },
+                  });
+                }
+              }}
+              style={{
+                alignItems: 'center',
+              }}>
+              <Text style={{fontSize: 16, color: 'red'}}>Xóa</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <Toast position="top" />
     </KeyboardAvoidingView>
   );

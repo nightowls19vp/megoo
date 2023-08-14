@@ -25,7 +25,8 @@ import {
   deleteBill,
   getBillInfo,
   updateBillInfo,
-  updateBorrowersStatus,
+  updateBorrowersStatusByLender,
+  updateBorrowerStatus,
 } from './services/bill-info-service';
 import styles from './styles/style';
 import userStore from '../../../../../common/store/user.store';
@@ -51,7 +52,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
   const [summary, setSummary] = useState('');
   const [description, setDescription] = useState('');
 
-  const [borrowerStatus, setBorrowerStatus] = useState<string[]>([]);
+  const [borrowersStatus, setBorrowersStatus] = useState<string[]>([]);
   const [status, setStatus] = useState([
     {label: 'Chờ thanh toán', value: 'PENDING'},
     {label: 'Đã xác nhận', value: 'APPROVED'},
@@ -88,7 +89,8 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
 
   const getBill = async () => {
     const bill = await getBillInfo(billId);
-    console.log('bill', JSON.stringify(bill, null, 2));
+    // console.log('bill', JSON.stringify(bill, null, 2));
+    console.log('bill id', bill?.billing?._id);
     setBill({
       _id: bill?.billing?._id ?? '',
       summary: bill?.billing?.summary ?? '',
@@ -117,15 +119,23 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
 
     setSummary(bill?.billing?.summary ?? '');
     setDescription(bill?.billing?.description ?? '');
-    setBorrowerStatus(
+    setBorrowersStatus(
       bill?.billing?.borrowers.map((borrower: any) => borrower.status),
     );
     setDropdownStates(bill?.billing?.borrowers.map((borrower: any) => false));
   };
 
-  const updateStatus = async (borrowers: {user: string; status: string}[]) => {
+  const updateStatusByLender = async (
+    borrowers: {user: string; status: string}[],
+  ) => {
     console.log('borrowers:', JSON.stringify(borrowers, null, 2));
-    const response = await updateBorrowersStatus(billId, borrowers);
+    const response = await updateBorrowersStatusByLender(billId, borrowers);
+    console.log('response', response);
+  };
+
+  const updateStatusByBorrower = async (status: string) => {
+    console.log('status:', status);
+    const response = await updateBorrowerStatus(billId, status);
     console.log('response', response);
   };
 
@@ -147,21 +157,29 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
   }, [summary]);
 
   useEffect(() => {
-    console.log('borrowerStatus:', borrowerStatus);
+    console.log('borrowerStatus:', borrowersStatus);
 
-    borrowerStatus.map((status: string, index) => {
+    borrowersStatus.map((status: string, index) => {
       if (status !== bill.borrowers[index].status) {
         console.log(status, bill.borrowers[index].status);
-        const borrowers = [
-          {
-            user: bill.borrowers[index].borrower._id,
-            status: status,
-          },
-        ];
-        updateStatus(borrowers);
+        if (userStore.id === bill.lender._id) {
+          console.log('Lender changes status');
+
+          const borrowers = [
+            {
+              user: bill.borrowers[index].borrower._id,
+              status: status,
+            },
+          ];
+          updateStatusByLender(borrowers);
+        } else if (userStore.id === bill.borrowers[index].borrower._id) {
+          console.log('borrower changes status');
+
+          updateStatusByBorrower(status);
+        }
       }
     });
-  }, [borrowerStatus]);
+  }, [borrowersStatus]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -303,7 +321,8 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                   </View>
                   <View style={[styles.infoRow, {alignItems: 'center'}]}>
                     <Text style={styles.headingText}>Trạng thái:</Text>
-                    {userStore.id === bill.lender._id ? (
+                    {userStore.id === bill.borrowers[index].borrower._id ||
+                    userStore.id === bill.lender._id ? (
                       <Dropdown
                         style={{
                           width: '60%',
@@ -316,15 +335,15 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                         placeholderStyle={{
                           color: Colors.text.lightgrey,
                         }}
-                        value={borrowerStatus[index]}
+                        value={borrowersStatus[index]}
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
                         onChange={item => {
                           // setValue(item.value);
 
-                          const newStatus = [...borrowerStatus];
+                          const newStatus = [...borrowersStatus];
                           newStatus[index] = item.value;
-                          setBorrowerStatus(newStatus);
+                          setBorrowersStatus(newStatus);
                         }}
                       />
                     ) : (

@@ -109,13 +109,13 @@ export const deleteBill = async (billId: string) => {
  * @param borrowers
  * @return response from server
  */
-export const updateBorrowersStatus = async (
+export const updateBorrowersStatusByLender = async (
   billId: string,
   borrowers: {user: string; status: string}[],
 ) => {
-  const billEndpoint = `api/pkg-mgmt/bill/${billId}/status`;
+  const billEndpoint = `api/pkg-mgmt/bill/${billId}/status/lender`;
   const reqUrl = `${URL_HOST}${billEndpoint}`;
-  console.log("Update borrowes's status:", reqUrl);
+  console.log("Update borrowers's status:", reqUrl);
 
   const accessToken = await AsyncStorage.getItem('accessToken');
 
@@ -124,6 +124,32 @@ export const updateBorrowersStatus = async (
       reqUrl,
       {
         borrowers: borrowers,
+      },
+      {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.log('Update bill status error: ', error);
+  }
+};
+
+export const updateBorrowerStatus = async (billId: string, status: string) => {
+  const billEndpoint = `api/pkg-mgmt/bill/${billId}/status/borrower`;
+  const reqUrl = `${URL_HOST}${billEndpoint}`;
+  console.log("Update borrower's status:", reqUrl);
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+
+  try {
+    const response = await axios.put(
+      reqUrl,
+      {
+        status: status,
       },
       {
         headers: {

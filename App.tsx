@@ -25,8 +25,6 @@ import LoginScreen from './src/screens/login/screens/LoginScreen';
 import RegisterScreen from './src/screens/register/RegisterScreen';
 import SplashScreen from './src/screens/splash/SplashScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import Toast from 'react-native-toast-message';
 
 const Stack = createNativeStackNavigator();
 

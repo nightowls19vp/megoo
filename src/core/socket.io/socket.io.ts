@@ -5,6 +5,8 @@ import {displayNotification} from '../push-notifee/notifee';
 import userStore from '../../common/store/user.store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import Toast from 'react-native-toast-message';
+import {useNavigation} from '@react-navigation/native';
 
 export let socket: Socket;
 
@@ -37,6 +39,7 @@ export function onConnect() {
 export async function listen() {
   // todo: listen for socket events
   onZpCallback();
+  onVnpCallback();
 
   onCreatedBill();
   onUpdatedBill();
@@ -61,6 +64,43 @@ export function onZpCallback() {
       'Thanh toán thành công',
       `Giao dịch ${dataObj.app_trans_id} của bạn đã thanh toán thành công.`,
     );
+  });
+}
+
+export function onVnpCallback() {
+  socket.on('vnpCallback', async (data: any) => {
+    console.log('vnpCallback data:', data);
+
+    // const dataObj = JSON.parse(data);
+    // console.log('dataObj app trans id:', dataObj.app_trans_id);
+
+    // Request permissions (required for iOS)
+    // await notifee.requestPermission();
+
+    displayNotification(
+      'Thanh toán thành công',
+      `Giao dịch của bạn đã thanh toán thành công.`,
+    );
+
+    Toast.show({
+      type: 'success',
+      text1: 'Thanh toán thành công',
+      autoHide: true,
+      visibilityTime: 3000,
+      topOffset: 20,
+      onHide: () => {
+        const navigation = useNavigation();
+        navigation.navigate(
+          'PROFILE_STACK' as never,
+          {
+            params: {
+              screen: 'PROFILE',
+              activeTab: 'group',
+            },
+          } as never,
+        );
+      },
+    });
   });
 }
 

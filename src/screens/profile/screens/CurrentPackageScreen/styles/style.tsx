@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 200,
     height: 200,
-    // borderRadius: 200 / 2,
+    borderRadius: 200 / 2,
     borderWidth: 1,
     borderColor: Colors.border.lightgrey,
   },
@@ -183,6 +183,28 @@ const styles = StyleSheet.create({
     fontWeight: '200',
     color: 'red',
     fontSize: 24,
+  },
+  modalContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.background.white,
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalText: {
+    width: '100%',
+    fontSize: 18,
+    color: Colors.text.grey,
+    textAlign: 'left',
+  },
+  modalButtonContainer: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 30,
   },
 });
 

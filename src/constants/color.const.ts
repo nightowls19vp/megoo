@@ -30,6 +30,7 @@ export const Colors = {
 
   title: {
     orange: '#F58F00',
+    grey: '#49454F',
   },
 
   text: {

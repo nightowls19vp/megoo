@@ -161,7 +161,7 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
                 console.log('ZALOPAY');
 
                 const response = await checkout(selectedItemList, 'ZALOPAY');
-                console.log('Checkout response:', response);
+                console.log('Checkout ZALOPAY response:', response);
                 const order = response.order;
                 const trans = response.trans;
                 console.log('order res:', order);
@@ -212,7 +212,26 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
               } else if (selectedId === '2') {
                 console.log('VNPAY');
                 const response = await checkout(selectedItemList, 'VNPAY');
-                console.log('Checkout response:', response);
+                console.log('Checkout VNPAY response:', response);
+
+                // Open URL for payment
+                Linking.openURL(response.data);
+
+                // Toast.show({
+                //   type: 'success',
+                //   text1: 'Thanh toán thành công',
+                //   autoHide: true,
+                //   visibilityTime: 3000,
+                //   topOffset: 20,
+                //   onHide: () => {
+                //     navigation.navigate('PROFILE_STACK', {
+                //       params: {
+                //         screen: 'PROFILE',
+                //         activeTab: 'group',
+                //       },
+                //     });
+                //   },
+                // });
               }
             }}>
             <Text style={styles.buttonText}>Thanh toán</Text>

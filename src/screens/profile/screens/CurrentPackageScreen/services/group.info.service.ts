@@ -61,3 +61,27 @@ export const invite = async (groupId: string, emails: string[]) => {
     console.log('Invite error:', error);
   }
 };
+
+export const deleteMember = async (groupId: string, userId: string) => {
+  const deleteMemberEndpoint = `api/pkg-mgmt/gr/${groupId}/memb`;
+  const reqUrl = `${URL_HOST}${deleteMemberEndpoint}`;
+  console.log('Delete member:', reqUrl);
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+
+  try {
+    const response = await axios.delete(reqUrl, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: {
+        user: userId,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log('Delete member error:', error);
+  }
+};
