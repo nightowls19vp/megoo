@@ -62,7 +62,38 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     borderTopLeftRadius: 10,
   },
-
+  prodTag: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    borderColor: Colors.border.lightgrey,
+    borderWidth: 1,
+    backgroundColor: Colors.background.white,
+    padding: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    width: 100,
+  },
+  prodTagText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: Colors.text.grey,
+    letterSpacing: 1.2,
+    textTransform: 'capitalize',
+    textAlign: 'center',
+  },
+  prodTagRunningOutOfStock: {
+    borderColor: Colors.border.orange,
+  },
+  prodTagTextRunningOutOfStock: {
+    color: Colors.text.orange,
+  },
+  prodTagOutOfStock: {
+    borderColor: Colors.border.red,
+  },
+  prodTagTextOutOfStock: {
+    color: Colors.text.red,
+  },
   text: {
     fontSize: 14,
     color: Colors.text.grey,
@@ -72,6 +103,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.text.lightgrey,
     textAlign: 'justify',
+    fontWeight: 'bold',
   },
   modal: {
     flex: 1,
