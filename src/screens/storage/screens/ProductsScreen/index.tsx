@@ -58,6 +58,15 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
     },
   });
 
+  const tags = {
+    runningOutOfStock: {
+      text: 'Sắp hết',
+    },
+    outOfStock: {
+      text: 'Hết',
+    },
+  };
+
   const [resDto, setResDto] = useState<IGetItemsPaginatedRes>({
     data: [],
     message: '',
@@ -178,6 +187,31 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
     }
   };
 
+  const renderTag = (item: IItem) => {
+    if (item.quantity !== undefined && item.quantity === 0) {
+      console.log('renderTag: ', item.quantity);
+
+      return (
+        <View style={[styles.prodTag, styles.prodTagOutOfStock]}>
+          <Text style={[styles.prodTagText, styles.prodTagTextOutOfStock]}>
+            {tags.outOfStock.text}
+          </Text>
+        </View>
+      );
+    } else if (item.quantity !== undefined && item.quantity <= 3) {
+      return (
+        <View style={[styles.prodTag, styles.prodTagRunningOutOfStock]}>
+          <Text
+            style={[styles.prodTagText, styles.prodTagTextRunningOutOfStock]}>
+            {tags.runningOutOfStock.text}
+          </Text>
+        </View>
+      );
+    } else {
+      return null;
+    }
+  };
+
   const renderItem = (item: IItem) => {
     return (
       <TouchableOpacity
@@ -187,6 +221,8 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
         ]}
         key={item.id}
         onLongPress={() => {
+          console.log('onLongPress item: ', item.id);
+
           setSelectedItemId(item.id!);
           setBottomMenuVisible(true);
         }}>
@@ -196,7 +232,9 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
           }}
           style={styles.prodImg}
         />
+
         <View style={styles.productInfoContainer}>
+          {renderTag(item)}
           <View style={styles.productInfo}>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>
               Tên sản phẩm:{' '}
@@ -205,7 +243,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
               {item?.groupProduct?.name || 'Chưa có tên sản phẩm'}
             </Text>
           </View>
-          {item?.quantity ? (
+          {item?.quantity || item.quantity === 0 ? (
             <View style={styles.productInfo}>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
                 Số lượng:{' '}

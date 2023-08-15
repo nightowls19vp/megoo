@@ -29,7 +29,7 @@ const BottomMenu: React.FC<Props> = ({
       transparent={true}
       visible={isVisible}
       onRequestClose={onClose}>
-      <View style={styles.overlay}>
+      <TouchableOpacity style={styles.overlay} onPress={onClose}>
         <View style={styles.menuContainer}>
           <TouchableOpacity style={styles.menuItem} onPress={onDetail}>
             <Ionicons name="md-information-circle" size={20} color="#f58500" />
@@ -55,7 +55,7 @@ const BottomMenu: React.FC<Props> = ({
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </TouchableOpacity>
     </Modal>
   );
 };
@@ -73,7 +73,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    boxShadow: '0px -4px 10px rgba(0, 0, 0, 0.3)',
+    boxShadow: '0px -5px red;',
+
     // borderColor: Colors.border.lightgrey,
     // borderWidth: 1,
   },
