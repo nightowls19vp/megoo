@@ -51,6 +51,7 @@ import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScree
 import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
 import appStore from '../../store/app.store';
 import groupStore from '../../store/group.store';
+import ChangeGroupChatDetailScreen from './../../../screens/chat/screens/ChangeGroupChatDetailScreen/index';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = ({navigation}: {navigation: any}) => {
@@ -87,6 +88,10 @@ const ChatScreenStack = ({navigation}: {navigation: any}) => {
       <ChatStack.Screen
         name={RouteNames.GROUP_CHAT_DETAIL}
         component={GroupChatDetailScreen}
+      />
+      <ChatStack.Screen
+        name={RouteNames.CHANGE_GROUP_CHAT_DETAIL}
+        component={ChangeGroupChatDetailScreen}
       />
     </ChatStack.Navigator>
   );

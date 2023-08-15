@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import {Camera, useCameraDevices} from 'react-native-vision-camera';
 
 import {useFocusEffect, useRoute} from '@react-navigation/native';
@@ -32,6 +33,7 @@ import * as i from '../../services/items.service';
 import {PropsProductsScreen} from './props-products-screen';
 import styles from './styles/styles';
 import BottomMenu from './components/bottom-menu';
+// import { FeatherIcon } from 'react-native-vector-icons/Feather';
 
 const ProductsScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<PropsProductsScreen>();
@@ -282,6 +284,9 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
       }}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>Danh sách sản phẩm</Text>
+        <TouchableOpacity onPress={() => {}}>
+          <AntDesignIcon name="filter" size={24} color={Colors.text.orange} />
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
             console.log('open modal add product');

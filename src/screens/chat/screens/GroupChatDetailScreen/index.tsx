@@ -10,12 +10,15 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Foundation from 'react-native-vector-icons/Foundation';
+import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 
 import {RouteProp, useRoute} from '@react-navigation/native';
 
 import {getGroupById, getMembers} from '../../../../services/group.service';
 import {Colors} from '../../../../constants/color.const';
 import userStore from '../../../../common/store/user.store';
+import RouteNames from '../../../../constants/route-names.const';
+import groupStore from '../../../../common/store/group.store';
 
 type GroupChatRouteParams = {
   channelUrl: string;
@@ -119,7 +122,35 @@ const GroupChatDetailScreen = ({navigation}: {navigation: any}) => {
     <View style={styles.container}>
       <View style={styles.groupContainer}>
         <Image source={{uri: group?.avatar}} style={styles.groupAvatar} />
-        <Text style={styles.groupName}>{group.name}</Text>
+
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            position: 'relative',
+            marginVertical: 10,
+          }}>
+          <Text style={styles.groupName}>{group.name}</Text>
+
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              bottom: 2,
+              right: 15,
+            }}
+            onPress={() => {
+              navigation.navigate(
+                RouteNames.CHANGE_GROUP_CHAT_DETAIL as never,
+                {
+                  groupId: groupStore.id,
+                  channelUrl: groupStore.channelUrl,
+                },
+              );
+            }}>
+            <AntDesignIcon name="edit" size={20} color={Colors.icon.orange} />
+          </TouchableOpacity>
+        </View>
       </View>
       <Text style={styles.title}>Danh sách thành viên</Text>
       <View style={styles.memberListContainer}>

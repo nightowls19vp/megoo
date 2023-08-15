@@ -32,7 +32,7 @@ const BillListScreen = ({navigation}: {navigation: any}) => {
   const [billList, setBillList] = useState([]);
   const getBills = async () => {
     const bills = await getBillList(groupId);
-    // console.log('bills', JSON.stringify(bills, null, 2));
+    console.log('bills', JSON.stringify(bills, null, 2));
     if (
       !bills.group.billing ||
       !bills?.group?.billing.length ||

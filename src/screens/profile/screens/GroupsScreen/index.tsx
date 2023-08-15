@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState} from 'react';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {Image, Text, TouchableOpacity, View, ScrollView} from 'react-native';
 
 import {useFocusEffect} from '@react-navigation/native';
 
@@ -132,7 +132,9 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
   };
 
   return appStore.isLoggedIn === true ? (
-    <View style={styles.container}>{renderGroupItem()}</View>
+    <ScrollView contentContainerStyle={styles.container}>
+      {renderGroupItem()}
+    </ScrollView>
   ) : (
     <View style={styles.loginContainer}>
       <Image

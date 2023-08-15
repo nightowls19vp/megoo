@@ -406,16 +406,14 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
                           text1: 'Thêm vào giỏ hàng thành công',
                           autoHide: true,
                           visibilityTime: 2000,
-                          topOffset: 30,
-                          bottomOffset: 40,
+                          topOffset: 40,
                         });
                       } else {
                         Toast.show({
                           type: 'error',
                           text1: response.message,
                           autoHide: false,
-                          topOffset: 30,
-                          bottomOffset: 40,
+                          topOffset: 40,
                         });
                       }
                     }}>
@@ -556,8 +554,6 @@ const PackageScreen = ({navigation}: {navigation: any}) => {
           </View>
         </View>
       </Modal>
-
-      <Toast position="top" />
     </ScrollView>
   );
 };

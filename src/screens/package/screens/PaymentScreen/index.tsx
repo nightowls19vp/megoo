@@ -42,6 +42,7 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
         size: 20,
         color: Colors.icon.orange,
         labelStyle: {color: Colors.text.grey},
+        image: require('../../../../../assets/ZaloPay-logo.png'),
       },
       {
         id: '2',
@@ -50,6 +51,7 @@ const PaymentScreen = ({navigation}: {navigation: any}) => {
         size: 20,
         color: Colors.icon.orange,
         labelStyle: {color: Colors.text.grey},
+        uri: require('../../../../../assets/VNPay-logo.png'),
       },
     ],
     [],

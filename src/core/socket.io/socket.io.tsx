@@ -62,7 +62,7 @@ export function onZpCallback() {
 
     displayNotification(
       'Thanh toán thành công',
-      `Giao dịch ${dataObj.app_trans_id} của bạn đã thanh toán thành công.`,
+      `Đơn hàng ${dataObj.app_trans_id} của bạn đã thanh toán thành công.`,
     );
   });
 }
@@ -79,7 +79,7 @@ export function onVnpCallback() {
 
     displayNotification(
       'Thanh toán thành công',
-      `Giao dịch của bạn đã thanh toán thành công.`,
+      `Đơn hàng ${data.vnp_TxnRef} của bạn đã thanh toán thành công.`,
     );
 
     Toast.show({

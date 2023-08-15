@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: width,
-    height: '100%',
+    minHeight: '100%',
   },
   loginTextContainer: {
     display: 'flex',

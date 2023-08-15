@@ -18,7 +18,12 @@ import {ProgressView} from '@react-native-community/progress-view';
 import {RouteProp, useRoute} from '@react-navigation/native';
 
 import {IMAGE_URI_DEFAULT} from '../../../../../common/default';
-import {dateFormat, splitString} from '../../../../../common/handle.string';
+import {
+  changeStatusBillToVietnamese,
+  dateFormat,
+  splitString,
+} from '../../../../../common/handle.string';
+import userStore from '../../../../../common/store/user.store';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import {
@@ -29,8 +34,6 @@ import {
   updateBorrowerStatus,
 } from './services/bill-info-service';
 import styles from './styles/style';
-import userStore from '../../../../../common/store/user.store';
-import {changeStatusBillToVietnamese} from './../../../../../common/handle.string';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -53,6 +56,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
   const [description, setDescription] = useState('');
 
   const [borrowersStatus, setBorrowersStatus] = useState<string[]>([]);
+  const [lenderStatus, setLenderStatus] = useState<string[]>([]);
   const [status, setStatus] = useState([
     {label: 'Chờ thanh toán', value: 'PENDING'},
     {label: 'Đã xác nhận', value: 'APPROVED'},
@@ -83,6 +87,10 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
         },
         amount: '',
         status: '',
+        detailStt: {
+          lender: '',
+          borrower: '',
+        },
       },
     ],
   });
@@ -113,6 +121,10 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
           },
           amount: borrower?.amount ?? '',
           status: borrower?.status ?? '',
+          detailStt: {
+            lender: borrower?.detailStt?.lender,
+            borrower: borrower?.detailStt?.borrower,
+          },
         };
       }),
     });
@@ -120,7 +132,14 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
     setSummary(bill?.billing?.summary ?? '');
     setDescription(bill?.billing?.description ?? '');
     setBorrowersStatus(
-      bill?.billing?.borrowers.map((borrower: any) => borrower.status),
+      bill?.billing?.borrowers.map(
+        (borrower: any) => borrower.detailStt.borrower,
+      ),
+    );
+    setLenderStatus(
+      bill?.billing?.borrowers.map(
+        (borrower: any) => borrower.detailStt.lender,
+      ),
     );
     setDropdownStates(bill?.billing?.borrowers.map((borrower: any) => false));
   };
@@ -289,7 +308,12 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
       <Text style={styles.title}>Danh sách người mượn</Text>
       <View style={styles.contentContainer}>
         {bill.borrowers.map((borrower, index) => {
-          const viStatus = changeStatusBillToVietnamese(borrower.status);
+          const borrowerViStatus = changeStatusBillToVietnamese(
+            borrower.detailStt.borrower,
+          );
+          const lenderViStatus = changeStatusBillToVietnamese(
+            borrower.detailStt.lender,
+          );
 
           return (
             <View
@@ -347,10 +371,18 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                         }}
                       />
                     ) : (
-                      <Text style={styles.text}>{viStatus}</Text>
+                      <Text style={styles.text}>{borrowerViStatus}</Text>
                     )}
-                    {/* <Text style={styles.text}>{borrower.status}</Text> */}
                   </View>
+                  {borrower.detailStt.lender === 'PENDING' ? (
+                    <Text style={{color: Colors.text.red}}>
+                      &#8251; Chờ người cho mượn xác nhận
+                    </Text>
+                  ) : (
+                    <Text style={{color: Colors.text.red}}>
+                      {lenderViStatus}
+                    </Text>
+                  )}
                 </View>
               </View>
             </View>
