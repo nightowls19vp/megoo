@@ -15,8 +15,14 @@ export function connectSocket(userId: string) {
   console.log('socket token:', token);
 
   // Connect socket on port 3001, change to ngrok link if can't connect by localhost;
+  // socket = io(URL_SOCKET, {
+  //   autoConnect: false,
+  //   query: {token},
+  // });
+
   socket = io(URL_SOCKET, {
     autoConnect: false,
+    path: URL_SOCKET.includes('localhost') ? undefined : '/ws/',
     query: {token},
   });
 

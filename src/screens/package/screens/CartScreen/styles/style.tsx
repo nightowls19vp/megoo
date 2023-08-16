@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   cartInfoContainer: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'baseline',
     gap: 10,
   },
   text: {

@@ -160,7 +160,9 @@ const DrawerNavigation = ({navigation}: {navigation: any}) => {
       <Drawer.Screen
         options={{
           title: 'Megoo',
+          headerTitleStyle: {fontSize: 18},
           drawerLabel: 'Trang chủ',
+          drawerLabelStyle: {fontSize: 18},
           drawerIcon: ({color}) => <Icon name="home" size={20} color={color} />,
         }}
         name={RouteNames.HOME_STACK_DRAWER}
@@ -170,7 +172,9 @@ const DrawerNavigation = ({navigation}: {navigation: any}) => {
       <Drawer.Screen
         options={{
           title: 'Megoo',
+          // headerTitleStyle: {fontSize: 18},
           drawerLabel: 'Quản lý gói',
+          drawerLabelStyle: {fontSize: 18},
           drawerIcon: ({color}) => (
             <Icon name="addusergroup" size={20} color={color} />
           ),
@@ -182,7 +186,9 @@ const DrawerNavigation = ({navigation}: {navigation: any}) => {
       <Drawer.Screen
         options={{
           title: 'Megoo',
+          // headerTitleStyle: {fontSize: 18},
           drawerLabel: 'Quản lý kho',
+          drawerLabelStyle: {fontSize: 18},
           drawerIcon: ({color}) => <Icon name="isv" size={20} color={color} />,
         }}
         name={RouteNames.STORAGE_STACK_DRAWER}
@@ -192,6 +198,8 @@ const DrawerNavigation = ({navigation}: {navigation: any}) => {
       <Drawer.Screen
         options={{
           title: 'Megoo',
+          // headerTitleStyle: {fontSize: 18},
+          drawerLabelStyle: {fontSize: 18},
           drawerLabel: 'Trang cá nhân',
           drawerIcon: ({color}) => <Icon name="user" size={20} color={color} />,
         }}
@@ -202,7 +210,9 @@ const DrawerNavigation = ({navigation}: {navigation: any}) => {
       <Drawer.Screen
         options={{
           title: 'Megoo',
+          // headerTitleStyle: {fontSize: 18},
           drawerLabel: 'Cài đặt',
+          drawerLabelStyle: {fontSize: 18},
           drawerIcon: ({color}) => (
             <Icon name="setting" size={20} color={color} />
           ),

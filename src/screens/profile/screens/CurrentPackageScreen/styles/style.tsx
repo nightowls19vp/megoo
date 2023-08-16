@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '70%',
-    height: 40,
+    height: 50,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

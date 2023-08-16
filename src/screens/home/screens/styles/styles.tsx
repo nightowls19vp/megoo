@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   },
   utility: {
     minWidth: '47.5%',
-    height: 60,
+    height: 75,
     // padding: 20,
     display: 'flex',
     alignItems: 'center',

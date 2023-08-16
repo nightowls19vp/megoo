@@ -139,6 +139,9 @@ const TodosTabs = () => {
   return (
     <TodosTopTabNavigator.Navigator
       screenOptions={{
+        tabBarLabelStyle: {
+          fontSize: 16,
+        },
         tabBarIndicatorStyle: {
           backgroundColor: Colors.text.orange,
         },
@@ -355,6 +358,9 @@ const StorageTabs = () => {
   return (
     <StorageTopTabNavigator.Navigator
       screenOptions={{
+        tabBarLabelStyle: {
+          fontSize: 16,
+        },
         tabBarIndicatorStyle: {
           backgroundColor: Colors.text.orange,
         },
@@ -438,6 +444,9 @@ const GroupTabs = () => {
   return (
     <GroupsTopTabNavigator.Navigator
       screenOptions={{
+        tabBarLabelStyle: {
+          fontSize: 16,
+        },
         tabBarIndicatorStyle: {
           backgroundColor: Colors.text.orange,
         },
@@ -461,6 +470,9 @@ const UserInfoTabs = () => {
   return (
     <ProfileTopTabNavigator.Navigator
       screenOptions={{
+        tabBarLabelStyle: {
+          fontSize: 16,
+        },
         tabBarIndicatorStyle: {
           backgroundColor: Colors.text.orange,
         },
@@ -560,7 +572,7 @@ export default observer(function BottomNavigationBar() {
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
-        tabBarLabelStyle: {paddingBottom: 10},
+        tabBarLabelStyle: {paddingBottom: 5},
         tabBarActiveTintColor: Colors.bottomTabActiveIcon,
         tabBarInactiveTintColor: Colors.bottomTabInactiveIcon,
         tabBarStyle: {

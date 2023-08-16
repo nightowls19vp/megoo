@@ -110,8 +110,7 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                 type: 'error',
                 text1: response.message,
                 autoHide: false,
-                topOffset: 30,
-                bottomOffset: 40,
+                topOffset: 20,
               });
             }
           }}>
@@ -132,7 +131,7 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                   onChangeText={value => setFieldValue('name', value)}
                   onBlur={() => setFieldTouched('name')}
                   style={styles.inputText}
-                  placeholderTextColor={Colors.text.grey}
+                  placeholderTextColor={Colors.text.lightgrey}
                   placeholder={'Họ và tên'}
                   value={values.name}
                 />
@@ -154,7 +153,7 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                   onBlur={() => setFieldTouched('username')}
                   placeholder={'Email/Tên đăng nhập'}
                   style={styles.inputText}
-                  placeholderTextColor={Colors.text.grey}
+                  placeholderTextColor={Colors.text.lightgrey}
                   value={values.username}
                   keyboardType="email-address"
                 />
@@ -177,7 +176,7 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                   secureTextEntry={hidePassword}
                   placeholder={'Mật khẩu'}
                   style={styles.inputText}
-                  placeholderTextColor={Colors.text.grey}
+                  placeholderTextColor={Colors.text.lightgrey}
                   value={values.password}
                 />
                 {values.password && (
@@ -202,7 +201,7 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                   onBlur={() => setFieldTouched('phone')}
                   placeholder={'Số điện thoại'}
                   style={styles.inputText}
-                  placeholderTextColor={Colors.text.grey}
+                  placeholderTextColor={Colors.text.lightgrey}
                   value={values.phone}
                   keyboardType="phone-pad"
                 />
@@ -220,12 +219,12 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
 
               <View style={[styles.inputContainer]}>
                 <TextInput
-                  // editable={false}
+                  editable={false}
                   // onChangeText={value => setFieldValue('dob', value)}
                   onBlur={() => setFieldTouched('dob')}
                   placeholder={'Ngày sinh'}
                   style={styles.inputText}
-                  placeholderTextColor={Colors.text.grey}
+                  placeholderTextColor={Colors.text.lightgrey}
                   value={values.dob}
                 />
 
@@ -289,8 +288,6 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                 ]}>
                 <Text style={styles.buttonText}>Đăng ký</Text>
               </TouchableOpacity>
-
-              <Toast position="top" />
 
               <View style={styles.dividerContainer}>
                 <View style={styles.divider} />

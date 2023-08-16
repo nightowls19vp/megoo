@@ -3,6 +3,7 @@ import {observer} from 'mobx-react';
 import React, {Fragment, useEffect, useRef, useState} from 'react';
 import {Button, TextInput, TouchableOpacity, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {Colors} from '../../../constants/color.const';
 
 import appStore from '../../store/app.store';
 import searchStore from '../../store/search.store';
@@ -42,6 +43,7 @@ const SearchComp = () => {
         onChangeText={handleInputChange}
         onSubmitEditing={onPress}
         placeholder="Tìm kiếm ..."
+        placeholderTextColor={Colors.text.lightgrey}
         style={styles.textInput}
       />
       <TouchableOpacity onPress={onPress}>
