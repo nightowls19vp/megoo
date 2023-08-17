@@ -77,7 +77,7 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
         display: 'flex',
         flexDirection: 'column',
         // alignItems: 'flex-end',
-        // backgroundColor: Colors.background.white,
+        backgroundColor: Colors.background.white,
         borderRadius: 10,
         marginTop: 10,
       }}>
@@ -94,7 +94,8 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
             textAlign: 'left',
             color: Colors.title.orange,
             fontWeight: 'bold',
-            fontSize: 14,
+            fontSize: 16,
+            marginBottom: 10,
           }}>
           Nhu yếu phẩm
         </Text>

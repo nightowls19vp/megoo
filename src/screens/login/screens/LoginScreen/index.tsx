@@ -19,15 +19,14 @@ import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
 import {IGoogleLoginRes, ILoginRes} from './interfaces/login.interface';
-import {
-  googleSignIn,
-  isUserSignedIn,
-  login,
-  validate,
-} from './services/login.service';
+import {login, validate} from './services/login.service';
 import styles from './styles/styles';
 import {io} from 'socket.io-client';
 import {connectSocket} from '../../../../core/socket.io/socket.io';
+import {
+  googleSignIn,
+  isUserSignedIn,
+} from '../../../../services/google.service';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -295,6 +294,9 @@ export default function LoginScreen({navigation}: {navigation: any}) {
                     'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9';
 
                   userStore.setUser(user);
+
+                  userStore.setAuthId(res?.auth?.user?.id);
+                  userStore.setSocialAccounts(res?.auth?.user?.socialAccounts);
 
                   // Store user settings
                   let settings: ISettings = {

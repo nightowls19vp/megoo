@@ -5,10 +5,7 @@ import notifee from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {URL_HOST} from '../core/config/api/api.config';
-import {
-  signOutIfSignedInWithGG,
-  validate,
-} from '../screens/login/screens/LoginScreen/services/login.service';
+import {validate} from '../screens/login/screens/LoginScreen/services/login.service';
 import {dateFormat} from './handle.string';
 import {ISettings} from './interfaces/settings.interface';
 import {IJWTToken} from './interfaces/token.interface';
@@ -17,6 +14,7 @@ import userStore from './store/user.store';
 import {SendBirdChatService} from '../services/sendbird-chat.service';
 import {GroupChannel} from '@sendbird/chat/groupChannel';
 import {connectSocket} from '../core/socket.io/socket.io';
+import {signOutIfSignedInWithGG} from '../services/google.service';
 
 export const checkValidToken = async (token: string) => {
   // console.log("AT:", accessToken);
@@ -108,6 +106,9 @@ export const checkLogin = async () => {
           'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9';
 
         userStore.setUser(user);
+
+        userStore.setAuthId(response?.auth?.user?.id);
+        userStore.setSocialAccounts(response?.auth?.user?.socialAccounts);
 
         // Store user settings
         let settings: ISettings = {

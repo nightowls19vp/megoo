@@ -123,7 +123,7 @@ export const updateAvatar = async (userId: string, avatarUrl: string) => {
         },
       },
     );
-    console.log(response);
+    console.log(response.data);
 
     return response.data;
   } catch (error) {

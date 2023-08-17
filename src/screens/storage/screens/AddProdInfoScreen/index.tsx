@@ -153,6 +153,9 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                     text1: 'Thêm nhu yếu phẩm thành công',
                     visibilityTime: 1000,
                     autoHide: true,
+                    onHide: () => {
+                      navigation.goBack();
+                    },
                   });
                 }
               })

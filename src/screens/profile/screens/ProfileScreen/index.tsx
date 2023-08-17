@@ -8,7 +8,13 @@ import appStore from '../../../../common/store/app.store';
 import userStore from '../../../../common/store/user.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
+import {
+  googleLink,
+  signOutIfSignedInWithGG,
+} from '../../../../services/google.service';
 import styles from './styles/styles';
+import Toast from 'react-native-toast-message';
+import {validate} from '../../../login/screens/LoginScreen/services/login.service';
 
 const ProfileScreen = ({navigation}: {navigation: any}) => {
   const [selectedImages, setSelectedImages] = useState('');
@@ -90,8 +96,30 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
             />
             <Text style={styles.text}>Tài khoản Google</Text>
           </View>
-          <TouchableOpacity>
-            <Text style={styles.connectText}>Liên kết</Text>
+          <TouchableOpacity
+            disabled={userStore.socialAccounts.length === 0 ? false : true}
+            onPress={async () => {
+              // await signOutIfSignedInWithGG();
+              // const response = await googleLink();
+
+              // console.log('Google linking data:', response);
+
+              // if (response?.status === 201) {
+              //   Toast.show({
+              //     type: 'success',
+              //     text1: 'Liên kết với tài khoản Google thành công',
+              //     autoHide: true,
+              //     visibilityTime: 1000,
+              //   });
+              // }
+              const validateResponse = await validate();
+              console.log(validateResponse?.auth?.user?.socialAccounts);
+            }}>
+            {userStore.socialAccounts.length === 0 ? (
+              <Text style={styles.connectText}>Liên kết</Text>
+            ) : (
+              <Text style={styles.connectText}>Đã liên kết</Text>
+            )}
           </TouchableOpacity>
         </View>
         {/* <View style={styles.infoRow}>

@@ -50,11 +50,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 10,
     marginBottom: 5,
-    fontSize: 14,
+    fontSize: 16,
   },
   infoInput: {
     width: '100%',
-    height: 40,
+    height: 50,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

@@ -69,6 +69,8 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width * 0.5,
     height: Dimensions.get('window').width * 0.5,
     borderRadius: (Dimensions.get('window').width * 0.5) / 2,
+    borderColor: Colors.border.lightgrey,
+    borderWidth: 1,
   },
 });
 

@@ -62,6 +62,7 @@ const StorageLocationDropdownPicker: React.FC<IProps> = ({
   return (
     <View
       style={{
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
         // alignItems: 'flex-end',
@@ -82,7 +83,8 @@ const StorageLocationDropdownPicker: React.FC<IProps> = ({
             textAlign: 'left',
             color: Colors.title.orange,
             fontWeight: 'bold',
-            fontSize: 14,
+            fontSize: 16,
+            marginBottom: 10,
           }}>
           Vị trí lưu trữ
         </Text>

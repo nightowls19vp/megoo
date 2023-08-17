@@ -58,6 +58,8 @@ const ProvincesDropdownPicker: React.FC<IProps> = ({fnUpdateProvince}) => {
         style={{
           fontWeight: 'bold',
           color: Colors.text.orange,
+          fontSize: 16,
+          marginBottom: 10,
         }}>
         Tỉnh/thành phố
       </Text>

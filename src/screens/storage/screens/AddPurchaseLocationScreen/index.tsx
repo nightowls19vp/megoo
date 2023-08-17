@@ -185,6 +185,9 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                     text1: 'Thêm nơi lưu trữ thành công',
                     visibilityTime: 1000,
                     autoHide: true,
+                    onHide: () => {
+                      navigation.goBack();
+                    },
                   });
                 } else {
                   Toast.show({
@@ -230,6 +233,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   alignSelf: 'flex-start',
                   color: Colors.text.orange,
                   // marginBottom: 10,
+                  fontSize: 16,
                 }}>
                 Tên địa điểm
               </Text>
@@ -267,6 +271,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   alignSelf: 'flex-start',
                   color: Colors.text.orange,
                   marginTop: 10,
+                  fontSize: 16,
                 }}>
                 Địa chỉ chi tiết
               </Text>
@@ -298,6 +303,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   alignSelf: 'flex-start',
                   color: Colors.text.orange,
                   marginTop: 10,
+                  fontSize: 16,
                 }}>
                 Mô tả
               </Text>

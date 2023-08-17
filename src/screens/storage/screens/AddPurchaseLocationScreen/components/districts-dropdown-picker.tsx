@@ -72,6 +72,8 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
         style={{
           fontWeight: 'bold',
           color: Colors.text.orange,
+          fontSize: 16,
+          marginBottom: 10,
         }}>
         Quận/huyện
       </Text>

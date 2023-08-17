@@ -1,7 +1,7 @@
 import {Formik} from 'formik';
 import {set} from 'mobx';
 import {observer} from 'mobx-react';
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useCallback} from 'react';
 import {
   Image,
   Modal,
@@ -22,6 +22,7 @@ import * as sl from '../../services/storage-location.service';
 import {RouteParamsProductsScreen} from '../ProductsScreen/props-products-screen';
 import {IRouteParamsStorageLocationScreen} from './route-param.interface';
 import styles from './styles/style';
+import {useFocusEffect} from '@react-navigation/native';
 
 const StorageLocationScreen = ({navigation}: {navigation: any}) => {
   const props = navigation?.route?.params as IRouteParamsStorageLocationScreen;
@@ -48,6 +49,27 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
       appStore.setSearchActive(false);
     };
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (groupStore.id === '' || !groupStore.id) {
+        return;
+      }
+
+      sl.getStorageLocationPaginated({
+        groupId: groupStore.id,
+      }).then(res => {
+        if (res && res.data && res.data.length > 0) {
+          setLocations(res.data);
+        }
+      });
+
+      // reset searchActive when unmount
+      return () => {
+        appStore.setSearchActive(false);
+      };
+    }, []),
+  );
 
   const renderLocationItem = () => {
     return locations.map((stoLoc: IStorageLocation) => {

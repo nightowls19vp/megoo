@@ -20,6 +20,10 @@ class UserStore {
   @observable phone = '';
   @observable dob = '';
   @observable avatar = '';
+
+  @observable authId = '';
+  @observable socialAccounts = [];
+
   @observable msgNoti = true;
   @observable callNoti = true;
   @observable newsNoti = true;
@@ -27,6 +31,7 @@ class UserStore {
   @observable billNoti = true;
   @observable todosNoti = true;
   @observable calendarNoti = true;
+
   @observable cartList: ICartList = {
     cart: [] as ICartItem[],
   };
@@ -130,6 +135,16 @@ class UserStore {
 
   @action setAvatar(avatar: string) {
     this.avatar = avatar;
+  }
+
+  @action setAuthId(authId: string) {
+    this.authId = authId;
+  }
+
+  @action setSocialAccounts(socialAccounts: []) {
+    for (let i = 0; i < socialAccounts.length; i++) {
+      this.socialAccounts.push(socialAccounts[i]);
+    }
   }
 
   @action setCartList(list: ICartList) {

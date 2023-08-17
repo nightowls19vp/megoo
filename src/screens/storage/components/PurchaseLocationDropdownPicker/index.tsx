@@ -59,6 +59,7 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
   return (
     <View
       style={{
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
         // alignItems: 'flex-end',
@@ -79,7 +80,8 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
             textAlign: 'left',
             color: Colors.title.orange,
             fontWeight: 'bold',
-            fontSize: 14,
+            fontSize: 16,
+            marginBottom: 10,
           }}>
           Địa điểm mua hàng
         </Text>
