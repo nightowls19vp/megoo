@@ -142,7 +142,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   textAlign: 'left',
                   color: Colors.title.orange,
                   fontWeight: 'bold',
-                  fontSize: 18,
+                  fontSize: 16,
                   marginTop: 10,
                 }}>
                 Vị trí lưu trữ
@@ -184,7 +184,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   textAlign: 'left',
                   color: Colors.title.orange,
                   fontWeight: 'bold',
-                  fontSize: 18,
+                  fontSize: 16,
                   marginTop: 10,
                 }}>
                 Mô tả

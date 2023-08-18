@@ -52,14 +52,21 @@ export default {
   STORAGE_GROUPS: 'Danh sách nhóm',
   MANAGEMENT_SCREEN: 'Quản lý nhu yếu phẩm',
   STORAGE_TABS: 'STORY_TABS',
-  STORAGE: 'Nơi lưu trữ',
-  PRODUCTS: 'Nhu yếu phẩm',
+
+  STORAGE_LOCATIONS: 'Nơi lưu trữ',
+  ADD_STORAGE_LOCATION: 'Thêm vị trí lưu trữ',
+  STORAGE_LOCATION_DETAIL: 'Thông tin vị trí lưu trữ',
+  EDIT_STORAGE_LOCATION_DETAIL: 'Chỉnh sửa thông tin vị trí lưu trữ',
+
   PURCHASE_LOCATIONS: 'Nơi mua sắm',
+  ADD_PURCHASE_LOCATION: 'Thêm vị trí mua sắm',
+  PURCHASE_LOCATION_DETAIL: 'Thông tin vị trí mua sắm',
+  EDIT_PURCHASE_LOCATION_DETAIL: 'Chỉnh sửa thông tin vị trí mua sắm',
+
+  PRODUCTS: 'Nhu yếu phẩm',
   PRODUCT_DETAIL: 'Chi tiết sản phẩm nhu yếu phẩm',
   ADD_PRODUCT_INFO: 'Thêm sản phẩm nhu yếu phẩm',
   ADD_GROUP_PRODUCT: 'Thêm loại nhu yếu phẩm',
-  ADD_STORAGE_LOCATION: 'Thêm vị trí lưu trữ',
-  ADD_PURCHASE_LOCATION: 'Thêm vị trí mua sắm',
   SCAN_BARCODE: 'Quét barcode',
 
   TOP_TAB: 'TOP_TAB',

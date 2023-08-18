@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 20,
     // gap: 10,
     backgroundColor: Colors.background.white,
     borderRadius: 10,
@@ -75,11 +76,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     color: Colors.text.grey,
-    textAlign: 'justify',
-  },
-  infoText: {
-    fontSize: 14,
-    color: Colors.text.lightgrey,
     textAlign: 'justify',
   },
 });

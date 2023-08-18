@@ -72,12 +72,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  text: {
+  labelText: {
     color: Colors.text.grey,
     fontSize: 14,
   },
-  infoText: {
-    color: Colors.text.lightgrey,
+  text: {
+    color: Colors.text.grey,
+    fontWeight: 'bold',
     fontSize: 14,
   },
   socialContainer: {

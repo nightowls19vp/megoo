@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    // gap: 10,
+    marginBottom: 20,
     backgroundColor: Colors.background.white,
     borderRadius: 10,
   },

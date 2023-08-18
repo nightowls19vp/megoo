@@ -52,6 +52,8 @@ import StorageLocationScreen from '../../../screens/storage/screens/StorageLocat
 import appStore from '../../store/app.store';
 import groupStore from '../../store/group.store';
 import ChangeGroupChatDetailScreen from './../../../screens/chat/screens/ChangeGroupChatDetailScreen/index';
+import StorageLocationDetailScreen from '../../../screens/storage/screens/StorageLocationDetailScreen';
+import EditStorageLocationDetailScreen from '../../../screens/storage/screens/EditStorageDetailScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = ({navigation}: {navigation: any}) => {
@@ -370,7 +372,7 @@ const StorageTabs = () => {
         component={ProductsScreen}
       />
       <StorageTopTabNavigator.Screen
-        name={RouteNames.STORAGE}
+        name={RouteNames.STORAGE_LOCATIONS}
         component={StorageLocationScreen}
       />
       <StorageTopTabNavigator.Screen
@@ -417,6 +419,14 @@ const StorageScreenStack = () => {
       <StorageStack.Screen
         name={RouteNames.ADD_STORAGE_LOCATION}
         component={AddStorageLocationScreen}
+      />
+      <StorageStack.Screen
+        name={RouteNames.STORAGE_LOCATION_DETAIL}
+        component={StorageLocationDetailScreen}
+      />
+      <StorageStack.Screen
+        name={RouteNames.EDIT_STORAGE_LOCATION_DETAIL}
+        component={EditStorageLocationDetailScreen}
       />
       <StorageStack.Screen
         name={RouteNames.ADD_PURCHASE_LOCATION}

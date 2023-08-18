@@ -8,7 +8,7 @@ import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
 import styles from './styles/style';
 import {Colors} from '../../../../constants/color.const';
-import {changeStatusPkgToVietnamese} from '../../../../common/handle.string';
+import {changePackageStatusToVietnamese} from '../../../../common/handle.string';
 import groupStore from '../../../../common/store/group.store';
 import appStore from '../../../../common/store/app.store';
 
@@ -29,21 +29,30 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
 
       setGroups(
         groupsRes.groups.map((groupItem: any) => {
+          const currentPackage = groupItem.packages.find(
+            (packageItem: any) => packageItem.status !== 'Expired',
+          );
+
+          console.log('currentPackage:', currentPackage);
+
+          // console.log('groupItem', JSON.stringify(groupItem.packages, null, 2));
+
+          // if(currentPackage !== undefined) {
+
+          // }
           return {
             _id: groupItem._id ? groupItem._id : '',
             name: groupItem.name ? groupItem.name : '',
             avatar: groupItem.avatar,
             // ? groupItem.avatar
             // : 'https://asset.cloudinary.com/nightowls19vp/52603991f890c1d52ee9bb1efebb21e9',
-            duration: groupItem.packages[0].package.duration
-              ? groupItem.packages[0].package.duration
+            duration: currentPackage?.package.duration
+              ? currentPackage?.package.duration
               : 0,
-            noOfMember: groupItem.packages[0].package.noOfMember
-              ? groupItem.packages[0].package.noOfMember
+            noOfMember: currentPackage?.package.noOfMember
+              ? currentPackage?.package.noOfMember
               : 0,
-            status: groupItem.packages[0].status
-              ? groupItem.packages[0].status
-              : '',
+            status: currentPackage?.status ? currentPackage.status : '',
             members: groupItem.members ? groupItem.members : [],
           };
         }),
@@ -70,7 +79,7 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
 
   const renderGroupItem = () => {
     return groups.map((group: any, index) => {
-      const viStatus = changeStatusPkgToVietnamese(group.status);
+      const viStatus = changePackageStatusToVietnamese(group.status);
 
       return (
         <TouchableOpacity
@@ -91,12 +100,9 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
           />
           <View style={styles.groupInfo}>
             <View style={styles.infoRow}>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>Tên nhóm:</Text>
+              <Text style={styles.text}>Tên nhóm:</Text>
               <Text
-                style={{
-                  width: '50%',
-                  color: Colors.text.lightgrey,
-                }}
+                style={[styles.text, {width: '50%', fontWeight: 'bold'}]}
                 ellipsizeMode={'tail'}
                 numberOfLines={1}>
                 {group.name}
@@ -104,26 +110,24 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
             </View>
 
             <View style={styles.infoRow}>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>Thời hạn:</Text>
-              <Text style={{color: Colors.text.lightgrey}}>
+              <Text style={styles.text}>Thời hạn:</Text>
+              <Text style={[styles.text, {fontWeight: 'bold'}]}>
                 {group.duration} tháng
               </Text>
             </View>
 
             <View style={styles.infoRow}>
+              <Text style={styles.text}>Số lượng thành viên:</Text>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Số lượng thành viên:
-              </Text>
-              <Text style={{color: Colors.text.lightgrey}}>
                 {group.noOfMember}
               </Text>
             </View>
 
             <View style={styles.infoRow}>
+              <Text style={styles.text}>Trạng thái:</Text>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Trạng thái:
+                {viStatus}
               </Text>
-              <Text style={{color: Colors.text.lightgrey}}>{viStatus}</Text>
             </View>
           </View>
         </TouchableOpacity>

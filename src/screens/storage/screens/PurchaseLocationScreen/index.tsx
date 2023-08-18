@@ -2,6 +2,7 @@ import {Formik} from 'formik';
 import {observer} from 'mobx-react';
 import {useEffect, useState} from 'react';
 import {
+  FlatList,
   Image,
   Modal,
   ScrollView,
@@ -48,71 +49,56 @@ const PurchaseLocationScreen = ({navigation}: {navigation: any}) => {
     };
   }, []);
 
-  const renderLocationItem = () => {
-    return locations.map((stoLoc: IPurchaseLocation) => {
-      const routeParam: RouteParamsProductsScreen = {
-        groupId: props?.groupId,
-        storageLocation: stoLoc,
-      };
+  const renderLocationItem = (purLoc: IPurchaseLocation) => {
+    const routeParam: RouteParamsProductsScreen = {
+      groupId: props?.groupId,
+      storageLocation: purLoc,
+    };
 
-      return (
-        <TouchableOpacity
-          style={styles.locationContainer}
-          key={stoLoc.id}
-          onPress={() => {
-            navigation.navigate(RouteNames.PRODUCTS, routeParam);
-          }}>
-          <Image
-            source={{
-              uri:
-                stoLoc.image ||
-                'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
-            }}
-            style={styles.locationImg}
-          />
-          <View style={styles.locationInfoContainer}>
-            <View style={[styles.locationInfoRow]}>
-              <Text
-                style={[
-                  styles.text,
-                  {
-                    fontWeight: 'bold',
-                  },
-                ]}>
-                Nơi mua sắm:
-              </Text>
-              <Text style={styles.infoText} numberOfLines={3}>
-                {stoLoc?.name}
-              </Text>
-            </View>
-            <View style={[styles.locationInfoRow]}>
-              <Text
-                style={[
-                  styles.text,
-                  {
-                    fontWeight: 'bold',
-                  },
-                ]}>
-                Địa chỉ:
-              </Text>
-              <Text
-                style={{...styles.infoText, flexWrap: 'wrap', marginTop: -5}}
-                numberOfLines={3}>
-                {[
-                  stoLoc?.address?.addressLine1,
-                  stoLoc?.address?.addressLine2,
-                  stoLoc?.address?.wardName,
-                  stoLoc?.address?.districtName,
-                  stoLoc?.address?.provinceName,
-                ]
-                  .filter(Boolean)
-                  .join(', ')}
-              </Text>
-            </View>
+    return (
+      <TouchableOpacity
+        style={styles.locationContainer}
+        key={purLoc.id}
+        onPress={() => {
+          navigation.navigate(RouteNames.PRODUCTS, routeParam);
+        }}>
+        <Image
+          source={{
+            uri:
+              purLoc.image ||
+              'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
+          }}
+          style={styles.locationImg}
+        />
+        <View style={styles.locationInfoContainer}>
+          <View style={[styles.locationInfoRow]}>
+            <Text style={styles.text}>Nơi mua sắm:</Text>
+            <Text style={[styles.text, {fontWeight: 'bold'}]} numberOfLines={3}>
+              {purLoc?.name}
+            </Text>
           </View>
-        </TouchableOpacity>
-      );
-    });
+          <View style={[styles.locationInfoRow]}>
+            <Text style={styles.text}>Địa chỉ:</Text>
+            <Text
+              style={[
+                styles.text,
+                {flexWrap: 'wrap', fontWeight: 'bold', marginTop: -5},
+              ]}
+              numberOfLines={3}>
+              {[
+                purLoc?.address?.addressLine1,
+                purLoc?.address?.addressLine2,
+                purLoc?.address?.wardName,
+                purLoc?.address?.districtName,
+                purLoc?.address?.provinceName,
+              ]
+                .filter(Boolean)
+                .join(', ')}
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
   };
 
   return appStore.isLoggedIn ? (
@@ -333,9 +319,27 @@ const PurchaseLocationScreen = ({navigation}: {navigation: any}) => {
         </View>
       </Modal>
 
-      <ScrollView contentContainerStyle={styles.locationsContainer}>
+      {/* <ScrollView contentContainerStyle={styles.locationsContainer}>
         {renderLocationItem()}
-      </ScrollView>
+      </ScrollView> */}
+      <FlatList
+        data={locations}
+        keyExtractor={item =>
+          item?.id?.toString() ?? new Date().getTime().toString()
+        }
+        renderItem={({item}) => renderLocationItem(item)}
+        contentContainerStyle={styles.container}
+        // onEndReached={fetchMoreData} // Add your function to fetch more data here
+        onEndReachedThreshold={0.2} // Adjust the threshold as needed
+        ListEmptyComponent={() => (
+          <View
+            style={{
+              marginTop: 20,
+            }}>
+            <Text>Không có sản phẩm nào</Text>
+          </View>
+        )}
+      />
       {/* {locations.length > 0 ? {} : null } */}
     </View>
   ) : (

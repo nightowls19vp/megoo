@@ -20,7 +20,7 @@ import {RouteProp, useRoute} from '@react-navigation/native';
 
 import {IMAGE_URI_DEFAULT} from '../../../../../common/default';
 import {
-  changeStatusBillToVietnamese,
+  changeBillStatusToVietnamese,
   dateISOFormat,
   splitString,
 } from '../../../../../common/handle.string';
@@ -543,7 +543,7 @@ const BillScreen = ({navigation}: {navigation: any}) => {
                   width: '100%',
                 }}>
                 {selectedBorrowers.map((selectedBorrower: any, index) => {
-                  const viStatus = changeStatusBillToVietnamese(
+                  const viStatus = changeBillStatusToVietnamese(
                     selectedBorrower.status,
                   );
                   return (

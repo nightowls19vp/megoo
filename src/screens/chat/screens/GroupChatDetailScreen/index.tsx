@@ -228,11 +228,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 40 / 2,
+    width: 50,
+    height: 50,
+    borderRadius: 50 / 2,
     borderWidth: 1,
-    borderColor: Colors.border.lightgrey,
   },
   title: {
     width: '90%',

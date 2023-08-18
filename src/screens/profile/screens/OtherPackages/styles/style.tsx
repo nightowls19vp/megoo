@@ -31,10 +31,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.text.grey,
   },
-  infoText: {
-    fontSize: 14,
-    color: Colors.text.lightgrey,
-  },
   packageContainer: {
     width: '90%',
     display: 'flex',

@@ -249,6 +249,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
                   placeholder={'Số lượng'}
                   placeholderTextColor={Colors.text.lightgrey}
                   value={values.quantity}
+                  keyboardType={'numeric'}
                 />
 
                 {values.quantity && (

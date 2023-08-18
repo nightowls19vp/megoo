@@ -154,9 +154,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   groupAvatar: {
-    width: 150,
-    height: 150,
-    borderRadius: 150 / 2,
+    width: 200,
+    height: 200,
+    borderRadius: 200 / 2,
     borderWidth: 1,
     borderColor: Colors.border.lightgrey,
   },
@@ -166,13 +166,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: Colors.title.grey,
     fontWeight: 'bold',
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 40 / 2,
-    borderWidth: 1,
-    borderColor: Colors.border.lightgrey,
   },
   title: {
     width: '100%',
