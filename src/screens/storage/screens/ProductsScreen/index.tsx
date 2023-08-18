@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, {set} from 'lodash';
 import {observer} from 'mobx-react';
 import moment from 'moment';
 import React, {useCallback, useEffect, useState} from 'react';
@@ -12,8 +12,8 @@ import {
   View,
 } from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Camera, useCameraDevices} from 'react-native-vision-camera';
 
 import {useFocusEffect, useRoute} from '@react-navigation/native';
@@ -30,20 +30,21 @@ import {
   IGetItemsPaginatedRes,
 } from '../../interfaces/items';
 import * as i from '../../services/items.service';
+import BottomMenu from './components/bottom-menu';
+import FilterMenu from './components/filter-menu';
 import {PropsProductsScreen} from './props-products-screen';
 import styles from './styles/styles';
-import BottomMenu from './components/bottom-menu';
+
 // import { FeatherIcon } from 'react-native-vector-icons/Feather';
 
 const ProductsScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<PropsProductsScreen>();
-  console.log('route:', JSON.stringify(route, null, 2));
-
   const [modalVisible, setModalVisible] = useState(false);
   const [items, setItems] = useState<IItem[]>([]);
   const [showCamera, setShowCamera] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [bottomMenuVisible, setBottomMenuVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const devices = useCameraDevices();
   const device = devices.back;
@@ -59,6 +60,38 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
       'timestamp.deletedAt': '$eq:$null',
     },
   });
+
+  // filter
+  const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
+
+  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [stockStatus, setStockStatus] = useState<string | null>(null);
+  const [storageLocation, setStorageLocation] = useState<string | null>(null);
+  const [purchaseLocation, setPurchaseLocation] = useState<string | null>(null);
+
+  const openFilterModal = () => {
+    setIsFilterModalVisible(true);
+  };
+
+  const closeFilterModal = () => {
+    setIsFilterModalVisible(false);
+  };
+
+  const handleSortByChange = (value: string | null) => {
+    setSortBy(value);
+  };
+
+  const handleStockStatusChange = (value: string | null) => {
+    setStockStatus(value);
+  };
+
+  const handleStorageLocationChange = (value: string | null) => {
+    setStorageLocation(value);
+  };
+
+  const handlePurchaseLocationChange = (value: string | null) => {
+    setPurchaseLocation(value);
+  };
 
   const tags = {
     runningOutOfStock: {
@@ -121,6 +154,8 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
   }, []);
 
   useEffect(() => {
+    setIsLoading(true);
+
     // fetch the first 10 items
     i.getItemPaginated(reqDto).then(res => {
       console.log('res getItemPaginated: ', res.data.length);
@@ -131,6 +166,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
       } else {
         setItems([...items, ...res.data]);
       }
+      setIsLoading(false);
     });
   }, [reqDto]);
 
@@ -191,8 +227,6 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
 
   const renderTag = (item: IItem) => {
     if (item.quantity !== undefined && item.quantity === 0) {
-      console.log('renderTag: ', item.quantity);
-
       return (
         <View style={[styles.prodTag, styles.prodTagOutOfStock]}>
           <Text style={[styles.prodTagText, styles.prodTagTextOutOfStock]}>
@@ -284,7 +318,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
       }}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>Danh sách sản phẩm</Text>
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={openFilterModal}>
           <AntDesignIcon name="filter" size={24} color={Colors.text.orange} />
         </TouchableOpacity>
         <TouchableOpacity
@@ -382,25 +416,63 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
         contentContainerStyle={styles.container}
         onEndReached={fetchMoreData} // Add your function to fetch more data here
         onEndReachedThreshold={0.2} // Adjust the threshold as needed
-        ListEmptyComponent={() => (
-          <View
-            style={{
-              marginTop: 20,
-            }}>
-            <Text>
-              Không có sản phẩm
-              <Text
+        ListEmptyComponent={() => {
+          if (!isLoading) {
+            return (
+              <View
                 style={{
-                  color: Colors.text.orange,
+                  marginTop: 20,
                 }}>
-                {searchStore.searchText.length > 0
-                  ? ' ' + searchStore.searchText + ' '
-                  : ' '}
-              </Text>
-              nào
-            </Text>
-          </View>
-        )}
+                <Text
+                  style={{
+                    color: Colors.text.grey,
+                  }}>
+                  Không có sản phẩm
+                  <Text
+                    style={{
+                      color: Colors.text.orange,
+                    }}>
+                    {searchStore.searchText.length > 0
+                      ? ' ' + searchStore.searchText + ' '
+                      : ' '}
+                  </Text>
+                  nào
+                </Text>
+              </View>
+            );
+          } else {
+            return null;
+          }
+        }}
+        ListFooterComponent={() => {
+          if (isLoading) {
+            return (
+              <View>
+                <Text
+                  style={{
+                    color: Colors.text.grey,
+                  }}>
+                  Đang tải ...
+                </Text>
+              </View>
+            );
+          } else {
+            if (resDto?.data?.length > 0 && !resDto?.links?.next) {
+              return (
+                <View>
+                  <Text
+                    style={{
+                      color: Colors.text.grey,
+                    }}>
+                    Hết
+                  </Text>
+                </View>
+              );
+            } else {
+              return null;
+            }
+          }
+        }}
       />
       <BottomMenu
         isVisible={bottomMenuVisible}
@@ -424,6 +496,15 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
           // Handle "Detail" option
           setBottomMenuVisible(false);
         }}
+      />
+
+      <FilterMenu
+        isVisible={isFilterModalVisible}
+        onClose={closeFilterModal}
+        onSortByChange={handleSortByChange}
+        onStockStatusChange={handleStockStatusChange}
+        onStorageLocationChange={handleStorageLocationChange}
+        onPurchaseLocationChange={handlePurchaseLocationChange}
       />
     </View>
   );

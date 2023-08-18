@@ -1,5 +1,6 @@
 import React from 'react';
-import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import Modal from 'react-native-modal';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -25,46 +26,47 @@ const BottomMenu: React.FC<Props> = ({
 }) => {
   return (
     <Modal
-      animationType="slide"
-      transparent={true}
-      visible={isVisible}
-      onRequestClose={onClose}>
-      <TouchableOpacity style={styles.overlay} onPress={onClose}>
-        <View style={styles.menuContainer}>
-          <TouchableOpacity style={styles.menuItem} onPress={onDetail}>
-            <Ionicons name="md-information-circle" size={20} color="#f58500" />
-            <Text style={styles.menuText}>Detail</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={onUpdate}>
-            <Ionicons name="md-pencil" size={20} color="#f58500" />
-            <Text style={styles.menuText}>Update</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={onUse}>
-            <AntDesignIcon name="check" size={20} color="#f58500" />
-            <Text style={styles.menuText}>Use</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={onDelete}>
-            <Ionicons name="md-trash" size={20} color="#f58500" />
-            <Text style={styles.menuText}>Delete</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-            <MaterialIcons
-              name="cancel"
-              size={20}
-              color="#f58500"></MaterialIcons>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
+      isVisible={isVisible}
+      animationIn="slideInUp"
+      animationOut="slideOutDown"
+      hasBackdrop={true}
+      onBackdropPress={onClose}
+      onBackButtonPress={onClose}
+      style={styles.modal}>
+      <View style={styles.menuContainer}>
+        <TouchableOpacity style={styles.menuItem} onPress={onDetail}>
+          <Ionicons name="md-information-circle" size={20} color="#f58500" />
+          <Text style={styles.menuText}>Detail</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem} onPress={onUpdate}>
+          <Ionicons name="md-pencil" size={20} color="#f58500" />
+          <Text style={styles.menuText}>Update</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem} onPress={onUse}>
+          <AntDesignIcon name="check" size={20} color="#f58500" />
+          <Text style={styles.menuText}>Use</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem} onPress={onDelete}>
+          <Ionicons name="md-trash" size={20} color="#f58500" />
+          <Text style={styles.menuText}>Delete</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+          <MaterialIcons
+            name="cancel"
+            size={20}
+            color="#f58500"></MaterialIcons>
+          <Text style={styles.cancelButtonText}>Cancel</Text>
+        </TouchableOpacity>
+      </View>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
+  modal: {
+    margin: 0, // This is the important style you need to set
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
   menuContainer: {
     backgroundColor: Colors.background.white,
