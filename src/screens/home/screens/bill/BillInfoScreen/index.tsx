@@ -19,7 +19,7 @@ import {RouteProp, useRoute} from '@react-navigation/native';
 
 import {IMAGE_URI_DEFAULT} from '../../../../../common/default';
 import {
-  changeStatusBillToVietnamese,
+  changeBillStatusToVietnamese,
   dateFormat,
   splitString,
 } from '../../../../../common/handle.string';
@@ -308,10 +308,10 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
       <Text style={styles.title}>Danh sách người mượn</Text>
       <View style={styles.contentContainer}>
         {bill.borrowers.map((borrower, index) => {
-          const borrowerViStatus = changeStatusBillToVietnamese(
+          const borrowerViStatus = changeBillStatusToVietnamese(
             borrower.detailStt.borrower,
           );
-          const lenderViStatus = changeStatusBillToVietnamese(
+          const lenderViStatus = changeBillStatusToVietnamese(
             borrower.detailStt.lender,
           );
 

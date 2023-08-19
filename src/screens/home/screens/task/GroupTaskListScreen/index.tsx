@@ -23,10 +23,9 @@ const GroupTaskListScreen = ({navigation}: {navigation: any}) => {
       // console.log('groupsRes:', groupsRes);
 
       // get all active group
-      const activeGroups = groupsRes.groups.filter(
-        (groupItem: any) => groupItem.packages[0].status === 'Active',
+      const activeGroups = groupsRes.groups.filter((groupItem: any) =>
+        groupItem.packages.some((pkg: any) => pkg.status === 'Active'),
       );
-
       // console.log('activeGroups:', activeGroups);
 
       if (!activeGroups || !activeGroups.length || activeGroups.length === 0) {
@@ -80,14 +79,9 @@ const GroupTaskListScreen = ({navigation}: {navigation: any}) => {
           />
           <View style={styles.groupInfo}>
             <View style={styles.infoRow}>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Tên nhóm:{' '}
-              </Text>
+              <Text style={styles.text}>Tên nhóm: </Text>
               <Text
-                style={{
-                  width: '50%',
-                  color: Colors.text.lightgrey,
-                }}
+                style={[styles.text, {width: '50%', fontWeight: 'bold'}]}
                 ellipsizeMode={'tail'}
                 numberOfLines={1}>
                 {group.name}
@@ -95,10 +89,8 @@ const GroupTaskListScreen = ({navigation}: {navigation: any}) => {
             </View>
 
             <View style={styles.infoRow}>
+              <Text style={styles.text}>Số lượng thành viên: </Text>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Số lượng thành viên:{' '}
-              </Text>
-              <Text style={{color: Colors.text.lightgrey}}>
                 {group.noOfMember}
               </Text>
             </View>

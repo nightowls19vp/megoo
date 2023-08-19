@@ -5,6 +5,7 @@ import {dateFormat} from '../../../../common/handle.string';
 import groupStore from '../../../../common/store/group.store';
 import {getPkgsByGroupId} from './services/packages.service';
 import styles from './styles/style';
+import {changePackageStatusToVietnamese} from './../../../../common/handle.string';
 
 // type GroupDetailRouteParams = {
 //   groupId: string;
@@ -17,19 +18,19 @@ import styles from './styles/style';
 // >;
 
 const OtherPackages = ({navigation}: {navigation: any}) => {
-  const [packages, setPackages] = useState([
+  const [packages, setPackages] = useState<
     {
-      pkgId: '',
-      pkgName: '',
-      pkgPrice: '',
-      pkgDuration: 0,
-      pkgNoOfMember: 0,
-      pkgDescription: '',
-      pkgStartDate: '',
-      pkgEndDate: '',
-      pkgStatus: '',
-    },
-  ]);
+      pkgId: string;
+      pkgName: string;
+      pkgPrice: string;
+      pkgDuration: number;
+      pkgNoOfMember: number;
+      pkgDescription: string;
+      pkgStartDate: string;
+      pkgEndDate: string;
+      pkgStatus: string;
+    }[]
+  >([]);
 
   // const {groupId} = props;
   // const route = useRoute<GroupDetailRouteProp>();
@@ -38,16 +39,16 @@ const OtherPackages = ({navigation}: {navigation: any}) => {
   const getPkgs = async () => {
     // Get all user's groups
     const groupsRes = await getPkgsByGroupId(groupStore.id);
-    console.log('getPkgsRes:', groupsRes.group.packages);
+    // console.log('getPkgsRes:', groupsRes.group.packages);
     // Filter out active package
     const otherPkgs = groupsRes.group.packages.filter(
       (pkgItem: any) => pkgItem.status !== 'Active',
     );
-    console.log('otherPkgs:', otherPkgs);
+    // console.log('otherPkgs:', otherPkgs);
     if (otherPkgs.length !== 0) {
       // Set packages list
       setPackages(
-        groupsRes.group.packages.map((pkgItem: any) => {
+        otherPkgs.map((pkgItem: any) => {
           return {
             pkgId: pkgItem.package._id ? pkgItem.package._id : '',
             pkgName: pkgItem.package.name ? pkgItem.package.name : '',
@@ -81,50 +82,53 @@ const OtherPackages = ({navigation}: {navigation: any}) => {
   }, []);
 
   const renderPackageItem = () => {
-    if (packages.length === 0) {
+    if (packages.length !== 0) {
       return packages.map((pkgItem: any, index) => {
+        const viStatus = changePackageStatusToVietnamese(pkgItem.pkgStatus);
         return (
           <TouchableOpacity key={index} style={styles.packageContainer}>
             <View style={styles.packageContent}>
               <View style={styles.packageInfo}>
+                <Text style={styles.text}>Tên gói: </Text>
                 <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                  Tên gói:{' '}
+                  {pkgItem.pkgName}
                 </Text>
-                <Text style={styles.infoText}>{pkgItem.pkgName}</Text>
               </View>
               <View style={styles.packageInfo}>
+                <Text style={styles.text}>Thời hạn: </Text>
                 <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                  Thời hạn:{' '}
+                  {pkgItem.pkgDuration} tháng
                 </Text>
-                <Text style={styles.infoText}>{pkgItem.pkgDuration} tháng</Text>
               </View>
               <View style={styles.packageInfo}>
+                <Text style={styles.text}>Số lượng thành viên: </Text>
                 <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                  Số lượng thành viên:{' '}
+                  {pkgItem.pkgNoOfMember}
                 </Text>
-                <Text style={styles.infoText}>{pkgItem.pkgNoOfMember}</Text>
               </View>
               <View style={styles.packageInfo}>
+                <Text style={styles.text}>Ngày bắt đầu: </Text>
                 <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                  Ngày bắt đầu:{' '}
+                  {pkgItem.pkgStartDate}
                 </Text>
-                <Text style={styles.infoText}>{pkgItem.pkgStartDate}</Text>
               </View>
               <View style={styles.packageInfo}>
+                <Text style={styles.text}>Ngày hết hạn: </Text>
                 <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                  Ngày hết hạn:{' '}
+                  {pkgItem.pkgEndDate}
                 </Text>
-                <Text style={styles.infoText}>{pkgItem.pkgEndDate}</Text>
               </View>
               <View style={styles.packageInfo}>
-                <Text style={[styles.text, {fontWeight: 'bold'}]}>Mô tả: </Text>
-                <Text style={styles.infoText}>{pkgItem.pkgDescription}</Text>
+                <Text style={styles.text}>Mô tả: </Text>
+                <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                  {pkgItem.pkgDescription}
+                </Text>
               </View>
               <View style={styles.packageInfo}>
+                <Text style={styles.text}>Trạng thái: </Text>
                 <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                  Trạng thái:{' '}
+                  {viStatus}
                 </Text>
-                <Text style={styles.infoText}>{pkgItem.pkgStatus}</Text>
               </View>
             </View>
           </TouchableOpacity>

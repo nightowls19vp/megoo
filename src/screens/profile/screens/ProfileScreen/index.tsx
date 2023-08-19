@@ -53,25 +53,25 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
       </View>
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
-          <Text style={[styles.text, {width: '40%'}]}>Email:</Text>
+          <Text style={[styles.labelText, {width: '40%'}]}>Email:</Text>
           <Text
             numberOfLines={1}
             ellipsizeMode={'tail'}
-            style={[styles.infoText, {width: '60%', textAlign: 'right'}]}>
+            style={[styles.text, {width: '60%', textAlign: 'right'}]}>
             {userStore.email}
           </Text>
         </View>
         <View style={styles.infoRow}>
-          <Text style={styles.text}>Họ tên:</Text>
-          <Text style={styles.infoText}>{userStore.name}</Text>
+          <Text style={styles.labelText}>Họ tên:</Text>
+          <Text style={styles.text}>{userStore.name}</Text>
         </View>
         <View style={styles.infoRow}>
-          <Text style={styles.text}>Số điện thoại:</Text>
-          <Text style={styles.infoText}>{userStore.phone}</Text>
+          <Text style={styles.labelText}>Số điện thoại:</Text>
+          <Text style={styles.text}>{userStore.phone}</Text>
         </View>
         <View style={styles.infoRow}>
-          <Text style={styles.text}>Ngày sinh:</Text>
-          <Text style={styles.infoText}>{userStore.dob}</Text>
+          <Text style={styles.labelText}>Ngày sinh:</Text>
+          <Text style={styles.text}>{userStore.dob}</Text>
         </View>
       </View>
 
@@ -94,7 +94,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
               source={require('../../../../../assets/google.png')}
               style={{width: 20, height: 20}}
             />
-            <Text style={styles.text}>Tài khoản Google</Text>
+            <Text style={styles.labelText}>Tài khoản Google</Text>
           </View>
           <TouchableOpacity
             disabled={userStore.socialAccounts.length === 0 ? false : true}

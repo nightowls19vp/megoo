@@ -49,10 +49,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
   },
-  infoText: {
-    fontSize: 14,
-    color: Colors.text.lightgrey,
-  },
   superUserText: {
     fontSize: 14,
     fontWeight: 'bold',

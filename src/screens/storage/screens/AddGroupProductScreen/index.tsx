@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {Asset, launchCamera} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as Yup from 'yup';
 
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import appStore from '../../../../common/store/app.store';
@@ -22,6 +23,12 @@ import groupStore from '../../../../common/store/group.store';
 import {createGroupProduct} from '../../services/group-products.service';
 import Toast from 'react-native-toast-message';
 import AddImageModal from '../../../../common/components/AddImageModal';
+
+const ProductSchema = Yup.object().shape({
+  name: Yup.string()
+    // .email('Email không hợp lệ')
+    .required('Vui lòng nhập tên nhu yếu phẩm'),
+});
 
 const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
   const initialValues = {
@@ -71,18 +78,19 @@ const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
 
         <Formik
           initialValues={initialValues}
+          validationSchema={ProductSchema}
           onSubmit={(values, {resetForm}) => {
             console.log('values:', values);
 
-            if (!values.name) {
-              Toast.show({
-                type: 'error',
-                text1: 'Vui lòng nhập tên mẫu mã nhu yếu phẩm',
-                visibilityTime: 1000,
-                autoHide: true,
-              });
-              return;
-            }
+            // if (!values.name) {
+            //   Toast.show({
+            //     type: 'error',
+            //     text1: 'Vui lòng nhập tên mẫu mã nhu yếu phẩm',
+            //     visibilityTime: 1000,
+            //     autoHide: true,
+            //   });
+            //   return;
+            // }
 
             const reqDto: ICreateGroupProductReq = {
               name: values.name,
@@ -104,6 +112,9 @@ const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
                     text1: 'Thêm mẫu mã nhu yếu phẩm thành công',
                     visibilityTime: 1000,
                     autoHide: true,
+                    onHide: () => {
+                      navigation.goBack();
+                    },
                   });
                 } else {
                   Toast.show({
@@ -180,6 +191,16 @@ const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
                   />
                 )}
               </View>
+              {touched.name && errors.name && (
+                <Text
+                  style={{
+                    width: '100%',
+                    color: Colors.text.red,
+                    textAlign: 'left',
+                  }}>
+                  {errors.name}
+                </Text>
+              )}
 
               <Text style={styles.inputLabel}>Giá tiền</Text>
               <View style={styles.infoInput}>
@@ -187,12 +208,11 @@ const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
                   onChangeText={value => {
                     setFieldValue('price', value);
                   }}
-                  // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('price')}
                   style={{flex: 1, color: Colors.text.grey}}
                   placeholder={'Nhập giá tiền'}
                   placeholderTextColor={Colors.text.lightgrey}
                   value={values.price.toString()}
+                  keyboardType="numeric"
                 />
 
                 {values.price && (
@@ -210,8 +230,6 @@ const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
                   onChangeText={value => {
                     setFieldValue('region', value);
                   }}
-                  // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('region')}
                   style={{flex: 1, color: Colors.text.grey}}
                   placeholder={'Nhập nơi sản xuất'}
                   placeholderTextColor={Colors.text.lightgrey}
@@ -233,8 +251,6 @@ const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
                   onChangeText={value => {
                     setFieldValue('brand', value);
                   }}
-                  // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('brand')}
                   style={{flex: 1, color: Colors.text.grey}}
                   placeholder={'Nhập tên nhãn hiệu'}
                   placeholderTextColor={Colors.text.lightgrey}
@@ -254,19 +270,17 @@ const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
               <View style={styles.infoInput}>
                 <TextInput
                   onChangeText={value => {
-                    setFieldValue('brand', value);
+                    setFieldValue('category', value);
                   }}
-                  // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('brand')}
                   style={{flex: 1, color: Colors.text.grey}}
                   placeholder={'Phân loại nhu yếu phẩm'}
                   placeholderTextColor={Colors.text.lightgrey}
-                  value={values.brand}
+                  value={values.category}
                 />
 
-                {values.brand && (
+                {values.category && (
                   <Icon
-                    onPress={() => setFieldValue('brand', '')}
+                    onPress={() => setFieldValue('category', '')}
                     name={'close'}
                     style={styles.icon}
                   />
@@ -279,8 +293,6 @@ const AddGroupProductScreen = ({navigation}: {navigation: any}) => {
                   onChangeText={value => {
                     setFieldValue('description', value);
                   }}
-                  // onSubmitEditing={handleSubmit}
-                  onBlur={() => setFieldTouched('description')}
                   style={{flex: 1, color: Colors.text.grey}}
                   placeholder={'Nhập mô tả'}
                   placeholderTextColor={Colors.text.lightgrey}

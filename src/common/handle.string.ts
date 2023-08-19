@@ -57,7 +57,7 @@ export const splitString = (input: string): string => {
   return number;
 };
 
-export const changeStatusPkgToVietnamese = (status: string) => {
+export const changePackageStatusToVietnamese = (status: string) => {
   if (status === 'Active') {
     return 'Đang kích hoạt';
   } else if (status === 'Not Activated') {
@@ -67,7 +67,7 @@ export const changeStatusPkgToVietnamese = (status: string) => {
   }
 };
 
-export const changeStatusBillToVietnamese = (status: string) => {
+export const changeBillStatusToVietnamese = (status: string) => {
   if (status === 'PENDING') {
     return 'Chờ thanh toán';
   } else if (status === 'APPROVED') {
@@ -107,6 +107,7 @@ export const convertDayNumberToDayText = (dayNumber: string): string => {
   }
   return result;
 };
+
 export const convertDayTextToDayNumber = (dayText: string): string => {
   let result = '';
   switch (dayText) {

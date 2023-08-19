@@ -5,7 +5,7 @@ import {IStorageLocation} from '../../interfaces/base-dto/storage-location.inter
 export interface RouteParamsProductsScreen {
   groupId: string;
   storageLocation?: IStorageLocation;
-  purchaseLocation?: IPurchaseLocation;
+  storageLocation?: IPurchaseLocation;
 }
 
 export type PropsProductsScreen = RouteProp<

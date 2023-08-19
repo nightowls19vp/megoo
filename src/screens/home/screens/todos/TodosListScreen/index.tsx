@@ -184,13 +184,13 @@ const TodosListScreen = ({
             <Text
               style={{
                 color: Colors.text.grey,
-                fontWeight: 'bold',
               }}>
               Tiêu đề:
             </Text>
             <Text
               style={{
                 color: Colors.text.grey,
+                fontWeight: 'bold',
               }}>
               {todosItem.summary}
             </Text>

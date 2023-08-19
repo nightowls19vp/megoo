@@ -3,6 +3,7 @@ import {set} from 'mobx';
 import {observer} from 'mobx-react';
 import {useEffect, useState, useCallback} from 'react';
 import {
+  FlatList,
   Image,
   Modal,
   ScrollView,
@@ -71,65 +72,43 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
     }, []),
   );
 
-  const renderLocationItem = () => {
-    return locations.map((stoLoc: IStorageLocation) => {
-      const routeParam: RouteParamsProductsScreen = {
-        groupId: props?.groupId,
-        storageLocation: stoLoc,
-      };
+  const renderLocationItem = (stoLoc: IStorageLocation) => {
+    const routeParam: RouteParamsProductsScreen = {
+      groupId: groupStore.id,
+      storageLocation: stoLoc,
+    };
 
-      return (
-        <TouchableOpacity
-          style={styles.locationContainer}
-          key={stoLoc.id}
-          onPress={() => {
-            navigation.navigate(RouteNames.PRODUCTS, routeParam);
-          }}>
-          <Image
-            source={{
-              uri:
-                stoLoc.image ||
-                'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
-            }}
-            style={styles.locationImg}
-          />
-          <View style={styles.locationInfoContainer}>
-            <View style={[styles.locationInfoRow]}>
-              <Text
-                style={[
-                  styles.text,
-                  {
-                    fontWeight: 'bold',
-                  },
-                ]}>
-                Nơi lưu trữ:
-              </Text>
-              <Text
-                style={[styles.text, {color: Colors.text.lightgrey}]}
-                numberOfLines={3}>
-                {stoLoc?.name}
-              </Text>
-            </View>
-            <View style={[styles.locationInfoRow]}>
-              <Text
-                style={[
-                  styles.text,
-                  {
-                    fontWeight: 'bold',
-                  },
-                ]}>
-                Ghi chú:
-              </Text>
-              <Text
-                style={[styles.text, {color: Colors.text.lightgrey}]}
-                numberOfLines={3}>
-                {stoLoc.description}
-              </Text>
-            </View>
+    return (
+      <TouchableOpacity
+        style={styles.locationContainer}
+        key={stoLoc.id}
+        onPress={() => {
+          navigation.navigate(RouteNames.STORAGE_LOCATION_DETAIL, routeParam);
+        }}>
+        <Image
+          source={{
+            uri:
+              stoLoc.image ||
+              'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
+          }}
+          style={styles.locationImg}
+        />
+        <View style={styles.locationInfoContainer}>
+          <View style={[styles.locationInfoRow]}>
+            <Text style={styles.text}>Nơi lưu trữ:</Text>
+            <Text style={[styles.text, {fontWeight: 'bold'}]} numberOfLines={3}>
+              {stoLoc?.name}
+            </Text>
           </View>
-        </TouchableOpacity>
-      );
-    });
+          <View style={[styles.locationInfoRow]}>
+            <Text style={styles.text}>Ghi chú:</Text>
+            <Text style={[styles.text, {fontWeight: 'bold'}]} numberOfLines={3}>
+              {stoLoc.description}
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
   };
 
   return appStore.isLoggedIn ? (
@@ -350,9 +329,24 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
         </View>
       </Modal>
 
-      <ScrollView contentContainerStyle={styles.locationsContainer}>
-        {renderLocationItem()}
-      </ScrollView>
+      <FlatList
+        data={locations}
+        keyExtractor={item =>
+          item?.id?.toString() ?? new Date().getTime().toString()
+        }
+        renderItem={({item}) => renderLocationItem(item)}
+        contentContainerStyle={styles.container}
+        // onEndReached={fetchMoreData} // Add your function to fetch more data here
+        onEndReachedThreshold={0.2} // Adjust the threshold as needed
+        ListEmptyComponent={() => (
+          <View
+            style={{
+              marginTop: 20,
+            }}>
+            <Text>Không có sản phẩm nào</Text>
+          </View>
+        )}
+      />
       {/* {locations.length > 0 ? {} : null } */}
     </View>
   ) : (

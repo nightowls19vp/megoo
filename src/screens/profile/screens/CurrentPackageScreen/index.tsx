@@ -20,7 +20,7 @@ import Modal from 'react-native-modal';
 import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
 
 import {
-  changeStatusPkgToVietnamese,
+  changePackageStatusToVietnamese,
   dateFormat,
 } from '../../../../common/handle.string';
 import appStore from '../../../../common/store/app.store';
@@ -94,15 +94,15 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
   const getSelectedGroup = async () => {
     // Get group info by id
     const groupRes = await getGroupById(groupStore.id);
-    console.log('groupsRes group:', groupRes.group);
-    console.log('groupsRes group members:', groupRes?.group?.members);
+    // console.log('groupsRes group:', groupRes.group);
+    // console.log('groupsRes group members:', groupRes?.group?.members);
     // console.log('route param:', route);
 
     const activePackage = groupRes.group.packages.find(
       (pkg: any) => pkg.status === 'Active',
     );
 
-    console.log('activePackage:', activePackage);
+    // console.log('activePackage:', activePackage);
 
     if (!activePackage) {
       setGroup({
@@ -202,10 +202,12 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
     });
   };
 
-  const viStatus = changeStatusPkgToVietnamese(group.status);
+  const viStatus = changePackageStatusToVietnamese(group.status);
 
   useEffect(() => {
     getSelectedGroup();
+    console.log('group status:', group.status);
+
     if (group.status === 'Expired') {
       console.log('Package expired');
       extendPackage();
@@ -260,13 +262,14 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
         </View>
         <View style={styles.groupInfoContainer}>
           <View style={[styles.infoRow, {flexWrap: 'wrap'}]}>
-            <Text style={[styles.text, {fontWeight: 'bold'}]}>Tên nhóm: </Text>
+            <Text style={styles.text}>Tên nhóm: </Text>
             <Text
               style={[
-                styles.infoText,
+                styles.text,
                 {
                   width: '100%',
-                  paddingRight: 20,
+                  fontWeight: 'bold',
+                  paddingRight: 10,
                 },
               ]}
               ellipsizeMode={'tail'}
@@ -275,38 +278,40 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
             </Text>
           </View>
           <View style={styles.infoRow}>
-            <Text style={[styles.text, {fontWeight: 'bold'}]}>Thời hạn: </Text>
-            <Text style={styles.infoText}>{group.duration} tháng</Text>
+            <Text style={styles.text}>Thời hạn: </Text>
+            <Text style={[styles.text, {fontWeight: 'bold'}]}>
+              {group.duration} tháng
+            </Text>
           </View>
           <View style={styles.infoRow}>
+            <Text style={styles.text}>Số lượng thành viên: </Text>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>
-              Số lượng thành viên:{' '}
+              {group.noOfMember}
             </Text>
-            <Text style={styles.infoText}>{group.noOfMember}</Text>
           </View>
           {group.status === 'Active' ? (
             <>
               <View style={styles.infoRow}>
+                <Text style={styles.text}>Ngày kích hoạt: </Text>
                 <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                  Ngày kích hoạt:{' '}
+                  {group.startDate}
                 </Text>
-                <Text style={styles.infoText}>{group.startDate}</Text>
               </View>
               <View style={styles.infoRow}>
+                <Text style={styles.text}>Ngày hết hạn: </Text>
                 <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                  Ngày hết hạn:{' '}
+                  {group.endDate}
                 </Text>
-                <Text style={styles.infoText}>{group.endDate}</Text>
               </View>
             </>
           ) : null}
 
           <View style={styles.activateGroupContainer}>
             <View style={styles.infoRow}>
+              <Text style={styles.text}>Trạng thái: </Text>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Trạng thái:{' '}
+                {viStatus}
               </Text>
-              <Text style={styles.infoText}>{viStatus}</Text>
             </View>
             {group.status === 'Not Activated' ? (
               <TouchableOpacity
@@ -377,9 +382,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
               flexDirection: 'column',
               gap: 10,
             }}>
-            <Text style={[styles.text, {fontWeight: 'bold'}]}>
-              Danh sách thành viên:{' '}
-            </Text>
+            <Text style={styles.text}>Danh sách thành viên: </Text>
             {group.members.map((member, index) => {
               return (
                 <View
@@ -406,7 +409,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                       <Text
                         style={
                           member.role !== 'Super User'
-                            ? styles.infoText
+                            ? styles.text
                             : styles.superUserText
                         }>
                         {member.user.name}
