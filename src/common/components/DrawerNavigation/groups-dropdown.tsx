@@ -27,7 +27,15 @@ interface IProps {
 
 const GroupsDropdownPicker = () => {
   const [value, setValue] = useState('');
-  const [items, setItems] = useState<ISelectCountryItem[]>([]);
+  const [items, setItems] = useState<ISelectCountryItem[]>([
+    {
+      label: 'abc',
+      value: 'abc',
+      image: {
+        uri: IMAGE_URI_DEFAULT,
+      },
+    },
+  ]);
 
   const [isFocus, setIsFocus] = useState(false);
 
@@ -46,25 +54,47 @@ const GroupsDropdownPicker = () => {
       ) {
         return [];
       } else {
-        setItems(
-          groupsRes.groups.map((groupItem: any) => {
-            const item: ISelectCountryItem = {
-              label: groupItem.name,
-              value: groupItem._id,
-              image: {
-                uri: groupItem?.avatar || IMAGE_URI_DEFAULT,
-              },
-            };
-
-            return item;
-          }),
+        const activeGroups = groupsRes.groups.filter((groupItem: any) =>
+          groupItem.packages.some((pkg: any) => pkg.status === 'Active'),
         );
 
-        setValue(groupsRes.groups[0]._id);
-        groupStore.setGroupId(groupsRes.groups[0]._id);
+        if (
+          !activeGroups ||
+          !activeGroups.length ||
+          activeGroups.length === 0
+        ) {
+          return;
+        }
+
+        const myItems = activeGroups.map((groupItem: any) => {
+          const item: ISelectCountryItem = {
+            label: groupItem.name,
+            value: groupItem._id,
+            image: {
+              uri: groupItem?.avatar || IMAGE_URI_DEFAULT,
+            },
+          };
+
+          return item;
+        });
+
+        setItems(myItems);
+
+        if (groupStore.id === '') {
+          setValue(groupsRes.groups[0]._id);
+          groupStore.setGroupId(groupsRes.groups[0]._id);
+        }
       }
     }
   };
+
+  // watch groupStore.activeGroups on changes
+  useEffect(() => {
+    if (groupStore.toUpdateGroupDropdown) {
+      getGroups();
+      groupStore.setToUpdateGroupDropdown(false);
+    }
+  }, [groupStore.toUpdateGroupDropdown]);
 
   return (
     <View

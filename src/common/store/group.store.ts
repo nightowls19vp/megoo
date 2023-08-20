@@ -25,6 +25,14 @@ class GroupStore {
     this.id = '';
     this.channelUrl = '';
   }
+
+  @observable
+  toUpdateGroupDropdown = false;
+
+  @action
+  setToUpdateGroupDropdown(toUpdateGroupDropdown: boolean) {
+    this.toUpdateGroupDropdown = toUpdateGroupDropdown;
+  }
 }
 
 const groupStore = new GroupStore();

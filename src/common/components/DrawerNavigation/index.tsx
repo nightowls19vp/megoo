@@ -19,8 +19,9 @@ import GroupsDropdown from './groups-dropdown';
 
 const Drawer = createDrawerNavigator();
 
-function CustomDrawerContent(props: any) {
+const customDrawerContent = (props: any) => {
   const navigation = useNavigation();
+
   return (
     <DrawerContentScrollView
       {...props}
@@ -114,7 +115,9 @@ function CustomDrawerContent(props: any) {
       </View>
     </DrawerContentScrollView>
   );
-}
+};
+
+const CustomDrawerContent = observer(customDrawerContent);
 
 const ChatScreen = () => {
   return (
