@@ -15,6 +15,7 @@ import appStore from '../../store/app.store';
 import {useNavigation} from '@react-navigation/native';
 import {observer} from 'mobx-react-lite';
 import SearchComp from '../Search';
+import GroupsDropdown from './groups-dropdown';
 
 const Drawer = createDrawerNavigator();
 
@@ -31,36 +32,44 @@ function CustomDrawerContent(props: any) {
       <View
         style={{
           backgroundColor: Colors.background.white,
-          height: '30%',
+          // height: '30%',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
         }}>
         {appStore.isLoggedIn ? (
           <React.Fragment>
-            <Image
-              source={{
-                uri:
-                  userStore?.avatar ||
-                  'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
-              }}
+            <View>
+              <Image
+                source={{
+                  uri:
+                    userStore?.avatar ||
+                    'https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png',
+                }}
+                style={{
+                  width: 150,
+                  height: 150,
+                  borderRadius: 150 / 2,
+                  marginBottom: 20,
+                }}
+              />
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: Colors.text.orange,
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                }}
+                numberOfLines={2}>
+                {userStore.name}
+              </Text>
+            </View>
+            <View
               style={{
-                width: 150,
-                height: 150,
-                borderRadius: 150 / 2,
-                marginBottom: 20,
-              }}
-            />
-            <Text
-              style={{
-                textAlign: 'center',
-                color: Colors.text.orange,
-                fontSize: 18,
-                fontWeight: 'bold',
-              }}
-              numberOfLines={2}>
-              {userStore.name}
-            </Text>
+                marginBottom: 10,
+              }}>
+              <GroupsDropdown />
+            </View>
           </React.Fragment>
         ) : (
           <>
