@@ -22,6 +22,10 @@ const Drawer = createDrawerNavigator();
 const customDrawerContent = (props: any) => {
   const navigation = useNavigation();
 
+  const renderGroupsDropdown = () => {
+    return <GroupsDropdown />;
+  };
+
   return (
     <DrawerContentScrollView
       {...props}
@@ -69,7 +73,7 @@ const customDrawerContent = (props: any) => {
               style={{
                 marginBottom: 10,
               }}>
-              <GroupsDropdown />
+              {renderGroupsDropdown()}
             </View>
           </React.Fragment>
         ) : (

@@ -27,15 +27,7 @@ interface IProps {
 
 const GroupsDropdownPicker = () => {
   const [value, setValue] = useState('');
-  const [items, setItems] = useState<ISelectCountryItem[]>([
-    {
-      label: 'abc',
-      value: 'abc',
-      image: {
-        uri: IMAGE_URI_DEFAULT,
-      },
-    },
-  ]);
+  const [items, setItems] = useState<ISelectCountryItem[]>([]);
 
   const [isFocus, setIsFocus] = useState(false);
 
