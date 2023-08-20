@@ -388,7 +388,7 @@ const StorageStack = createNativeStackNavigator();
 
 const StorageScreenStack = () => {
   return (
-    <StorageStack.Navigator initialRouteName={RouteNames.STORAGE_GROUPS}>
+    <StorageStack.Navigator initialRouteName={RouteNames.STORAGE_TABS}>
       <StorageStack.Screen
         name={appStore.isLoggedIn ? RouteNames.STORAGE_GROUPS : 'Quản lý gói'}
         component={GroupsProductsListScreen}
@@ -605,7 +605,7 @@ export default observer(function BottomNavigationBar() {
       <Tab.Screen
         name={RouteNames.STORAGE_STACK_BOTTOM}
         component={StorageScreenStack}
-        initialParams={{screen: RouteNames.STORAGE_GROUPS}}
+        initialParams={{screen: RouteNames.STORAGE_TABS}}
         options={{
           unmountOnBlur: true,
           title: 'Kho',

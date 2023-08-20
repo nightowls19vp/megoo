@@ -46,13 +46,11 @@ const GroupsDropdownPicker = () => {
       ) {
         return [];
       } else {
-        setValue(groupsRes.groups[0].id);
-
         setItems(
           groupsRes.groups.map((groupItem: any) => {
             const item: ISelectCountryItem = {
               label: groupItem.name,
-              value: groupItem.id,
+              value: groupItem._id,
               image: {
                 uri: groupItem?.avatar || IMAGE_URI_DEFAULT,
               },
@@ -61,6 +59,9 @@ const GroupsDropdownPicker = () => {
             return item;
           }),
         );
+
+        setValue(groupsRes.groups[0]._id);
+        groupStore.setGroupId(groupsRes.groups[0]._id);
       }
     }
   };

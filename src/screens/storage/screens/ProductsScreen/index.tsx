@@ -154,6 +154,10 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
   }, []);
 
   useEffect(() => {
+    if (groupStore.id === '' || !groupStore.id) {
+      return;
+    }
+
     setIsLoading(true);
 
     // fetch the first 10 items
@@ -169,6 +173,17 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
       setIsLoading(false);
     });
   }, [reqDto]);
+
+  // watch for groupStore.id change
+  useEffect(() => {
+    // reset page to 1
+    setReqDto(prevReqDto => ({
+      ...prevReqDto,
+      page: 1,
+      groupId: groupStore.id,
+      search: searchStore.searchText,
+    }));
+  }, [groupStore.id]);
 
   // listen to the search text change
   useEffect(() => {
