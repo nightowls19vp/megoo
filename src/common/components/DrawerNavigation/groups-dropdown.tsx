@@ -71,11 +71,6 @@ const GroupsDropdownPicker = () => {
         });
 
         setItems(myItems);
-
-        if (groupStore.id === '') {
-          setValue(groupsRes.groups[0]._id);
-          groupStore.setGroupId(groupsRes.groups[0]._id);
-        }
       }
     }
   };
@@ -87,6 +82,15 @@ const GroupsDropdownPicker = () => {
       groupStore.setToUpdateGroupDropdown(false);
     }
   }, [groupStore.toUpdateGroupDropdown]);
+
+  useEffect(() => {
+    console.log('render dropdown:', items.length);
+
+    if (groupStore.id === '' && items.length > 0) {
+      setValue(items[0].value);
+      groupStore.setGroupId(items[0].value);
+    }
+  }, [items]);
 
   return (
     <View
