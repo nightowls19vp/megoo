@@ -1,7 +1,9 @@
-import {URL_HOST} from '../../../../core/config/api/api.config';
 import axios from 'axios';
-import {IRegisterReq, IRegisterRes} from './../interfaces/register.interface';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {URL_HOST} from '../../../../core/config/api/api.config';
+import {IRegisterReq, IRegisterRes} from '../interfaces/register.interface';
 
 export const register = async (registerInfo: IRegisterReq) => {
   const registerEndpoint = 'api/auth/register';

@@ -24,6 +24,7 @@ import {
   dateISOFormat,
   splitString,
 } from '../../../../../common/handle.string';
+import groupStore from '../../../../../common/store/group.store';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import {getMembers} from '../../../../../services/group.service';
@@ -49,7 +50,7 @@ const BillSchema = Yup.object().shape({
 
 const BillScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupRouteProp>();
-  const groupId = route.params.groupId;
+  const groupId = groupStore.id;
 
   const [members, setMembers] = useState([
     {

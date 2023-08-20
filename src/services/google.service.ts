@@ -1,8 +1,10 @@
+import axios from 'axios';
+
 import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import axios from 'axios';
+
 import userStore from '../common/store/user.store';
 import {URL_HOST} from '../core/config/api/api.config';
 import {IGoogleLoginRes} from '../screens/login/screens/LoginScreen/interfaces/login.interface';

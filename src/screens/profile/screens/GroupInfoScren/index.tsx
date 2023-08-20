@@ -1,15 +1,17 @@
-import {RouteProp, useRoute} from '@react-navigation/native';
 import {useEffect, useState} from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Toast from 'react-native-toast-message';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
+import {RouteProp, useRoute} from '@react-navigation/native';
+
+import groupStore from '../../../../common/store/group.store';
 import {Colors} from '../../../../constants/color.const';
-import styles from './styles/style';
-import CurrentPackage from '../CurrentPackageScreen';
-import OtherPackages from '../OtherPackages';
 import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
+import CurrentPackage from '../CurrentPackageScreen';
+import OtherPackages from '../OtherPackages';
+import styles from './styles/style';
 
 // Define the type for the route params
 type GroupDetailRouteParams = {
@@ -68,7 +70,7 @@ const GroupInfoScreen = ({navigation}: {navigation: any}) => {
       };
     });
 
-    const groupId = route.params?.groupId;
+    const groupId = groupStore.id;
 
     const selectedGroup = groups.find((group: any) => group._id === groupId);
 

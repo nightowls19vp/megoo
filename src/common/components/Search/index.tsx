@@ -3,8 +3,8 @@ import {observer} from 'mobx-react';
 import React, {Fragment, useEffect, useRef, useState} from 'react';
 import {Button, TextInput, TouchableOpacity, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Colors} from '../../../constants/color.const';
 
+import {Colors} from '../../../constants/color.const';
 import appStore from '../../store/app.store';
 import searchStore from '../../store/search.store';
 import {styles} from './styles';

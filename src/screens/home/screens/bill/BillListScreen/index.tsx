@@ -1,3 +1,4 @@
+import {useCallback, useEffect, useState} from 'react';
 import {
   Dimensions,
   ScrollView,
@@ -8,14 +9,17 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import RouteNames from '../../../../../constants/route-names.const';
-import {Colors} from '../../../../../constants/color.const';
 import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
-import {useCallback, useEffect, useState} from 'react';
+
+import {
+  changeBillStatusToVietnamese,
+  dateFormat,
+} from '../../../../../common/handle.string';
+import groupStore from '../../../../../common/store/group.store';
+import {Colors} from '../../../../../constants/color.const';
+import RouteNames from '../../../../../constants/route-names.const';
 import {getBillList} from './services/bill-list.service';
 import styles from './styles/style';
-import {dateFormat} from '../../../../../common/handle.string';
-import {changeBillStatusToVietnamese} from './../../../../../common/handle.string';
 
 // Define the type for the route params
 type GroupRouteParams = {
@@ -27,7 +31,7 @@ type GroupRouteProp = RouteProp<Record<string, GroupRouteParams>, string>;
 
 const BillListScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupRouteProp>();
-  const groupId = route.params?.groupId;
+  const groupId = groupStore.id;
 
   const [billList, setBillList] = useState([]);
   const getBills = async () => {

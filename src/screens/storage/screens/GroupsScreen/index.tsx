@@ -4,6 +4,9 @@ import {Image, Text, TouchableOpacity, View} from 'react-native';
 import notifee from '@notifee/react-native';
 
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
+import appStore from '../../../../common/store/app.store';
+import groupStore from '../../../../common/store/group.store';
+import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
 import * as d from '../../services/divisions.service';
@@ -13,9 +16,6 @@ import * as p from '../../services/product.service';
 import * as pl from '../../services/purchase-locations.service';
 import * as sl from '../../services/storage-location.service';
 import styles from './styles/style';
-import appStore from '../../../../common/store/app.store';
-import {Colors} from '../../../../constants/color.const';
-import groupStore from '../../../../common/store/group.store';
 
 const GroupProductListScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);

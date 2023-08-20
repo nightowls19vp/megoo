@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Button} from 'react-native-elements';
+import Modal from 'react-native-modal';
 
 import {Colors} from '../../../../../constants/color.const';
-import Modal from 'react-native-modal';
+
 interface FilterModalProps {
   isVisible: boolean;
   onClose: () => void;

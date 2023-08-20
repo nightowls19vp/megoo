@@ -1,4 +1,5 @@
 import {observer} from 'mobx-react';
+import {useState} from 'react';
 import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,6 +11,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import {Colors} from '../../../constants/color.const';
 import RouteNames from '../../../constants/route-names.const';
+import ChangeGroupChatDetailScreen from '../../../screens/chat/screens/ChangeGroupChatDetailScreen/index';
 import ChatScreen from '../../../screens/chat/screens/ChatScreen';
 import GroupChatDetailScreen from '../../../screens/chat/screens/GroupChatDetailScreen/index';
 import GroupChatListScreen from '../../../screens/chat/screens/GroupChatListScreen';
@@ -43,17 +45,17 @@ import AddGroupProductScreen from '../../../screens/storage/screens/AddGroupProd
 import AddProdInfoScreen from '../../../screens/storage/screens/AddProdInfoScreen';
 import AddPurchaseLocationScreen from '../../../screens/storage/screens/AddPurchaseLocationScreen';
 import AddStorageLocationScreen from '../../../screens/storage/screens/AddStorageLocationScreen';
+import EditStorageLocationDetailScreen from '../../../screens/storage/screens/EditStorageDetailScreen';
 import GroupsProductsListScreen from '../../../screens/storage/screens/GroupsScreen';
 import ProductDetailScreen from '../../../screens/storage/screens/ProductDetailScreen';
 import ProductsScreen from '../../../screens/storage/screens/ProductsScreen';
 import PurchaseLocationScreen from '../../../screens/storage/screens/PurchaseLocationScreen';
 import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScreen';
+import StorageLocationDetailScreen from '../../../screens/storage/screens/StorageLocationDetailScreen';
 import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
 import appStore from '../../store/app.store';
 import groupStore from '../../store/group.store';
-import ChangeGroupChatDetailScreen from './../../../screens/chat/screens/ChangeGroupChatDetailScreen/index';
-import StorageLocationDetailScreen from '../../../screens/storage/screens/StorageLocationDetailScreen';
-import EditStorageLocationDetailScreen from '../../../screens/storage/screens/EditStorageDetailScreen';
+import ToolTip from '../ToolTip';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = ({navigation}: {navigation: any}) => {
@@ -168,7 +170,7 @@ const TodosTabs = () => {
 const TodosListStack = createNativeStackNavigator();
 const TodosListScreenStack = () => {
   return (
-    <TodosListStack.Navigator initialRouteName={RouteNames.GROUP_TODOS_LIST}>
+    <TodosListStack.Navigator initialRouteName={RouteNames.TODOS_TAB}>
       <TodosListStack.Screen
         name={RouteNames.CHAT_STACK}
         component={ChatScreenStack}
@@ -189,6 +191,7 @@ const TodosListScreenStack = () => {
       <TodosListStack.Screen
         name={RouteNames.TODOS_TAB}
         component={TodosTabs}
+        initialParams={{screen: RouteNames.PRIVATE_TODOS_TAB}}
         // options={{headerShown: false}}
       />
       <TodosListStack.Screen
@@ -237,6 +240,8 @@ const TaskListScreenStack = () => {
 
 const HomeStack = createNativeStackNavigator();
 const HomeScreenStack = () => {
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+
   return (
     <HomeStack.Navigator initialRouteName={RouteNames.HOME}>
       <HomeStack.Screen
@@ -277,6 +282,22 @@ const HomeScreenStack = () => {
         component={InterestRateScreen}
         options={{
           headerShown: true,
+          headerRight: () => {
+            return (
+              // <TouchableOpacity>
+              //   <Ionicons
+              //     name="information-circle-outline"
+              //     size={24}
+              //     color={'black'}
+              //   />
+              // </TouchableOpacity>
+              <ToolTip
+                content="Tỉ lệ lãi suất ngân hàng"
+                isTooltipVisible={isTooltipVisible}
+                setIsTooltipVisible={setIsTooltipVisible}
+              />
+            );
+          },
         }}
       />
     </HomeStack.Navigator>
@@ -355,7 +376,6 @@ const AddProductScreenStack = () => {
 };
 
 const StorageTopTabNavigator = createMaterialTopTabNavigator();
-
 const StorageTabs = () => {
   return (
     <StorageTopTabNavigator.Navigator

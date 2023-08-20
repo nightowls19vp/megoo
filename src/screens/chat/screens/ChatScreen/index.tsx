@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
+import {Image} from 'react-native-elements';
 import {
   Bubble,
   Composer,
@@ -19,14 +20,17 @@ import {
   Send,
   SystemMessage,
 } from 'react-native-gifted-chat';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {RouteProp, useRoute} from '@react-navigation/native';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import {RouteProp, useRoute} from '@react-navigation/native';
 import {GroupChannel} from '@sendbird/chat/groupChannel';
+
+import groupStore from '../../../../common/store/group.store';
 // import {v4 as uuid} from 'uuid';
 // import 'react-native-get-random-values';
-
 import userStore from '../../../../common/store/user.store';
+import {Colors} from '../../../../constants/color.const';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
 import {
   getMessages,
@@ -34,9 +38,6 @@ import {
   sendMessageImageToSendBird,
   uploadImage,
 } from './services/chat.service';
-import {Colors} from '../../../../constants/color.const';
-import {Image} from 'react-native-elements';
-import groupStore from './../../../../common/store/group.store';
 
 // Define the type for the route params
 type ChannelUrlRouteParams = {
@@ -191,7 +192,7 @@ const renderComposer = (props: any) => {
 const ChatScreen = () => {
   const route = useRoute<ChannelUrlRouteProp>();
   const channelUrl = route.params.channelUrl;
-  const groupId = route.params.groupId;
+  const groupId = groupStore.id;
 
   const [isMounted, setIsMounted] = useState(false);
 

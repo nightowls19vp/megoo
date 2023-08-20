@@ -1,16 +1,16 @@
 import {useCallback, useEffect, useState} from 'react';
-import {Image, Text, TouchableOpacity, View, ScrollView} from 'react-native';
+import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 
 import {useFocusEffect} from '@react-navigation/native';
 
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
+import {changePackageStatusToVietnamese} from '../../../../common/handle.string';
+import appStore from '../../../../common/store/app.store';
+import groupStore from '../../../../common/store/group.store';
+import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
 import styles from './styles/style';
-import {Colors} from '../../../../constants/color.const';
-import {changePackageStatusToVietnamese} from '../../../../common/handle.string';
-import groupStore from '../../../../common/store/group.store';
-import appStore from '../../../../common/store/app.store';
 
 const GroupsScreen = ({navigation}: {navigation: any}) => {
   const [groups, setGroups] = useState([]);
@@ -52,7 +52,7 @@ const GroupsScreen = ({navigation}: {navigation: any}) => {
             noOfMember: currentPackage?.package.noOfMember
               ? currentPackage?.package.noOfMember
               : 0,
-            status: currentPackage?.status ? currentPackage.status : '',
+            status: currentPackage?.status ? currentPackage.status : 'Expired',
             members: groupItem.members ? groupItem.members : [],
           };
         }),

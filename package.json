@@ -66,6 +66,7 @@
     "react-native-toast-message": "^2.1.6",
     "react-native-vector-icons": "^9.2.0",
     "react-native-vision-camera": "^2.15.4",
+    "react-native-walkthrough-tooltip": "^1.5.0",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",
     "vision-camera-code-scanner": "^0.2.0",

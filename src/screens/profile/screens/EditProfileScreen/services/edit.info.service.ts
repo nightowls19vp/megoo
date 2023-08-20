@@ -1,9 +1,11 @@
-import {URL_HOST} from './../../../../../core/config/api/api.config';
 import axios from 'axios';
-import {IEditInfoReq, IEditInfoRes} from './../interfaces/edit.info.interface';
-import userStore from './../../../../../common/store/user.store';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as base64 from 'base64-js';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import userStore from '../../../../../common/store/user.store';
+import {URL_HOST} from '../../../../../core/config/api/api.config';
+import {IEditInfoReq, IEditInfoRes} from '../interfaces/edit.info.interface';
 
 export const editInfo = async (editInfo: IEditInfoReq) => {
   const editInfoEndpoint = `api/users/${userStore.id}`;

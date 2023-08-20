@@ -1,14 +1,18 @@
-import {URL_HOST} from './../../../../../core/config/api/api.config';
 import axios from 'axios';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+
+import {IValidateRes} from '../../../../../common/interfaces/validate.interface';
+import {URL_HOST} from '../../../../../core/config/api/api.config';
 import {
   IGoogleLoginRes,
   ILoginReq,
   ILoginRes,
 } from '../interfaces/login.interface';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {statusCodes} from '@react-native-google-signin/google-signin';
-import {IValidateRes} from '../../../../../common/interfaces/validate.interface';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const login = async (loginInfo: ILoginReq) => {
   const loginEndpoint = 'api/auth/login/mobile';

@@ -4,12 +4,12 @@ import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {GroupChannel} from '@sendbird/chat/groupChannel';
 
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
+import groupStore from '../../../../common/store/group.store';
 import userStore from '../../../../common/store/user.store';
 import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
 import styles from './styles/style';
-import groupStore from '../../../../common/store/group.store';
 
 // const appId = 'ADD4546B-CF09-4980-B6AC-DB7FFD2E70EC';
 // export const sendbird = new SendBird({appId});

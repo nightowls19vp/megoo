@@ -23,9 +23,9 @@ import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {IEditInfoRes} from './interfaces/edit.info.interface';
 import {
-  uploadAvatarWithBase64,
   editInfo,
   updateAvatar,
+  uploadAvatarWithBase64,
 } from './services/edit.info.service';
 import styles from './styles/styles';
 

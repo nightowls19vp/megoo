@@ -12,18 +12,18 @@ import {
 } from 'react-native';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import Modal from 'react-native-modal/dist/modal';
+import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import AddImageModal from '../../../../common/components/AddImageModal';
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import appStore from '../../../../common/store/app.store';
+import groupStore from '../../../../common/store/group.store';
+import userStore from '../../../../common/store/user.store';
 import {Colors} from '../../../../constants/color.const';
+import {ICreateStorageLocationReq} from '../../interfaces/storage-locations';
 import {createStorageLocation} from '../../services/storage-location.service';
 import styles from './styles/style';
-import {ICreateStorageLocationReq} from '../../interfaces/storage-locations';
-import userStore from '../../../../common/store/user.store';
-import groupStore from '../../../../common/store/group.store';
-import Toast from 'react-native-toast-message';
 
 const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
   const initialValues = {

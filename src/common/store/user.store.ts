@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {
   action,
   extendObservable,
@@ -5,13 +6,14 @@ import {
   observable,
   reaction,
 } from 'mobx';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {URL_HOST} from '../../core/config/api/api.config';
+import {ICartItem, ICartList, IPackage} from '../interfaces/package.interface';
+import {ISettings} from '../interfaces/settings.interface';
 import {IUser} from '../interfaces/user.interface';
 import {IValidateRes} from '../interfaces/validate.interface';
-import {ISettings} from './../interfaces/settings.interface';
-import axios from 'axios';
-import {URL_HOST} from '../../core/config/api/api.config';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ICartItem, ICartList, IPackage} from '../interfaces/package.interface';
 
 class UserStore {
   @observable id = '';

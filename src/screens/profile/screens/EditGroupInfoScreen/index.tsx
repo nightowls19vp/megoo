@@ -1,3 +1,4 @@
+import {Formik} from 'formik';
 import {useEffect, useState} from 'react';
 import {
   Dimensions,
@@ -8,11 +9,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {RouteProp, useRoute} from '@react-navigation/native';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
+import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as Yup from 'yup';
 
+import {RouteProp, useRoute} from '@react-navigation/native';
+
+import {IMAGE_URI_DEFAULT} from '../../../../common/default';
+import groupStore from '../../../../common/store/group.store';
 import {Colors} from '../../../../constants/color.const';
 import {getGroupById} from '../../../../services/group.service';
 import {
@@ -20,8 +24,6 @@ import {
   updateGroupName,
   uploadGroupAvatarWithBase64,
 } from './services/group.info.service';
-import {Asset, launchImageLibrary} from 'react-native-image-picker';
-import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 
 // Define the type for the route params
 type GroupAvatarRouteParams = {
@@ -41,7 +43,8 @@ const ChangeGroupNameSchema = Yup.object().shape({
 
 const EditGroupinfoScreen = () => {
   const route = useRoute<GroupAvatarRouteProp>();
-  const {groupId, avatarUrl} = route.params;
+  const {avatarUrl} = route.params;
+  const groupId = groupStore.id;
 
   const [group, setGroup] = useState({
     name: '',

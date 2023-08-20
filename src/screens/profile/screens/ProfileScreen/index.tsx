@@ -2,6 +2,7 @@ import {observer} from 'mobx-react';
 import React, {useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
+import Toast from 'react-native-toast-message';
 
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import appStore from '../../../../common/store/app.store';
@@ -12,9 +13,8 @@ import {
   googleLink,
   signOutIfSignedInWithGG,
 } from '../../../../services/google.service';
-import styles from './styles/styles';
-import Toast from 'react-native-toast-message';
 import {validate} from '../../../login/screens/LoginScreen/services/login.service';
+import styles from './styles/styles';
 
 const ProfileScreen = ({navigation}: {navigation: any}) => {
   const [selectedImages, setSelectedImages] = useState('');

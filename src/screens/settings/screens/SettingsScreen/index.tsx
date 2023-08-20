@@ -1,3 +1,4 @@
+import {observer} from 'mobx-react';
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
@@ -6,23 +7,23 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Modal from 'react-native-modal';
+import Toast from 'react-native-toast-message';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import Toast from 'react-native-toast-message';
-import Modal from 'react-native-modal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import RouteNames from '../../../../constants/route-names.const';
-import styles from './styles/styles';
-import userStore from './../../../../common/store/user.store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+
 import appStore from '../../../../common/store/app.store';
+import userStore from '../../../../common/store/user.store';
+import {Colors} from '../../../../constants/color.const';
+import RouteNames from '../../../../constants/route-names.const';
+import {socket} from '../../../../core/socket.io/socket.io';
+import {signOutIfSignedInWithGG} from '../../../../services/google.service';
 import {ILogoutRes} from './interfaces/logout.interface';
 import {logout} from './services/settings.service';
-import {signOutIfSignedInWithGG} from '../../../login/screens/LoginScreen/services/login.service';
-import {observer} from 'mobx-react';
-import {Colors} from '../../../../constants/color.const';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {socket} from '../../../../core/socket.io/socket.io';
+import styles from './styles/styles';
 
 const SettingsScreen = ({navigation}: {navigation: any}) => {
   const [modalVisible, setModalVisible] = useState(false);

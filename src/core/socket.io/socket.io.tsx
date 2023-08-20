@@ -1,12 +1,14 @@
-import {io, Socket} from 'socket.io-client';
-import notifee from '@notifee/react-native';
-import {URL_HOST, URL_SOCKET} from '../config/api/api.config';
-import {displayNotification} from '../push-notifee/notifee';
-import userStore from '../../common/store/user.store';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+import {io, Socket} from 'socket.io-client';
+
+import notifee from '@notifee/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
+
+import userStore from '../../common/store/user.store';
+import {URL_HOST, URL_SOCKET} from '../config/api/api.config';
+import {displayNotification} from '../push-notifee/notifee';
 
 export let socket: Socket;
 

@@ -1,16 +1,18 @@
+import axios from 'axios';
 import {observer} from 'mobx-react';
 import React, {useEffect, useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Dropdown, SelectCountry} from 'react-native-element-dropdown';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Colors} from '../../../constants/color.const';
-import {getUserGroup} from '../../../services/group.service';
-import appStore from '../../store/app.store';
-import {IMAGE_URI_DEFAULT} from '../../default';
-import {URL_HOST} from '../../../core/config/api/api.config';
-import axios from 'axios';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {Colors} from '../../../constants/color.const';
+import {URL_HOST} from '../../../core/config/api/api.config';
+import {getUserGroup} from '../../../services/group.service';
+import {IMAGE_URI_DEFAULT} from '../../default';
+import appStore from '../../store/app.store';
 import groupStore from '../../store/group.store';
 
 interface ISelectCountryItem {

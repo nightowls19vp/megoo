@@ -1,5 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {URL_HOST} from '../../../../../../core/config/api/api.config';
 

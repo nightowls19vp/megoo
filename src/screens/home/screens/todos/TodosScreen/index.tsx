@@ -1,3 +1,4 @@
+import {Formik} from 'formik';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Dimensions,
@@ -8,17 +9,20 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
-import CheckBox from '@react-native-community/checkbox';
 import Modal from 'react-native-modal';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import RadioGroup, {
   RadioButton,
   RadioButtonProps,
 } from 'react-native-radio-buttons-group';
+import Toast from 'react-native-toast-message';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as Yup from 'yup';
 
+import CheckBox from '@react-native-community/checkbox';
+import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
+
+import {Colors} from '../../../../../constants/color.const';
+import RouteNames from '../../../../../constants/route-names.const';
 import {
   addTodos,
   changeState,
@@ -28,9 +32,6 @@ import {
   getTodosById,
   updateTodoInList,
 } from './services/todos.service';
-import RouteNames from '../../../../../constants/route-names.const';
-import {Colors} from '../../../../../constants/color.const';
-import Toast from 'react-native-toast-message';
 import styles from './styles/styles';
 
 // Define the type for the route params

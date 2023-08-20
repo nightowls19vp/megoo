@@ -1,4 +1,6 @@
 import {Formik} from 'formik';
+import _ from 'lodash';
+import moment from 'moment';
 import {useEffect, useMemo, useState} from 'react';
 import {
   Dimensions,
@@ -9,29 +11,27 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import DatePicker from 'react-native-date-picker';
+import {Dropdown} from 'react-native-element-dropdown';
+import {ButtonGroup} from 'react-native-elements';
 import Modal from 'react-native-modal';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {RadioButtonProps, RadioGroup} from 'react-native-radio-buttons-group';
+import Toast from 'react-native-toast-message';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
 
 import {RouteProp, useRoute} from '@react-navigation/native';
 
-import {Colors} from '../../../../../constants/color.const';
-import {deleteTask, editTaskDetail, getTaskById} from './services/task.service';
-import {Dropdown} from 'react-native-element-dropdown';
-import {RadioButtonProps, RadioGroup} from 'react-native-radio-buttons-group';
-import {ButtonGroup} from 'react-native-elements';
-import DatePicker from 'react-native-date-picker';
-import moment from 'moment';
 import {
   convertDayNumberToDayText,
   convertDayTextToDayNumber,
   dateFormat,
   dateFormatWithTime,
   dateISOFormat,
-} from './../../../../../common/handle.string';
-import Toast from 'react-native-toast-message';
-import _ from 'lodash';
+} from '../../../../../common/handle.string';
+import {Colors} from '../../../../../constants/color.const';
+import {deleteTask, editTaskDetail, getTaskById} from './services/task.service';
 
 type TaskRouteParams = {
   taskId: string;

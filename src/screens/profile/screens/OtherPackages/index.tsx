@@ -1,21 +1,15 @@
+import {useEffect, useState} from 'react';
+import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
+
 import {RouteProp, useRoute} from '@react-navigation/native';
-import {useState, useEffect} from 'react';
-import {Text, View, TouchableOpacity} from 'react-native';
-import {dateFormat} from '../../../../common/handle.string';
+
+import {
+  changePackageStatusToVietnamese,
+  dateFormat,
+} from '../../../../common/handle.string';
 import groupStore from '../../../../common/store/group.store';
 import {getPkgsByGroupId} from './services/packages.service';
 import styles from './styles/style';
-import {changePackageStatusToVietnamese} from './../../../../common/handle.string';
-
-// type GroupDetailRouteParams = {
-//   groupId: string;
-// };
-
-// // Specify the type for the route
-// type GroupDetailRouteProp = RouteProp<
-//   Record<string, GroupDetailRouteParams>,
-//   string
-// >;
 
 const OtherPackages = ({navigation}: {navigation: any}) => {
   const [packages, setPackages] = useState<
@@ -31,10 +25,6 @@ const OtherPackages = ({navigation}: {navigation: any}) => {
       pkgStatus: string;
     }[]
   >([]);
-
-  // const {groupId} = props;
-  // const route = useRoute<GroupDetailRouteProp>();
-  // const groupId = route.params?.groupId;
 
   const getPkgs = async () => {
     // Get all user's groups
@@ -86,7 +76,7 @@ const OtherPackages = ({navigation}: {navigation: any}) => {
       return packages.map((pkgItem: any, index) => {
         const viStatus = changePackageStatusToVietnamese(pkgItem.pkgStatus);
         return (
-          <TouchableOpacity key={index} style={styles.packageContainer}>
+          <View key={index} style={styles.packageContainer}>
             <View style={styles.packageContent}>
               <View style={styles.packageInfo}>
                 <Text style={styles.text}>Tên gói: </Text>
@@ -131,7 +121,7 @@ const OtherPackages = ({navigation}: {navigation: any}) => {
                 </Text>
               </View>
             </View>
-          </TouchableOpacity>
+          </View>
         );
       });
     } else {
@@ -139,7 +129,11 @@ const OtherPackages = ({navigation}: {navigation: any}) => {
     }
   };
 
-  return <View style={styles.container}>{renderPackageItem()}</View>;
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      {renderPackageItem()}
+    </ScrollView>
+  );
 };
 
 export default OtherPackages;

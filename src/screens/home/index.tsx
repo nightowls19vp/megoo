@@ -22,9 +22,9 @@ import {Colors} from '../../constants/color.const';
 import RouteNames from '../../constants/route-names.const';
 import {getUserGroup} from '../../services/group.service';
 import {getAllPackage} from '../package/screens/PackageScreen/services/package.service';
-import {getTodosList} from './screens/todos/TodosListScreen/services/todos.list.service';
-import styles from './screens/styles/styles';
 import TodoItem from './screens/components/Todo/TodoItem';
+import styles from './screens/styles/styles';
+import {getTodosList} from './screens/todos/TodosListScreen/services/todos.list.service';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;

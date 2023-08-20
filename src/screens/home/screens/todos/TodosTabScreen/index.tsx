@@ -1,14 +1,14 @@
+import {observer} from 'mobx-react';
 import {useState} from 'react';
-import {Image, Text, View, Dimensions} from 'react-native';
-import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
+import {Dimensions, Image, Text, View} from 'react-native';
+import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
+
 import {RouteProp, useRoute} from '@react-navigation/native';
 
-import styles from './styles/style';
 import {Colors} from '../../../../../constants/color.const';
-
-import {observer} from 'mobx-react';
-import TodosScreen from '../TodosScreen';
 import TodosListScreen from '../TodosListScreen';
+import TodosScreen from '../TodosScreen';
+import styles from './styles/style';
 
 // Define the type for the route params
 type GroupsRouteParams = {

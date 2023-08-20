@@ -1,7 +1,7 @@
 import {Formik} from 'formik';
 import {set} from 'mobx';
 import {observer} from 'mobx-react';
-import {useEffect, useState, useCallback} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -14,6 +14,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+import {useFocusEffect} from '@react-navigation/native';
+
 import appStore from '../../../../common/store/app.store';
 import groupStore from '../../../../common/store/group.store';
 import {Colors} from '../../../../constants/color.const';
@@ -23,7 +25,6 @@ import * as sl from '../../services/storage-location.service';
 import {RouteParamsProductsScreen} from '../ProductsScreen/props-products-screen';
 import {IRouteParamsStorageLocationScreen} from './route-param.interface';
 import styles from './styles/style';
-import {useFocusEffect} from '@react-navigation/native';
 
 const StorageLocationScreen = ({navigation}: {navigation: any}) => {
   const props = navigation?.route?.params as IRouteParamsStorageLocationScreen;
@@ -125,7 +126,7 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate(RouteNames.ADD_STORAGE_LOCATION, {
-              groupId: props?.groupId,
+              groupId: groupStore.id,
             })
           }>
           <Icon

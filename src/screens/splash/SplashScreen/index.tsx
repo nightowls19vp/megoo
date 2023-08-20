@@ -1,4 +1,5 @@
-import {View, Text, Image, Dimensions} from 'react-native';
+import {Dimensions, Image, Text, View} from 'react-native';
+
 import {Colors} from '../../../constants/color.const';
 
 const SplashScreen = () => {

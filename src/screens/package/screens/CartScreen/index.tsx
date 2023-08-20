@@ -10,9 +10,11 @@ import {
 import NumericInput from 'react-native-numeric-input';
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/AntDesign';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckBox from '@react-native-community/checkbox';
 
+import {splitString} from '../../../../common/handle.string';
 import {ICartList} from '../../../../common/interfaces/package.interface';
 import userStore from '../../../../common/store/user.store';
 import {Colors} from '../../../../constants/color.const';
@@ -20,7 +22,6 @@ import RouteNames from '../../../../constants/route-names.const';
 import {updateCart} from '../PackageScreen/services/package.service';
 import {getUserCart} from './services/cart.service';
 import styles from './styles/style';
-import {splitString} from '../../../../common/handle.string';
 
 const CartScreen = ({navigation}: {navigation: any}) => {
   const [cartList, setCartList] = useState<any[]>([]);

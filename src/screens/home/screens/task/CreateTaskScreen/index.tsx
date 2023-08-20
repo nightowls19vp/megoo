@@ -12,22 +12,23 @@ import {
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import {Dropdown} from 'react-native-element-dropdown';
+import {ButtonGroup} from 'react-native-elements/dist/buttons/ButtonGroup';
 import {RadioButtonProps, RadioGroup} from 'react-native-radio-buttons-group';
 import Toast from 'react-native-toast-message';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
-import {ButtonGroup} from 'react-native-elements/dist/buttons/ButtonGroup';
 
 import CheckBox from '@react-native-community/checkbox';
 import {RouteProp, useRoute} from '@react-navigation/native';
 
+import {convertDayNumberToDayText} from '../../../../../common/handle.string';
+import groupStore from '../../../../../common/store/group.store';
+import userStore from '../../../../../common/store/user.store';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import {getMembers} from '../../../../../services/group.service';
 import {createTask} from './services/task.service';
-import {convertDayNumberToDayText} from '../../../../../common/handle.string';
-import userStore from '../../../../../common/store/user.store';
 
 type GroupRouteParams = {
   groupId: string;
@@ -43,7 +44,7 @@ const CreateTaskSchema = Yup.object().shape({
 
 const CreateTaskScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupRouteProp>();
-  const groupId = route.params.groupId;
+  const groupId = groupStore.id;
 
   const [startDate, setStartDate] = useState(new Date());
   const [selectedStartDate, setSelectedStartDate] = useState(startDate);

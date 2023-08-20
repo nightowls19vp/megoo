@@ -1,20 +1,21 @@
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import {io, Socket} from 'socket.io-client';
+
 import notifee from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {GroupChannel} from '@sendbird/chat/groupChannel';
 
 import {URL_HOST} from '../core/config/api/api.config';
+import {connectSocket} from '../core/socket.io/socket.io';
 import {validate} from '../screens/login/screens/LoginScreen/services/login.service';
+import {signOutIfSignedInWithGG} from '../services/google.service';
+import {SendBirdChatService} from '../services/sendbird-chat.service';
 import {dateFormat} from './handle.string';
 import {ISettings} from './interfaces/settings.interface';
 import {IJWTToken} from './interfaces/token.interface';
 import {IUser} from './interfaces/user.interface';
 import userStore from './store/user.store';
-import {SendBirdChatService} from '../services/sendbird-chat.service';
-import {GroupChannel} from '@sendbird/chat/groupChannel';
-import {connectSocket} from '../core/socket.io/socket.io';
-import {signOutIfSignedInWithGG} from '../services/google.service';
 
 export const checkValidToken = async (token: string) => {
   // console.log("AT:", accessToken);
