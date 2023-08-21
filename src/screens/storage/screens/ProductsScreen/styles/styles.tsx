@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   },
   prodTag: {
     position: 'absolute',
-    top: 5,
+    bottom: 5,
     right: 5,
     borderColor: Colors.border.lightgrey,
     borderWidth: 1,
@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 5,
     width: 100,
+    zIndex: 2,
   },
   prodTagText: {
     fontSize: 14,
@@ -96,12 +97,12 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-    color: Colors.text.grey,
+    color: Colors.text.lightgrey,
     textAlign: 'justify',
   },
   infoText: {
     fontSize: 14,
-    color: Colors.text.lightgrey,
+    color: Colors.text.grey,
     textAlign: 'justify',
     fontWeight: 'bold',
   },

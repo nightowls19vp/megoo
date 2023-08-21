@@ -34,6 +34,7 @@ export const Colors = {
   },
 
   text: {
+    black: '#000000',
     grey: '#49454F',
     lightgrey: '#A8A8A8',
     white: '#FFFFFF',

@@ -34,6 +34,8 @@ import BottomMenu from './components/bottom-menu';
 import FilterMenu from './components/filter-menu';
 import {PropsProductsScreen} from './props-products-screen';
 import styles from './styles/styles';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 
 // import { FeatherIcon } from 'react-native-vector-icons/Feather';
 
@@ -289,16 +291,55 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
           style={styles.prodImg}
         />
 
+        {renderTag(item)}
         <View style={styles.productInfoContainer}>
-          {renderTag(item)}
           <View style={styles.productInfo}>
-            <Text style={[styles.text, {fontWeight: 'bold'}]}>
+            {/* <Text style={[styles.text, {fontWeight: 'bold'}]}>
               Tên sản phẩm:{' '}
-            </Text>
+            </Text> */}
             <Text style={styles.infoText} numberOfLines={3}>
               {item?.groupProduct?.name || 'Chưa có tên sản phẩm'}
             </Text>
           </View>
+
+          <View style={styles.productInfo}>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+              }}>
+              <View
+                style={{
+                  width: 30,
+                }}>
+                <MaterialCommunityIcons name="warehouse" size={20} />
+              </View>
+              <Text style={styles.infoText}>
+                {' '}
+                {item?.storageLocation?.name ?? 'Không rõ'}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.productInfo}>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+              }}>
+              <View
+                style={{
+                  width: 30,
+                }}>
+                <MaterialCommunityIcons name="shopping" size={20} />
+              </View>
+              <Text style={styles.infoText}>
+                {' '}
+                {item?.purchaseLocation?.name ?? 'Không rõ'}
+              </Text>
+            </View>
+          </View>
+
           {item?.quantity || item.quantity === 0 ? (
             <View style={styles.productInfo}>
               <Text style={[styles.text, {fontWeight: 'bold'}]}>
@@ -313,9 +354,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
           )}
           {item?.bestBefore ? (
             <View style={styles.productInfo}>
-              <Text style={[styles.text, {fontWeight: 'bold'}]}>
-                Hạn sử dụng:{' '}
-              </Text>
+              <Text style={[styles.text, {fontWeight: 'bold'}]}>HSD: </Text>
               <Text style={styles.infoText}>
                 {moment(item?.bestBefore).isValid()
                   ? moment(item?.bestBefore).format('DD-MM-YYYY')
