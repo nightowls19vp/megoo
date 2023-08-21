@@ -12,16 +12,18 @@ import {IItem} from '../../interfaces/base-dto/item.interface';
 import * as gp from '../../services/group-products.service';
 
 interface IProps {
-  navigation: any;
+  navigation?: any;
   groupId: string;
   fnUpdateGroupProductId: (id: string) => void;
   fnUpdateGpImage: Function;
+  initItemId?: string;
 }
 const GroupProductDropdownPicker: React.FC<IProps> = ({
   navigation,
   groupId,
   fnUpdateGroupProductId,
   fnUpdateGpImage,
+  initItemId,
 }) => {
   const [value, setValue] = useState('');
   const [items, setItems] = useState<
@@ -65,7 +67,18 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
 
     setItems(items);
 
-    console.log('items[0]: ', JSON.stringify(items[0], null, 2));
+    if (initItemId) {
+      const selectedItem = items.find(item => item.value === initItemId);
+      if (selectedItem) {
+        setValue(selectedItem.value);
+
+        initItemId = undefined;
+
+        fnUpdateGpImage(selectedItem?.image?.uri || IMAGE_URI_DEFAULT);
+
+        fnUpdateGroupProductId(selectedItem.value);
+      }
+    }
 
     setItemsFullData(resp.data);
   };
@@ -99,14 +112,20 @@ const GroupProductDropdownPicker: React.FC<IProps> = ({
           }}>
           Nhu yếu phẩm
         </Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate(RouteNames.ADD_GROUP_PRODUCT, {})}>
-          <Ionicons
-            name="add-circle-outline"
-            size={24}
-            color={Colors.text.orange}
-          />
-        </TouchableOpacity>
+
+        {/* if navigation provided - show the add button */}
+        {navigation && (
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(RouteNames.ADD_GROUP_PRODUCT, {})
+            }>
+            <Ionicons
+              name="add-circle-outline"
+              size={24}
+              color={Colors.text.orange}
+            />
+          </TouchableOpacity>
+        )}
       </View>
 
       <SelectCountry

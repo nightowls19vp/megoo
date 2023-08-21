@@ -10,7 +10,7 @@ import RouteNames from '../../../../constants/route-names.const';
 import * as pl from '../../services/purchase-locations.service';
 
 interface IProps {
-  navigation: any;
+  navigation?: any;
   groupId: string;
   fnUpdatePurchaseLocationId: (id: string) => void;
 }
@@ -85,16 +85,18 @@ const PurchaseLocationDropdownPicker: React.FC<IProps> = ({
           }}>
           Địa điểm mua hàng
         </Text>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(RouteNames.ADD_PURCHASE_LOCATION, {})
-          }>
-          <Ionicons
-            name="add-circle-outline"
-            size={24}
-            color={Colors.text.orange}
-          />
-        </TouchableOpacity>
+        {navigation && (
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(RouteNames.ADD_PURCHASE_LOCATION, {})
+            }>
+            <Ionicons
+              name="add-circle-outline"
+              size={24}
+              color={Colors.text.orange}
+            />
+          </TouchableOpacity>
+        )}
       </View>
       <Dropdown
         containerStyle={{

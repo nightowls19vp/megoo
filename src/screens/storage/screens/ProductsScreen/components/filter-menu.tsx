@@ -4,6 +4,9 @@ import {Button} from 'react-native-elements';
 
 import {Colors} from '../../../../../constants/color.const';
 import Modal from 'react-native-modal';
+import groupStore from '../../../../../common/store/group.store';
+import PurchaseLocationDropdownPicker from '../../../components/PurchaseLocationDropdownPicker';
+import StorageLocationDropdownPicker from '../../../components/StorageLocationDropdownPicker';
 interface FilterModalProps {
   isVisible: boolean;
   onClose: () => void;
@@ -12,46 +15,66 @@ interface FilterModalProps {
   onStorageLocationChange: (value: string | null) => void;
   onPurchaseLocationChange: (value: string | null) => void;
 }
-const FilterMenu: React.FC<FilterModalProps> = ({isVisible, onClose}) => {
+const FilterMenu: React.FC<FilterModalProps> = props => {
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [stockStatus, setStockStatus] = useState<string | null>(null);
   const [storageLocation, setStorageLocation] = useState<string | null>(null);
   const [purchaseLocation, setPurchaseLocation] = useState<string | null>(null);
 
+  const sortOptions = {
+    nameAsc: 'Tên tăng dần (A-Z)',
+    nameDesc: 'Tên giảm dần (Z-A)',
+  };
+
+  const stockStatusOptions = {
+    inStock: 'Còn đầy đủ',
+    runningOutOfStock: 'Sắp hết',
+    outOfStock: 'Hết',
+  };
+
   return (
     <Modal
-      isVisible={isVisible}
+      isVisible={props.isVisible}
       animationIn="slideInRight"
       animationOut="slideOutRight"
       hasBackdrop={true}
-      onBackdropPress={onClose}
-      onBackButtonPress={onClose}
+      onBackdropPress={props.onClose}
+      onBackButtonPress={props.onClose}
       style={styles.modal}>
       <View style={styles.menuContainer}>
+        <View>
+          <Text>Bo loc</Text>
+        </View>
         <Text>Sort By:</Text>
         {/* Implement your sort options */}
-
         <Text>Stock Status:</Text>
         {/* Implement your stock status options */}
-
-        <Text>Storage Location:</Text>
-        {/* Implement the dropdown for storage location */}
-
-        <Text>Purchase Location:</Text>
-        {/* Implement the dropdown for purchase location */}
-
-        <Button
-          title="Apply"
-          onPress={() => {
-            /* Apply filters */
-          }}
+        <StorageLocationDropdownPicker
+          groupId={groupStore.id}
+          fnUpdateStorageLocationId={value =>
+            props.onStorageLocationChange(value)
+          }
         />
-        <Button
-          title="Reset"
-          onPress={() => {
-            /* Reset filters */
-          }}
+        <PurchaseLocationDropdownPicker
+          groupId={groupStore.id}
+          fnUpdatePurchaseLocationId={value =>
+            props.onPurchaseLocationChange(value)
+          }
         />
+        <View>
+          <Button
+            title="Apply"
+            onPress={() => {
+              /* Apply filters */
+            }}
+          />
+          <Button
+            title="Reset"
+            onPress={() => {
+              /* Reset filters */
+            }}
+          />
+        </View>
       </View>
     </Modal>
   );
@@ -60,17 +83,22 @@ const FilterMenu: React.FC<FilterModalProps> = ({isVisible, onClose}) => {
 const styles = StyleSheet.create({
   modal: {
     margin: 0, // This is the important style you need to set
-    flex: 1,
+    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    backgroundColor: 'none',
+    width: '100%',
   },
   menuContainer: {
-    width: '80%',
+    width: '100%',
     backgroundColor: Colors.background.white,
     paddingVertical: 10,
     paddingHorizontal: 20,
     // borderColor: Colors.border.lightgrey,
     // borderWidth: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
   },
 });
 

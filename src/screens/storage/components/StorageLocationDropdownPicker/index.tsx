@@ -13,7 +13,7 @@ import styles from '../../screens/AddGroupProductScreen/styles/style';
 import {Dropdown} from 'react-native-element-dropdown';
 
 interface IProps {
-  navigation: any;
+  navigation?: any;
   groupId: string;
   fnUpdateStorageLocationId: (id: string) => void;
 }
@@ -88,16 +88,18 @@ const StorageLocationDropdownPicker: React.FC<IProps> = ({
           }}>
           Vị trí lưu trữ
         </Text>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(RouteNames.ADD_STORAGE_LOCATION, {})
-          }>
-          <Ionicons
-            name="add-circle-outline"
-            size={24}
-            color={Colors.text.orange}
-          />
-        </TouchableOpacity>
+        {navigation && (
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(RouteNames.ADD_STORAGE_LOCATION, {})
+            }>
+            <Ionicons
+              name="add-circle-outline"
+              size={24}
+              color={Colors.text.orange}
+            />
+          </TouchableOpacity>
+        )}
       </View>
 
       <Dropdown
