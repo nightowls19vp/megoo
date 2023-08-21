@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {Button} from 'react-native-elements';
 
 import {Colors} from '../../../../../constants/color.const';
@@ -42,38 +48,56 @@ const FilterMenu: React.FC<FilterModalProps> = props => {
       onBackButtonPress={props.onClose}
       style={styles.modal}>
       <View style={styles.menuContainer}>
-        <View>
-          <Text>Bo loc</Text>
-        </View>
-        <Text>Sort By:</Text>
-        {/* Implement your sort options */}
-        <Text>Stock Status:</Text>
-        {/* Implement your stock status options */}
-        <StorageLocationDropdownPicker
-          groupId={groupStore.id}
-          fnUpdateStorageLocationId={value =>
-            props.onStorageLocationChange(value)
-          }
-        />
-        <PurchaseLocationDropdownPicker
-          groupId={groupStore.id}
-          fnUpdatePurchaseLocationId={value =>
-            props.onPurchaseLocationChange(value)
-          }
-        />
-        <View>
-          <Button
-            title="Apply"
+        <ScrollView>
+          <View>
+            <Text>Bo loc</Text>
+          </View>
+          <Text>Sort By:</Text>
+          {/* Implement your sort options */}
+          <Text>Stock Status:</Text>
+          {/* Implement your stock status options */}
+          <StorageLocationDropdownPicker
+            groupId={groupStore.id}
+            fnUpdateStorageLocationId={value =>
+              props.onStorageLocationChange(value)
+            }
+          />
+          <PurchaseLocationDropdownPicker
+            groupId={groupStore.id}
+            fnUpdatePurchaseLocationId={value =>
+              props.onPurchaseLocationChange(value)
+            }
+          />
+        </ScrollView>
+        <View style={[styles.buttonGroup]}>
+          <TouchableOpacity
+            style={[styles.buttonGroupItem, styles.applyButton]}
             onPress={() => {
               /* Apply filters */
-            }}
-          />
-          <Button
-            title="Reset"
+            }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 'bold',
+                color: Colors.text.white,
+              }}>
+              Apply
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.buttonGroupItem, styles.resetButton]}
             onPress={() => {
               /* Reset filters */
-            }}
-          />
+            }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 'bold',
+                color: Colors.text.orange,
+              }}>
+              Reset
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
@@ -86,11 +110,14 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    backgroundColor: 'none',
-    width: '100%',
+    minHeight: '100%',
+    position: 'relative',
   },
   menuContainer: {
-    width: '100%',
+    position: 'relative',
+    borderColor: 'black',
+    borderWidth: 1,
+    width: '90%',
     backgroundColor: Colors.background.white,
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -99,6 +126,45 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
+  },
+
+  // scrollContainer
+  scrollContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    paddingBottom: 100,
+  },
+
+  buttonGroup: {
+    width: '100%',
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    display: 'flex',
+    flexDirection: 'column',
+    height: 90,
+    justifyContent: 'space-between',
+  },
+
+  buttonGroupItem: {
+    borderWidth: 1,
+    borderRadius: 5,
+    height: 40,
+    backgroundColor: Colors.background.white,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  applyButton: {
+    backgroundColor: Colors.background.orange,
+    borderColor: Colors.border.orange,
+  },
+
+  resetButton: {
+    backgroundColor: Colors.background.white,
+    borderColor: Colors.border.orange,
   },
 });
 
