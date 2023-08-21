@@ -13,6 +13,7 @@ import {
 import Modal from 'react-native-modal';
 import Carousel from 'react-native-reanimated-carousel';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Slider from '@react-native-community/slider';
 import {useFocusEffect} from '@react-navigation/native';
@@ -31,6 +32,53 @@ const height = Dimensions.get('window').height;
 
 const HomeScreen = ({navigation}: {navigation: any}) => {
   const [loading, setLoading] = useState(true);
+
+  const [extentions, setExtentions] = useState<
+    {
+      id: string;
+      iconName: string;
+      iconSize: number;
+      name: string;
+      routeName: string;
+    }[]
+  >([
+    {
+      id: '1',
+      iconName: 'scissors-cutting',
+      iconSize: 26,
+      name: 'Quản lý nợ',
+      routeName: RouteNames.BILL_LIST_STACK,
+    },
+    {
+      id: '2',
+      iconName: 'piggy-bank-outline',
+      iconSize: 26,
+      name: 'Quản lý quỹ',
+      routeName: RouteNames.FUND_LIST_STACK,
+    },
+    {
+      id: '3',
+      iconName: 'checkbox-outline',
+      iconSize: 24,
+      name: 'Việc cần làm',
+      routeName: RouteNames.TODOS_LIST_STACK,
+    },
+    {
+      id: '4',
+      iconName: 'calendar-outline',
+      iconSize: 24,
+      name: 'Lịch biểu',
+      routeName: RouteNames.TASK_LIST_STACK,
+    },
+    {
+      id: '5',
+      iconName: 'percent-outline',
+      iconSize: 24,
+      name: 'Lãi suất',
+      routeName: RouteNames.BANK_INTEREST_RATE,
+    },
+  ]);
+
   const [packages, setPackages] = useState([]);
   const [groups, setGroups] = useState<
     {
@@ -137,22 +185,22 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
     }, 2000);
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      // if (appStore.isLoggedIn) {
-      //   getGroups();
-      // } else {
-      //   getPackages();
-      // }
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     // if (appStore.isLoggedIn) {
+  //     //   getGroups();
+  //     // } else {
+  //     //   getPackages();
+  //     // }
 
-      getGroups();
-      getPackages();
+  //     getGroups();
+  //     getPackages();
 
-      return () => {
-        // Code to clean up the effect when the screen is unfocused
-      };
-    }, []),
-  );
+  //     return () => {
+  //       // Code to clean up the effect when the screen is unfocused
+  //     };
+  //   }, []),
+  // );
 
   useEffect(() => {
     getTodos();
@@ -349,6 +397,45 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
     }
   };
 
+  const renderExtensions = () => {
+    return extentions.map(item => {
+      return (
+        <View
+          style={{
+            width: 90,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 5,
+            marginHorizontal: 5,
+          }}
+          key={item.id}>
+          <TouchableOpacity
+            style={styles.utility}
+            onPress={() => {
+              appStore.isLoggedIn
+                ? navigation.navigate(item.routeName, {})
+                : setModalVisible(true);
+            }}>
+            {/* <Text style={styles.utilityText}>Quản lý chi tiêu</Text> */}
+            <MaterialCommunityIcons
+              name={item.iconName}
+              size={item.iconSize}
+              color={Colors.icon.orange}
+            />
+          </TouchableOpacity>
+          <Text
+            style={{
+              color: Colors.text.grey,
+              fontSize: 14,
+            }}>
+            {item.name}
+          </Text>
+        </View>
+      );
+    });
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {loading ? (
@@ -387,52 +474,34 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
 
           <View style={styles.utilitiesContainer}>
             <Text style={[styles.title, {width: '100%'}]}>Tiện ích</Text>
-            <View style={styles.utilitiesContent}>
-              <TouchableOpacity
-                style={styles.utility}
-                onPress={() => {
-                  appStore.isLoggedIn
-                    ? navigation.navigate(RouteNames.BILL_LIST_STACK, {})
-                    : setModalVisible(true);
-                }}>
-                <Text style={styles.utilityText}>Quản lý chi tiêu</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.utility}
-                onPress={() => {
-                  appStore.isLoggedIn
-                    ? navigation.navigate(RouteNames.TODOS_LIST_STACK, {})
-                    : setModalVisible(true);
-                }}>
-                <Text style={styles.utilityText}>Việc cần làm</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.utility}
-                onPress={() => {
-                  appStore.isLoggedIn
-                    ? navigation.navigate(RouteNames.TASK_LIST_STACK, {})
-                    : setModalVisible(true);
-                }}>
-                <Text style={styles.utilityText}>Lịch biểu</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.utility}
-                onPress={() => {
-                  appStore.isLoggedIn
-                    ? navigation.navigate(RouteNames.BANK_INTEREST_RATE, {})
-                    : setModalVisible(true);
-                }}>
-                <Text numberOfLines={2} style={styles.utilityText}>
-                  Tính lãi suất {'\n'} ngân hàng
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <ScrollView
+              style={{flex: 1, height: 90}}
+              horizontal={true}
+              showsHorizontalScrollIndicator={true}>
+              {renderExtensions()}
+            </ScrollView>
+            {/* <Carousel
+                loop={false}
+                mode="parallax"
+                modeConfig={{
+                  parallaxScrollingScale: 1,
+                  parallaxScrollingOffset: 250,
+                }}
+                width={width * 0.9}
+                height={height * 0.1}
+                // autoPlay={true}
+                data={extentions}
+                scrollAnimationDuration={1000}
+                onSnapToItem={index => console.log('current index:', index)}
+                renderItem={renderExtensions}
+              /> */}
           </View>
 
           {appStore.isLoggedIn ? (
             <View style={[styles.utilitiesContainer, {marginTop: -10}]}>
               <View style={styles.titleContainer}>
                 <Text style={styles.title}>Việc cần làm</Text>
+
                 <TouchableOpacity
                   onPress={() =>
                     navigation.navigate(RouteNames.TODOS_LIST_STACK, {})

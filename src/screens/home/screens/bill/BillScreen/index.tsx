@@ -227,7 +227,7 @@ const BillScreen = ({navigation}: {navigation: any}) => {
         handleReset,
       }) => (
         <ScrollView contentContainerStyle={styles.container}>
-          <Text style={[styles.title, {marginTop: 20}]}>
+          <Text style={[styles.title, {marginTop: 10}]}>
             Tên khoản chi tiêu
           </Text>
           <View style={styles.inputContainer}>

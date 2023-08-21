@@ -33,6 +33,11 @@ export default {
   TASK: 'Chi tiết sự kiện',
   CREATE_TASK: 'Tạo sự kiện',
 
+  FUND_LIST_STACK: 'FUND_LIST_STACK',
+  FUND_LIST: 'Quản lý quỹ',
+  FUND: 'Chi tiết quỹ',
+  CREATE_FUND: 'Tạo quỹ',
+
   BANK_INTEREST_RATE: 'Tính lãi suất ngân hàng',
 
   PACKAGE_STACK_DRAWER: 'PACKAGE_STACK_DRAWER',

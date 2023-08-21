@@ -476,7 +476,10 @@ const InterestRateScreen = () => {
     );
 
     let difference = 0;
-    if (oldInterest.interest && newInterest.interestUntilWithdrawalDate) {
+    if (
+      oldInterest.interest !== 0 &&
+      newInterest.interestUntilWithdrawalDate !== 0
+    ) {
       if (oldInterest.nonTermInterest !== 0) {
         difference =
           Math.round(oldInterest.interest) -
@@ -489,10 +492,17 @@ const InterestRateScreen = () => {
           Math.round(oldInterest.interest) -
           Math.round(newInterest.interestUntilWithdrawalDate);
       }
-
-      setDifferenceAmount(Math.abs(difference));
+    } else {
+      difference =
+        Math.round(oldInterest.interest) - Math.round(newInterest.interest);
     }
-  }, [oldInterest.interest, newInterest.interestUntilWithdrawalDate]);
+    setDifferenceAmount(Math.abs(difference));
+  }, [
+    oldInterest.interest,
+    oldInterest.nonTermInterest,
+    newInterest.interestUntilWithdrawalDate,
+    newInterest.interest,
+  ]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -961,7 +971,7 @@ const InterestRateScreen = () => {
           width: '90%',
           display: 'flex',
           flexDirection: 'row',
-          alignItems: 'flex-end',
+          alignItems: 'baseline',
           justifyContent: 'space-between',
           marginVertical: 10,
         }}>
@@ -970,7 +980,7 @@ const InterestRateScreen = () => {
             width: '45%',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'baseline',
+            // alignItems: 'center',
           }}>
           <Text style={styles.title}>Số tiền chênh lệch</Text>
           {isNonTermInterestRate ? (
@@ -994,27 +1004,45 @@ const InterestRateScreen = () => {
             alignItems: 'center',
             gap: 10,
           }}>
-          {oldInterest.interest !== 0 && newInterest.interest !== 0 ? (
-            oldInterest.interest >
-            newInterest.interestUntilWithdrawalDate +
-              oldInterest.nonTermInterest ? (
-              <FoundationIcon name="arrow-down" size={24} color={'red'} />
-            ) : (
-              <FoundationIcon name="arrow-up" size={24} color={'green'} />
-            )
-          ) : (
-            false
-          )}
+          {oldInterest.interest !== 0 &&
+          newInterest.interest !== 0 &&
+          newInterest.interestUntilWithdrawalDate !== 0
+            ? oldInterest.interest >
+                newInterest.interestUntilWithdrawalDate +
+                  oldInterest.nonTermInterest && (
+                <FoundationIcon
+                  name="arrow-down"
+                  size={24}
+                  color={'red'}
+                  style={{
+                    paddingTop: 12,
+                  }}
+                />
+              )
+            : oldInterest.interest <
+                newInterest.interestUntilWithdrawalDate +
+                  oldInterest.nonTermInterest && (
+                <FoundationIcon
+                  name="arrow-up"
+                  size={24}
+                  color={'green'}
+                  style={{
+                    paddingTop: 12,
+                  }}
+                />
+              )}
 
           <Text
             style={[
               styles.amountText,
-              oldInterest.interest !== 0 && newInterest.interest !== 0
+              oldInterest.interest !== 0 &&
+              newInterest.interest !== 0 &&
+              newInterest.interestUntilWithdrawalDate !== 0
                 ? oldInterest.interest >
                   newInterest.interestUntilWithdrawalDate +
                     oldInterest.nonTermInterest
-                  ? {color: 'red'}
-                  : {color: 'green'}
+                  ? {color: 'red', paddingTop: 12}
+                  : {color: 'green', paddingTop: 12}
                 : {color: Colors.text.grey},
               {fontSize: 20},
             ]}>

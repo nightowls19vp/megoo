@@ -48,7 +48,8 @@ export const invite = async (groupId: string, emails: string[]) => {
       {
         grId: groupId,
         emails: emails,
-        feUrl: 'http://localhost:8080/pkg-mgmt/gr/join',
+        // feUrl: 'http://localhost:8080/pkg-mgmt/gr/join',
+        feUrl: 'https://megoo.netlify.app/pgk-mgmt/gr/join',
       },
       {
         headers: {

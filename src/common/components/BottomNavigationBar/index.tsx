@@ -56,6 +56,8 @@ import StorageLocationScreen from '../../../screens/storage/screens/StorageLocat
 import appStore from '../../store/app.store';
 import groupStore from '../../store/group.store';
 import ToolTip from '../ToolTip';
+import FundListScreen from '../../../screens/home/screens/fund/FundListScreen';
+import CreateFundScreen from '../../../screens/home/screens/fund/CreateFundScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = ({navigation}: {navigation: any}) => {
@@ -104,7 +106,7 @@ const ChatScreenStack = ({navigation}: {navigation: any}) => {
 const BillListStack = createNativeStackNavigator();
 const BillListScreenStack = () => {
   return (
-    <BillListStack.Navigator initialRouteName={RouteNames.GROUP_BILL_LIST}>
+    <BillListStack.Navigator initialRouteName={RouteNames.BILL_MANAGEMENT}>
       <BillListStack.Screen
         name={RouteNames.CHAT_STACK}
         component={ChatScreenStack}
@@ -206,7 +208,7 @@ const TodosListScreenStack = () => {
 const TaskListStack = createNativeStackNavigator();
 const TaskListScreenStack = () => {
   return (
-    <TaskListStack.Navigator initialRouteName={RouteNames.GROUP_TASK_LIST}>
+    <TaskListStack.Navigator initialRouteName={RouteNames.TASK_LIST}>
       <TaskListStack.Screen
         name={RouteNames.CHAT_STACK}
         component={ChatScreenStack}
@@ -238,6 +240,32 @@ const TaskListScreenStack = () => {
   );
 };
 
+const FundListTask = createNativeStackNavigator();
+const FundListScreenStack = () => {
+  return (
+    <FundListTask.Navigator initialRouteName={RouteNames.FUND_LIST}>
+      <FundListTask.Screen
+        name={RouteNames.CHAT_STACK}
+        component={ChatScreenStack}
+        options={{
+          title: 'Nhóm chat',
+        }}
+      />
+
+      <FundListTask.Screen
+        name={RouteNames.FUND_LIST}
+        component={FundListScreen}
+        // options={{headerShown: false}}
+      />
+      <FundListTask.Screen
+        name={RouteNames.CREATE_FUND}
+        component={CreateFundScreen}
+        // options={{headerShown: false}}
+      />
+    </FundListTask.Navigator>
+  );
+};
+
 const HomeStack = createNativeStackNavigator();
 const HomeScreenStack = () => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
@@ -257,7 +285,7 @@ const HomeScreenStack = () => {
         name={RouteNames.BILL_LIST_STACK}
         component={BillListScreenStack}
         options={{
-          title: 'Quản lý chi tiêu',
+          title: 'Quản lý nợ',
           headerShown: false,
         }}
       />
@@ -273,7 +301,15 @@ const HomeScreenStack = () => {
         name={RouteNames.TASK_LIST_STACK}
         component={TaskListScreenStack}
         options={{
-          title: 'Quản lý thời gian',
+          title: 'Lịch biểu',
+          headerShown: false,
+        }}
+      />
+      <HomeStack.Screen
+        name={RouteNames.FUND_LIST_STACK}
+        component={FundListScreenStack}
+        options={{
+          title: 'Quản lý quỹ',
           headerShown: false,
         }}
       />
