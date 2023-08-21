@@ -66,6 +66,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
 
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [stockStatus, setStockStatus] = useState<string | null>(null);
+  const [bestBeforeDate, setBestBeforeDate] = useState<string | null>(null);
   const [storageLocation, setStorageLocation] = useState<string | null>(null);
   const [purchaseLocation, setPurchaseLocation] = useState<string | null>(null);
 
@@ -83,6 +84,10 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
 
   const handleStockStatusChange = (value: string | null) => {
     setStockStatus(value);
+  };
+
+  const handleBestBeforeDateChange = (value: string | null) => {
+    setBestBeforeDate(value);
   };
 
   const handleStorageLocationChange = (value: string | null) => {
@@ -514,10 +519,12 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
       />
 
       <FilterMenu
+        curReqDto={reqDto}
         isVisible={isFilterModalVisible}
         onClose={closeFilterModal}
         onSortByChange={handleSortByChange}
         onStockStatusChange={handleStockStatusChange}
+        onBestBeforeDateChange={handleBestBeforeDateChange}
         onStorageLocationChange={handleStorageLocationChange}
         onPurchaseLocationChange={handlePurchaseLocationChange}
       />

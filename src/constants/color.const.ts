@@ -80,6 +80,7 @@ export const Colors = {
 
   checkBox: {
     orange: '#F58F00',
+    black: '#000000',
   },
 
   itemBackground: {
