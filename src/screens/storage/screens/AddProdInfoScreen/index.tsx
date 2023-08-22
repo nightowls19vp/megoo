@@ -72,7 +72,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
             style={{
               display: 'flex',
               position: 'absolute',
-              right: 10,
+              right: 15,
               bottom: 10,
             }}
             onPress={async () => {

@@ -11,22 +11,23 @@ import {
   View,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import {Dropdown} from 'react-native-element-dropdown';
 import Toast from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
 
 import CheckBox from '@react-native-community/checkbox';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 
 import {splitString} from '../../../../../common/handle.string';
 import groupStore from '../../../../../common/store/group.store';
-import userStore from '../../../../../common/store/user.store';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
-import {getMembers} from '../../../../../services/group.service';
-import {createFund} from './services/create-fund.service';
+import {getFundById} from './services/fund.service';
 import styles from './styles/style';
+
+type FundRouteParams = {
+  fundId: string;
+};
 
 const FundSchema = Yup.object().shape({
   summary: Yup.string().required('Vui lòng nhập tên quỹ'),
@@ -39,15 +40,18 @@ const FundSchema = Yup.object().shape({
   // members: Yup.array().required('Vui lòng chọn thành viên'),
 });
 
-const CreateFundScreen = () => {
+// Specify the type for the route
+type FundRouteProp = RouteProp<Record<string, FundRouteParams>, string>;
+
+const FundDetailScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute<FundRouteProp>();
+  const fundId = route.params.fundId;
 
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
   const [openEndDatePicker, setOpenEndDatePicker] = useState(false);
-
-  const [isFocus, setIsFocus] = useState(false);
 
   const [times, setTimes] = useState<
     {
@@ -105,24 +109,77 @@ const CreateFundScreen = () => {
     },
   ]);
 
-  const [members, setMembers] = useState<
-    {
-      role: string;
-      id: string;
-      name: string;
+  const [fund, setFund] = useState<{
+    _id: string;
+    createdAt: string;
+    description: string;
+    ends: string;
+    history: any[];
+    members: {
+      _id: string;
       email: string;
+      name: string;
       avatar: string;
-    }[]
-  >([]);
+    }[];
+    startDate: string;
+    summary: string;
+    times: number;
+    total: number;
+    updatedAt: string;
+  }>({
+    _id: '',
+    createdAt: '',
+    description: '',
+    ends: '',
+    history: [],
+    members: [],
+    startDate: '',
+    summary: '',
+    times: 0,
+    total: 0,
+    updatedAt: '',
+  });
 
   const [toggleCheckBoxArray, setToggleCheckBoxArray] = useState(
-    members.map((_, index) => index === 0),
+    fund.members.map((_, index) => index === 0),
   );
 
   const [amountArray, setAmountArray] = useState<number[]>([]);
 
   const [totalAmount, setTotalAmount] = useState(0);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+
+  const getFundDetail = async () => {
+    try {
+      const response = await getFundById(fundId);
+      console.log('Get fund response', response);
+
+      if (!response?.funding) {
+        return;
+      } else {
+        setFund({
+          _id: response?.funding?._id,
+          createdAt: response?.funding?.createdAt,
+          description: response?.funding?.description,
+          ends: response?.funding?.ends,
+          history: response?.funding?.history,
+          members: response?.funding?.members?.map((member: any) => ({
+            _id: member?._id,
+            email: member?.email,
+            name: member?.name,
+            avatar: member?.avatar,
+          })),
+          startDate: response?.funding?.startDate,
+          summary: response?.funding?.summary,
+          times: response?.funding?.times,
+          total: response?.funding?.total,
+          updatedAt: response?.funding?.updatedAt,
+        });
+      }
+    } catch (error) {
+      console.log('Get fun by id error: ', error);
+    }
+  };
 
   const handleToggleCheckBox = (index: number, newValue: boolean) => {
     const updatedArray = [...toggleCheckBoxArray];
@@ -154,80 +211,21 @@ const CreateFundScreen = () => {
     // add result to amount
   };
 
-  const getMemberList = async () => {
-    try {
-      const response = await getMembers(groupStore.id);
-      // console.log(
-      //   'Members response:',
-      //   JSON.stringify(response.group.members, null, 2),
-      //   // response.group.members,
-      // );
-      if (
-        !response.group ||
-        !response?.group?.members ||
-        response?.group?.members?.length === 0
-      ) {
-        setMembers([]);
-      } else {
-        const groupMembers = response?.group?.members?.map((member: any) => ({
-          role: member?.role,
-          id: member?.user?._id,
-          name: member?.user?.name,
-          avatar: member?.user?.avatar,
-          email: member?.user?.email,
-        }));
-
-        setMembers(groupMembers);
-        // Initialize toggleCheckBoxArray with true for the current user's index, if found
-        const currentUserIndex = groupMembers.findIndex(
-          (member: any) => member.role === 'Super User',
-        );
-
-        const initialToggleValues = groupMembers.map(
-          (_: any, index: number) => index === currentUserIndex,
-        );
-        setToggleCheckBoxArray(initialToggleValues);
-        setAmountArray(Array.from({length: members.length}, () => 0));
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
-    getMemberList();
+    console.log('Fund id', fundId);
+    getFundDetail();
   }, []);
 
   useEffect(() => {
-    console.log('amountArray', amountArray);
-  }, [amountArray]);
-
-  useEffect(() => {
-    console.log('toggleCheckBoxArray', toggleCheckBoxArray);
-
-    const newSelectedMembers = toggleCheckBoxArray
-      .map((item, index) =>
-        toggleCheckBoxArray[index] ? members[index].id : null,
-      )
-      .filter(Boolean) as string[];
-    console.log('newSelectedMembers', newSelectedMembers);
-
-    setSelectedMembers(newSelectedMembers);
-  }, [toggleCheckBoxArray]);
-
-  useEffect(() => {
-    if (totalAmount > 0) {
-      diviseAmount(totalAmount);
-    }
-  }, [totalAmount]);
-
+    console.log('Fund members:', fund.members);
+  }, [fund]);
   return (
     <Formik
       initialValues={{
-        summary: '',
-        description: '',
-        times: times[0].value,
-        total: '',
+        summary: fund.summary,
+        description: fund.description,
+        times: fund.times.toString(),
+        total: fund.total.toString(),
         startDate: '',
         ends: '',
       }}
@@ -235,40 +233,6 @@ const CreateFundScreen = () => {
       validationSchema={FundSchema}
       onSubmit={async values => {
         console.log('values', values);
-        console.log('members', selectedMembers);
-
-        const fund = {
-          summary: values.summary,
-          description: values.description,
-          times: Number(values.times),
-          total: totalAmount,
-          startDate: moment(values.startDate, 'DD/MM/YYYY').toISOString(),
-          ends: moment(values.ends, 'DD/MM/YYYY').toISOString(),
-          members: selectedMembers,
-        };
-        console.log('fund', fund);
-
-        const response = await createFund(groupStore.id, fund);
-        console.log('response', response.statusCode);
-
-        if (response.statusCode === 201) {
-          Toast.show({
-            type: 'success',
-            text1: `${response.message}`,
-            autoHide: true,
-            visibilityTime: 1000,
-            onHide: () => {
-              navigation.goBack();
-            },
-          });
-        } else {
-          Toast.show({
-            type: 'error',
-            text1: `${response.message}`,
-            autoHide: true,
-            visibilityTime: 3000,
-          });
-        }
       }}>
       {({
         values,
@@ -514,8 +478,8 @@ const CreateFundScreen = () => {
 
           <Text style={styles.title}>Danh sách thành viên</Text>
 
-          {members.length > 0 &&
-            members.map((member, index) => (
+          {fund.members.length > 0 &&
+            fund.members.map((member, index) => (
               <View
                 style={{
                   width: '90%',
@@ -524,7 +488,7 @@ const CreateFundScreen = () => {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                 }}
-                key={member.id}>
+                key={member._id}>
                 <View
                   style={{
                     width: '70%',
@@ -537,7 +501,8 @@ const CreateFundScreen = () => {
                   }}>
                   <CheckBox
                     tintColors={{true: Colors.checkBox.orange}}
-                    disabled={member.role === 'Super User'}
+                    // disabled={member.role === 'Super User'}
+                    disabled={false}
                     value={toggleCheckBoxArray[index]}
                     onValueChange={async newValue => {
                       handleToggleCheckBox(index, newValue);
@@ -591,17 +556,9 @@ const CreateFundScreen = () => {
           </View>
 
           <TouchableOpacity
-            style={[
-              styles.createButton,
-              {
-                backgroundColor: isValid
-                  ? Colors.buttonBackground.orange
-                  : Colors.buttonBackground.lightorange,
-              },
-            ]}
-            disabled={!isValid}
+            style={[styles.deleteButton]}
             onPress={handleSubmit}>
-            <Text style={styles.buttonText}>Tạo</Text>
+            <Text style={styles.buttonText}>Xóa</Text>
           </TouchableOpacity>
         </ScrollView>
       )}
@@ -609,4 +566,4 @@ const CreateFundScreen = () => {
   );
 };
 
-export default CreateFundScreen;
+export default FundDetailScreen;

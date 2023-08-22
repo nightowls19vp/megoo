@@ -12,6 +12,7 @@ import {getFundList} from './services/fund-list.service';
 import groupStore from './../../../../../common/store/group.store';
 import {useState, useEffect} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import styles from './styles/style';
 
 const FundListScreen = () => {
   const navigation = useNavigation();
@@ -82,7 +83,17 @@ const FundListScreen = () => {
   const renderFundItem = () => {
     return funds.map((fund: any) => {
       return (
-        <TouchableOpacity key={fund._id} style={styles.fundsContainer}>
+        <TouchableOpacity
+          key={fund._id}
+          style={styles.fundsContainer}
+          onPress={() => {
+            navigation.navigate(
+              RouteNames.FUND as never,
+              {
+                fundId: fund._id,
+              } as never,
+            );
+          }}>
           <View style={styles.infoRow}>
             <Text style={styles.text}>Tiêu đề:</Text>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>
@@ -109,7 +120,7 @@ const FundListScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Danh sách phân chia chi tiêu</Text>
+        <Text style={styles.title}>Danh sách quỹ của nhóm</Text>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate(RouteNames.CREATE_FUND as never, {} as never);
@@ -125,51 +136,5 @@ const FundListScreen = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    alignItems: 'center',
-    width: Dimensions.get('window').width,
-    minHeight: '100%',
-  },
-  titleContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '90%',
-    alignItems: 'center',
-    marginVertical: 10,
-    // backgroundColor: 'pink',
-  },
-  title: {
-    width: '90%',
-    textAlign: 'left',
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.title.orange,
-  },
-  fundsContainer: {
-    width: '90%',
-    display: 'flex',
-    flexDirection: 'column',
-    // alignItems: 'center',
-    //   justifyContent: 'space-between',
-    backgroundColor: Colors.background.white,
-    padding: 10,
-    gap: 10,
-    borderRadius: 10,
-  },
-  infoRow: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 10,
-  },
-  text: {
-    color: Colors.text.grey,
-    fontSize: 14,
-  },
-});
 
 export default FundListScreen;

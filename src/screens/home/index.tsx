@@ -454,6 +454,12 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
               <Text style={[styles.title, {width: '100%'}]}>
                 Gói người dùng
               </Text>
+              {/* <ScrollView
+                style={{flex: 1, height: 150}}
+                horizontal={true}
+                showsHorizontalScrollIndicator={true}>
+                {packages.map((item: any) => renderPackageItem(item))}
+              </ScrollView> */}
               <Carousel
                 loop={false}
                 mode="parallax"
@@ -473,9 +479,11 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
           )}
 
           <View style={styles.utilitiesContainer}>
-            <Text style={[styles.title, {width: '100%'}]}>Tiện ích</Text>
+            <Text style={[styles.title, {width: '100%'}]}>
+              Tiện ích và chức năng
+            </Text>
             <ScrollView
-              style={{flex: 1, height: 90}}
+              style={{flex: 1, height: 85, marginBottom: 10}}
               horizontal={true}
               showsHorizontalScrollIndicator={true}>
               {renderExtensions()}

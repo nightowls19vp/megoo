@@ -58,6 +58,7 @@ import groupStore from '../../store/group.store';
 import ToolTip from '../ToolTip';
 import FundListScreen from '../../../screens/home/screens/fund/FundListScreen';
 import CreateFundScreen from '../../../screens/home/screens/fund/CreateFundScreen';
+import FundDetailScreen from '../../../screens/home/screens/fund/FundDetailScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = ({navigation}: {navigation: any}) => {
@@ -260,6 +261,11 @@ const FundListScreenStack = () => {
       <FundListTask.Screen
         name={RouteNames.CREATE_FUND}
         component={CreateFundScreen}
+        // options={{headerShown: false}}
+      />
+      <FundListTask.Screen
+        name={RouteNames.FUND}
+        component={FundDetailScreen}
         // options={{headerShown: false}}
       />
     </FundListTask.Navigator>

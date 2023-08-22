@@ -31,6 +31,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
   const [msgNoti, setMsgNoti] = useState(userStore.msgNoti);
   const [stockNoti, setStockNoti] = useState(userStore.stockNoti);
   const [billNoti, setBillNoti] = useState(true);
+  const [fundNoti, setFundNoti] = useState(true);
   const [todosNoti, setTodosNoti] = useState(true);
   const [calendarNoti, setCalendarNoti] = useState(true);
 
@@ -170,17 +171,22 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
           </Text>
           <View style={styles.contentContainer}>
             <View style={styles.settingItem}>
-              <Text style={styles.text}>Quản lý chi tiêu</Text>
+              <Text style={styles.text}>Quản lý nợ</Text>
               <FontAwesomeIcon
                 onPress={async () => {
                   setBillNoti(!billNoti);
-
-                  // await AsyncStorage.setItem('billNoti', `${billNoti}`);
-                  // const noti = await AsyncStorage.getItem('billNoti');
-                  // userStore.setBillNoti(billNoti);
-                  // console.log('Bill noti after set & get:', noti);
                 }}
                 name={billNoti ? 'toggle-on' : 'toggle-off'}
+                style={styles.notiIcon}
+              />
+            </View>
+            <View style={styles.settingItem}>
+              <Text style={styles.text}>Quản lý quỹ</Text>
+              <FontAwesomeIcon
+                onPress={async () => {
+                  setFundNoti(!fundNoti);
+                }}
+                name={fundNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}
               />
             </View>
@@ -190,10 +196,6 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
               <FontAwesomeIcon
                 onPress={async () => {
                   setTodosNoti(!todosNoti);
-                  // await AsyncStorage.setItem('todosNoti', `${todosNoti}`);
-                  // const noti = await AsyncStorage.getItem('todosNoti');
-                  // userStore.setTodosNoti(todosNoti);
-                  // console.log('Todos noti:', noti);
                 }}
                 name={todosNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}
@@ -205,8 +207,6 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
               <FontAwesomeIcon
                 onPress={() => {
                   setCalendarNoti(!calendarNoti);
-                  userStore.setCalendarNoti(calendarNoti);
-                  console.log('Calendar noti:', userStore.calendarNoti);
                 }}
                 name={userStore.calendarNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}
