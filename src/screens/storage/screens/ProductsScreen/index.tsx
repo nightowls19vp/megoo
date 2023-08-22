@@ -14,6 +14,7 @@ import {
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Camera, useCameraDevices} from 'react-native-vision-camera';
 
 import {useFocusEffect, useRoute} from '@react-navigation/native';
@@ -34,10 +35,6 @@ import BottomMenu from './components/bottom-menu';
 import FilterMenu from './components/filter-menu';
 import {PropsProductsScreen} from './props-products-screen';
 import styles from './styles/styles';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Fontisto from 'react-native-vector-icons/Fontisto';
-
-// import { FeatherIcon } from 'react-native-vector-icons/Feather';
 
 const ProductsScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<PropsProductsScreen>();
@@ -293,7 +290,13 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
 
         {renderTag(item)}
         <View style={styles.productInfoContainer}>
-          <View style={styles.productInfo}>
+          <View
+            style={[
+              styles.productInfo,
+              {
+                paddingTop: 30,
+              },
+            ]}>
             {/* <Text style={[styles.text, {fontWeight: 'bold'}]}>
               Tên sản phẩm:{' '}
             </Text> */}
@@ -378,7 +381,11 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
       <View style={styles.contentContainer}>
         <Text style={styles.title}>Danh sách sản phẩm</Text>
         <TouchableOpacity onPress={openFilterModal}>
-          <AntDesignIcon name="filter" size={24} color={Colors.text.orange} />
+          <Ionicons
+            name="options-outline"
+            size={24}
+            color={Colors.text.orange}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {

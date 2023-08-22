@@ -1,9 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import {Colors} from '../../../../../constants/color.const';
 
@@ -35,26 +33,30 @@ const BottomMenu: React.FC<Props> = ({
       style={styles.modal}>
       <View style={styles.menuContainer}>
         <TouchableOpacity style={styles.menuItem} onPress={onDetail}>
-          <Ionicons name="md-information-circle" size={20} color="#f58500" />
+          <Ionicons
+            name="information-circle-outline"
+            size={20}
+            color="#f58500"
+          />
           <Text style={styles.menuText}>Detail</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} onPress={onUpdate}>
-          <Ionicons name="md-pencil" size={20} color="#f58500" />
+          <Ionicons name="pencil-outline" size={20} color="#f58500" />
           <Text style={styles.menuText}>Update</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} onPress={onUse}>
-          <AntDesignIcon name="check" size={20} color="#f58500" />
+          <Ionicons name="checkmark" size={20} color="#f58500" />
           <Text style={styles.menuText}>Use</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} onPress={onDelete}>
-          <Ionicons name="md-trash" size={20} color="#f58500" />
+          <Ionicons name="trash-bin-outline" size={20} color="#f58500" />
           <Text style={styles.menuText}>Delete</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-          <MaterialIcons
-            name="cancel"
+          <Ionicons
+            name="close-circle-outline"
             size={20}
-            color="#f58500"></MaterialIcons>
+            color="#f58500"></Ionicons>
           <Text style={styles.cancelButtonText}>Cancel</Text>
         </TouchableOpacity>
       </View>

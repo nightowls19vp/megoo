@@ -162,7 +162,7 @@ const DrawerNavigation = ({navigation}: {navigation: any}) => {
                     }}>
                     <Ionicons
                       // name="chatbubble-ellipses-outline"
-                      name="md-chatbubble-ellipses-outline"
+                      name="chatbubble-ellipses-outline"
                       size={24}
                       color={'black'}
                     />

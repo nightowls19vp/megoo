@@ -168,6 +168,7 @@ const FilterMenu: React.FC<FilterModalProps> = props => {
             {bestBeforeDateOptions.map((opt, idx) => {
               return (
                 <CheckBox
+                  key={opt.type}
                   title={opt.text}
                   checked={opt.checked}
                   checkedColor={Colors.checkBox.black}
