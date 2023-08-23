@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {useNavigation} from '@react-navigation/native';
+import {getItemById} from '../../screens/storage/services/items.service';
 
 export let socket: Socket;
 
@@ -54,6 +55,8 @@ export async function listen() {
   onUpdatedTodos();
 
   onTaskReminder();
+
+  onProdNoti();
 }
 
 export function onZpCallback() {
@@ -214,6 +217,49 @@ export function onTaskReminder() {
         `<b>${data.summary}</b>
         ${data.description}`,
       );
+    }
+  });
+}
+
+export function onProdNoti() {
+  interface IProdNoti {
+    type: 'outOfStock' | 'runningOutOfStock' | 'expiringSoon' | 'expired';
+    itemId: string;
+    groupId: string;
+  }
+
+  socket.on('prodNoti', async (data: IProdNoti) => {
+    console.log('prodNoti data:', data);
+
+    const resDto = await getItemById({
+      groupId: data.groupId,
+      id: data.itemId,
+    });
+
+    const item = resDto.data;
+
+    // displayNotification
+    let message = '';
+
+    switch (data.type) {
+      case 'outOfStock':
+        message = `Nhu yếu phẩm <b>${item?.groupProduct?.name}</b> đã hết !`;
+        break;
+      case 'runningOutOfStock':
+        message = `Nhu yếu phẩm <b>${item?.groupProduct?.name}</b> sắp hết ! Chỉ còn ${item?.quantity} ${item?.unit}`;
+        break;
+      case 'expiringSoon':
+        message = `Nhu yếu phẩm <b>${item?.groupProduct?.name}</b> sắp hết hạn sử dụng !`;
+        break;
+      case 'expired':
+        message = `Nhu yếu phẩm <b>${item?.groupProduct?.name}</b> đã hết hạn sử dụng !`;
+        break;
+      default:
+        break;
+    }
+
+    if (message.length > 0) {
+      displayNotification('Nhắc nhở nhu yếu phẩm', message);
     }
   });
 }

@@ -312,12 +312,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
                 display: 'flex',
                 flexDirection: 'row',
               }}>
-              <View
-                style={{
-                  width: 30,
-                }}>
-                <MaterialIcons name="warehouse" size={20} />
-              </View>
+              <Text style={[styles.text, {fontWeight: 'bold'}]}>Nơi mua: </Text>
               <Text style={styles.infoText}>
                 {' '}
                 {item?.storageLocation?.name ?? 'Không rõ'}
@@ -331,12 +326,9 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
                 display: 'flex',
                 flexDirection: 'row',
               }}>
-              <View
-                style={{
-                  width: 30,
-                }}>
-                <MaterialCommunityIcons name="shopping" size={20} />
-              </View>
+              <Text style={[styles.text, {fontWeight: 'bold'}]}>
+                Nơi lưu trữ:{' '}
+              </Text>
               <Text style={styles.infoText}>
                 {' '}
                 {item?.purchaseLocation?.name ?? 'Không rõ'}
