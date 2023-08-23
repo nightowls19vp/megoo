@@ -118,6 +118,14 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
+                storeFile file(MYAPP_UPLOAD_STORE_FILE)
+                storePassword MYAPP_UPLOAD_STORE_PASSWORD
+                keyAlias MYAPP_UPLOAD_KEY_ALIAS
+                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+            }
+        }
     }
     buildTypes {
         debug {
@@ -126,7 +134,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -170,29 +178,29 @@ dependencies {
 apply from: file('../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle')
 applyNativeModulesAppBuildGradle(project)
 
-// project.ext.vectoricons = [
-//     iconFontNames: [
-//         'AntDesign.ttf',
-//         'Entypo.ttf',
-//         'EvilIcons.ttf',
-//         'Feather.ttf',
-//         'FontAwesome.ttf',
-//         'FontAwesome5_Regular.ttf',
-//         'FontAwesome5_Solid.ttf',
-//         'FontAwesome5_Brands.ttf',
-//         'FontAwesome6_Brands.ttf',
-//         'FontAwesome6_Regular.ttf',
-//         'FontAwesome6_Solid.ttf',
-//         'Fontisto.ttf',
-//          'Foundation.ttf',
-//           'Ionicons.ttf',
-//           'MaterialCommunityIcons.ttf',
-//           'MaterialIcons.ttf',
-//           'Octicons.ttf',
-//           'SimpleLineIcons.ttf',
-//           'Zocial.ttf'
-//           ],
-// ]
+project.ext.vectoricons = [
+  iconFontNames: [
+    'AntDesign.ttf',
+    'Entypo.ttf',
+    'EvilIcons.ttf',
+    'Feather.ttf',
+    'FontAwesome.ttf',
+    'FontAwesome5_Regular.ttf',
+    'FontAwesome5_Solid.ttf',
+    'FontAwesome5_Brands.ttf',
+    'FontAwesome6_Brands.ttf',
+    'FontAwesome6_Regular.ttf',
+    'FontAwesome6_Solid.ttf',
+    'Fontisto.ttf',
+    'Foundation.ttf',
+    'Ionicons.ttf',
+    'MaterialCommunityIcons.ttf',
+    'MaterialIcons.ttf',
+    'Octicons.ttf',
+    'SimpleLineIcons.ttf',
+    'Zocial.ttf'
+  ],
+]
 
 apply from: '../../node_modules/react-native-vector-icons/fonts.gradle'
 

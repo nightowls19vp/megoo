@@ -10,6 +10,15 @@ export const getUserGroup = async () => {
   const accessToken = await AsyncStorage.getItem('accessToken');
   console.log('Access token:', accessToken);
 
+  if (
+    !accessToken ||
+    accessToken === '' ||
+    accessToken === 'null' ||
+    accessToken === 'undefined'
+  ) {
+    return;
+  }
+
   try {
     const response = await axios.get(reqUrl, {
       headers: {

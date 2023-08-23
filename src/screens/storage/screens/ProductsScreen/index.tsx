@@ -14,6 +14,7 @@ import {
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Camera, useCameraDevices} from 'react-native-vision-camera';
 
@@ -315,7 +316,7 @@ const ProductsScreen = ({navigation}: {navigation: any}) => {
                 style={{
                   width: 30,
                 }}>
-                <MaterialCommunityIcons name="warehouse" size={20} />
+                <MaterialIcons name="warehouse" size={20} />
               </View>
               <Text style={styles.infoText}>
                 {' '}
