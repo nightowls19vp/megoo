@@ -147,7 +147,7 @@ const TodosTabs = () => {
     <TodosTopTabNavigator.Navigator
       screenOptions={{
         tabBarLabelStyle: {
-          fontSize: 16,
+          fontSize: 14,
         },
         tabBarIndicatorStyle: {
           backgroundColor: Colors.text.orange,
@@ -334,7 +334,7 @@ const HomeScreenStack = () => {
               //   />
               // </TouchableOpacity>
               <ToolTip
-                content="Tỉ lệ lãi suất ngân hàng"
+                content="So sánh sự chênh lệch tiền lãi nếu rút khoản tiết kiệm trước kỳ hạn và gửi lại với lãi suất mới"
                 isTooltipVisible={isTooltipVisible}
                 setIsTooltipVisible={setIsTooltipVisible}
               />
@@ -423,7 +423,7 @@ const StorageTabs = () => {
     <StorageTopTabNavigator.Navigator
       screenOptions={{
         tabBarLabelStyle: {
-          fontSize: 16,
+          fontSize: 14,
         },
         tabBarIndicatorStyle: {
           backgroundColor: Colors.text.orange,
@@ -517,7 +517,7 @@ const GroupTabs = () => {
     <GroupsTopTabNavigator.Navigator
       screenOptions={{
         tabBarLabelStyle: {
-          fontSize: 16,
+          fontSize: 14,
         },
         tabBarIndicatorStyle: {
           backgroundColor: Colors.text.orange,
@@ -543,7 +543,7 @@ const UserInfoTabs = () => {
     <ProfileTopTabNavigator.Navigator
       screenOptions={{
         tabBarLabelStyle: {
-          fontSize: 16,
+          fontSize: 14,
         },
         tabBarIndicatorStyle: {
           backgroundColor: Colors.text.orange,

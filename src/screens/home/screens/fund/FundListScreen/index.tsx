@@ -132,7 +132,11 @@ const FundListScreen = () => {
           />
         </TouchableOpacity>
       </View>
-      {funds.length > 0 ? renderFundItem() : <Text>Không có quỹ nào</Text>}
+      {funds.length > 0 ? (
+        renderFundItem()
+      ) : (
+        <Text style={{color: Colors.text.grey}}>Không có quỹ nào</Text>
+      )}
     </View>
   );
 };

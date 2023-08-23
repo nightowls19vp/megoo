@@ -10,6 +10,7 @@ import RouteNames from '../../../../constants/route-names.const';
 import {getUserGroup} from '../../../../services/group.service';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
 import styles from './styles/style';
+import {Colors} from '../../../../constants/color.const';
 
 // const appId = 'ADD4546B-CF09-4980-B6AC-DB7FFD2E70EC';
 // export const sendbird = new SendBird({appId});
@@ -135,6 +136,7 @@ const GroupChatListScreen = ({navigation}: {navigation: any}) => {
           <View style={styles.groupInfo}>
             <Text
               style={{
+                color: Colors.text.grey,
                 width: '75%',
                 fontWeight: 'bold',
               }}

@@ -644,6 +644,9 @@ const FundDetailScreen = () => {
                 )}
               </View>
             ))}
+          {toggleCheckBoxArray.every(item => !item) && (
+            <Text style={styles.error}>Vui lòng chọn thành viên</Text>
+          )}
 
           <Text style={styles.title}>Mô tả</Text>
           <View style={styles.inputContainer}>

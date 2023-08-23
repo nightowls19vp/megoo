@@ -467,7 +467,9 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
 
                   gap: 10,
                 }}>
-                <Text>Lặp lại mỗi:</Text>
+                <Text style={{color: Colors.text.grey, fontSize: 14}}>
+                  Lặp lại mỗi:
+                </Text>
                 <TextInput
                   style={{
                     width: '10%',
@@ -593,7 +595,9 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
                   marginTop: 10,
                   // backgroundColor: 'yellow',
                 }}>
-                <Text>Kết thúc:</Text>
+                <Text style={{color: Colors.text.grey, fontSize: 14}}>
+                  Kết thúc:
+                </Text>
                 <RadioGroup
                   containerStyle={styles.radioButtonContainer}
                   layout="column"
@@ -733,7 +737,13 @@ const CreateTaskScreen = ({navigation}: {navigation: any}) => {
                       handleToggleCheckBox(index, newValue)
                     }
                   />
-                  <Text>{member.user.name}</Text>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: Colors.text.grey,
+                    }}>
+                    {member.user.name}
+                  </Text>
                 </View>
               ))}
             </View>

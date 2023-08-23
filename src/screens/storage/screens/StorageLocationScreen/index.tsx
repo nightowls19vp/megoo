@@ -344,7 +344,13 @@ const StorageLocationScreen = ({navigation}: {navigation: any}) => {
             style={{
               marginTop: 20,
             }}>
-            <Text>Không có sản phẩm nào</Text>
+            <Text
+              style={{
+                color: Colors.text.grey,
+                fontSize: 14,
+              }}>
+              Không có nơi lưu trữ nào
+            </Text>
           </View>
         )}
       />

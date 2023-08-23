@@ -2,6 +2,7 @@ import {FC} from 'react';
 import {Text, TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Tooltip from 'react-native-walkthrough-tooltip';
+import {Colors} from '../../../constants/color.const';
 
 interface ITooltipProps {
   content: string;
@@ -20,7 +21,7 @@ const ToolTip: FC<ITooltipProps> = ({
       placement="bottom"
       isVisible={isTooltipVisible}
       onClose={() => setIsTooltipVisible(false)}
-      content={<Text>{content}</Text>}>
+      content={<Text style={{color: Colors.text.grey}}>{content}</Text>}>
       <TouchableOpacity onPress={() => setIsTooltipVisible(!isTooltipVisible)}>
         <Ionicons name="information-circle-outline" size={22} color={'black'} />
       </TouchableOpacity>

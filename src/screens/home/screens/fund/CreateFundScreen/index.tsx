@@ -183,7 +183,7 @@ const CreateFundScreen = () => {
         setMembers(groupMembers);
         // Initialize toggleCheckBoxArray with true for the current user's index, if found
         const currentUserIndex = groupMembers.findIndex(
-          (member: any) => member.id === 'Super User',
+          (member: any) => member.role === 'Super User',
         );
 
         const initialToggleValues = groupMembers.map(

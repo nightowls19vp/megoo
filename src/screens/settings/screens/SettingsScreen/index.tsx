@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Button,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -139,7 +140,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {appStore.isLoggedIn ? (
         <View style={styles.settingsContainer}>
           <Text style={styles.title}>Thông báo</Text>
@@ -390,9 +391,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
           <Text style={styles.buttonText}>Đăng nhập/đăng ký</Text>
         </TouchableOpacity>
       )}
-
-      <Toast position="top" />
-    </View>
+    </ScrollView>
   );
 };
 

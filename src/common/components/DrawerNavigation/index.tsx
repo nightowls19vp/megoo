@@ -84,7 +84,7 @@ const customDrawerContent = (props: any) => {
               style={{
                 width: 150,
                 height: 150,
-                marginBottom: 20,
+                marginVertical: 20,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
