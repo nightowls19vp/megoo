@@ -2,15 +2,14 @@ import {observer} from 'mobx-react';
 import React, {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {Dropdown} from 'react-native-element-dropdown';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
-import * as sl from '../../services/storage-location.service';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../../screens/AddGroupProductScreen/styles/style';
-
-import {Dropdown} from 'react-native-element-dropdown';
+import * as sl from '../../services/storage-location.service';
 
 interface IProps {
   navigation?: any;

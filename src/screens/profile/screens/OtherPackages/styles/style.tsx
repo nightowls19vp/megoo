@@ -1,4 +1,5 @@
 import {Dimensions, StyleSheet} from 'react-native';
+
 import {Colors} from '../../../../../constants/color.const';
 
 const width = Dimensions.get('window').width;
@@ -6,11 +7,12 @@ const height = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    display: 'flex',
     alignItems: 'center',
     width: width,
-    minHeight: height,
+    minHeight: '100%',
     marginTop: 20,
+    paddingBottom: 20,
     // justifyContent: 'center',
   },
   titleContainer: {

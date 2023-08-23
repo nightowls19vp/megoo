@@ -1,4 +1,5 @@
 import axios from 'axios';
+import qs from 'qs';
 
 import {URL_HOST} from '../../../core/config/api/api.config';
 import {
@@ -15,8 +16,6 @@ import {
   IUpdateItemReq,
   IUpdateItemRes,
 } from '../interfaces/items';
-
-import qs from 'qs';
 
 /**
  * Creates a new item.

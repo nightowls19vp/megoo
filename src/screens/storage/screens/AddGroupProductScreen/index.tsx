@@ -11,18 +11,18 @@ import {
   View,
 } from 'react-native';
 import {Asset, launchCamera} from 'react-native-image-picker';
+import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
 
+import AddImageModal from '../../../../common/components/AddImageModal';
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import appStore from '../../../../common/store/app.store';
-import {Colors} from '../../../../constants/color.const';
-import styles from './styles/style';
-import {ICreateGroupProductReq} from '../../interfaces/group-products';
 import groupStore from '../../../../common/store/group.store';
+import {Colors} from '../../../../constants/color.const';
+import {ICreateGroupProductReq} from '../../interfaces/group-products';
 import {createGroupProduct} from '../../services/group-products.service';
-import Toast from 'react-native-toast-message';
-import AddImageModal from '../../../../common/components/AddImageModal';
+import styles from './styles/style';
 
 const ProductSchema = Yup.object().shape({
   name: Yup.string()

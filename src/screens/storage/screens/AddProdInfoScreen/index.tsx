@@ -16,22 +16,20 @@ import {
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
+import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import {IMAGE_URI_DEFAULT} from '../../../../common/default';
 import appStore from '../../../../common/store/app.store';
+import groupStore from '../../../../common/store/group.store';
+import userStore from '../../../../common/store/user.store';
 import {Colors} from '../../../../constants/color.const';
 import GroupProductDropdownPicker from '../../components/GroupProductDropdownPicker';
 import PurchaseLocationDropdownPicker from '../../components/PurchaseLocationDropdownPicker';
 import StorageLocationDropdownPicker from '../../components/StorageLocationDropdownPicker';
-import styles from './styles/style';
 import {ICreateItemReq} from '../../interfaces/items';
-import groupStore from '../../../../common/store/group.store';
-
 import {createItem} from '../../services/items.service';
-
-import userStore from '../../../../common/store/user.store';
-import Toast from 'react-native-toast-message';
+import styles from './styles/style';
 
 const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
   const initialValues = {
@@ -74,7 +72,7 @@ const AddProdInfoScreen = ({navigation}: {navigation: any}) => {
             style={{
               display: 'flex',
               position: 'absolute',
-              right: 10,
+              right: 15,
               bottom: 10,
             }}
             onPress={async () => {

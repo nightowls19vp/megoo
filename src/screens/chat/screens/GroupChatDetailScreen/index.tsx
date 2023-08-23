@@ -8,17 +8,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Foundation from 'react-native-vector-icons/Foundation';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import Foundation from 'react-native-vector-icons/Foundation';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {RouteProp, useRoute} from '@react-navigation/native';
 
-import {getGroupById, getMembers} from '../../../../services/group.service';
-import {Colors} from '../../../../constants/color.const';
-import userStore from '../../../../common/store/user.store';
-import RouteNames from '../../../../constants/route-names.const';
 import groupStore from '../../../../common/store/group.store';
+import userStore from '../../../../common/store/user.store';
+import {Colors} from '../../../../constants/color.const';
+import RouteNames from '../../../../constants/route-names.const';
+import {getGroupById, getMembers} from '../../../../services/group.service';
 
 type GroupChatRouteParams = {
   channelUrl: string;
@@ -33,7 +33,8 @@ type GroupChatRouteProp = RouteProp<
 
 const GroupChatDetailScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupChatRouteProp>();
-  const {channelUrl, groupId} = route.params;
+  const {channelUrl} = route.params;
+  const groupId = groupStore.id;
 
   const [group, setGroup] = useState<{
     _id: string;

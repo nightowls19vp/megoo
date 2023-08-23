@@ -1,5 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {URL_HOST} from '../../../../../core/config/api/api.config';
 
 export const updateGroupName = async (groupId: string, name: string) => {

@@ -1,4 +1,5 @@
 import {observer} from 'mobx-react';
+import {useState} from 'react';
 import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,6 +11,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import {Colors} from '../../../constants/color.const';
 import RouteNames from '../../../constants/route-names.const';
+import ChangeGroupChatDetailScreen from '../../../screens/chat/screens/ChangeGroupChatDetailScreen/index';
 import ChatScreen from '../../../screens/chat/screens/ChatScreen';
 import GroupChatDetailScreen from '../../../screens/chat/screens/GroupChatDetailScreen/index';
 import GroupChatListScreen from '../../../screens/chat/screens/GroupChatListScreen';
@@ -43,17 +45,20 @@ import AddGroupProductScreen from '../../../screens/storage/screens/AddGroupProd
 import AddProdInfoScreen from '../../../screens/storage/screens/AddProdInfoScreen';
 import AddPurchaseLocationScreen from '../../../screens/storage/screens/AddPurchaseLocationScreen';
 import AddStorageLocationScreen from '../../../screens/storage/screens/AddStorageLocationScreen';
+import EditStorageLocationDetailScreen from '../../../screens/storage/screens/EditStorageDetailScreen';
 import GroupsProductsListScreen from '../../../screens/storage/screens/GroupsScreen';
 import ProductDetailScreen from '../../../screens/storage/screens/ProductDetailScreen';
 import ProductsScreen from '../../../screens/storage/screens/ProductsScreen';
 import PurchaseLocationScreen from '../../../screens/storage/screens/PurchaseLocationScreen';
 import ScanBarcodeScreen from '../../../screens/storage/screens/ScanBarcodeScreen';
+import StorageLocationDetailScreen from '../../../screens/storage/screens/StorageLocationDetailScreen';
 import StorageLocationScreen from '../../../screens/storage/screens/StorageLocationScreen';
 import appStore from '../../store/app.store';
 import groupStore from '../../store/group.store';
-import ChangeGroupChatDetailScreen from './../../../screens/chat/screens/ChangeGroupChatDetailScreen/index';
-import StorageLocationDetailScreen from '../../../screens/storage/screens/StorageLocationDetailScreen';
-import EditStorageLocationDetailScreen from '../../../screens/storage/screens/EditStorageDetailScreen';
+import ToolTip from '../ToolTip';
+import FundListScreen from '../../../screens/home/screens/fund/FundListScreen';
+import CreateFundScreen from '../../../screens/home/screens/fund/CreateFundScreen';
+import FundDetailScreen from '../../../screens/home/screens/fund/FundDetailScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = ({navigation}: {navigation: any}) => {
@@ -102,7 +107,7 @@ const ChatScreenStack = ({navigation}: {navigation: any}) => {
 const BillListStack = createNativeStackNavigator();
 const BillListScreenStack = () => {
   return (
-    <BillListStack.Navigator initialRouteName={RouteNames.GROUP_BILL_LIST}>
+    <BillListStack.Navigator initialRouteName={RouteNames.BILL_MANAGEMENT}>
       <BillListStack.Screen
         name={RouteNames.CHAT_STACK}
         component={ChatScreenStack}
@@ -142,7 +147,7 @@ const TodosTabs = () => {
     <TodosTopTabNavigator.Navigator
       screenOptions={{
         tabBarLabelStyle: {
-          fontSize: 16,
+          fontSize: 14,
         },
         tabBarIndicatorStyle: {
           backgroundColor: Colors.text.orange,
@@ -168,7 +173,7 @@ const TodosTabs = () => {
 const TodosListStack = createNativeStackNavigator();
 const TodosListScreenStack = () => {
   return (
-    <TodosListStack.Navigator initialRouteName={RouteNames.GROUP_TODOS_LIST}>
+    <TodosListStack.Navigator initialRouteName={RouteNames.TODOS_TAB}>
       <TodosListStack.Screen
         name={RouteNames.CHAT_STACK}
         component={ChatScreenStack}
@@ -189,6 +194,7 @@ const TodosListScreenStack = () => {
       <TodosListStack.Screen
         name={RouteNames.TODOS_TAB}
         component={TodosTabs}
+        initialParams={{screen: RouteNames.PRIVATE_TODOS_TAB}}
         // options={{headerShown: false}}
       />
       <TodosListStack.Screen
@@ -203,7 +209,7 @@ const TodosListScreenStack = () => {
 const TaskListStack = createNativeStackNavigator();
 const TaskListScreenStack = () => {
   return (
-    <TaskListStack.Navigator initialRouteName={RouteNames.GROUP_TASK_LIST}>
+    <TaskListStack.Navigator initialRouteName={RouteNames.TASK_LIST}>
       <TaskListStack.Screen
         name={RouteNames.CHAT_STACK}
         component={ChatScreenStack}
@@ -235,8 +241,41 @@ const TaskListScreenStack = () => {
   );
 };
 
+const FundListTask = createNativeStackNavigator();
+const FundListScreenStack = () => {
+  return (
+    <FundListTask.Navigator initialRouteName={RouteNames.FUND_LIST}>
+      <FundListTask.Screen
+        name={RouteNames.CHAT_STACK}
+        component={ChatScreenStack}
+        options={{
+          title: 'Nhóm chat',
+        }}
+      />
+
+      <FundListTask.Screen
+        name={RouteNames.FUND_LIST}
+        component={FundListScreen}
+        // options={{headerShown: false}}
+      />
+      <FundListTask.Screen
+        name={RouteNames.CREATE_FUND}
+        component={CreateFundScreen}
+        // options={{headerShown: false}}
+      />
+      <FundListTask.Screen
+        name={RouteNames.FUND}
+        component={FundDetailScreen}
+        // options={{headerShown: false}}
+      />
+    </FundListTask.Navigator>
+  );
+};
+
 const HomeStack = createNativeStackNavigator();
 const HomeScreenStack = () => {
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+
   return (
     <HomeStack.Navigator initialRouteName={RouteNames.HOME}>
       <HomeStack.Screen
@@ -252,7 +291,7 @@ const HomeScreenStack = () => {
         name={RouteNames.BILL_LIST_STACK}
         component={BillListScreenStack}
         options={{
-          title: 'Quản lý chi tiêu',
+          title: 'Quản lý nợ',
           headerShown: false,
         }}
       />
@@ -268,7 +307,15 @@ const HomeScreenStack = () => {
         name={RouteNames.TASK_LIST_STACK}
         component={TaskListScreenStack}
         options={{
-          title: 'Quản lý thời gian',
+          title: 'Lịch biểu',
+          headerShown: false,
+        }}
+      />
+      <HomeStack.Screen
+        name={RouteNames.FUND_LIST_STACK}
+        component={FundListScreenStack}
+        options={{
+          title: 'Quản lý quỹ',
           headerShown: false,
         }}
       />
@@ -277,6 +324,22 @@ const HomeScreenStack = () => {
         component={InterestRateScreen}
         options={{
           headerShown: true,
+          headerRight: () => {
+            return (
+              // <TouchableOpacity>
+              //   <Ionicons
+              //     name="information-circle-outline"
+              //     size={24}
+              //     color={'black'}
+              //   />
+              // </TouchableOpacity>
+              <ToolTip
+                content="So sánh sự chênh lệch tiền lãi nếu rút khoản tiết kiệm trước kỳ hạn và gửi lại với lãi suất mới"
+                isTooltipVisible={isTooltipVisible}
+                setIsTooltipVisible={setIsTooltipVisible}
+              />
+            );
+          },
         }}
       />
     </HomeStack.Navigator>
@@ -355,13 +418,12 @@ const AddProductScreenStack = () => {
 };
 
 const StorageTopTabNavigator = createMaterialTopTabNavigator();
-
 const StorageTabs = () => {
   return (
     <StorageTopTabNavigator.Navigator
       screenOptions={{
         tabBarLabelStyle: {
-          fontSize: 16,
+          fontSize: 14,
         },
         tabBarIndicatorStyle: {
           backgroundColor: Colors.text.orange,
@@ -455,7 +517,7 @@ const GroupTabs = () => {
     <GroupsTopTabNavigator.Navigator
       screenOptions={{
         tabBarLabelStyle: {
-          fontSize: 16,
+          fontSize: 14,
         },
         tabBarIndicatorStyle: {
           backgroundColor: Colors.text.orange,
@@ -481,7 +543,7 @@ const UserInfoTabs = () => {
     <ProfileTopTabNavigator.Navigator
       screenOptions={{
         tabBarLabelStyle: {
-          fontSize: 16,
+          fontSize: 14,
         },
         tabBarIndicatorStyle: {
           backgroundColor: Colors.text.orange,

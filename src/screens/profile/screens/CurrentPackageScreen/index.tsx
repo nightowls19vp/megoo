@@ -11,11 +11,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Modal from 'react-native-modal';
 import Toast from 'react-native-toast-message';
 import Foundation from 'react-native-vector-icons/Foundation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
-import Modal from 'react-native-modal';
 
 import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
 
@@ -25,13 +25,13 @@ import {
 } from '../../../../common/handle.string';
 import appStore from '../../../../common/store/app.store';
 import groupStore from '../../../../common/store/group.store';
+import userStore from '../../../../common/store/user.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
 import {getGroupById} from '../../../../services/group.service';
 import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
 import {activate, deleteMember, invite} from './services/group.info.service';
 import styles from './styles/style';
-import userStore from '../../../../common/store/user.store';
 
 const height = Dimensions.get('window').height;
 
@@ -352,12 +352,14 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                       // todo: handle error
                     }
 
+                    groupStore.setToUpdateGroupDropdown(true);
+
                     Toast.show({
                       type: 'success',
                       text1: 'Kích hoạt thành công',
                       autoHide: true,
                       visibilityTime: 1000,
-                      topOffset: 0,
+                      topOffset: 30,
                       onHide: () => {
                         navigation.navigate(RouteNames.PROFILE as never, {
                           activeTab: 'group',
@@ -369,6 +371,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                       type: 'error',
                       text1: response.message,
                       autoHide: false,
+                      topOffset: 30,
                     });
                   }
                 }}>
@@ -600,7 +603,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                               text1: 'Mời thành viên thành công',
                               autoHide: true,
                               visibilityTime: 1000,
-                              topOffset: 20,
+                              topOffset: 30,
                               // onHide: () => {},
                             });
                           } else {
@@ -609,7 +612,7 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                               text1: 'Mời thành viên thất bại',
                               autoHide: true,
                               visibilityTime: 1000,
-                              topOffset: height * 0.05,
+                              topOffset: 30,
                               // onHide: () => {},
                             });
                           }
@@ -621,9 +624,6 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
                 </View>
               )}
             </Formik>
-
-            {/* <Toast position="top" /> */}
-
             <TouchableOpacity
               style={styles.button}
               onPress={() => {
@@ -693,7 +693,6 @@ const CurrentPackage = ({navigation}: {navigation: any}) => {
           </View>
         </View>
       </Modal>
-      <Toast position="top" />
     </KeyboardAvoidingView>
   );
 };

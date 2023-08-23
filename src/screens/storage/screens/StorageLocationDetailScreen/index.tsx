@@ -1,30 +1,32 @@
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {Formik} from 'formik';
+import moment from 'moment';
 import {useEffect, useState} from 'react';
 import {
-  Text,
-  View,
-  StyleSheet,
   Dimensions,
   Image,
-  TouchableOpacity,
-  ScrollView,
   KeyboardAvoidingView,
+  ScrollView,
+  StyleSheet,
+  Text,
   TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import {IMAGE_URI_DEFAULT} from '../../../../common/default';
-import {Colors} from '../../../../constants/color.const';
-import {getStorageLocationById} from '../../services/storage-location.service';
-import {IGetStorageLocationByIdReq} from './../../interfaces/storage-locations/index';
-import {dateFormat} from './../../../../common/handle.string';
+import DatePicker from 'react-native-date-picker';
 import {Asset, launchCamera} from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Formik} from 'formik';
-import GroupProductDropdownPicker from '../../components/GroupProductDropdownPicker';
+
+import {RouteProp, useRoute} from '@react-navigation/native';
+
+import {IMAGE_URI_DEFAULT} from '../../../../common/default';
+import {dateFormat} from '../../../../common/handle.string';
 import groupStore from '../../../../common/store/group.store';
-import DatePicker from 'react-native-date-picker';
-import moment from 'moment';
-import StorageLocationDropdownPicker from '../../components/StorageLocationDropdownPicker';
+import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
+import GroupProductDropdownPicker from '../../components/GroupProductDropdownPicker';
+import StorageLocationDropdownPicker from '../../components/StorageLocationDropdownPicker';
+import {IGetStorageLocationByIdReq} from '../../interfaces/storage-locations/index';
+import {getStorageLocationById} from '../../services/storage-location.service';
 
 //{"groupId": "64b51c96ba5d05ba3371f7e3", "storageLocation": {"addedBy": "64b43e494c30dd05f47fe253", "description": "", "id": "a20f116d-3bca-4e5e-9d92-5a4afecf168a", "image": "https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png", "name": "Bếp", "timestamp": {"createdAt": "2023-08-17T06:37:49.306Z", "deletedAt": null, "updatedAt": "2023-08-17T06:37:49.306Z"}}}
 type StorageLocationRouteParams = {
@@ -51,7 +53,8 @@ type StorageLocationRouteProp = RouteProp<
 
 const StorageLocationDetailScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<StorageLocationRouteProp>();
-  const {groupId, storageLocation} = route.params;
+  const {storageLocation} = route.params;
+  const groupId = groupStore.id;
 
   //{"addedBy": "64b43e494c30dd05f47fe253", "description": "", "id": "a20f116d-3bca-4e5e-9d92-5a4afecf168a", "image": "https://res.cloudinary.com/nightowls19vp/image/upload/v1687419179/default.png", "name": "Bếp", "timestamp": {"createdAt": "2023-08-17T06:37:49.306Z", "deletedAt": null, "updatedAt": "2023-08-17T06:37:49.306Z"}}
   const [location, setLocation] = useState<{
@@ -270,6 +273,7 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
+    borderRadius: 20,
     borderColor: Colors.border.lightgrey,
     borderWidth: 1,
   },

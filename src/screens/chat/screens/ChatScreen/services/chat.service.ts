@@ -1,13 +1,15 @@
+import axios from 'axios';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {GroupChannel} from '@sendbird/chat/groupChannel';
 import {
   BaseMessage,
   FileMessageCreateParams,
   MessageListParams,
   UserMessageCreateParams,
 } from '@sendbird/chat/message';
-import {GroupChannel} from '@sendbird/chat/groupChannel';
+
 import {URL_HOST} from '../../../../../core/config/api/api.config';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 
 export const getMessages = async (channel: GroupChannel) => {
   try {

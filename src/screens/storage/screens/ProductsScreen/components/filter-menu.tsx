@@ -1,22 +1,15 @@
-import React, {useMemo, useState} from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {Button, CheckBox} from 'react-native-elements';
+import { cloneDeep } from 'lodash';
+import React, { useMemo, useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, CheckBox } from 'react-native-elements';
 import Modal from 'react-native-modal';
-import {RadioGroup} from 'react-native-radio-buttons-group';
+import { RadioGroup } from 'react-native-radio-buttons-group';
 
 import groupStore from '../../../../../common/store/group.store';
-import {Colors} from '../../../../../constants/color.const';
+import { Colors } from '../../../../../constants/color.const';
 import PurchaseLocationDropdownPicker from '../../../components/PurchaseLocationDropdownPicker';
 import StorageLocationDropdownPicker from '../../../components/StorageLocationDropdownPicker';
-
-import {cloneDeep} from 'lodash';
-import {IGetItemsPaginatedReq} from '../../../interfaces/items';
+import { IGetItemsPaginatedReq } from '../../../interfaces/items';
 
 interface FilterModalProps {
   curReqDto: IGetItemsPaginatedReq;

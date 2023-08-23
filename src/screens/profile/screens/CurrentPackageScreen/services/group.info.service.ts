@@ -1,5 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {URL_HOST} from '../../../../../core/config/api/api.config';
 
 export const activate = async (groupId: string, pkg: Object) => {
@@ -46,7 +48,8 @@ export const invite = async (groupId: string, emails: string[]) => {
       {
         grId: groupId,
         emails: emails,
-        feUrl: 'http://localhost:8080/pkg-mgmt/gr/join',
+        // feUrl: 'http://localhost:8080/pkg-mgmt/gr/join',
+        feUrl: 'https://megoo.netlify.app/pgk-mgmt/gr/join',
       },
       {
         headers: {

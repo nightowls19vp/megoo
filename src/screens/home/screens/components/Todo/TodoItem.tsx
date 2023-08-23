@@ -1,7 +1,9 @@
+import {useEffect, useState} from 'react';
 import {Text, View} from 'react-native';
+
 import CheckBox from '@react-native-community/checkbox';
+
 import {Colors} from '../../../../../constants/color.const';
-import {useState, useEffect} from 'react';
 import {updateTodoInList} from '../../todos/TodosScreen/services/todos.service';
 
 const TodoItem = ({

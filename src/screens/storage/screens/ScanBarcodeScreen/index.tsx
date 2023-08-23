@@ -1,8 +1,9 @@
 import 'react-native-reanimated';
+
 import {useCallback, useEffect} from 'react';
 import {Linking, StyleSheet, View} from 'react-native';
-import {Camera, useCameraDevices} from 'react-native-vision-camera';
 import {RNCamera} from 'react-native-camera';
+import {Camera, useCameraDevices} from 'react-native-vision-camera';
 
 const ScanBarcodeScreen = () => {
   const devices = useCameraDevices();

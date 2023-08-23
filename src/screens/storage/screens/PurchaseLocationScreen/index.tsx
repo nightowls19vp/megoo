@@ -336,7 +336,13 @@ const PurchaseLocationScreen = ({navigation}: {navigation: any}) => {
             style={{
               marginTop: 20,
             }}>
-            <Text>Không có sản phẩm nào</Text>
+            <Text
+              style={{
+                color: Colors.text.grey,
+                fontSize: 14,
+              }}>
+              Không có nơi mua sắm nào
+            </Text>
           </View>
         )}
       />

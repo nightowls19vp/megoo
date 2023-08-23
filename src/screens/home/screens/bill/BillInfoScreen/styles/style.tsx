@@ -1,4 +1,5 @@
 import {Dimensions, StyleSheet} from 'react-native';
+
 import {Colors} from '../../../../../../constants/color.const';
 
 const width = Dimensions.get('window').width;
@@ -24,12 +25,12 @@ const styles = StyleSheet.create({
   title: {
     width: '90%',
     textAlign: 'left',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: Colors.title.orange,
     lineHeight: 21,
     paddingVertical: 0,
-    marginVertical: 10,
+    // marginBottom: 5,
   },
   contentContainer: {
     width: '90%',
@@ -38,24 +39,35 @@ const styles = StyleSheet.create({
     gap: 20,
     // backgroundColor: 'yellow',
     marginBottom: 20,
+    marginTop: 10,
   },
-  textInput: {
-    width: '100%',
-    backgroundColor: Colors.background.white,
-    textAlign: 'left',
-    borderBottomWidth: 1,
+  inputContainer: {
+    width: '90%',
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    // paddingHorizontal: 15,
+    marginBottom: 10,
     borderColor: Colors.border.lightgrey,
-    padding: 10,
+    borderBottomWidth: 1,
+    // borderRadius: 10,
   },
-  headingText: {
+  inputText: {flex: 1, color: Colors.text.grey},
+  inputIcon: {
+    fontWeight: '200',
+    color: Colors.icon.lightgrey,
+    fontSize: 20,
+  },
+  labelText: {
     fontSize: 14,
-    fontWeight: 'bold',
     color: Colors.text.grey,
     marginRight: 10,
   },
   text: {
     fontSize: 14,
-    color: Colors.text.lightgrey,
+    fontWeight: 'bold',
+
+    color: Colors.text.grey,
   },
   buttonText: {
     fontSize: 18,
@@ -65,6 +77,7 @@ const styles = StyleSheet.create({
   lenderContainer: {
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
   },
   borrowerContainer: {
@@ -73,6 +86,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   infoContainer: {
+    width: '70%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',

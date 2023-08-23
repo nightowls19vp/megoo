@@ -21,6 +21,7 @@ import {IMAGE_URI_DEFAULT} from '../../../../../common/default';
 import {
   changeBillStatusToVietnamese,
   dateFormat,
+  dateISOFormat,
   splitString,
 } from '../../../../../common/handle.string';
 import userStore from '../../../../../common/store/user.store';
@@ -29,6 +30,7 @@ import RouteNames from '../../../../../constants/route-names.const';
 import {
   deleteBill,
   getBillInfo,
+  sendRequest,
   updateBillInfo,
   updateBorrowersStatusByLender,
   updateBorrowerStatus,
@@ -87,10 +89,6 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
         },
         amount: '',
         status: '',
-        detailStt: {
-          lender: '',
-          borrower: '',
-        },
       },
     ],
   });
@@ -132,15 +130,13 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
     setSummary(bill?.billing?.summary ?? '');
     setDescription(bill?.billing?.description ?? '');
     setBorrowersStatus(
-      bill?.billing?.borrowers.map(
-        (borrower: any) => borrower.detailStt.borrower,
-      ),
+      bill?.billing?.borrowers.map((borrower: any) => borrower.status),
     );
-    setLenderStatus(
-      bill?.billing?.borrowers.map(
-        (borrower: any) => borrower.detailStt.lender,
-      ),
-    );
+    // setLenderStatus(
+    //   bill?.billing?.borrowers.map(
+    //     (borrower: any) => borrower.detailStt.lender,
+    //   ),
+    // );
     setDropdownStates(bill?.billing?.borrowers.map((borrower: any) => false));
   };
 
@@ -202,7 +198,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.contentContainer}>
+      <View style={styles.inputContainer}>
         <TextInput
           onChangeText={text => setSummary(text)}
           onEndEditing={async () => {
@@ -214,7 +210,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
             });
             const response = await updateBillInfo(billId, {
               summary: summary,
-              date: bill.date,
+              date: dateISOFormat(bill.date),
               lender: bill.lender._id,
               description: bill.description,
               borrowers: borrowers,
@@ -223,23 +219,14 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
             console.log('Update summary:', response);
           }}
           value={summary}
-          style={[
-            styles.textInput,
-            {
-              padding: 0,
-              paddingBottom: 5,
-              marginTop: 10,
-              fontWeight: 'bold',
-              fontSize: 20,
-              color: Colors.text.grey,
-            },
-          ]}
+          style={[styles.inputText, {fontSize: 20, fontWeight: 'bold'}]}
           placeholder={'Tên khoản chi tiêu'}
           placeholderTextColor={Colors.text.lightgrey}
         />
       </View>
 
-      <View style={styles.contentContainer}>
+      <Text style={styles.title}>Mô tả</Text>
+      <View style={styles.inputContainer}>
         <TextInput
           onChangeText={text => setDescription(text)}
           onEndEditing={async () => {
@@ -249,30 +236,30 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                 amount: borrower.amount,
               };
             });
-            const response = await updateBillInfo(billId, {
+
+            const ob = {
               summary: bill.summary,
-              date: bill.date,
+              date: dateISOFormat(bill.date),
               lender: bill.lender._id,
               description: description,
               borrowers: borrowers,
-            });
+            };
 
-            console.log('Update summary:', response);
+            console.log('ob', JSON.stringify(ob, null, 2));
+
+            // const response = await updateBillInfo(billId, {
+            //   summary: bill.summary,
+            //   date: dateISOFormat(bill.date),
+            //   lender: bill.lender._id,
+            //   description: description,
+            //   borrowers: borrowers,
+            // });
+
+            // console.log('Update summary:', response);
           }}
           value={description}
-          style={[
-            styles.textInput,
-            {
-              width: '100%',
-              height: 70,
-              display: 'flex',
-              textAlignVertical: 'top',
-              borderRadius: 10,
-              borderWidth: 1,
-              // marginTop: 10,
-            },
-          ]}
-          multiline={true}
+          style={styles.inputText}
+          // multiline={true}
           maxLength={100}
           placeholder={'Mô tả'}
           placeholderTextColor={Colors.text.lightgrey}
@@ -281,17 +268,57 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
 
       <Text style={styles.title}>Người cho mượn</Text>
       <View style={styles.contentContainer}>
-        <View style={styles.lenderContainer}>
+        <View
+          style={[
+            styles.lenderContainer,
+            userStore.id !== bill.lender._id
+              ? {
+                  justifyContent: 'space-between',
+                }
+              : {},
+          ]}>
           <Image
             source={{uri: bill?.lender?.avatar || IMAGE_URI_DEFAULT}}
             style={styles.avatar}
           />
           <View style={styles.infoContainer}>
             <View style={styles.infoRow}>
-              <Text style={styles.headingText}>Họ và tên:</Text>
+              <Text style={styles.labelText}>Họ và tên:</Text>
               <Text style={styles.text}>{bill.lender.name}</Text>
             </View>
           </View>
+          {userStore.id !== bill.lender._id && (
+            <TouchableOpacity
+              onPress={async () => {
+                const response = await sendRequest(billId, bill.lender._id);
+                console.log(
+                  `Borrower send req to ${bill.lender._id}:`,
+                  response,
+                );
+
+                if (response.statusCode === 200) {
+                  Toast.show({
+                    type: 'success',
+                    text1: `Gửi nhắc nhở đến ${bill.lender.name} thành công`,
+                    autoHide: true,
+                    visibilityTime: 1000,
+                  });
+                } else {
+                  Toast.show({
+                    type: 'error',
+                    text1: `Gửi nhắc nhở đến ${bill.lender.name} thất bại`,
+                    autoHide: true,
+                    visibilityTime: 1000,
+                  });
+                }
+              }}>
+              <Ionicons
+                name="notifications"
+                size={24}
+                color={Colors.icon.orange}
+              />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
@@ -309,10 +336,7 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
       <View style={styles.contentContainer}>
         {bill.borrowers.map((borrower, index) => {
           const borrowerViStatus = changeBillStatusToVietnamese(
-            borrower.detailStt.borrower,
-          );
-          const lenderViStatus = changeBillStatusToVietnamese(
-            borrower.detailStt.lender,
+            borrower.status,
           );
 
           return (
@@ -320,12 +344,20 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
               key={index}
               style={[styles.borrowerContainer, {zIndex: 10000 - index}]}>
               <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 10,
-                }}>
+                style={[
+                  {
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+
+                    gap: 10,
+                  },
+                  userStore.id === bill.lender._id
+                    ? {
+                        justifyContent: 'space-between',
+                      }
+                    : {},
+                ]}>
                 <Image
                   source={{
                     uri: borrower?.borrower?.avatar || IMAGE_URI_DEFAULT,
@@ -334,19 +366,18 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                 />
                 <View style={styles.infoContainer}>
                   <View style={styles.infoRow}>
-                    <Text style={styles.headingText}>Họ và tên:</Text>
+                    <Text style={styles.labelText}>Họ và tên:</Text>
                     <Text style={styles.text}>{borrower.borrower.name}</Text>
                   </View>
                   <View style={styles.infoRow}>
-                    <Text style={styles.headingText}>Số tiền:</Text>
+                    <Text style={styles.labelText}>Số tiền:</Text>
                     <Text style={styles.text}>
                       {splitString(borrower.amount.toString())} VNĐ
                     </Text>
                   </View>
                   <View style={[styles.infoRow, {alignItems: 'center'}]}>
-                    <Text style={styles.headingText}>Trạng thái:</Text>
-                    {userStore.id === bill.borrowers[index].borrower._id ||
-                    userStore.id === bill.lender._id ? (
+                    <Text style={styles.labelText}>Trạng thái:</Text>
+                    {userStore.id === bill.lender._id ? (
                       <Dropdown
                         style={{
                           width: '60%',
@@ -374,16 +405,49 @@ const BillInfoScreen = ({navigation}: {navigation: any}) => {
                       <Text style={styles.text}>{borrowerViStatus}</Text>
                     )}
                   </View>
-                  {borrower.detailStt.lender === 'PENDING' ? (
+                  {/* {borrower.status === 'PENDING' ? (
                     <Text style={{color: Colors.text.red}}>
                       &#8251; Chờ người cho mượn xác nhận
                     </Text>
                   ) : (
-                    <Text style={{color: Colors.text.red}}>
-                      {lenderViStatus}
-                    </Text>
-                  )}
+                    false
+                  )} */}
                 </View>
+                {userStore.id === bill.lender._id && (
+                  <TouchableOpacity
+                    onPress={async () => {
+                      const response = await sendRequest(
+                        billId,
+                        borrower.borrower._id,
+                      );
+                      console.log(
+                        `Lender send req to ${borrower.borrower._id}:`,
+                        response,
+                      );
+
+                      if (response.statusCode === 200) {
+                        Toast.show({
+                          type: 'success',
+                          text1: `Gửi nhắc nhở đến ${borrower.borrower.name} thành công`,
+                          autoHide: true,
+                          visibilityTime: 1000,
+                        });
+                      } else {
+                        Toast.show({
+                          type: 'error',
+                          text1: `Gửi nhắc nhở đến ${borrower.borrower.name} thất bại`,
+                          autoHide: true,
+                          visibilityTime: 1000,
+                        });
+                      }
+                    }}>
+                    <Ionicons
+                      name="notifications"
+                      size={24}
+                      color={Colors.icon.orange}
+                    />
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           );

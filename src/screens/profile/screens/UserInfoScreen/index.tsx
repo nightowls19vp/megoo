@@ -1,16 +1,16 @@
+import {observer} from 'mobx-react';
 import {useState} from 'react';
-import {Image, Text, View, Dimensions} from 'react-native';
-import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
+import {Dimensions, Image, Text, View} from 'react-native';
+import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
+
 import {RouteProp, useRoute} from '@react-navigation/native';
 
-import styles from './styles/style';
+import appStore from '../../../../common/store/app.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
-import appStore from '../../../../common/store/app.store';
-
 import GroupsScreen from '../GroupsScreen';
 import ProfileScreen from '../ProfileScreen';
-import {observer} from 'mobx-react';
+import styles from './styles/style';
 
 // Define the type for the route params
 type GroupsRouteParams = {

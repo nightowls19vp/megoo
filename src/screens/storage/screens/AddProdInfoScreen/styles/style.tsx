@@ -1,4 +1,5 @@
 import {Dimensions, StyleSheet} from 'react-native';
+
 import {Colors} from '../../../../../constants/color.const';
 
 const width = Dimensions.get('window').width;
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
-    // // borderRadius: 200 / 2,
+    borderRadius: 15,
     borderColor: Colors.border.lightgrey,
     borderWidth: 1,
   },

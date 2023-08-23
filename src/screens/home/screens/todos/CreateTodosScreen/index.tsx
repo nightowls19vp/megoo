@@ -18,6 +18,7 @@ import * as Yup from 'yup';
 import CheckBox from '@react-native-community/checkbox';
 import {RouteProp, useRoute} from '@react-navigation/native';
 
+import groupStore from '../../../../../common/store/group.store';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import {createTodos} from './services/create.todos.service';
@@ -38,7 +39,7 @@ type GroupRouteProp = RouteProp<Record<string, GroupRouteParams>, string>;
 
 const CreateTodosScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupRouteProp>();
-  const groupId = route?.params?.groupId;
+  const groupId = groupStore.id;
 
   const radioButtons: RadioButtonProps[] = useMemo(
     () => [
@@ -138,7 +139,7 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
             text1: 'Thêm việc cần làm thành công',
             autoHide: true,
             visibilityTime: 1000,
-            topOffset: 30,
+            topOffset: 20,
             onHide: () => {
               navigation.navigate(RouteNames.TODOS_TAB, {
                 groupId: groupId,

@@ -1,19 +1,21 @@
+import {observer} from 'mobx-react-lite';
 import * as React from 'react';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
+import Icon from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import Icon from 'react-native-vector-icons/AntDesign';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import RouteNames from '../../../constants/route-names.const';
-import BottomNavigationBar from '../BottomNavigationBar';
-import {Text, View, Image, TouchableOpacity} from 'react-native';
-import userStore from '../../store/user.store';
-import {Colors} from '../../../constants/color.const';
-import appStore from '../../store/app.store';
 import {useNavigation} from '@react-navigation/native';
-import {observer} from 'mobx-react-lite';
+
+import {Colors} from '../../../constants/color.const';
+import RouteNames from '../../../constants/route-names.const';
+import appStore from '../../store/app.store';
+import userStore from '../../store/user.store';
+import BottomNavigationBar from '../BottomNavigationBar';
 import SearchComp from '../Search';
 import GroupsDropdown from './groups-dropdown';
 
@@ -82,7 +84,7 @@ const customDrawerContent = (props: any) => {
               style={{
                 width: 150,
                 height: 150,
-                marginBottom: 20,
+                marginVertical: 20,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

@@ -1,4 +1,4 @@
-import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
+import {observer} from 'mobx-react';
 import {useCallback, useEffect, useState} from 'react';
 import {
   Dimensions,
@@ -10,21 +10,14 @@ import {
   View,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {getTodosList} from './services/todos.list.service';
 
+import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
+
+import groupStore from '../../../../../common/store/group.store';
+import userStore from '../../../../../common/store/user.store';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
-import userStore from './../../../../../common/store/user.store';
-import groupStore from '../../../../../common/store/group.store';
-import {observer} from 'mobx-react';
-
-// // Define the type for the route params
-// type GroupRouteParams = {
-//   groupId: string;
-// };
-
-// // Specify the type for the route
-// type GroupRouteProp = RouteProp<Record<string, GroupRouteParams>, string>;
+import {getTodosList} from './services/todos.list.service';
 
 const TodosListScreen = ({
   navigation,
@@ -33,28 +26,25 @@ const TodosListScreen = ({
   navigation: any;
   state: string;
 }) => {
-  // const route = useRoute<GroupRouteProp>();
-  // const groupId = route?.params?.groupId;
-
   const [todos, setTodos] = useState([]);
 
   const getAllTodos = async () => {
     const todosRes = await getTodosList(groupStore.id);
     console.log('groupStore.id:', groupStore.id);
-    console.log('todosRes', JSON.stringify(todosRes.data, null, 2));
 
     if (state === 'Private') {
       // Find all todos with the status 'Private'
       // and created by the currently logged-in user
-      const privateTodos = todosRes?.group?.todos?.filter(
-        (todos: any) =>
-          todos.state === 'Private' && todos.createdBy._id === userStore.id,
-      );
-
-      // console.log('privateTodos', JSON.stringify(privateTodos, null, 2));
+      const privateTodos = todosRes?.group?.todos?.filter((todos: any) => {
+        return (
+          todos.state === 'Private' && todos.createdBy._id === userStore.id
+        );
+      });
 
       setTodos(
         privateTodos.map((todosItem: any) => {
+          console.log('todosItem', JSON.stringify(todosItem, null, 2));
+
           return {
             _id: todosItem._id,
             summary: todosItem.summary,

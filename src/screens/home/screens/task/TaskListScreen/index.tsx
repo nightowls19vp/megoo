@@ -21,8 +21,9 @@ import {MarkedDates} from 'react-native-calendars/src/types';
 import Modal from 'react-native-modal';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import {RouteProp, useRoute, useFocusEffect} from '@react-navigation/native';
+import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
 
+import groupStore from '../../../../../common/store/group.store';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import {getTaskList} from './services/task.service';
@@ -106,7 +107,7 @@ LocaleConfig.defaultLocale = 'vi';
 
 const TaskListScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupRouteProp>();
-  const groupId = route?.params?.groupId;
+  const groupId = groupStore.id;
 
   const [selectedEvent, setSelectedEvent] = useState({
     _id: '',

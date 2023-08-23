@@ -1,31 +1,33 @@
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {Formik} from 'formik';
+import moment from 'moment';
 import {useEffect, useState} from 'react';
 import {
-  Text,
-  View,
-  StyleSheet,
   Dimensions,
   Image,
-  TouchableOpacity,
-  ScrollView,
   KeyboardAvoidingView,
+  ScrollView,
+  StyleSheet,
+  Text,
   TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import {IMAGE_URI_DEFAULT} from '../../../../common/default';
-import {Colors} from '../../../../constants/color.const';
-import {getStorageLocationById} from '../../services/storage-location.service';
-import {IGetStorageLocationByIdReq} from './../../interfaces/storage-locations/index';
-import {dateFormat} from './../../../../common/handle.string';
+import DatePicker from 'react-native-date-picker';
 import {Asset, launchCamera} from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Formik} from 'formik';
-import GroupProductDropdownPicker from '../../components/GroupProductDropdownPicker';
-import groupStore from '../../../../common/store/group.store';
-import DatePicker from 'react-native-date-picker';
-import moment from 'moment';
-import StorageLocationDropdownPicker from '../../components/StorageLocationDropdownPicker';
-import RouteNames from '../../../../constants/route-names.const';
 import * as Yup from 'yup';
+
+import {RouteProp, useRoute} from '@react-navigation/native';
+
+import {IMAGE_URI_DEFAULT} from '../../../../common/default';
+import {dateFormat} from '../../../../common/handle.string';
+import groupStore from '../../../../common/store/group.store';
+import {Colors} from '../../../../constants/color.const';
+import RouteNames from '../../../../constants/route-names.const';
+import GroupProductDropdownPicker from '../../components/GroupProductDropdownPicker';
+import StorageLocationDropdownPicker from '../../components/StorageLocationDropdownPicker';
+import {IGetStorageLocationByIdReq} from '../../interfaces/storage-locations/index';
+import {getStorageLocationById} from '../../services/storage-location.service';
 
 const StorageSchema = Yup.object().shape({
   name: Yup.string().required('Vui lòng nhập vị trí lưu trữ'),
@@ -294,6 +296,7 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
+    borderRadius: 20,
     borderColor: Colors.border.lightgrey,
     borderWidth: 1,
   },

@@ -1,4 +1,5 @@
 import {Dimensions, StyleSheet} from 'react-native';
+
 import {Colors} from '../../../../../constants/color.const';
 
 const width = Dimensions.get('window').width;
@@ -10,6 +11,7 @@ const styles = StyleSheet.create({
     width: width,
     minHeight: '100%',
     marginTop: 20,
+    paddingBottom: 20,
   },
   avatar: {
     width: 200,

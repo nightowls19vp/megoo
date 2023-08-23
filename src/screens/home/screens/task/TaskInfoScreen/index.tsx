@@ -1,4 +1,6 @@
 import {Formik} from 'formik';
+import _ from 'lodash';
+import moment from 'moment';
 import {useEffect, useMemo, useState} from 'react';
 import {
   Dimensions,
@@ -9,29 +11,30 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import DatePicker from 'react-native-date-picker';
+import {Dropdown} from 'react-native-element-dropdown';
+import {ButtonGroup} from 'react-native-elements';
 import Modal from 'react-native-modal';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {RadioButtonProps, RadioGroup} from 'react-native-radio-buttons-group';
+import Toast from 'react-native-toast-message';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
 
 import {RouteProp, useRoute} from '@react-navigation/native';
 
-import {Colors} from '../../../../../constants/color.const';
-import {deleteTask, editTaskDetail, getTaskById} from './services/task.service';
-import {Dropdown} from 'react-native-element-dropdown';
-import {RadioButtonProps, RadioGroup} from 'react-native-radio-buttons-group';
-import {ButtonGroup} from 'react-native-elements';
-import DatePicker from 'react-native-date-picker';
-import moment from 'moment';
 import {
   convertDayNumberToDayText,
   convertDayTextToDayNumber,
   dateFormat,
   dateFormatWithTime,
   dateISOFormat,
-} from './../../../../../common/handle.string';
-import Toast from 'react-native-toast-message';
-import _ from 'lodash';
+} from '../../../../../common/handle.string';
+import {Colors} from '../../../../../constants/color.const';
+import {deleteTask, editTaskDetail, getTaskById} from './services/task.service';
+import {getMembers} from '../../../../../services/group.service';
+import groupStore from '../../../../../common/store/group.store';
+import CheckBox from '@react-native-community/checkbox';
 
 type TaskRouteParams = {
   taskId: string;
@@ -50,47 +53,6 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
   const taskId = route.params.taskId;
   const [isMounted, setIsMounted] = useState(false);
 
-  const [task, setTask] = useState<{
-    _id: string;
-    summary: string;
-    description: string;
-    isRepeated: boolean;
-    recurrence?: {
-      times: number;
-      unit: string;
-      repeatOn: string[];
-      ends?: string;
-    };
-    startDate: string;
-    state: string;
-    members?: {
-      _id: string;
-      name: string;
-      avatar: string;
-      email: string;
-    }[];
-    createdBy: {
-      _id: string;
-      name: string;
-      avatar: string;
-      email: string;
-    };
-  }>({
-    _id: '',
-    summary: '',
-    description: '',
-    isRepeated: false,
-    recurrence: undefined,
-    startDate: '',
-    state: '',
-    members: undefined,
-    createdBy: {
-      _id: '',
-      name: '',
-      avatar: '',
-      email: '',
-    },
-  });
   const [summary, setSummary] = useState('');
   const [description, setDescription] = useState('');
 
@@ -189,10 +151,53 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const [task, setTask] = useState<{
+    _id: string;
+    summary: string;
+    description: string;
+    isRepeated: boolean;
+    recurrence?: {
+      times: number;
+      unit: string;
+      repeatOn: string[];
+      ends?: string;
+    };
+    startDate: string;
+    state: string;
+    members?: {
+      _id: string;
+      name: string;
+      avatar: string;
+      email: string;
+    }[];
+    createdBy: {
+      _id: string;
+      name: string;
+      avatar: string;
+      email: string;
+    };
+  }>({
+    _id: '',
+    summary: '',
+    description: '',
+    isRepeated: false,
+    recurrence: undefined,
+    startDate: '',
+    state: '',
+    members: undefined,
+    createdBy: {
+      _id: '',
+      name: '',
+      avatar: '',
+      email: '',
+    },
+  });
+
   const [newTaskDetail, setNewTaskDetail] = useState<{
     summary: string;
     description: string;
     isRepeated: boolean;
+    members?: string[];
     recurrence?: {
       times: number;
       unit: string;
@@ -204,6 +209,7 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
     summary: '',
     description: '',
     isRepeated: false,
+    members: [],
     recurrence: {
       times: 1,
       unit: 'Day',
@@ -225,6 +231,59 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
     ends: '',
   });
 
+  const [members, setMembers] = useState<
+    {
+      role: string;
+      _id: string;
+      name: string;
+      email: string;
+      avatar: string;
+    }[]
+  >([]);
+
+  const [toggleCheckBoxArray, setToggleCheckBoxArray] = useState(
+    members.map((_, index) => index === 0),
+  );
+
+  const handleToggleCheckBox = (index: number, newValue: boolean) => {
+    const updatedArray = [...toggleCheckBoxArray];
+    console.log('updatedArray:', updatedArray);
+    updatedArray[index] = newValue;
+    console.log('updatedArray:', updatedArray);
+
+    setToggleCheckBoxArray(updatedArray);
+  };
+
+  const getMemberList = async () => {
+    try {
+      const response = await getMembers(groupStore.id);
+      // console.log(
+      //   'Members response:',
+      //   JSON.stringify(response.group.members, null, 2),
+      //   // response.group.members,
+      // );
+      if (
+        !response.group ||
+        !response?.group?.members ||
+        response?.group?.members?.length === 0
+      ) {
+        setMembers([]);
+      } else {
+        const groupMembers = response?.group?.members?.map((member: any) => ({
+          role: member?.role,
+          _id: member?.user?._id,
+          name: member?.user?.name,
+          avatar: member?.user?.avatar,
+          email: member?.user?.email,
+        }));
+
+        setMembers(groupMembers);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getTaskDetail = async () => {
     const response = await getTaskById(taskId);
     console.log('Get task response', response.task);
@@ -233,6 +292,12 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
         summary: response?.task.summary,
         description: response?.task.description,
         isRepeated: response?.task.isRepeated,
+        members: response?.task.members.map((member: any) => ({
+          _id: member?._id,
+          name: member?.name,
+          email: member?.email,
+          avatar: member?.avatar,
+        })),
         recurrence: {
           times: response?.task.recurrence?.times,
           unit: response?.task.recurrence?.unit,
@@ -327,13 +392,62 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
   };
 
   useEffect(() => {
+    if (newTaskDetail.members?.length && members.length > 0) {
+      setToggleCheckBoxArray(newTaskDetail.members.map((_, index) => true));
+    }
+
+    console.log('toggleCheckBoxArray', toggleCheckBoxArray);
+    console.log('task.members', newTaskDetail.members);
+  }, [task, members]);
+
+  useEffect(() => {
     console.log('taskId', taskId);
     getTaskDetail();
+    getMemberList();
   }, []);
 
   useEffect(() => {
     console.log('task', task);
   }, [task]);
+
+  const renderMembers = () => {
+    if (!state) {
+      return null;
+    }
+    return (
+      <View
+        style={{
+          width: '90%',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 5,
+          marginTop: 5,
+        }}>
+        {members.map((member, index) => (
+          <View
+            key={index}
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginLeft: -5,
+              gap: 7,
+            }}>
+            <CheckBox
+              key={index}
+              tintColors={{true: Colors.checkBox.orange}}
+              value={toggleCheckBoxArray[index]}
+              onValueChange={newValue => handleToggleCheckBox(index, newValue)}
+            />
+            <Text>{member.name}</Text>
+          </View>
+        ))}
+        {toggleCheckBoxArray.every(item => !item) && (
+          <Text style={styles.error}>Vui lòng chọn thành viên</Text>
+        )}
+      </View>
+    );
+  };
 
   useEffect(() => {
     let selectedDay: string[] = [];
@@ -368,7 +482,7 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
   }) => {
     const response = await editTaskDetail(taskId, newTaskDetail);
 
-    console.log('Edit task response', response);
+    // console.log('Edit task response', response);
 
     // if (response.statusCode === 200) {
     //   setNewTaskDetail({
@@ -517,6 +631,10 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
       updateTask(newTaskDetail);
     }
   }, [newTaskDetail]);
+
+  useEffect(() => {
+    console.log('members', members);
+  }, [members]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -887,6 +1005,43 @@ const TaskDetailScreen = ({navigation}: {navigation: any}) => {
           Nhóm
         </Text>
       </View>
+      {/* {state === true && (
+        <View
+          style={{
+            width: '90%',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 5,
+            marginTop: 5,
+          }}>
+          {members.map((member, index) => (
+            <View
+              key={index}
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginLeft: -5,
+                gap: 7,
+              }}>
+              <CheckBox
+                key={index}
+                tintColors={{true: Colors.checkBox.orange}}
+                value={toggleCheckBoxArray[index]}
+                onValueChange={newValue =>
+                  handleToggleCheckBox(index, newValue)
+                }
+              />
+              <Text>{member.name}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+      {toggleCheckBoxArray.every(item => !item) && (
+        <Text style={styles.error}>Vui lòng chọn thành viên</Text>
+      )} */}
+
+      {renderMembers()}
 
       <TouchableOpacity
         style={styles.deleteButton}

@@ -5,7 +5,9 @@ import {Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
 // import Toast from '@ant-design/react-native/lib/toast';
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {io} from 'socket.io-client';
 import * as Yup from 'yup';
+
 import notifee from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
@@ -17,16 +19,15 @@ import appStore from '../../../../common/store/app.store';
 import userStore from '../../../../common/store/user.store';
 import {Colors} from '../../../../constants/color.const';
 import RouteNames from '../../../../constants/route-names.const';
-import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
-import {IGoogleLoginRes, ILoginRes} from './interfaces/login.interface';
-import {login, validate} from './services/login.service';
-import styles from './styles/styles';
-import {io} from 'socket.io-client';
 import {connectSocket} from '../../../../core/socket.io/socket.io';
 import {
   googleSignIn,
   isUserSignedIn,
 } from '../../../../services/google.service';
+import {SendBirdChatService} from '../../../../services/sendbird-chat.service';
+import {IGoogleLoginRes, ILoginRes} from './interfaces/login.interface';
+import {login, validate} from './services/login.service';
+import styles from './styles/styles';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()

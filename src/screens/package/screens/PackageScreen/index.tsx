@@ -1,35 +1,35 @@
-import {useEffect, useRef, useState, useCallback} from 'react';
+import {observer} from 'mobx-react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {
-  View,
-  Text,
   Dimensions,
   Image,
-  TouchableOpacity,
   ScrollView,
-  // Modal,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import Carousel from 'react-native-reanimated-carousel';
-import Slider from '@react-native-community/slider';
 import Modal from 'react-native-modal';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import FeatherIcon from 'react-native-vector-icons/Feather';
-import {RouteProp, useRoute, useFocusEffect} from '@react-navigation/native';
+import Carousel from 'react-native-reanimated-carousel';
 import Toast from 'react-native-toast-message';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import RouteNames from '../../../../constants/route-names.const';
-import styles from './styles/style';
-import {getAllPackage, updateCart} from './services/package.service';
-import {Colors} from '../../../../constants/color.const';
+import Slider from '@react-native-community/slider';
+import {RouteProp, useFocusEffect, useRoute} from '@react-navigation/native';
+
+import {splitString} from '../../../../common/handle.string';
 import {
   ICartItem,
   ICartList,
   IUserCart,
 } from '../../../../common/interfaces/package.interface';
-import userStore from '../../../../common/store/user.store';
-import {getUserCart} from '../CartScreen/services/cart.service';
 import appStore from '../../../../common/store/app.store';
-import {observer} from 'mobx-react';
-import {splitString} from './../../../../common/handle.string';
+import userStore from '../../../../common/store/user.store';
+import {Colors} from '../../../../constants/color.const';
+import RouteNames from '../../../../constants/route-names.const';
+import {getUserCart} from '../CartScreen/services/cart.service';
+import {getAllPackage, updateCart} from './services/package.service';
+import styles from './styles/style';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;

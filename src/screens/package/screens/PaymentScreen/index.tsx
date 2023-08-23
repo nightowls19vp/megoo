@@ -7,16 +7,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Toast from 'react-native-toast-message';
 import {RadioButtonProps, RadioGroup} from 'react-native-radio-buttons-group';
+import Toast from 'react-native-toast-message';
+
 import {RouteProp, useRoute} from '@react-navigation/native';
 
+import {splitString} from '../../../../common/handle.string';
 import {ICartList} from '../../../../common/interfaces/package.interface';
 import appStore from '../../../../common/store/app.store';
+import {Colors} from '../../../../constants/color.const';
 import {checkout, getUserById, renew} from './services/payment.service';
 import styles from './styles/style';
-import {splitString} from '../../../../common/handle.string';
-import {Colors} from '../../../../constants/color.const';
 
 // Define the type for the route params
 type SelectedItemsRouteParams = {

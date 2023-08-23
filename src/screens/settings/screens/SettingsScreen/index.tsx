@@ -1,28 +1,30 @@
+import {observer} from 'mobx-react';
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Button,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import Modal from 'react-native-modal';
+import Toast from 'react-native-toast-message';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import Toast from 'react-native-toast-message';
-import Modal from 'react-native-modal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import RouteNames from '../../../../constants/route-names.const';
-import styles from './styles/styles';
-import userStore from './../../../../common/store/user.store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+
 import appStore from '../../../../common/store/app.store';
+import userStore from '../../../../common/store/user.store';
+import {Colors} from '../../../../constants/color.const';
+import RouteNames from '../../../../constants/route-names.const';
+import {socket} from '../../../../core/socket.io/socket.io';
+import {signOutIfSignedInWithGG} from '../../../../services/google.service';
 import {ILogoutRes} from './interfaces/logout.interface';
 import {logout} from './services/settings.service';
-import {signOutIfSignedInWithGG} from '../../../login/screens/LoginScreen/services/login.service';
-import {observer} from 'mobx-react';
-import {Colors} from '../../../../constants/color.const';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {socket} from '../../../../core/socket.io/socket.io';
+import styles from './styles/styles';
 
 const SettingsScreen = ({navigation}: {navigation: any}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -30,6 +32,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
   const [msgNoti, setMsgNoti] = useState(userStore.msgNoti);
   const [stockNoti, setStockNoti] = useState(userStore.stockNoti);
   const [billNoti, setBillNoti] = useState(true);
+  const [fundNoti, setFundNoti] = useState(true);
   const [todosNoti, setTodosNoti] = useState(true);
   const [calendarNoti, setCalendarNoti] = useState(true);
 
@@ -62,6 +65,23 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
     setBillNoti(bill);
   };
 
+  const setFundNotiToStorage = async (value: boolean) => {
+    try {
+      const fund = await getNotiFromStorage('fundNoti');
+
+      if (fund !== value) {
+        await AsyncStorage.setItem('fundNoti', JSON.stringify(value));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const initFundNoti = async () => {
+    const fund = (await getNotiFromStorage('fundNoti')) ?? true;
+    setFundNoti(fund);
+  };
+
   const setTodosNotiToStorage = async (value: boolean) => {
     try {
       const todos = await getNotiFromStorage('todosNoti');
@@ -75,7 +95,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
   };
 
   const initTodosNoti = async () => {
-    const todos = await getNotiFromStorage('todosNoti');
+    const todos = (await getNotiFromStorage('todosNoti')) ?? true;
     setTodosNoti(todos);
   };
 
@@ -92,13 +112,17 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
   };
 
   const initCalendarNoti = async () => {
-    const calendar = await getNotiFromStorage('calendarNoti');
+    const calendar = (await getNotiFromStorage('calendarNoti')) ?? true;
     setCalendarNoti(calendar);
   };
 
   useEffect(() => {
     setBillNotiToStorage(billNoti);
   }, [billNoti]);
+
+  useEffect(() => {
+    setFundNotiToStorage(fundNoti);
+  }, [fundNoti]);
 
   useEffect(() => {
     setTodosNotiToStorage(todosNoti);
@@ -110,12 +134,13 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
 
   useEffect(() => {
     initBillNoti();
+    initFundNoti();
     initTodosNoti();
     initCalendarNoti();
   }, []);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {appStore.isLoggedIn ? (
         <View style={styles.settingsContainer}>
           <Text style={styles.title}>Thông báo</Text>
@@ -143,7 +168,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
                 onPress={() => {
                   setStockNoti(!stockNoti);
                   userStore.setStockNoti(stockNoti);
-                  console.log('Stock noti:', userStore.msgNoti);
+                  console.log('Stock noti:', userStore.stockNoti);
                 }}
                 name={userStore.stockNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}
@@ -169,17 +194,22 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
           </Text>
           <View style={styles.contentContainer}>
             <View style={styles.settingItem}>
-              <Text style={styles.text}>Quản lý chi tiêu</Text>
+              <Text style={styles.text}>Quản lý nợ</Text>
               <FontAwesomeIcon
                 onPress={async () => {
                   setBillNoti(!billNoti);
-
-                  // await AsyncStorage.setItem('billNoti', `${billNoti}`);
-                  // const noti = await AsyncStorage.getItem('billNoti');
-                  // userStore.setBillNoti(billNoti);
-                  // console.log('Bill noti after set & get:', noti);
                 }}
                 name={billNoti ? 'toggle-on' : 'toggle-off'}
+                style={styles.notiIcon}
+              />
+            </View>
+            <View style={styles.settingItem}>
+              <Text style={styles.text}>Quản lý quỹ</Text>
+              <FontAwesomeIcon
+                onPress={async () => {
+                  setFundNoti(!fundNoti);
+                }}
+                name={fundNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}
               />
             </View>
@@ -189,10 +219,6 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
               <FontAwesomeIcon
                 onPress={async () => {
                   setTodosNoti(!todosNoti);
-                  // await AsyncStorage.setItem('todosNoti', `${todosNoti}`);
-                  // const noti = await AsyncStorage.getItem('todosNoti');
-                  // userStore.setTodosNoti(todosNoti);
-                  // console.log('Todos noti:', noti);
                 }}
                 name={todosNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}
@@ -204,8 +230,6 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
               <FontAwesomeIcon
                 onPress={() => {
                   setCalendarNoti(!calendarNoti);
-                  userStore.setCalendarNoti(calendarNoti);
-                  console.log('Calendar noti:', userStore.calendarNoti);
                 }}
                 name={userStore.calendarNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}
@@ -367,9 +391,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
           <Text style={styles.buttonText}>Đăng nhập/đăng ký</Text>
         </TouchableOpacity>
       )}
-
-      <Toast position="top" />
-    </View>
+    </ScrollView>
   );
 };
 

@@ -19,13 +19,11 @@ import userStore from '../../../common/store/user.store';
 import {Colors} from '../../../constants/color.const';
 import RouteNames from '../../../constants/route-names.const';
 import {IGoogleLoginRes} from '../../login/screens/LoginScreen/interfaces/login.interface';
-import {
-  googleSignIn,
-  validate,
-} from '../../login/screens/LoginScreen/services/login.service';
+import {validate} from '../../login/screens/LoginScreen/services/login.service';
 import {IRegisterReq, IRegisterRes} from './interfaces/register.interface';
 import {register} from './services/register.service';
 import styles from './styles/styles';
+import {googleSignIn} from '../../../services/google.service';
 
 const RegisterSchema = Yup.object().shape({
   name: Yup.string().required('Vui lòng nhập họ và tên'),

@@ -14,6 +14,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {RouteProp, useRoute} from '@react-navigation/native';
 
+import groupStore from '../../../../common/store/group.store';
 import {Colors} from '../../../../constants/color.const';
 import {getGroupById} from '../../../../services/group.service';
 
@@ -30,7 +31,8 @@ type GroupChatRouteProp = RouteProp<
 
 const ChangeGroupChatDetailScreen = ({navigation}: {navigation: any}) => {
   const route = useRoute<GroupChatRouteProp>();
-  const {channelUrl, groupId} = route.params;
+  const {channelUrl} = route.params;
+  const groupId = groupStore.id;
 
   const [group, setGroup] = useState<{
     _id: string;
