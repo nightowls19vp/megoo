@@ -119,7 +119,7 @@ const CreateFundScreen = () => {
     members.map((_, index) => index === 0),
   );
 
-  const [amountArray, setAmountArray] = useState<number[]>([]);
+  const [amountArray, setAmountArray] = useState<string[]>([]);
 
   const [totalAmount, setTotalAmount] = useState(0);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
@@ -142,12 +142,15 @@ const CreateFundScreen = () => {
       }
     }
 
-    const result = amount / count;
+    console.log('count:', count);
 
-    const updatedArray = [...amountArray];
+    const result = amount / count;
+    console.log('result:', result);
+
+    const updatedArray: string[] = [];
     console.log('updatedAmountArray:', updatedArray);
-    for (let i = 0; i < updatedArray.length; ++i) {
-      updatedArray[i] = result;
+    for (let i = 0; i < count; ++i) {
+      updatedArray.push(splitString(result.toString()));
     }
     console.log('updatedAmountArray:', updatedArray);
     setAmountArray(updatedArray);
@@ -180,14 +183,14 @@ const CreateFundScreen = () => {
         setMembers(groupMembers);
         // Initialize toggleCheckBoxArray with true for the current user's index, if found
         const currentUserIndex = groupMembers.findIndex(
-          (member: any) => member.role === 'Super User',
+          (member: any) => member.id === 'Super User',
         );
 
         const initialToggleValues = groupMembers.map(
           (_: any, index: number) => index === currentUserIndex,
         );
         setToggleCheckBoxArray(initialToggleValues);
-        setAmountArray(Array.from({length: members.length}, () => 0));
+        // setAmountArray(Array.from({length: members.length}, () => '0'));
       }
     } catch (error) {
       console.log(error);
@@ -219,7 +222,7 @@ const CreateFundScreen = () => {
     if (totalAmount > 0) {
       diviseAmount(totalAmount);
     }
-  }, [totalAmount]);
+  }, [totalAmount, toggleCheckBoxArray]);
 
   return (
     <Formik
@@ -549,7 +552,7 @@ const CreateFundScreen = () => {
                   <Text style={{color: Colors.text.grey}}>{member.name}</Text>
                 </View>
 
-                {toggleCheckBoxArray[index] && amountArray[index] !== 0 && (
+                {toggleCheckBoxArray[index] && amountArray[index] !== '' && (
                   <View
                     style={{
                       display: 'flex',
@@ -563,7 +566,7 @@ const CreateFundScreen = () => {
                         fontSize: 16,
                         fontWeight: 'bold',
                       }}>
-                      {splitString(amountArray[index].toString())}
+                      {amountArray[index]}
                     </Text>
                     <Text>VNĐ</Text>
                   </View>

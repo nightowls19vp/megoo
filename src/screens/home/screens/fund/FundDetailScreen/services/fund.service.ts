@@ -45,3 +45,35 @@ export const deleteFundById = async (fundId: string) => {
     console.log('Delete fund error: ', error);
   }
 };
+
+export const updateFundDetail = async (
+  fundId: string,
+  fund: {
+    summary: string;
+    description: string;
+    times: number;
+    total: number;
+    startDate: string;
+    ends: string;
+    members: string[];
+  },
+) => {
+  const fundEndpoint = `api/pkg-mgmt/funding/${fundId}`;
+  const reqUrl = `${URL_HOST}${fundEndpoint}`;
+  console.log(`Update fund ${fundId} :`, reqUrl);
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+
+  try {
+    const response = await axios.put(reqUrl, fund, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log('Update fund error: ', error);
+  }
+};

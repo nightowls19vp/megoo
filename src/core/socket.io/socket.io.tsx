@@ -51,11 +51,14 @@ export async function listen() {
 
   onCreatedBill();
   onUpdatedBill();
+  onSendBillRequest();
 
   onCreatedTodos();
   onUpdatedTodos();
 
   onTaskReminder();
+
+  onFunding();
 }
 
 export function onZpCallback() {
@@ -144,8 +147,8 @@ export function onCreatedBill() {
     if (billNoti === 'true') {
       if (userStore.id === data.lender) {
         displayNotification(
-          'Phân chia chi tiêu mới',
-          `Bạn nhận được yêu cầu thanh toán chi tiêu mới từ ${response.user.name}.`,
+          'Phiếu nhắc nợ mới',
+          `Bạn nhận được yêu cầu trả nợ mới từ ${response.user.name}.`,
         );
       }
     }
@@ -155,6 +158,46 @@ export function onCreatedBill() {
 export function onUpdatedBill() {
   socket.on('updatedBill', async (data: any) => {
     console.log('updatedBill data:', data);
+
+    const response = await getUserInfo(data.updatedBy);
+    console.log('response:', response.user.name);
+
+    const billNoti = await AsyncStorage.getItem('billNoti');
+
+    if (billNoti === 'true') {
+      displayNotification(
+        'Cập nhật phiếu nhắc nợ',
+        ` ${response.user.name} vừa cập nhật phiếu nhắc nợ ${data.summary}`,
+      );
+    }
+  });
+}
+
+export function onSendBillRequest() {
+  socket.on('billing_req', async (data: any) => {
+    console.log('Send bill req data:', data);
+
+    const billNoti = await AsyncStorage.getItem('billNoti');
+
+    if (billNoti === 'true') {
+      if (userStore.id === data.data.borrower) {
+        const response = await getUserInfo(data.data.borrower);
+        console.log('response:', response.user.name);
+
+        displayNotification(
+          'Nhắc nhở trả nợ',
+          `Bạn có yêu cầu nhắc nhở trả nợ từ ${response.user.name}`,
+        );
+      } else {
+        const response = await getUserInfo(data.from_user);
+        console.log('response:', response.user.name);
+
+        displayNotification(
+          'Nhắc nhở kiểm tra trạng thái',
+          `Bạn có yêu cầu nhắc nhở kiểm tra trạng thái trả nợ từ ${response.user.name}`,
+        );
+      }
+    }
   });
 }
 
@@ -201,6 +244,7 @@ export function onUpdatedTodos() {
     }
   });
 }
+
 export function onTaskReminder() {
   socket.on('taskReminder', async (data: any) => {
     console.log('taskReminder data:', data);
@@ -216,6 +260,21 @@ export function onTaskReminder() {
         `<b>${data.summary}</b>
         ${data.description}`,
       );
+    }
+  });
+}
+
+export function onFunding() {
+  socket.on('funding', async (data: any) => {
+    console.log('funding data:', data);
+
+    // const response = await getUserInfo(data.createdBy);
+    // console.log('response:', response.user.name);
+
+    const fundNoti = await AsyncStorage.getItem('fundNoti');
+
+    if (fundNoti === 'true') {
+      displayNotification('Nhắc nhở đóng quỹ nhóm', `<b>${data.summary}</b>`);
     }
   });
 }

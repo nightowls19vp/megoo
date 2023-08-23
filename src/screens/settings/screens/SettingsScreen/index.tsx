@@ -64,6 +64,23 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
     setBillNoti(bill);
   };
 
+  const setFundNotiToStorage = async (value: boolean) => {
+    try {
+      const fund = await getNotiFromStorage('fundNoti');
+
+      if (fund !== value) {
+        await AsyncStorage.setItem('fundNoti', JSON.stringify(value));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const initFundNoti = async () => {
+    const fund = (await getNotiFromStorage('fundNoti')) ?? true;
+    setFundNoti(fund);
+  };
+
   const setTodosNotiToStorage = async (value: boolean) => {
     try {
       const todos = await getNotiFromStorage('todosNoti');
@@ -77,7 +94,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
   };
 
   const initTodosNoti = async () => {
-    const todos = await getNotiFromStorage('todosNoti');
+    const todos = (await getNotiFromStorage('todosNoti')) ?? true;
     setTodosNoti(todos);
   };
 
@@ -94,13 +111,17 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
   };
 
   const initCalendarNoti = async () => {
-    const calendar = await getNotiFromStorage('calendarNoti');
+    const calendar = (await getNotiFromStorage('calendarNoti')) ?? true;
     setCalendarNoti(calendar);
   };
 
   useEffect(() => {
     setBillNotiToStorage(billNoti);
   }, [billNoti]);
+
+  useEffect(() => {
+    setFundNotiToStorage(fundNoti);
+  }, [fundNoti]);
 
   useEffect(() => {
     setTodosNotiToStorage(todosNoti);
@@ -112,6 +133,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
 
   useEffect(() => {
     initBillNoti();
+    initFundNoti();
     initTodosNoti();
     initCalendarNoti();
   }, []);
@@ -145,7 +167,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
                 onPress={() => {
                   setStockNoti(!stockNoti);
                   userStore.setStockNoti(stockNoti);
-                  console.log('Stock noti:', userStore.msgNoti);
+                  console.log('Stock noti:', userStore.stockNoti);
                 }}
                 name={userStore.stockNoti ? 'toggle-on' : 'toggle-off'}
                 style={styles.notiIcon}

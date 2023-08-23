@@ -44,6 +44,26 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginBottom: 10,
   },
+  modalContentContainer: {
+    display: 'flex',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    gap: 10,
+    padding: 20,
+  },
+  modalTextContainer: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 30,
+  },
+  modalTitle: {
+    fontSize: 18,
+    textAlign: 'left',
+    color: Colors.text.grey,
+  },
   deleteButton: {
     width: '90%',
     height: 50,

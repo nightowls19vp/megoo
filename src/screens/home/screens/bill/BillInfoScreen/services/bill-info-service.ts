@@ -165,3 +165,29 @@ export const updateBorrowerStatus = async (billId: string, status: string) => {
     console.log('Update bill status error: ', error);
   }
 };
+
+export const sendRequest = async (billId: string, toUser: string) => {
+  const billEndpoint = `api/pkg-mgmt/bill/${billId}/send_request`;
+  const reqUrl = `${URL_HOST}${billEndpoint}`;
+  console.log(`Send request to ${toUser}:`, reqUrl);
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+
+  try {
+    const response = await axios.post(
+      reqUrl,
+      {
+        to_user: toUser,
+      },
+      {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.log(`Send request to ${toUser} error: `, error);
+  }
+};

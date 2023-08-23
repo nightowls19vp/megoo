@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
+import Modal from 'react-native-modal';
 import Toast from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
@@ -18,11 +19,16 @@ import * as Yup from 'yup';
 import CheckBox from '@react-native-community/checkbox';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 
-import {splitString} from '../../../../../common/handle.string';
+import {
+  dateFormat,
+  dateISOFormat,
+  splitString,
+} from '../../../../../common/handle.string';
 import groupStore from '../../../../../common/store/group.store';
 import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
-import {getFundById} from './services/fund.service';
+import {getMembers} from '../../../../../services/group.service';
+import {getFundById, updateFundDetail} from './services/fund.service';
 import styles from './styles/style';
 
 type FundRouteParams = {
@@ -53,61 +59,19 @@ const FundDetailScreen = () => {
   const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
   const [openEndDatePicker, setOpenEndDatePicker] = useState(false);
 
-  const [times, setTimes] = useState<
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+
+  const [members, setMembers] = useState<
     {
-      label: string;
-      value: string;
+      role: string;
+      _id: string;
+      name: string;
+      email: string;
+      avatar: string;
     }[]
-  >([
-    {
-      label: '1 tháng',
-      value: '1',
-    },
-    {
-      label: '2 tháng',
-      value: '2',
-    },
-    {
-      label: '3 tháng',
-      value: '3',
-    },
-    {
-      label: '4 tháng',
-      value: '4',
-    },
-    {
-      label: '5 tháng',
-      value: '5',
-    },
-    {
-      label: '6 tháng',
-      value: '6',
-    },
-    {
-      label: '7 tháng',
-      value: '7',
-    },
-    {
-      label: '8 tháng',
-      value: '8',
-    },
-    {
-      label: '9 tháng',
-      value: '9',
-    },
-    {
-      label: '10 tháng',
-      value: '10',
-    },
-    {
-      label: '11 tháng',
-      value: '11',
-    },
-    {
-      label: '12 tháng',
-      value: '12',
-    },
-  ]);
+  >([]);
+
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
   const [fund, setFund] = useState<{
     _id: string;
@@ -144,10 +108,81 @@ const FundDetailScreen = () => {
     fund.members.map((_, index) => index === 0),
   );
 
-  const [amountArray, setAmountArray] = useState<number[]>([]);
+  const [amountArray, setAmountArray] = useState<string[]>([]);
 
   const [totalAmount, setTotalAmount] = useState(0);
-  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+
+  const handleToggleCheckBox = (index: number, newValue: boolean) => {
+    const updatedArray = [...toggleCheckBoxArray];
+    console.log('updatedArray:', updatedArray);
+    updatedArray[index] = newValue;
+    console.log('updatedArray:', updatedArray);
+
+    setToggleCheckBoxArray(updatedArray);
+  };
+
+  const diviseAmount = (amount: number) => {
+    console.log('amount to divise:', amount);
+
+    // Count in toggleCheckBoxArray how many element have true value
+    let count = 0;
+    for (let i = 0; i < toggleCheckBoxArray.length; ++i) {
+      if (toggleCheckBoxArray[i]) {
+        count++;
+      }
+    }
+
+    console.log('count:', count);
+
+    const result = amount / count;
+    console.log('result:', result);
+
+    const updatedArray: string[] = [];
+    console.log('updatedAmountArray:', updatedArray);
+    for (let i = 0; i < count; ++i) {
+      updatedArray.push(splitString(result.toString()));
+    }
+    console.log('updatedAmountArray:', updatedArray);
+    setAmountArray(updatedArray);
+    // add result to amount
+  };
+
+  const getMemberList = async () => {
+    try {
+      const response = await getMembers(groupStore.id);
+      // console.log(
+      //   'Members response:',
+      //   JSON.stringify(response.group.members, null, 2),
+      //   // response.group.members,
+      // );
+      if (
+        !response.group ||
+        !response?.group?.members ||
+        response?.group?.members?.length === 0
+      ) {
+        setMembers([]);
+      } else {
+        const groupMembers = response?.group?.members?.map((member: any) => ({
+          role: member?.role,
+          _id: member?.user?._id,
+          name: member?.user?.name,
+          avatar: member?.user?.avatar,
+          email: member?.user?.email,
+        }));
+
+        setMembers(groupMembers);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (fund.members.length > 0 && members.length > 0) {
+      // Initialize toggleCheckBoxArray with true for all the user have id who exist in fund.members array with length = members.length
+      setToggleCheckBoxArray(fund.members.map((_, index) => true));
+    }
+  }, [fund, members]);
 
   const getFundDetail = async () => {
     try {
@@ -161,7 +196,7 @@ const FundDetailScreen = () => {
           _id: response?.funding?._id,
           createdAt: response?.funding?.createdAt,
           description: response?.funding?.description,
-          ends: response?.funding?.ends,
+          ends: dateFormat(response?.funding?.ends as string),
           history: response?.funding?.history,
           members: response?.funding?.members?.map((member: any) => ({
             _id: member?._id,
@@ -169,56 +204,90 @@ const FundDetailScreen = () => {
             name: member?.name,
             avatar: member?.avatar,
           })),
-          startDate: response?.funding?.startDate,
+          startDate: dateFormat(response?.funding?.startDate as string),
           summary: response?.funding?.summary,
           times: response?.funding?.times,
           total: response?.funding?.total,
           updatedAt: response?.funding?.updatedAt,
         });
       }
+      setTotalAmount(response?.funding?.total as number);
+      // diviseAmount(response?.funding?.total as number);
+      setStartDate(new Date(response?.funding?.startDate as string));
+      setEndDate(new Date(response?.funding?.ends as string));
     } catch (error) {
       console.log('Get fun by id error: ', error);
     }
   };
 
-  const handleToggleCheckBox = (index: number, newValue: boolean) => {
-    const updatedArray = [...toggleCheckBoxArray];
-    console.log('updatedArray:', updatedArray);
-    updatedArray[index] = newValue;
-    console.log('updatedArray:', updatedArray);
+  const updateFund = async (fund: {
+    summary: string;
+    description: string;
+    times: number;
+    total: number;
+    startDate: string;
+    ends: string;
+    members: string[];
+  }) => {
+    try {
+      const response = await updateFundDetail(fundId, fund);
+      console.log('response', response);
 
-    setToggleCheckBoxArray(updatedArray);
-  };
-
-  const diviseAmount = (amount: number) => {
-    // Count in toggleCheckBoxArray how many element have true value
-    let count = 0;
-    for (let i = 0; i < toggleCheckBoxArray.length; ++i) {
-      if (toggleCheckBoxArray[i]) {
-        count++;
+      if (response?.statusCode === 200) {
+        getFundDetail();
+      } else {
+        return;
       }
+    } catch (error) {
+      console.log('Update fund error: ', error);
     }
-
-    const result = amount / count;
-
-    const updatedArray = [...amountArray];
-    console.log('updatedAmountArray:', updatedArray);
-    for (let i = 0; i < updatedArray.length; ++i) {
-      updatedArray[i] = result;
-    }
-    console.log('updatedAmountArray:', updatedArray);
-    setAmountArray(updatedArray);
-    // add result to amount
   };
 
+  // Get fund detail and group's members
   useEffect(() => {
     console.log('Fund id', fundId);
     getFundDetail();
+    getMemberList();
   }, []);
 
   useEffect(() => {
-    console.log('Fund members:', fund.members);
+    console.log('amountArray', amountArray);
+  }, [amountArray]);
+
+  useEffect(() => {
+    console.log('fund members', fund?.members?.[0]);
   }, [fund]);
+
+  // Add new selected member to selectedMembers array
+  useEffect(() => {
+    console.log('toggleCheckBoxArray', toggleCheckBoxArray);
+
+    const newSelectedMembers = toggleCheckBoxArray
+      .map((item, index) =>
+        toggleCheckBoxArray[index] ? members[index]?._id : null,
+      )
+      .filter(Boolean) as string[];
+    console.log('newSelectedMembers:', newSelectedMembers);
+
+    //add new selected members to selectedMembers without unchange the old value
+    setSelectedMembers([
+      ...new Set([...selectedMembers, ...newSelectedMembers]),
+    ]);
+  }, [toggleCheckBoxArray]);
+
+  // Divide the total amount equally among the selected members of the group
+  useEffect(() => {
+    if (totalAmount > 0) {
+      console.log('totalAmount after get amount', totalAmount);
+      diviseAmount(totalAmount);
+    }
+  }, [totalAmount, toggleCheckBoxArray]);
+
+  useEffect(() => {
+    if (selectedMembers.length > 0) {
+      console.log('selectedMembers', selectedMembers);
+    }
+  }, [toggleCheckBoxArray, selectedMembers]);
   return (
     <Formik
       initialValues={{
@@ -226,8 +295,8 @@ const FundDetailScreen = () => {
         description: fund.description,
         times: fund.times.toString(),
         total: fund.total.toString(),
-        startDate: '',
-        ends: '',
+        startDate: fund.startDate,
+        ends: fund.ends,
       }}
       enableReinitialize
       validationSchema={FundSchema}
@@ -249,6 +318,21 @@ const FundDetailScreen = () => {
           <View style={styles.inputContainer}>
             <TextInput
               onChangeText={value => setFieldValue('summary', value)}
+              onEndEditing={async () => {
+                const newFund = {
+                  summary: values.summary,
+                  description: fund.description,
+                  times: fund.times,
+                  total: totalAmount,
+                  startDate: dateISOFormat(fund.startDate),
+                  ends: dateISOFormat(fund.ends),
+                  members: selectedMembers,
+                };
+
+                console.log('newFund', newFund);
+
+                await updateFund(newFund);
+              }}
               onBlur={() => setFieldTouched('summary')}
               style={styles.inputText}
               placeholder={'Nhập tiêu đề'}
@@ -288,14 +372,26 @@ const FundDetailScreen = () => {
               title={'Chọn ngày'}
               confirmText={'Chọn'}
               cancelText={'Huỷ'}
-              onConfirm={value => {
+              onConfirm={async value => {
                 console.log('Selected start date:', value);
 
                 setOpenStartDatePicker(false);
                 setStartDate(value);
                 setFieldValue('startDate', moment(value).format('DD/MM/YYYY'));
 
-                console.log('Values startDate', values.startDate);
+                const newFund = {
+                  summary: fund.summary,
+                  description: fund.description,
+                  times: parseInt(values.times),
+                  total: totalAmount,
+                  startDate: value.toISOString(),
+                  ends: dateISOFormat(fund.ends),
+                  members: selectedMembers,
+                };
+
+                console.log('newFund', newFund);
+
+                await updateFund(newFund);
               }}
               onCancel={() => {
                 setOpenStartDatePicker(false);
@@ -342,12 +438,26 @@ const FundDetailScreen = () => {
               title={'Chọn ngày'}
               confirmText={'Chọn'}
               cancelText={'Huỷ'}
-              onConfirm={value => {
+              onConfirm={async value => {
                 console.log('Selected end date:', value);
 
                 setOpenEndDatePicker(false);
                 setEndDate(value);
                 setFieldValue('ends', moment(value).format('DD/MM/YYYY'));
+
+                const newFund = {
+                  summary: fund.summary,
+                  description: fund.description,
+                  times: parseInt(values.times),
+                  total: totalAmount,
+                  startDate: dateISOFormat(fund.startDate),
+                  ends: value.toISOString(),
+                  members: selectedMembers,
+                };
+
+                console.log('newFund', newFund);
+
+                await updateFund(newFund);
               }}
               onCancel={() => {
                 setOpenEndDatePicker(false);
@@ -379,37 +489,6 @@ const FundDetailScreen = () => {
               alignItems: 'center',
             }}>
             <Text style={styles.text}>Nhắc nhở lại sau</Text>
-            {/* <Dropdown
-              style={{
-                width: '40%',
-                height: 40,
-                marginBottom: 10,
-                marginHorizontal: 10,
-                // backgroundColor: 'yellow',
-              }}
-              data={times}
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? 'Chọn kỳ hạn' : '...'}
-              placeholderStyle={{
-                color: Colors.text.lightgrey,
-              }}
-              itemTextStyle={{
-                color: Colors.text.grey,
-              }}
-              selectedTextStyle={{
-                color: Colors.text.grey,
-                fontWeight: 'bold',
-                fontSize: 14,
-              }}
-              value={values.times}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
-              onChange={item => {
-                setFieldValue('times', item.value);
-              }}
-            /> */}
             <View
               style={[
                 styles.inputContainer,
@@ -421,6 +500,21 @@ const FundDetailScreen = () => {
               ]}>
               <TextInput
                 onChangeText={value => setFieldValue('times', value)}
+                onEndEditing={async () => {
+                  const newFund = {
+                    summary: fund.summary,
+                    description: fund.description,
+                    times: parseInt(values.times),
+                    total: totalAmount,
+                    startDate: dateISOFormat(fund.startDate),
+                    ends: dateISOFormat(fund.ends),
+                    members: selectedMembers,
+                  };
+
+                  console.log('newFund', newFund);
+
+                  await updateFund(newFund);
+                }}
                 onBlur={() => setFieldTouched('times')}
                 style={[
                   styles.inputText,
@@ -456,6 +550,21 @@ const FundDetailScreen = () => {
 
                 setTotalAmount(parseInt(amount));
               }}
+              onEndEditing={async () => {
+                const newFund = {
+                  summary: fund.summary,
+                  description: fund.description,
+                  times: fund.times,
+                  total: totalAmount,
+                  startDate: dateISOFormat(fund.startDate),
+                  ends: dateISOFormat(fund.ends),
+                  members: selectedMembers,
+                };
+
+                console.log('newFund', newFund);
+
+                await updateFund(newFund);
+              }}
               onBlur={() => setFieldTouched('total')}
               style={styles.inputText}
               placeholder={'Nhập tổng tiền'}
@@ -478,8 +587,8 @@ const FundDetailScreen = () => {
 
           <Text style={styles.title}>Danh sách thành viên</Text>
 
-          {fund.members.length > 0 &&
-            fund.members.map((member, index) => (
+          {members.length > 0 &&
+            members.map((member, index) => (
               <View
                 style={{
                   width: '90%',
@@ -501,7 +610,7 @@ const FundDetailScreen = () => {
                   }}>
                   <CheckBox
                     tintColors={{true: Colors.checkBox.orange}}
-                    // disabled={member.role === 'Super User'}
+                    // disabled={member._id === 'Super User'}
                     disabled={false}
                     value={toggleCheckBoxArray[index]}
                     onValueChange={async newValue => {
@@ -514,7 +623,7 @@ const FundDetailScreen = () => {
                   <Text style={{color: Colors.text.grey}}>{member.name}</Text>
                 </View>
 
-                {toggleCheckBoxArray[index] && amountArray[index] !== 0 && (
+                {toggleCheckBoxArray[index] && amountArray[index] !== '' && (
                   <View
                     style={{
                       display: 'flex',
@@ -528,7 +637,7 @@ const FundDetailScreen = () => {
                         fontSize: 16,
                         fontWeight: 'bold',
                       }}>
-                      {splitString(amountArray[index].toString())}
+                      {amountArray[index]}
                     </Text>
                     <Text>VNĐ</Text>
                   </View>
@@ -540,6 +649,21 @@ const FundDetailScreen = () => {
           <View style={styles.inputContainer}>
             <TextInput
               onChangeText={value => setFieldValue('description', value)}
+              onEndEditing={async () => {
+                const newFund = {
+                  summary: fund.summary,
+                  description: values.description,
+                  times: fund.times,
+                  total: totalAmount,
+                  startDate: dateISOFormat(fund.startDate),
+                  ends: dateISOFormat(fund.ends),
+                  members: selectedMembers,
+                };
+
+                console.log('newFund', newFund);
+
+                await updateFund(newFund);
+              }}
               onBlur={() => setFieldTouched('description')}
               style={styles.inputText}
               placeholder={'Nhập mô tả'}
@@ -557,9 +681,38 @@ const FundDetailScreen = () => {
 
           <TouchableOpacity
             style={[styles.deleteButton]}
-            onPress={handleSubmit}>
+            onPress={() => setIsDeleteModalVisible(true)}>
             <Text style={styles.buttonText}>Xóa</Text>
           </TouchableOpacity>
+
+          <Modal isVisible={isDeleteModalVisible}>
+            <View style={styles.modalContentContainer}>
+              <Text style={styles.modalTitle}>Xóa quỹ {fund.summary}?</Text>
+
+              <View style={styles.modalTextContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsDeleteModalVisible(!isDeleteModalVisible);
+                  }}
+                  style={{
+                    alignItems: 'center',
+                  }}>
+                  <Text style={{fontSize: 16, color: Colors.text.orange}}>
+                    Huỷ
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={async () => {
+                    setIsDeleteModalVisible(!isDeleteModalVisible);
+                  }}
+                  style={{
+                    alignItems: 'center',
+                  }}>
+                  <Text style={{fontSize: 16, color: 'red'}}>Xóa</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </ScrollView>
       )}
     </Formik>
