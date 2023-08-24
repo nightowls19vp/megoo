@@ -9,5 +9,6 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: Colors.border.lightgrey,
     width: '50%',
+    color: Colors.text.black,
   },
 });

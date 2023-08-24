@@ -140,7 +140,7 @@ const SettingsScreen = ({navigation}: {navigation: any}) => {
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       {appStore.isLoggedIn ? (
         <View style={styles.settingsContainer}>
           <Text style={styles.title}>Thông báo</Text>

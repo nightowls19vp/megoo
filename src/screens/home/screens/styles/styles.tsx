@@ -39,8 +39,8 @@ const styles = StyleSheet.create({
     color: Colors.title.orange,
   },
   utilitiesContainer: {
-    // display: 'flex',
-    flex: 1,
+    display: 'flex',
+    // flex: 1,
     width: '90%',
     alignItems: 'center',
     gap: 10,

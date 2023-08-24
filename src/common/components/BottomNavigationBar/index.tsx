@@ -670,7 +670,7 @@ export default observer(function BottomNavigationBar() {
         initialParams={{screen: RouteNames.STORAGE_TABS}}
         options={{
           unmountOnBlur: true,
-          title: 'Kho',
+          title: 'Quản lý NYP',
           tabBarIcon: ({color}) => {
             return <Icon name="isv" size={20} color={color} />;
           },

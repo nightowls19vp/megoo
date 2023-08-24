@@ -483,7 +483,13 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
               Tiện ích và chức năng
             </Text>
             <ScrollView
-              style={{flex: 1, height: 40, marginBottom: 10}}
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                // height: 40,
+                marginBottom: 10,
+                paddingVertical: 10,
+              }}
               horizontal={true}
               showsHorizontalScrollIndicator={true}>
               {renderExtensions()}

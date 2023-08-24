@@ -33,6 +33,14 @@ class GroupStore {
   setToUpdateGroupDropdown(toUpdateGroupDropdown: boolean) {
     this.toUpdateGroupDropdown = toUpdateGroupDropdown;
   }
+
+  @observable
+  barcode = '';
+
+  @action
+  setBarcode(barcode: string) {
+    this.barcode = barcode;
+  }
 }
 
 const groupStore = new GroupStore();

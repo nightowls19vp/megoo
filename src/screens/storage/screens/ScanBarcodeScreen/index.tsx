@@ -4,8 +4,9 @@ import {useCallback, useEffect} from 'react';
 import {Linking, StyleSheet, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {Camera, useCameraDevices} from 'react-native-vision-camera';
-
-const ScanBarcodeScreen = () => {
+import groupStore from '../../../../common/store/group.store';
+import RouteNames from '../../../../constants/route-names.const';
+const ScanBarcodeScreen = ({navigation}: {navigation: any}) => {
   const devices = useCameraDevices();
   const device = devices.back;
 
@@ -24,6 +25,14 @@ const ScanBarcodeScreen = () => {
   const onBarcodeRead = (event: any) => {
     console.log('Scanned barcode:', event.data);
     // Handle the scanned barcode data here
+
+    groupStore.setBarcode(event.data);
+
+    navigation.goBack();
+
+    setTimeout(() => {
+      navigation.navigate(RouteNames.ADD_PRODUCT_INFO);
+    }, 100);
   };
 
   return (
