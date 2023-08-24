@@ -59,6 +59,8 @@ import ToolTip from '../ToolTip';
 import FundListScreen from '../../../screens/home/screens/fund/FundListScreen';
 import CreateFundScreen from '../../../screens/home/screens/fund/CreateFundScreen';
 import FundDetailScreen from '../../../screens/home/screens/fund/FundDetailScreen';
+import NewGroupProductsScreen from '../../../screens/storage/screens/NewGroupProductsScreen';
+import AddNewGroupProductScreen from '../../../screens/storage/screens/AddNewGroupProductScreen';
 
 const ChatStack = createNativeStackNavigator();
 const ChatScreenStack = ({navigation}: {navigation: any}) => {
@@ -431,7 +433,7 @@ const StorageTabs = () => {
       }}>
       <StorageTopTabNavigator.Screen
         name={RouteNames.PRODUCTS}
-        component={ProductsScreen}
+        component={NewGroupProductsScreen}
       />
       <StorageTopTabNavigator.Screen
         name={RouteNames.STORAGE_LOCATIONS}
@@ -450,21 +452,21 @@ const StorageStack = createNativeStackNavigator();
 
 const StorageScreenStack = () => {
   return (
-    <StorageStack.Navigator initialRouteName={RouteNames.STORAGE_TABS}>
-      <StorageStack.Screen
+    <StorageStack.Navigator initialRouteName={RouteNames.PRODUCTS}>
+      {/* <StorageStack.Screen
         name={appStore.isLoggedIn ? RouteNames.STORAGE_GROUPS : 'Quản lý gói'}
         component={GroupsProductsListScreen}
-      />
-      <StorageStack.Screen
+      /> */}
+      {/* <StorageStack.Screen
         name={RouteNames.STORAGE_TABS}
         component={StorageTabs}
         options={{
           title: 'Quản lý nhu yếu phẩm',
         }}
-      />
+      /> */}
       <StorageStack.Screen
         name={RouteNames.PRODUCTS}
-        component={ProductsScreen}
+        component={NewGroupProductsScreen}
       />
       <StorageStack.Screen
         name={RouteNames.PRODUCT_DETAIL}
@@ -505,6 +507,10 @@ const StorageScreenStack = () => {
           headerShown: false,
           title: 'Nhóm chat',
         }}
+      />
+      <StorageStack.Screen
+        name={RouteNames.ADD_NEW_GROUP_PRODUCT}
+        component={AddNewGroupProductScreen}
       />
     </StorageStack.Navigator>
   );
@@ -667,7 +673,7 @@ export default observer(function BottomNavigationBar() {
       <Tab.Screen
         name={RouteNames.STORAGE_STACK_BOTTOM}
         component={StorageScreenStack}
-        initialParams={{screen: RouteNames.STORAGE_TABS}}
+        initialParams={{screen: RouteNames.ADD_NEW_GROUP_PRODUCT}}
         options={{
           unmountOnBlur: true,
           title: 'Quản lý NYP',

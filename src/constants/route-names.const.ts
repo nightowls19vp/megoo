@@ -96,4 +96,6 @@ export default {
   GROUP_CHATS: 'Nhóm chat',
   GROUP_CHAT_DETAIL: 'Chi tiết nhóm chat',
   CHANGE_GROUP_CHAT_DETAIL: 'Chỉnh sửa thông tin nhóm chat',
+
+  ADD_NEW_GROUP_PRODUCT: 'Thêm nhu yếu phẩm',
 };

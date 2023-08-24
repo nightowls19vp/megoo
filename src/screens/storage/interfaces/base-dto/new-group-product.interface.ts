@@ -12,15 +12,15 @@ export interface INewGroupProduct {
 
   price?: number;
 
-  bestBefore?: Date;
+  bestBefore?: Date | string;
 
   interval?: number;
 
   intervalType?: string;
 
-  lastNotification?: Date;
+  lastNotification?: Date | string;
 
-  nextNotification?: Date;
+  nextNotification?: Date | string;
 
   timestamp?: ITimestampEmbedded;
 
