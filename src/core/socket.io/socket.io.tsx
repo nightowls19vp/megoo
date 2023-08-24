@@ -25,7 +25,10 @@ export function connectSocket(userId: string) {
 
   socket = io(URL_SOCKET, {
     autoConnect: false,
-    path: URL_SOCKET.includes('localhost') ? undefined : '/ws/',
+    path:
+      URL_SOCKET.includes('localhost') || URL_SOCKET.includes('ngrok')
+        ? undefined
+        : '/ws/',
     query: {token},
   });
 

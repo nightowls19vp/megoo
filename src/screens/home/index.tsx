@@ -42,20 +42,20 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
       routeName: string;
     }[]
   >([
-    {
-      id: '1',
-      iconName: 'scissors-cutting',
-      iconSize: 26,
-      name: 'Quản lý nợ',
-      routeName: RouteNames.BILL_LIST_STACK,
-    },
-    {
-      id: '2',
-      iconName: 'piggy-bank-outline',
-      iconSize: 26,
-      name: 'Quản lý quỹ',
-      routeName: RouteNames.FUND_LIST_STACK,
-    },
+    // {
+    //   id: '1',
+    //   iconName: 'scissors-cutting',
+    //   iconSize: 26,
+    //   name: 'Quản lý nợ',
+    //   routeName: RouteNames.BILL_LIST_STACK,
+    // },
+    // {
+    //   id: '2',
+    //   iconName: 'piggy-bank-outline',
+    //   iconSize: 26,
+    //   name: 'Quản lý quỹ',
+    //   routeName: RouteNames.FUND_LIST_STACK,
+    // },
     {
       id: '3',
       iconName: 'checkbox-outline',
@@ -70,13 +70,13 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
       name: 'Lịch biểu',
       routeName: RouteNames.TASK_LIST_STACK,
     },
-    {
-      id: '5',
-      iconName: 'percent-outline',
-      iconSize: 24,
-      name: 'Lãi suất',
-      routeName: RouteNames.BANK_INTEREST_RATE,
-    },
+    // {
+    //   id: '5',
+    //   iconName: 'percent-outline',
+    //   iconSize: 24,
+    //   name: 'Lãi suất',
+    //   routeName: RouteNames.BANK_INTEREST_RATE,
+    // },
   ]);
 
   const [packages, setPackages] = useState([]);
@@ -402,7 +402,7 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
       return (
         <View
           style={{
-            width: 90,
+            width: 170,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -482,18 +482,19 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
             <Text style={[styles.title, {width: '100%'}]}>
               Tiện ích và chức năng
             </Text>
-            <ScrollView
+            <View
               style={{
                 display: 'flex',
                 flexDirection: 'row',
                 // height: 40,
                 marginBottom: 10,
                 paddingVertical: 10,
-              }}
-              horizontal={true}
-              showsHorizontalScrollIndicator={true}>
+                // backgroundColor: 'pink',
+                width: '100%',
+                justifyContent: 'space-between',
+              }}>
               {renderExtensions()}
-            </ScrollView>
+            </View>
             {/* <Carousel
                 loop={false}
                 mode="parallax"
