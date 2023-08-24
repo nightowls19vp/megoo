@@ -1,12 +1,14 @@
 import {Formik} from 'formik';
 import React, {useEffect, useMemo, useState} from 'react';
 import {
+  Image,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import {Dropdown} from 'react-native-element-dropdown';
 import RadioGroup, {
   RadioButton,
   RadioButtonProps,
@@ -23,6 +25,10 @@ import {Colors} from '../../../../../constants/color.const';
 import RouteNames from '../../../../../constants/route-names.const';
 import {createTodos} from './services/create.todos.service';
 import styles from './styles/style';
+import {getMembers} from '../../../../../services/group.service';
+import {toString} from 'lodash';
+import Tooltip from 'react-native-walkthrough-tooltip';
+import ToolTip from '../../../../../common/components/ToolTip';
 
 const CreateTodoSchema = Yup.object().shape({
   summary: Yup.string().required('Vui lòng nhập tiêu đề'),
@@ -66,7 +72,74 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
   const [selectedId, setSelectedId] = useState<string | undefined>(
     radioButtons[0].id,
   );
+
   const [selectedOption, setSelectedOption] = useState<string | undefined>();
+
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+
+  const [isFocus, setIsFocus] = useState(false);
+
+  const [members, setMembers] = useState<
+    {
+      role: string;
+      id: string;
+      name: string;
+      email: string;
+      avatar: string;
+    }[]
+  >([]);
+
+  const [dropdownMembers, setDropdownMembers] = useState<
+    {
+      label: string;
+      value: string;
+      image: {
+        uri: string;
+      };
+    }[]
+  >([]);
+
+  const [selectedMember, setSelectedMember] = useState('');
+
+  const getMemberList = async () => {
+    try {
+      const response = await getMembers(groupStore.id);
+      // console.log(
+      //   'Members response:',
+      //   JSON.stringify(response.group.members, null, 2),
+      //   // response.group.members,
+      // );
+      if (
+        !response.group ||
+        !response?.group?.members ||
+        response?.group?.members?.length === 0
+      ) {
+        setMembers([]);
+      } else {
+        const groupMembers = response?.group?.members?.map((member: any) => ({
+          role: member?.role,
+          id: member?.user?._id,
+          name: member?.user?.name,
+          avatar: member?.user?.avatar,
+          email: member?.user?.email,
+        }));
+
+        setMembers(groupMembers);
+        // Initialize toggleCheckBoxArray with true for the current user's index, if found
+        const currentUserIndex = groupMembers.findIndex(
+          (member: any) => member.role === 'Super User',
+        );
+
+        const initialToggleValues = groupMembers.map(
+          (_: any, index: number) => index === currentUserIndex,
+        );
+        setToggleCheckBoxArray(initialToggleValues);
+        // setAmountArray(Array.from({length: members.length}, () => '0'));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const [todos, setTodos] = useState<Object[]>([]);
 
@@ -107,8 +180,36 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
   }, [selectedId]);
 
   useEffect(() => {
+    if (selectedId === '1') {
+      setSelectedMember('');
+    }
+  }, [selectedId]);
+
+  useEffect(() => {
     console.log('todos', todos);
   }, [todos]);
+
+  useEffect(() => {
+    getMemberList();
+  }, []);
+
+  useEffect(() => {
+    console.log('members', members);
+
+    if (members.length > 0) {
+      setDropdownMembers(
+        members.map((member: any) => ({
+          label: member.name,
+          value: member.id,
+          image: {
+            uri: member.avatar,
+          },
+        })),
+      );
+    } else {
+      setDropdownMembers([]);
+    }
+  }, [members]);
 
   return (
     <Formik
@@ -119,14 +220,21 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
         state: selectedOption,
       }}
       validationSchema={CreateTodoSchema}
-      enableReinitialize={true}
+      // enableReinitialize={true}
       onSubmit={async values => {
         console.log('values', values);
         console.log('todos', todos);
         const checkList = {
           summary: values.summary,
-          state: values.state,
-          todos: todos,
+          state: selectedOption,
+          todos: todos.map((todo: any) => {
+            return {
+              todo: todo.todo,
+              isCompleted: todo.isCompleted,
+              description: todo.description,
+              assignee: todo.assignee !== '' ? todo.assignee : undefined,
+            };
+          }),
         };
         console.log('checkList', JSON.stringify(checkList, null, 2));
 
@@ -242,6 +350,42 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
               />
             )}
           </View>
+          {selectedId === '2' && (
+            <>
+              <Text style={styles.title}>Người đảm nhận</Text>
+              <Dropdown
+                style={{
+                  width: '90%',
+                  height: 50,
+                  borderBottomColor: Colors.text.lightgrey,
+                  borderBottomWidth: 1,
+                }}
+                itemTextStyle={{
+                  color: Colors.text.grey,
+                  fontSize: 14,
+                }}
+                selectedTextStyle={{
+                  color: Colors.text.grey,
+                  fontSize: 14,
+                }}
+                data={dropdownMembers.length > 0 ? dropdownMembers : []}
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Chọn người đảm nhận công việc' : '...'}
+                placeholderStyle={{
+                  color: Colors.text.lightgrey,
+                }}
+                value={selectedMember}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+                onChange={item => {
+                  setSelectedMember(item.value);
+                  setIsFocus(false);
+                }}
+              />
+            </>
+          )}
 
           <TouchableOpacity
             style={styles.addButton}
@@ -250,20 +394,76 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
 
               if (values.todo !== '') {
                 if (todos.length === 0) {
+                  let selectedMemberIndex = 0;
+                  let selectedMemberInfo = {
+                    name: '',
+                    avatar: '',
+                  };
+
+                  if (selectedMember !== '') {
+                    // Find selectedMember in members array
+                    selectedMemberIndex = members.findIndex(
+                      member => member.id === selectedMember,
+                    );
+
+                    selectedMemberInfo = {
+                      name: members[selectedMemberIndex].name,
+                      avatar: members[selectedMemberIndex].avatar,
+                    };
+                  }
+
                   setTodos([
                     {
                       todo: values.todo,
                       description: values.description,
                       isCompleted: false,
+                      assignee:
+                        selectedMember !== '' ? selectedMember : undefined,
+                      name:
+                        selectedMemberInfo.name !== ''
+                          ? selectedMemberInfo.name
+                          : '',
+                      avatar:
+                        selectedMemberInfo.avatar !== ''
+                          ? selectedMemberInfo.avatar
+                          : '',
                     },
                   ]);
                 } else {
+                  let selectedMemberIndex = 0;
+                  let selectedMemberInfo = {
+                    name: '',
+                    avatar: '',
+                  };
+
+                  if (selectedMember !== '') {
+                    // Find selectedMember in members array
+                    selectedMemberIndex = members.findIndex(
+                      member => member.id === selectedMember,
+                    );
+
+                    selectedMemberInfo = {
+                      name: members[selectedMemberIndex].name,
+                      avatar: members[selectedMemberIndex].avatar,
+                    };
+                  }
+
                   setTodos([
                     ...todos,
                     {
                       todo: values.todo,
                       description: values.description,
                       isCompleted: false,
+                      assignee:
+                        selectedMember !== '' ? selectedMember : undefined,
+                      name:
+                        selectedMemberInfo.name !== ''
+                          ? selectedMemberInfo.name
+                          : '',
+                      avatar:
+                        selectedMemberInfo.avatar !== ''
+                          ? selectedMemberInfo.avatar
+                          : '',
                     },
                   ]);
                 }
@@ -295,6 +495,7 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
                     />
                     <View
                       style={{
+                        width: '80%',
                         display: 'flex',
                         flexDirection: 'row',
                         alignItems: 'baseline',
@@ -324,12 +525,38 @@ const CreateTodosScreen = ({navigation}: {navigation: any}) => {
                       </Text>
                     </View>
                   </View>
-                  <TouchableOpacity>
-                    <Ionicons
-                      name={'remove-circle'}
-                      style={styles.removeIcon}
-                    />
-                  </TouchableOpacity>
+                  <View
+                    style={{
+                      width: '15%',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'flex-end',
+                      gap: 10,
+                    }}>
+                    {todo.assignee && (
+                      <ToolTip
+                        type="image"
+                        content={todo.name}
+                        imageUrl={todo.avatar}
+                        isTooltipVisible={isTooltipVisible}
+                        setIsTooltipVisible={setIsTooltipVisible}></ToolTip>
+                    )}
+                    <TouchableOpacity
+                      onPress={() => {
+                        // find todo in todos by id then remove
+                        const newTodos = todos.filter((todoItem: any) => {
+                          return todo.id !== todoItem.id;
+                        });
+
+                        setTodos(newTodos);
+                      }}>
+                      <Ionicons
+                        name={'remove-circle'}
+                        style={styles.removeIcon}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               ))}
           </View>

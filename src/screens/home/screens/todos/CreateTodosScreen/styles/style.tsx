@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   todoContainer: {
-    width: '90%',
+    width: '80%',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
