@@ -10,6 +10,7 @@ import {getItemById} from '../../screens/storage/services/items.service';
 import userStore from '../../common/store/user.store';
 import {URL_HOST, URL_SOCKET} from '../config/api/api.config';
 import {displayNotification} from '../push-notifee/notifee';
+import {getNewGroupProductById} from '../../screens/storage/services/new-group-products.service';
 
 export let socket: Socket;
 
@@ -64,6 +65,8 @@ export async function listen() {
 
   onProdNoti();
   onFunding();
+
+  onRestockNoti();
 }
 
 export function onZpCallback() {
@@ -322,6 +325,50 @@ export function onFunding() {
 
     if (fundNoti === 'true') {
       displayNotification('Nhắc nhở đóng quỹ nhóm', `<b>${data.summary}</b>`);
+    }
+  });
+}
+
+/*
+## Bo sung nhu yeu pham
+
+- Event: 'restockNoti'
+
+Payload
+
+```typescript
+interface IRestockNoti {
+    itemId: string;
+    groupId: string;
+}
+```
+*/
+
+export function onRestockNoti() {
+  interface IRestockNoti {
+    id: string;
+    groupId: string;
+  }
+
+  socket.on('restockNoti', async (data: IRestockNoti) => {
+    console.log('restockNoti data:', data);
+
+    const resDto = await getNewGroupProductById({
+      groupId: data.groupId,
+      id: data.id,
+    });
+
+    console.log('resDto:', JSON.stringify(resDto, null, 2));
+
+    const item = resDto.data;
+
+    // displayNotification
+    let message = '';
+
+    message = `Nhu yếu phẩm <b>${item?.name}</b> cần được bổ sung !`;
+
+    if (message.length > 0) {
+      displayNotification('Nhắc nhở nhu yếu phẩm', message);
     }
   });
 }
