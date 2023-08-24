@@ -33,6 +33,8 @@ import {
   updateTodoInList,
 } from './services/todos.service';
 import styles from './styles/styles';
+import {getMembers} from '../../../../../services/group.service';
+import groupStore from '../../../../../common/store/group.store';
 
 // Define the type for the route params
 type TodosRouteParams = {
@@ -78,7 +80,18 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
   );
   const [selectedOption, setSelectedOption] = useState<string | undefined>();
 
-  const [todos, setTodos] = useState({
+  const [todos, setTodos] = useState<{
+    _id: string;
+    summary: string;
+    todos: {
+      _id: string;
+      todo: string;
+      description: string;
+      isCompleted: boolean;
+      assignee?: string;
+    }[];
+    state: string;
+  }>({
     _id: '',
     summary: '',
     todos: [
@@ -87,6 +100,7 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
         todo: '',
         description: '',
         isCompleted: false,
+        assignee: '',
       },
     ],
     state: '',
@@ -109,38 +123,99 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
   const [isDeleteTodosModalVisible, setIsDeleteTodosModalVisible] =
     useState(false);
 
+  const [members, setMembers] = useState<
+    {
+      role: string;
+      id: string;
+      name: string;
+      email: string;
+      avatar: string;
+    }[]
+  >([]);
+
+  const [assignees, setAssignees] = useState<
+    {
+      id: string;
+      name: string;
+      email: string;
+      avatar: string;
+    }[]
+  >([]);
+
+  const getMemberList = async () => {
+    try {
+      const response = await getMembers(groupStore.id);
+      // console.log(
+      //   'Members response:',
+      //   JSON.stringify(response.group.members, null, 2),
+      //   // response.group.members,
+      // );
+      if (
+        !response.group ||
+        !response?.group?.members ||
+        response?.group?.members?.length === 0
+      ) {
+        setMembers([]);
+      } else {
+        const groupMembers = response?.group?.members?.map((member: any) => ({
+          role: member?.role,
+          id: member?.user?._id,
+          name: member?.user?.name,
+          avatar: member?.user?.avatar,
+          email: member?.user?.email,
+        }));
+
+        setMembers(groupMembers);
+        // Initialize toggleCheckBoxArray with true for the current user's index, if found
+        const currentUserIndex = groupMembers.findIndex(
+          (member: any) => member.role === 'Super User',
+        );
+
+        const initialToggleValues = groupMembers.map(
+          (_: any, index: number) => index === currentUserIndex,
+        );
+        setToggleCheckBoxArray(initialToggleValues);
+        // setAmountArray(Array.from({length: members.length}, () => '0'));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getTodos = async () => {
     const todosRes = await getTodosById(todosId);
-    // console.log('todos', JSON.stringify(todosRes, null, 2));
+    console.log('todos', JSON.stringify(todosRes.todos.todos[0], null, 2));
 
     setTodos({
-      _id: todosRes.todos._id,
-      summary: todosRes.todos.summary,
-      todos: todosRes.todos.todos.map((todoItem: any) => {
-        return {
-          _id: todoItem._id,
-          todo: todoItem.todo,
-          description: todoItem.description,
-          isCompleted: todoItem.isCompleted,
-        };
-      }),
-      state: todosRes.todos.state,
+      _id: todosRes?.todos?._id,
+      summary: todosRes?.todos?.summary,
+      todos:
+        todosRes?.todos?.todos?.map((todoItem: any) => {
+          return {
+            _id: todoItem._id,
+            todo: todoItem.todo,
+            description: todoItem.description,
+            isCompleted: todoItem.isCompleted,
+            assignee: todoItem.assignee,
+          };
+        }) || [],
+      state: todosRes?.todos?.state,
     });
 
-    if (todosRes.todos.state === 'Public') {
+    if (todosRes?.todos?.state === 'Public') {
       setSelectedId('2');
     } else {
       setSelectedId('1');
     }
 
     setToggleCheckBoxArray(
-      todosRes.todos.todos.map((todo: any) => todo.isCompleted),
+      todosRes?.todos?.todos?.map((todo: any) => todo.isCompleted) || [],
     );
   };
 
   const changeStatus = async (state: string) => {
     const todosRes = await changeState(todosId, state);
-    console.log('todosRes', JSON.stringify(todosRes, null, 2));
+    // console.log('todosRes', JSON.stringify(todosRes, null, 2));
   };
 
   const handleToggleCheckBox = (index: number, newValue: boolean) => {
@@ -172,11 +247,13 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
   useEffect(() => {
     console.log('todosId:', todosId);
     getTodos();
+    getMemberList();
   }, []);
 
   useFocusEffect(
     useCallback(() => {
       getTodos();
+      getMemberList();
       return () => {
         // Code to clean up the effect when the screen is unfocused
       };
@@ -184,8 +261,14 @@ const TodosScreen = ({navigation}: {navigation: any}) => {
   );
 
   useEffect(() => {
-    // console.log('todos:', todos);
-  }, [todos]);
+    if (members.length > 0 && todos.todos.length > 0) {
+      // find todos.todos.assignee in members than push to assignees
+      const assignees = members.filter((member: any) =>
+        todos.todos.map((todos: any) => member.id === todos.assignee),
+      );
+      setAssignees(assignees);
+    }
+  }, [members, todos]);
 
   useEffect(() => {
     console.log('selectedId:', selectedId);

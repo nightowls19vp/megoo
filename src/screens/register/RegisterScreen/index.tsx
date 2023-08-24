@@ -50,6 +50,9 @@ const RegisterSchema = Yup.object().shape({
   password: Yup.string()
     .min(6, 'Mật khẩu chứa ít nhất 6 kí tự')
     .required('Vui lòng nhập mật khẩu'),
+  confirmPassword: Yup.string()
+    .min(6, 'Mật khẩu chứa ít nhất 6 kí tự')
+    .required('Vui lòng nhập lại mật khẩu'),
   phone: Yup.string()
     .max(10, 'Số điện thoại không hợp lệ')
     .matches(/^(\+84)|0([3|5|7|8|9])(\d{8})$/, 'Số điện thoại không hợp lệ')
@@ -59,7 +62,7 @@ const RegisterSchema = Yup.object().shape({
 
 export default function RegisterScreen({navigation}: {navigation: any}) {
   const [hidePassword, setHidePassword] = useState(true);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(moment().subtract(12, 'years').toDate());
   const [selectedDate, setSelectedDate] = useState(date);
   const [open, setOpen] = useState(false);
 
@@ -71,10 +74,12 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
             name: '',
             username: '',
             password: '',
+            confirmPassword: '',
             phone: '',
             dob: '',
           }}
           validationSchema={RegisterSchema}
+          enableReinitialize={true}
           // onSubmit={values => {}}
           onSubmit={async values => {
             const dobISOString = moment(values.dob, 'DD/MM/YYYY').toISOString();
@@ -118,6 +123,7 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
             touched,
             setFieldTouched,
             setFieldValue,
+            setFieldError,
             isValid,
             handleChange,
             handleSubmit,
@@ -193,6 +199,39 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                 <Text style={[styles.error]}>{errors.password}</Text>
               )}
 
+              <View style={styles.inputContainer}>
+                <TextInput
+                  onChangeText={value =>
+                    setFieldValue('confirmPassword', value)
+                  }
+                  onEndEditing={() => {
+                    if (values.password !== values.confirmPassword) {
+                      setFieldError('confirmPassword', 'Mật khẩu không khớp');
+                    }
+                  }}
+                  onBlur={() => setFieldTouched('confirmPassword')}
+                  secureTextEntry={hidePassword}
+                  placeholder={'Nhập lại mật khẩu'}
+                  style={styles.inputText}
+                  placeholderTextColor={Colors.text.lightgrey}
+                  value={values.confirmPassword}
+                />
+                {values.confirmPassword && (
+                  <Icon
+                    onPress={() => setFieldValue('confirmPassword', '')}
+                    name={'close'}
+                    style={[styles.inputIcon, {marginRight: 5}]}
+                  />
+                )}
+                <Icon
+                  onPress={() => setHidePassword(!hidePassword)}
+                  name={hidePassword ? 'eye' : 'eye-off'}
+                  style={styles.inputIcon}></Icon>
+              </View>
+              {touched.confirmPassword && errors.confirmPassword && (
+                <Text style={[styles.error]}>{errors.confirmPassword}</Text>
+              )}
+
               <View style={[styles.inputContainer]}>
                 <TextInput
                   onChangeText={value => setFieldValue('phone', value)}
@@ -230,7 +269,7 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
                   modal
                   open={open}
                   date={selectedDate}
-                  maximumDate={new Date()}
+                  maximumDate={moment().subtract(12, 'years').toDate()}
                   mode={'date'}
                   locale={'vi'}
                   title={'Chọn ngày'}
